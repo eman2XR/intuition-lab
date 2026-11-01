@@ -1,16 +1,18 @@
 # Intuition Lab
 
-**[Open the live website →](https://eman2xr.github.io/intuition-lab/)**
+![The lab at work: AI agents researching, drawing and reviewing a guide](docs/images/lab.png)
 
-Short visual guides that explain why things work the way they do. A team of AI agents researches, builds and reviews each one.
+Short, intuitive guides that explain why things work. Why is the sky blue? Why is the night dark? Why does a guitar string play only certain notes? Each guide is a small animated picture with one sentence at a time underneath, and usually a slider at the end so you can try it yourself.
 
-Each guide is a short animated picture narrated one subtitle at a time, built on an exact model with automated checks, followed by a control to explore it yourself. Topics so far include gravity and time, light and spacetime, waves and quanta, black holes, why the night sky is dark, why the sky is blue, chance, and how AI reads text.
+**[Open the site →](https://eman2xr.github.io/intuition-lab/)**
 
-How a guide is made: once a day a scheduled run on the owner's Mac picks the next question whose picture is ready. A researcher gathers sources, a scientist writes the research record, a designer plans how the picture will show the reason, and a writer writes the chapters. The coordinator renders real browser frames and runs the checks, and four reviewers (accuracy, visual, beginner, and a blind viewer who sees only the pictures) must all pass, with up to three rounds of revision. Accepted guides are pushed to GitHub Pages. A few guides were made by hand in coding sessions and say so on their page.
+A team of AI agents makes them, one a day. One reads up and finds sources, one writes up the science, one plans the picture and one writes the words. Four reviewers then check the rendered result: one for accuracy, one for the visuals, one reading as a beginner, and one who sees only the pictures. If any of them isn't convinced, it goes back for another draft. Only guides that pass all four go live.
 
-The original persona debate CLI remains in `council.py`. The new visual lab is in `lab/` and `web/`.
+The pictures are drawn in code on top of exact models, so the numbers you see are the real ones.
 
-For coding-agent continuity, read [the handoff](docs/HANDOFF.md). Claude Code loads [CLAUDE.md](CLAUDE.md) as its entry point.
+![From "Why is the night sky dark?": only light from within 13.8 billion light-years has had time to reach us](docs/images/night-sky.jpg)
+
+The older persona-debate experiment lives in `council.py`. If you're a coding agent, start with [the handoff](docs/HANDOFF.md) and [CLAUDE.md](CLAUDE.md).
 
 ## Run locally
 
