@@ -1616,25 +1616,32 @@ function nightTag(ctx,value,x,y,{align='center',size=11,color='rgba(228,234,255,
  ctx.fillStyle=back;ctx.beginPath();ctx.roundRect?ctx.roundRect(left-6,y-size*.8,width+12,size*1.6,size*.8):ctx.rect(left-6,y-size*.8,width+12,size*1.6);ctx.fill();
  text(ctx,value,x,y,{align,size,weight,color});
 }
-// You, as a silhouette sitting on the hilltop: knees up, leaning back on one arm, head tipped up to the sky. The head
-// sits where the sight lines meet; a faint rim of skylight keeps the figure readable against the dark hill.
+// You, as one solid silhouette sitting on the hilltop with arms wrapped round the knees and the head tipped up to the
+// sky. The head sits where the sight lines meet; a faint rim of skylight traces the outline against the dark hill.
 function nightPerson(ctx,x,feet,s,col,rim){
- const hx=x-s*.09, hy=feet-s*.93, hip=[x+s*.06,feet-s*.09], shoulder=[hx-s*.02,hy+s*.21];
- const knee=[x+s*.34,feet-s*.55], foot=[x+s*.6,feet-s*.04], hand=[x-s*.42,feet-s*.03];
- const body=grow=>{
-  const limb=(pts,width)=>{ctx.lineWidth=width+grow;trace(ctx,pts);ctx.stroke();};
-  limb([hip,knee,foot],s*.15);
-  limb([shoulder,hip],s*.25);
-  // Leaning back on a straight arm.
-  limb([shoulder,hand],s*.1);
-  // The near arm rests across the knee.
-  limb([[shoulder[0]+s*.04,shoulder[1]+s*.06],[x+s*.22,feet-s*.38],[knee[0]+s*.04,knee[1]+s*.02]],s*.1);
-  // Head tipped back, chin up.
-  ctx.beginPath();ctx.ellipse(hx,hy,s*.13+grow/2,s*.14+grow/2,-.5,0,TAU);ctx.fill();
-  ctx.beginPath();ctx.moveTo(hx+s*.06,hy+s*.05);ctx.lineTo(hx+s*.2+grow/2,hy-s*.02);ctx.lineTo(hx+s*.1,hy-s*.1);ctx.closePath();ctx.fill();};
- ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
- if(rim){ctx.strokeStyle=rim;ctx.fillStyle=rim;body(2.4);}
- ctx.strokeStyle=col;ctx.fillStyle=col;body(0);ctx.restore();
+ const P=(dx,dy)=>[x+dx*s,feet+dy*s], hx=x-s*.09, hy=feet-s*.93;
+ const outline=()=>{ctx.beginPath();
+  ctx.moveTo(...P(-.34,0));
+  // The back, rounded, up to the shoulders.
+  ctx.bezierCurveTo(...P(-.40,-.22),...P(-.34,-.56),...P(-.2,-.74));
+  ctx.lineTo(...P(-.12,-.8));
+  // The arms reach forward round the knees.
+  ctx.bezierCurveTo(...P(-.02,-.72),...P(.06,-.64),...P(.13,-.63));
+  // The knees, then the shins down to the feet.
+  ctx.bezierCurveTo(...P(.2,-.72),...P(.36,-.7),...P(.39,-.56));
+  ctx.bezierCurveTo(...P(.41,-.48),...P(.39,-.44),...P(.38,-.4));
+  ctx.bezierCurveTo(...P(.36,-.26),...P(.38,-.1),...P(.46,-.04));
+  ctx.quadraticCurveTo(...P(.5,0),...P(.42,0));
+  ctx.closePath();
+  // The head, tipped back, chin up.
+  ctx.moveTo(hx+s*.14,hy);ctx.ellipse(hx,hy,s*.14,s*.15,-.5,0,TAU);
+  ctx.moveTo(hx+s*.07,hy+s*.08);ctx.lineTo(hx+s*.2,hy-s*.03);ctx.lineTo(hx+s*.1,hy-s*.1);ctx.closePath();};
+ ctx.save();ctx.lineJoin='round';
+ if(rim){outline();ctx.strokeStyle=rim;ctx.lineWidth=2.4;ctx.stroke();}
+ outline();ctx.fillStyle=col;ctx.fill();
+ // The neck joins head and shoulders without a seam.
+ ctx.beginPath();ctx.ellipse(x-s*.12,feet-s*.8,s*.08,s*.07,0,0,TAU);ctx.fill();
+ ctx.restore();
 }
 function nightGround(ctx,w,h,L,blaze){
  const far=x=>L.gy-h*.042+h*.016*Math.sin(x/w*6.3+1.1)+h*.011*Math.sin(x/w*15.7+.4);
