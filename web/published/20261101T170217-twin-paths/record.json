@@ -1,0 +1,332 @@
+{
+ "id": "20261101T170217-twin-paths",
+ "status": "reviewed",
+ "question": "Why the travelling twin comes home younger",
+ "topic": "spacetime-paths",
+ "created": "2026-11-01T17:02:17+00:00",
+ "updated": "2026-11-01T17:02:17Z",
+ "research": {
+  "claim": "A twin who flies to a star and back at 87% of light speed comes home younger, because only the traveller’s path through space and time bends, and a bent path holds less time.",
+  "explanation": "1. On a map with time up and distance sideways, the home twin’s path runs straight up; light moves along the 45° line.\n2. A light clock ticks each time light crosses between two mirrors. Light moves at the same speed for everyone, so seen from Earth the moving clock’s light slants, takes a longer path and ticks less often.\n3. At 87% of light speed (0.866) to a star 3.5 light-years away, each way takes 4 Earth years; every clock on board, and the traveller’s body, runs at half rate, so 8 years at home is 4 on the rocket.\n4. Only the traveller turns around, which they feel; between two meetings the straight (unaccelerated) path holds the most time.",
+  "assumptions": [
+   "Special relativity with an instant turnaround.",
+   "Speed 0.866 of light speed; star 3.46 light-years away (about 3.5).",
+   "No gravity."
+  ],
+  "prediction": "The traveller’s clock shows 4.0 years against 8.0 at home (50% less); a faster trip leaves less time on the traveller’s clock.",
+  "falsifier": "Clocks that take different paths between the same two meetings and still agree, beyond measurement error.",
+  "limitations": [
+   "A real turnaround takes time and a strong push; the drawn one is instant.",
+   "The 1971 flights measured a gravity effect too, not motion alone.",
+   "Distances on the map are not the time a path holds: tilted paths look longer than they hold.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Twin paradox (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Twin_paradox",
+    "supports": "The travelling twin ages less (at 80% of light speed, 6 years against 10); \"only the travelling twin experiences acceleration\"; the paths of inertially moving bodies \"maximise the proper time elapsed between two events\"."
+   },
+   {
+    "title": "Hafele–Keating experiment (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Hafele%E2%80%93Keating_experiment",
+    "supports": "In 1971 four caesium atomic clocks were flown twice around the world on airliners; eastward they lost 59 ± 10 ns (predicted 40 ± 23) and westward gained 273 ± 7 ns (predicted 275 ± 21), \"consistent with both special and general relativity\"."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 24,
+  "controls": "both",
+  "kind": "spacetime-paths",
+  "title": "Why the travelling twin comes home younger",
+  "subtitle": "Two twins part and meet again. A clock made of light shows why the one who travels counts fewer years.",
+  "accent": "blue",
+  "mass": 0.9623,
+  "distance": 2.5,
+  "takeaway": "Between the same two meetings, a bent path through space and time holds less time than a straight one. Only the traveller turns around, so only they come home younger.",
+  "beats": [
+   {
+    "title": "A map of space and time",
+    "body": "On this map, up is time and sideways is distance from Earth. The dotted line is the path of light, the fastest anything can go. The twin who stays home has a path straight up, one dot per year."
+   },
+   {
+    "title": "Why a moving clock ticks slowly",
+    "body": "A light clock ticks each time light crosses between two mirrors. Light moves at the same speed for everyone, as experiments since 1887 have shown. Seen from Earth, the mirrors move, so the light must slant to hit them: a longer path at the same speed means slower ticks."
+   },
+   {
+    "title": "The trip",
+    "body": "Now the traveller flies at 87% of light speed to a star 3.5 light-years away (as far as light travels in 3.5 years) and back: 4 Earth years each way. Every clock on board slows the same way, and so does the traveller’s body. They meet after 8 years at home, but only 4 on the rocket."
+   },
+   {
+    "title": "Why not the other way round?",
+    "body": "From the rocket, Earth seems to move, so why isn’t Earth’s clock the slow one? Only the traveller turns around, pressed into their seat, so only their path bends. Between the same two meetings, the straight path holds the most time, even though on this map the bent one looks longer."
+   }
+  ],
+  "why": "Time is personal: clocks that take different paths really do show different times, as atomic clocks flown around the world in 1971 confirmed.",
+  "opening": "Two twins say goodbye. One stays home and one flies to a star and back. Why is the traveller younger when they meet again?",
+  "questions": [
+   {
+    "q": "If the traveller flew faster, would the age gap grow or shrink?",
+    "a": "Grow. A faster trip bends the path more, and a more bent path holds less time."
+   },
+   {
+    "q": "From the rocket, it is Earth that moves away. Why isn’t the home twin the younger one?",
+    "a": "Only the traveller’s path is bent: they turn around, and everyone agrees on that. The straight path between the two meetings holds the most time."
+   },
+   {
+    "q": "What would a clock carried at light speed show?",
+    "a": "No time at all. The closer a clock gets to light speed, the slower it ticks; at light speed itself it would stop, though no clock can ever quite get there."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Zero speed gives equal ages",
+   "pass": true
+  },
+  {
+   "name": "Faster trips widen the age gap",
+   "pass": true
+  },
+  {
+   "name": "Time-dilation factor at 0.6 light speed is 1.25",
+   "pass": true
+  },
+  {
+   "name": "Traveller worldline stays inside the light cone",
+   "pass": true
+  },
+  {
+   "name": "Round-trip traveller time is home time divided by the factor",
+   "pass": true
+  },
+  {
+   "name": "Trip length does not change the percentage gap",
+   "pass": true
+  },
+  {
+   "name": "Worked example: 10 years out at 8 light-years gives 6 years",
+   "pass": true
+  },
+  {
+   "name": "Each leg holds the home time divided by the factor",
+   "pass": true
+  },
+  {
+   "name": "Light’s path has zero length",
+   "pass": true
+  },
+  {
+   "name": "Every bent path holds less time than the straight one",
+   "pass": true
+  },
+  {
+   "name": "A wider turnaround holds less time",
+   "pass": true
+  },
+  {
+   "name": "Moving light clock: the zigzag at light speed fits one tick",
+   "pass": true
+  },
+  {
+   "name": "Moving light clock ticks slower by the same factor as the trip",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, a final accuracy, visual and beginner review, and a copy edit."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 24,
+    "controls": "both",
+    "kind": "spacetime-paths",
+    "title": "Why the travelling twin comes home younger",
+    "subtitle": "Two twins part and meet again. A clock made of light shows why the one who travels counts fewer years.",
+    "accent": "blue",
+    "mass": 0.9623,
+    "distance": 2.5,
+    "takeaway": "Between the same two meetings, a bent path through space and time holds less time than a straight one. Only the traveller turns around, so only they come home younger.",
+    "beats": [
+     {
+      "title": "A map of space and time",
+      "body": "On this map, up is time and sideways is distance from Earth. The dotted line is the path of light, the fastest anything can go. The twin who stays home has a path straight up, one dot per year."
+     },
+     {
+      "title": "Why a moving clock ticks slowly",
+      "body": "A light clock ticks each time light crosses between two mirrors. Light moves at the same speed for everyone, as experiments since 1887 have shown. Seen from Earth, the mirrors move, so the light must slant to hit them: a longer path at the same speed means slower ticks."
+     },
+     {
+      "title": "The trip",
+      "body": "Now the traveller flies at 87% of light speed to a star 3.5 light-years away (as far as light travels in 3.5 years) and back: 4 Earth years each way. Every clock on board slows the same way, and so does the traveller’s body. They meet after 8 years at home, but only 4 on the rocket."
+     },
+     {
+      "title": "Why not the other way round?",
+      "body": "From the rocket, Earth seems to move, so why isn’t Earth’s clock the slow one? Only the traveller turns around, pressed into their seat, so only their path bends. Between the same two meetings, the straight path holds the most time, even though on this map the bent one looks longer."
+     }
+    ],
+    "why": "Time is personal: clocks that take different paths really do show different times, as atomic clocks flown around the world in 1971 confirmed.",
+    "opening": "Two twins say goodbye. One stays home and one flies to a star and back. Why is the traveller younger when they meet again?",
+    "questions": [
+     {
+      "q": "If the traveller flew faster, would the age gap grow or shrink?",
+      "a": "Grow. A faster trip bends the path more, and a more bent path holds less time."
+     },
+     {
+      "q": "From the rocket, it is Earth that moves away. Why isn’t the home twin the younger one?",
+      "a": "Only the traveller’s path is bent: they turn around, and everyone agrees on that. The straight path between the two meetings holds the most time."
+     },
+     {
+      "q": "What would a clock carried at light speed show?",
+      "a": "No time at all. The closer a clock gets to light speed, the slower it ticks; at light speed itself it would stop, though no clock can ever quite get there."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Zero speed gives equal ages",
+     "pass": true
+    },
+    {
+     "name": "Faster trips widen the age gap",
+     "pass": true
+    },
+    {
+     "name": "Time-dilation factor at 0.6 light speed is 1.25",
+     "pass": true
+    },
+    {
+     "name": "Traveller worldline stays inside the light cone",
+     "pass": true
+    },
+    {
+     "name": "Round-trip traveller time is home time divided by the factor",
+     "pass": true
+    },
+    {
+     "name": "Trip length does not change the percentage gap",
+     "pass": true
+    },
+    {
+     "name": "Worked example: 10 years out at 8 light-years gives 6 years",
+     "pass": true
+    },
+    {
+     "name": "Each leg holds the home time divided by the factor",
+     "pass": true
+    },
+    {
+     "name": "Light’s path has zero length",
+     "pass": true
+    },
+    {
+     "name": "Every bent path holds less time than the straight one",
+     "pass": true
+    },
+    {
+     "name": "A wider turnaround holds less time",
+     "pass": true
+    },
+    {
+     "name": "Moving light clock: the zigzag at light speed fits one tick",
+     "pass": true
+    },
+    {
+     "name": "Moving light clock ticks slower by the same factor as the trip",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 4.1 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 12)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 5)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "Every number checks out. At 0.866 of light speed a clock runs at exactly half rate. A star 3.46 light-years away (rounded to 3.5) takes 4.0 years each way, so the twins meet after 8 years at home and 4 on the rocket. The drawing matches the maths: the trip line, the turnaround point, the yearly dots and the 30-degree slant of the light-clock path are all where the sums put them. The explanation correctly puts the difference down to only the traveller turning around, and the quoted 1971 flying-clock results match the published figures, with a note that gravity also played a part. The small simplifications are acknowledged: the turnaround is instant, and a clock 'at light speed' is now said to be out of reach for any clock.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 7.5,
+    "summary": "The pictures alone tell most of the story: the home twin's straight path with one dot a year, a light clock on Earth beside a moving one whose light zigzags ('5 ticks to Earth's 10'), then the trip showing 8.0 years against 4.0. Each frame shows what its subtitle says, with few labels and a clear star, Earth and rocket, and the phone layout keeps the diagram readable. The weak spots: the last chapter reuses the trip picture without highlighting the turnaround, the blue 'Rocket' tick count sits beside the Earth clock, well away from the rocket's clock, and the light-clock chapter has two moving lights at once. None of these misleads the reader.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "In plain words: light always moves at the same speed, so a moving clock's light has to travel further between ticks and runs slow, and because only the traveller turns around, only the traveller's path bends and holds less time. All three questions can be answered from the guide: a faster trip widens the age gap; the home twin is not the younger one because only the traveller turns around; and a clock at light speed would not tick at all. The guide explains why, not just what. The one leap for a beginner is why the straight path holds the most time, which is stated rather than shown, but the light-clock chapter makes it believable.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T170217-twin-paths/revision-1-0.png",
+    "published/20261101T170217-twin-paths/revision-1-1.png",
+    "published/20261101T170217-twin-paths/revision-1-2.png",
+    "published/20261101T170217-twin-paths/revision-1-3.png",
+    "published/20261101T170217-twin-paths/revision-1-4.png",
+    "published/20261101T170217-twin-paths/revision-1-5.png",
+    "published/20261101T170217-twin-paths/revision-1-6.png",
+    "published/20261101T170217-twin-paths/revision-1-7.png",
+    "published/20261101T170217-twin-paths/revision-1-8.png",
+    "published/20261101T170217-twin-paths/revision-1-9.png"
+   ]
+  }
+ ]
+}

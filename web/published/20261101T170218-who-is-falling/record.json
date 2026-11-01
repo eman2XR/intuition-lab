@@ -1,0 +1,272 @@
+{
+ "id": "20261101T170218-who-is-falling",
+ "status": "reviewed",
+ "question": "Who is really falling?",
+ "topic": "fall-views",
+ "created": "2026-11-01T17:02:18+00:00",
+ "updated": "2026-11-01T17:02:18Z",
+ "research": {
+  "claim": "A tossed ball needs no push to follow its path: a scale on it reads zero, while your scale reads your weight because the ground pushes you up.",
+  "explanation": "1. Far from any planet, a released ball moves at a steady speed: a straight line on a chart of height against time, and a scale on it reads zero.\n2. On the ground the toss comes back in an arc, yet a scale riding on the ball still reads zero, as in mid-jump; only your scale reads anything.\n3. Seen from the ball, its line is straight again, and the ground first drops away (because of the toss) and then speeds back up toward the ball at the rate g.\n4. A scale measures pushes, so the measurement decides: nothing pushes the ball, while the ground pushes you. What needs a cause is staying put, not falling.",
+  "assumptions": [
+   "A short toss, so gravity is uniform and the ball’s view is exact.",
+   "Air resistance is ignored.",
+   "Heights and times are in made-up units; gravity in the model is 0.8 units for full strength."
+  ],
+  "prediction": "A scale riding on a tossed ball reads zero throughout the flight; seen from the ball, the ground speeds up toward it at the same rate the ball seems to fall from the ground. With gravity set to zero after playback, the ground drifts away in a straight line and nothing pushes you.",
+  "falsifier": "A scale or accelerometer riding on a freely flying ball that reads more than zero, or bodies of different make-up falling at different rates.",
+  "limitations": [
+   "Only a short toss in uniform gravity is drawn; over large distances gravity’s direction and strength change (tides).",
+   "The first chapter uses its own height scale so the straight path fits.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Equivalence principle (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Equivalence_principle",
+    "supports": "Einstein: \"If a man falls freely, he would not feel his weight\"; \"all objects, regardless of their composition, fall with precisely the same acceleration\"; an observer in a closed room cannot tell 1 g of gravity from a spaceship accelerating at 1 g."
+   },
+   {
+    "title": "Weightlessness (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Weightlessness",
+    "supports": "Weight sensations \"originate from contact with supporting floors, seats, beds, scales\"; \"Orbital motion is a form of free fall\"; a falling lift with a cut cable; gravity in low Earth orbit is about 9 m/s², against 9.81 m/s² at the surface (about nine tenths)."
+   },
+   {
+    "title": "Introduction to general relativity (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Introduction_to_general_relativity",
+    "supports": "Bodies at rest and dropped side by side \"will move towards each other as they fall towards the Earth's center\", so parallel paths do not stay parallel; free-fall paths are \"spacetime geodesics, the straightest possible lines in spacetime\"; the same differences in force cause ocean tides."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 24,
+  "kind": "fall-views",
+  "title": "Who is really falling?",
+  "subtitle": "One toss, seen from the ground and from the ball. A bathroom scale settles who is really being pushed.",
+  "accent": "blue",
+  "mass": 1,
+  "distance": 1.6,
+  "controls": "first",
+  "takeaway": "Falling needs no push; staying put does. A scale on the falling ball reads zero, while yours reads your weight.",
+  "beats": [
+   {
+    "title": "What straight means",
+    "body": "This chart shows height going up and time going to the right. Far from any planet or star, a tossed ball moves at a steady speed, so its line is straight. Nothing pushes the ball or you, so a scale on either would read zero."
+   },
+   {
+    "title": "From the ground",
+    "body": "Seen from the ground, the ball rises and comes back down in an arc. We say gravity pulls the ball, yet a scale riding on it reads zero, the same weightlessness you feel in mid-jump. Scales measure pushes: only yours reads anything, because the ground pushes up on you."
+   },
+   {
+    "title": "From the ball",
+    "body": "Now watch the same toss from the ball: its line is straight, as it was far from any planet. To float, you don’t need to be far from planets, only free of pushes. From here the ground first drops away, since you threw the ball up, but the Earth beneath keeps pushing the ground up until it reaches the ball again."
+   },
+   {
+    "title": "Which view is right?",
+    "body": "Both views show the same toss, so only a measurement can decide. A scale on the ball reads zero and yours reads your weight, so you are the one being pushed. Nothing needs to pull the ball: what needs a cause is you staying put."
+   }
+  ],
+  "why": "It turns the usual picture around: falling needs no push, and what you feel as your weight is the ground pushing up on you.",
+  "opening": "You toss a ball and catch it. Which is really being pushed: the ball or you?",
+  "questions": [
+   {
+    "q": "A scale riding on the tossed ball reads zero the whole time. What does that tell you?",
+    "a": "Nothing pushes the ball while it flies, so its path is the one that needs no cause."
+   },
+   {
+    "q": "Seen from the ball, which way does the ground move during the toss?",
+    "a": "Away at first, because of the toss, then back up to the ball, because the Earth beneath keeps pushing the ground up."
+   },
+   {
+    "q": "Why does your scale read your weight while you stand still?",
+    "a": "The ground pushes up on you through the scale, and that push is what the scale measures."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Without gravity the tossed ball keeps going in a straight line",
+   "pass": true
+  },
+  {
+   "name": "With gravity the ball comes back to the hand at the catch",
+   "pass": true
+  },
+  {
+   "name": "Seen from the ball, the ground speeds up at g (it is pushed)",
+   "pass": true
+  },
+  {
+   "name": "Ground view and ball view give the same extra time for the ball",
+   "pass": true
+  },
+  {
+   "name": "The real toss keeps more time than a lower or higher one",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, a final accuracy, visual and beginner review, and a copy edit."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 24,
+    "kind": "fall-views",
+    "title": "Who is really falling?",
+    "subtitle": "One toss, seen from the ground and from the ball. A bathroom scale settles who is really being pushed.",
+    "accent": "blue",
+    "mass": 1,
+    "distance": 1.6,
+    "controls": "first",
+    "takeaway": "Falling needs no push; staying put does. A scale on the falling ball reads zero, while yours reads your weight.",
+    "beats": [
+     {
+      "title": "What straight means",
+      "body": "This chart shows height going up and time going to the right. Far from any planet or star, a tossed ball moves at a steady speed, so its line is straight. Nothing pushes the ball or you, so a scale on either would read zero."
+     },
+     {
+      "title": "From the ground",
+      "body": "Seen from the ground, the ball rises and comes back down in an arc. We say gravity pulls the ball, yet a scale riding on it reads zero, the same weightlessness you feel in mid-jump. Scales measure pushes: only yours reads anything, because the ground pushes up on you."
+     },
+     {
+      "title": "From the ball",
+      "body": "Now watch the same toss from the ball: its line is straight, as it was far from any planet. To float, you don’t need to be far from planets, only free of pushes. From here the ground first drops away, since you threw the ball up, but the Earth beneath keeps pushing the ground up until it reaches the ball again."
+     },
+     {
+      "title": "Which view is right?",
+      "body": "Both views show the same toss, so only a measurement can decide. A scale on the ball reads zero and yours reads your weight, so you are the one being pushed. Nothing needs to pull the ball: what needs a cause is you staying put."
+     }
+    ],
+    "why": "It turns the usual picture around: falling needs no push, and what you feel as your weight is the ground pushing up on you.",
+    "opening": "You toss a ball and catch it. Which is really being pushed: the ball or you?",
+    "questions": [
+     {
+      "q": "A scale riding on the tossed ball reads zero the whole time. What does that tell you?",
+      "a": "Nothing pushes the ball while it flies, so its path is the one that needs no cause."
+     },
+     {
+      "q": "Seen from the ball, which way does the ground move during the toss?",
+      "a": "Away at first, because of the toss, then back up to the ball, because the Earth beneath keeps pushing the ground up."
+     },
+     {
+      "q": "Why does your scale read your weight while you stand still?",
+      "a": "The ground pushes up on you through the scale, and that push is what the scale measures."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Without gravity the tossed ball keeps going in a straight line",
+     "pass": true
+    },
+    {
+     "name": "With gravity the ball comes back to the hand at the catch",
+     "pass": true
+    },
+    {
+     "name": "Seen from the ball, the ground speeds up at g (it is pushed)",
+     "pass": true
+    },
+    {
+     "name": "Ground view and ball view give the same extra time for the ball",
+     "pass": true
+    },
+    {
+     "name": "The real toss keeps more time than a lower or higher one",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 4.4 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 10)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 4)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 8.5,
+    "summary": "The physics is right. Once a ball leaves your hand it is in free fall, so a scale riding on it reads zero, and this is the same weightlessness you feel in mid-jump. Seen from the ball, the ground starts out moving away and is pushed back up at the same rate the ball seems to fall when seen from the ground. The model checks this: the ball returns exactly when the toss ends, and with gravity set to zero its path is straight. Two small overstatements were fixed. The subtitle had said a scale shows 'which view tells the truth'; it now says the scale shows who is really being pushed. The chapter that implied the push on the ground starts only after the ground has dropped away now says the push acts all along.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "You can follow the story from the pictures alone. Far from any planet, the ball's line is straight next to a flat line. Seen from the ground, the toss draws an arc. Seen from the ball, the ball's line is flat while the ground's line dips and comes back, with the person and the push arrow going up and down beside it. Labels are few and short, and only one thing moves at a time. The phone layout reads well. Small points: the reading on your own scale is shown only as a push arrow, never as a number, and on the phone the 'scale: 0' label touches the left edge.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "In one sentence, using only the guide: a scale on the tossed ball reads zero because nothing pushes the ball, while yours reads your weight because the ground pushes up on you, so falling needs no cause and standing still does. All three questions can be answered from the guide alone. The guide explains why the ground seems to come back to the ball: the Earth beneath keeps pushing it up. A curious reader may still ask what keeps the Earth's surface accelerating like this. The guide leaves that to the curvature ideas and does not claim to answer it.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T170218-who-is-falling/revision-1-0.png",
+    "published/20261101T170218-who-is-falling/revision-1-1.png",
+    "published/20261101T170218-who-is-falling/revision-1-2.png",
+    "published/20261101T170218-who-is-falling/revision-1-3.png",
+    "published/20261101T170218-who-is-falling/revision-1-4.png",
+    "published/20261101T170218-who-is-falling/revision-1-5.png",
+    "published/20261101T170218-who-is-falling/revision-1-6.png",
+    "published/20261101T170218-who-is-falling/revision-1-7.png",
+    "published/20261101T170218-who-is-falling/revision-1-8.png",
+    "published/20261101T170218-who-is-falling/revision-1-9.png"
+   ]
+  }
+ ]
+}

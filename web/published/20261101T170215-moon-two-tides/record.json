@@ -1,0 +1,286 @@
+{
+ "id": "20261101T170215-moon-two-tides",
+ "status": "reviewed",
+ "question": "Why the Moon raises two tides, not one",
+ "topic": "moon-tides",
+ "created": "2026-11-01T17:02:15+00:00",
+ "updated": "2026-11-01T17:02:15Z",
+ "research": {
+  "claim": "The Moon raises two tidal bulges because it pulls the Earth’s near side more than its centre and the far side less, so the oceans bulge toward and away from it.",
+  "explanation": "1. The Moon’s pull weakens with distance: it pulls the near side hardest, the centre less and the far side least.\n2. The whole Earth is falling toward the Moon (its sideways motion keeps them apart); the near side falls a little faster than the centre and the far side is left behind.\n3. Taking away the Earth’s shared fall leaves a stretch along the Earth–Moon line and a squeeze at the sides: two bulges.\n4. The Earth turns under the two bulges about once a day, so most coasts see two high and two low tides, about twelve and a half hours apart.",
+  "assumptions": [
+   "Newton’s law of gravity at the real distance of about 60.3 Earth radii.",
+   "Ocean surface in balance with the stretch (equilibrium tide).",
+   "The Moon’s mass is the real one; after playback it can be scaled."
+  ],
+  "prediction": "The near side is pulled about 3.4% harder than the centre and the far side about 3.2% less; twice as far away the stretch would be about eight times weaker; half the Moon’s mass gives half the stretch.",
+  "falsifier": "A single daily high tide on open coasts far from land effects, or tides that weaken only in proportion to distance rather than its cube.",
+  "limitations": [
+   "Real tides are shaped by coastlines, ocean depth and resonance; some places see one tide a day.",
+   "The Sun raises tides about half as big as the Moon’s; they add at new and full moon.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Tidal force (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Tidal_force",
+    "supports": "Tidal force is \"the difference in gravitational attraction between different points\"; \"bulges on the sides near the Moon and far from the Moon\"; \"inversely proportional to the cube of the distance\"; the Sun's tidal force is \"about half\" the Moon's (about 45%); a small free-falling sphere becomes \"an ellipsoid with two bulges\", pulled inward at right angles to the line."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 24,
+  "controls": "first",
+  "mass": 1,
+  "distance": 1.6,
+  "kind": "moon-tides",
+  "accent": "blue",
+  "title": "Why the Moon raises two tides, not one",
+  "subtitle": "Most coasts see two high tides a day, but there is only one Moon. Watch how it raises two.",
+  "why": "Tides shape coastlines, harbours and sea life, and the same uneven pull, made extreme, tears apart stars that come too close to a black hole.",
+  "opening": "The Moon pulls the oceans toward it. Why is there also a high tide on the far side of the Earth?",
+  "beats": [
+   {
+    "title": "The puzzle",
+    "body": "Most coasts get two high tides a day, about twelve and a half hours apart. They come from two bulges of water: one faces the Moon. The other faces away from it."
+   },
+   {
+    "title": "Pulled by different amounts",
+    "body": "The Moon’s pull gets weaker with distance. So the Moon pulls the near side of the Earth hardest, the centre a little less, and the far side least of all."
+   },
+   {
+    "title": "The whole Earth falls toward the Moon",
+    "body": "The whole Earth is always falling toward the Moon; only its sideways motion stops the two from meeting. The near side, pulled hardest, falls a little faster than the centre, and the far side, pulled least, is left behind. So the oceans bulge both ways: toward the Moon and away from it."
+   },
+   {
+    "title": "Two tides a day",
+    "body": "The Earth turns under the two bulges about once a day. So each day most places pass through both bulges, and get two high tides and two low tides."
+   }
+  ],
+  "takeaway": "The Moon pulls the Earth’s near side more than its centre, and the far side less, so the oceans bulge toward it and away from it.",
+  "questions": [
+   {
+    "q": "If the Moon were twice as far away, would tides be half as big, or smaller still?",
+    "a": "Much smaller: about one eighth as big. Tides come from the difference in pull between the near and far sides, and that difference shrinks faster than the pull itself, with the cube of the distance: twice as far gives 2 × 2 × 2 = 8 times weaker."
+   },
+   {
+    "q": "Does the Moon push the far-side water away?",
+    "a": "No. Everything is pulled toward the Moon. The far side bulges because it is pulled less than the Earth’s centre, so it is left behind as the Earth falls toward the Moon."
+   },
+   {
+    "q": "Why are the biggest tides at new moon and full moon?",
+    "a": "The Sun stretches the oceans too, about half as strongly as the Moon. At new and full moon, the Sun, Earth and Moon line up and the two stretches add."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "The near side is pulled toward the Moon more than the centre",
+   "pass": true
+  },
+  {
+   "name": "The far side is pulled less than the centre, so it is left behind",
+   "pass": true
+  },
+  {
+   "name": "The sides are squeezed inward",
+   "pass": true
+  },
+  {
+   "name": "Near and far bulges are almost equal at the real distance",
+   "pass": true
+  },
+  {
+   "name": "The squeeze is about half the stretch",
+   "pass": true
+  },
+  {
+   "name": "Twice as far away, the stretch is about eight times weaker",
+   "pass": true
+  },
+  {
+   "name": "Two high tides in one turn of the Earth",
+   "pass": true
+  },
+  {
+   "name": "No Moon, no stretch; half the Moon’s mass, half the stretch",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, a final accuracy, visual and beginner review, and a copy edit."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 24,
+    "controls": "first",
+    "mass": 1,
+    "distance": 1.6,
+    "kind": "moon-tides",
+    "accent": "blue",
+    "title": "Why the Moon raises two tides, not one",
+    "subtitle": "Most coasts see two high tides a day, but there is only one Moon. Watch how it raises two.",
+    "why": "Tides shape coastlines, harbours and sea life, and the same uneven pull, made extreme, tears apart stars that come too close to a black hole.",
+    "opening": "The Moon pulls the oceans toward it. Why is there also a high tide on the far side of the Earth?",
+    "beats": [
+     {
+      "title": "The puzzle",
+      "body": "Most coasts get two high tides a day, about twelve and a half hours apart. They come from two bulges of water: one faces the Moon. The other faces away from it."
+     },
+     {
+      "title": "Pulled by different amounts",
+      "body": "The Moon’s pull gets weaker with distance. So the Moon pulls the near side of the Earth hardest, the centre a little less, and the far side least of all."
+     },
+     {
+      "title": "The whole Earth falls toward the Moon",
+      "body": "The whole Earth is always falling toward the Moon; only its sideways motion stops the two from meeting. The near side, pulled hardest, falls a little faster than the centre, and the far side, pulled least, is left behind. So the oceans bulge both ways: toward the Moon and away from it."
+     },
+     {
+      "title": "Two tides a day",
+      "body": "The Earth turns under the two bulges about once a day. So each day most places pass through both bulges, and get two high tides and two low tides."
+     }
+    ],
+    "takeaway": "The Moon pulls the Earth’s near side more than its centre, and the far side less, so the oceans bulge toward it and away from it.",
+    "questions": [
+     {
+      "q": "If the Moon were twice as far away, would tides be half as big, or smaller still?",
+      "a": "Much smaller: about one eighth as big. Tides come from the difference in pull between the near and far sides, and that difference shrinks faster than the pull itself, with the cube of the distance: twice as far gives 2 × 2 × 2 = 8 times weaker."
+     },
+     {
+      "q": "Does the Moon push the far-side water away?",
+      "a": "No. Everything is pulled toward the Moon. The far side bulges because it is pulled less than the Earth’s centre, so it is left behind as the Earth falls toward the Moon."
+     },
+     {
+      "q": "Why are the biggest tides at new moon and full moon?",
+      "a": "The Sun stretches the oceans too, about half as strongly as the Moon. At new and full moon, the Sun, Earth and Moon line up and the two stretches add."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "The near side is pulled toward the Moon more than the centre",
+     "pass": true
+    },
+    {
+     "name": "The far side is pulled less than the centre, so it is left behind",
+     "pass": true
+    },
+    {
+     "name": "The sides are squeezed inward",
+     "pass": true
+    },
+    {
+     "name": "Near and far bulges are almost equal at the real distance",
+     "pass": true
+    },
+    {
+     "name": "The squeeze is about half the stretch",
+     "pass": true
+    },
+    {
+     "name": "Twice as far away, the stretch is about eight times weaker",
+     "pass": true
+    },
+    {
+     "name": "Two high tides in one turn of the Earth",
+     "pass": true
+    },
+    {
+     "name": "No Moon, no stretch; half the Moon’s mass, half the stretch",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 10)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 5)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 8.5,
+    "summary": "The lab checked every claim and number against Newton's law of gravity, using the Moon's real distance of about 60 Earth widths (radii). The near side is pulled about 3.4% harder than the Earth's centre and the far side about 3.2% less. The stretch weakens with the cube of the distance, so twice as far gives one eighth. The Sun's tides are a bit under half the Moon's, and high tides come about twelve and a half hours apart. The guide says plainly that coastlines, ocean depth and the Sun also shape real tides, and it never suggests the Moon pushes the far-side water away.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 7.5,
+    "summary": "Without any words, the pictures still tell the story: two water bulges, three arrows that shrink with distance from the Moon, stretch-and-squeeze arrows, and a point on the coast that traces two high tides in one day. Each chapter shows what its subtitle says, with few short labels and one moving thing at a time, and it works on a phone. One error has to be fixed before publishing. The globe is seen from above the North Pole with recognisable continents, but it turns clockwise. From above the North Pole the real Earth turns anticlockwise, so the picture shows it turning the wrong way. The final review found one blocking error, the Earth turning the wrong way, which was fixed: the Earth now turns anticlockwise, as seen from above the North Pole, and the coastal marker and its water-level graph show high water each time it passes through a bulge toward or away from the Moon. A second check of the new frames confirmed it.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 8.5,
+    "summary": "In plain words: the Moon pulls the near side of the Earth harder than the centre, and the far side less, so as the whole Earth falls toward the Moon the near-side water gets ahead and the far-side water lags behind, which makes two bulges that every coast passes through each day. The guide explains why, not only what, and the second question (does the Moon push the far side away?) can be answered from the chapters alone. The questions on distance and on spring tides bring in new ideas, the cube rule and the Sun, but each answer explains itself. After copy edits, the opening chapter says outright that the two high tides are two bulges of water.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T170215-moon-two-tides/revision-1-0.png",
+    "published/20261101T170215-moon-two-tides/revision-1-1.png",
+    "published/20261101T170215-moon-two-tides/revision-1-2.png",
+    "published/20261101T170215-moon-two-tides/revision-1-3.png",
+    "published/20261101T170215-moon-two-tides/revision-1-4.png",
+    "published/20261101T170215-moon-two-tides/revision-1-5.png",
+    "published/20261101T170215-moon-two-tides/revision-1-6.png",
+    "published/20261101T170215-moon-two-tides/revision-1-7.png",
+    "published/20261101T170215-moon-two-tides/revision-1-8.png",
+    "published/20261101T170215-moon-two-tides/revision-1-9.png"
+   ]
+  }
+ ]
+}

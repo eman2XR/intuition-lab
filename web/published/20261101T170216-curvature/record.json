@@ -1,0 +1,288 @@
+{
+ "id": "20261101T170216-curvature",
+ "status": "reviewed",
+ "question": "What curved spacetime really means",
+ "topic": "tides",
+ "created": "2026-11-01T17:02:16+00:00",
+ "updated": "2026-11-01T17:02:16Z",
+ "research": {
+  "claim": "Spacetime is curved where paths that nothing pushes start side by side and then come together or spread apart; near the Earth this stretches a small falling ring, which is what raises tides.",
+  "explanation": "1. On a ball, two walkers who start side by side and walk straight ahead come together: that is what curvature of a surface means.\n2. Two balls let go side by side above the Earth, at rest and unpushed, drift together as they fall, whatever they are made of; far from any planet they would keep their gap.\n3. A ring of balls around the whole Earth shrinks; standing on the ground means being held off those paths, felt as weight.\n4. A small ring let go above the Earth: the nearest ball falls a little faster and the farthest a little slower, so the ring stretches toward and away from the Earth while its sides draw in. The Moon stretches the oceans the same way.",
+  "assumptions": [
+   "Newton’s law of gravity, accurate for weak gravity like the Earth’s.",
+   "Balls start at rest; Earth radius 1, starting height 3 Earth radii (2.3 for the ring around the Earth), the small ring radius 0.3.",
+   "In the model the ring falls until its centre reaches 2.3 Earth radii."
+  ],
+  "prediction": "With the real mass, the small ring’s height grows by about 55% by the end of its fall while its width shrinks; with Earth’s mass set to none after playback it stays round.",
+  "falsifier": "Two free-falling bodies released side by side at rest above the Earth that keep the same gap, or bodies of different make-up falling at different rates.",
+  "limitations": [
+   "The globe is an analogy: spacetime curvature involves time and cannot be drawn exactly.",
+   "In three dimensions the ring stretches one way and squeezes in two, so at first the space it encloses stays the same.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Introduction to general relativity (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Introduction_to_general_relativity",
+    "supports": "Bodies at rest and dropped side by side \"will move towards each other as they fall towards the Earth's center\", so parallel paths do not stay parallel; free-fall paths are \"spacetime geodesics, the straightest possible lines in spacetime\"; the same differences in force cause ocean tides."
+   },
+   {
+    "title": "Tidal force (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Tidal_force",
+    "supports": "Tidal force is \"the difference in gravitational attraction between different points\"; \"bulges on the sides near the Moon and far from the Moon\"; \"inversely proportional to the cube of the distance\"; the Sun's tidal force is \"about half\" the Moon's (about 45%); a small free-falling sphere becomes \"an ellipsoid with two bulges\", pulled inward at right angles to the line."
+   },
+   {
+    "title": "Equivalence principle (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Equivalence_principle",
+    "supports": "Einstein: \"If a man falls freely, he would not feel his weight\"; \"all objects, regardless of their composition, fall with precisely the same acceleration\"; an observer in a closed room cannot tell 1 g of gravity from a spaceship accelerating at 1 g."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 24,
+  "kind": "tides",
+  "title": "What curved spacetime really means",
+  "subtitle": "Straight paths that start side by side don’t stay side by side. That is what curved spacetime means, and it explains the tides.",
+  "accent": "blue",
+  "mass": 1,
+  "distance": 1.6,
+  "controls": "first",
+  "takeaway": "Spacetime is curved wherever paths that nothing pushes start side by side but then come together or spread apart. Mass is what curves it.",
+  "beats": [
+   {
+    "title": "Straight lines that meet",
+    "body": "Two walkers start side by side on a ball, facing the same way, and walk straight ahead. Neither ever turns, yet they get closer and meet. On a curved surface, straight paths that start side by side come together."
+   },
+   {
+    "title": "Falling side by side",
+    "body": "Now let go of two balls side by side, high above the Earth, at rest and with nothing pushing them. Far from any planet they would keep the same gap forever, but here each falls towards the Earth’s centre, so they drift together, whatever they are made of. That drifting together is curved spacetime at work: space and time, taken together, bending the paths that nothing pushes."
+   },
+   {
+    "title": "Around the Earth",
+    "body": "Now let go of a ring of balls all around the Earth. The whole ring shrinks: the Earth’s mass draws together the paths that nothing pushes. Standing on the ground means being held off those paths, and the ground’s push holding you there is what you feel as your weight."
+   },
+   {
+    "title": "Tides",
+    "body": "High above the Earth, let go of a small ring of balls around a centre ball. The nearest ball falls a little faster and the farthest a little slower, so the ring stretches towards and away from the Earth while its sides draw in. The Moon stretches the Earth’s oceans the same way, into two bulges."
+   }
+  ],
+  "why": "Curvature is the heart of Einstein’s gravity, and the ocean tides are the part of it you can see.",
+  "opening": "Two balls are let go side by side, high above the Earth. Nothing pushes either one. Does the gap between them change?",
+  "questions": [
+   {
+    "q": "Far from any planet, two balls at rest side by side stay the same distance apart. What does it mean if they drift together?",
+    "a": "Spacetime is curved there: straight paths that start side by side come together, like the paths of the two walkers on the ball."
+   },
+   {
+    "q": "A small ring of balls, with nothing pushing them, falls towards the Earth. Which way does it stretch?",
+    "a": "Towards and away from the Earth, while its sides draw in."
+   },
+   {
+    "q": "Around the Earth, what makes paths that nothing pushes come together?",
+    "a": "The Earth’s mass."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Walkers heading north from the equator close their gap to zero at the pole",
+   "pass": true
+  },
+  {
+   "name": "Balls released side by side drift together",
+   "pass": true
+  },
+  {
+   "name": "Balls released one above the other drift apart",
+   "pass": true
+  },
+  {
+   "name": "Stretching starts at twice the squeezing",
+   "pass": true
+  },
+  {
+   "name": "Without the planet nothing drifts",
+   "pass": true
+  },
+  {
+   "name": "Without the planet the small ring stays round; with it, it stretches",
+   "pass": true
+  },
+  {
+   "name": "Fall time from the formula matches the simulation",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, a final accuracy, visual and beginner review, and a copy edit."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 24,
+    "kind": "tides",
+    "title": "What curved spacetime really means",
+    "subtitle": "Straight paths that start side by side don’t stay side by side. That is what curved spacetime means, and it explains the tides.",
+    "accent": "blue",
+    "mass": 1,
+    "distance": 1.6,
+    "controls": "first",
+    "takeaway": "Spacetime is curved wherever paths that nothing pushes start side by side but then come together or spread apart. Mass is what curves it.",
+    "beats": [
+     {
+      "title": "Straight lines that meet",
+      "body": "Two walkers start side by side on a ball, facing the same way, and walk straight ahead. Neither ever turns, yet they get closer and meet. On a curved surface, straight paths that start side by side come together."
+     },
+     {
+      "title": "Falling side by side",
+      "body": "Now let go of two balls side by side, high above the Earth, at rest and with nothing pushing them. Far from any planet they would keep the same gap forever, but here each falls towards the Earth’s centre, so they drift together, whatever they are made of. That drifting together is curved spacetime at work: space and time, taken together, bending the paths that nothing pushes."
+     },
+     {
+      "title": "Around the Earth",
+      "body": "Now let go of a ring of balls all around the Earth. The whole ring shrinks: the Earth’s mass draws together the paths that nothing pushes. Standing on the ground means being held off those paths, and the ground’s push holding you there is what you feel as your weight."
+     },
+     {
+      "title": "Tides",
+      "body": "High above the Earth, let go of a small ring of balls around a centre ball. The nearest ball falls a little faster and the farthest a little slower, so the ring stretches towards and away from the Earth while its sides draw in. The Moon stretches the Earth’s oceans the same way, into two bulges."
+     }
+    ],
+    "why": "Curvature is the heart of Einstein’s gravity, and the ocean tides are the part of it you can see.",
+    "opening": "Two balls are let go side by side, high above the Earth. Nothing pushes either one. Does the gap between them change?",
+    "questions": [
+     {
+      "q": "Far from any planet, two balls at rest side by side stay the same distance apart. What does it mean if they drift together?",
+      "a": "Spacetime is curved there: straight paths that start side by side come together, like the paths of the two walkers on the ball."
+     },
+     {
+      "q": "A small ring of balls, with nothing pushing them, falls towards the Earth. Which way does it stretch?",
+      "a": "Towards and away from the Earth, while its sides draw in."
+     },
+     {
+      "q": "Around the Earth, what makes paths that nothing pushes come together?",
+      "a": "The Earth’s mass."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Walkers heading north from the equator close their gap to zero at the pole",
+     "pass": true
+    },
+    {
+     "name": "Balls released side by side drift together",
+     "pass": true
+    },
+    {
+     "name": "Balls released one above the other drift apart",
+     "pass": true
+    },
+    {
+     "name": "Stretching starts at twice the squeezing",
+     "pass": true
+    },
+    {
+     "name": "Without the planet nothing drifts",
+     "pass": true
+    },
+    {
+     "name": "Without the planet the small ring stays round; with it, it stretches",
+     "pass": true
+    },
+    {
+     "name": "Fall time from the formula matches the simulation",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 3.5 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 10)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 5)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 8.5,
+    "summary": "Every claim holds up. Two balls dropped side by side above the Earth do drift together whatever they are made of, a ring of balls all around the Earth shrinks, and a small falling ring stretches towards and away from the Earth while its sides draw in, which is the same uneven pull that gives the oceans two tidal bulges. We re-ran the fall ourselves: a ring of radius 0.3 Earth radii, let go 3 Earth radii out and falling until its centre is 2.3 out, grows about 55% taller and ends about 77% as wide, matching the stated figure. The guide makes clear that the globe is only a comparison and that curved spacetime also involves time, so it does not overclaim.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 8.5,
+    "summary": "The four pictures tell the story without any words: two paths on a globe meet at the top, two falling balls close their gap while a small graph shows their paths drawing together, a ring of balls shrinks onto the Earth where standing figures are pushed up by the ground, and a small falling ring stretches into an egg shape. Each picture matches its subtitle, uses only a few short labels and has one main thing moving. It works on a phone too, though there the 'squeezed' label sits under the ring rather than beside its narrow sides.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "Restated using only the guide: spacetime is curved where paths that nothing pushes start side by side but then drift together or apart, like walkers on a ball. Near the Earth a falling ring stretches because its near side falls faster than its far side, and the Moon stretches the oceans in the same way, which makes the tides. All three questions can be answered from the guide alone. Before the copy edit, the made-up phrase 'floating paths' was unclear, and nothing said why two falling balls drift together. Both are now explained in plain words.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T170216-curvature/revision-1-0.png",
+    "published/20261101T170216-curvature/revision-1-1.png",
+    "published/20261101T170216-curvature/revision-1-2.png",
+    "published/20261101T170216-curvature/revision-1-3.png",
+    "published/20261101T170216-curvature/revision-1-4.png",
+    "published/20261101T170216-curvature/revision-1-5.png",
+    "published/20261101T170216-curvature/revision-1-6.png",
+    "published/20261101T170216-curvature/revision-1-7.png",
+    "published/20261101T170216-curvature/revision-1-8.png",
+    "published/20261101T170216-curvature/revision-1-9.png"
+   ]
+  }
+ ]
+}

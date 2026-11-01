@@ -1,0 +1,288 @@
+{
+ "id": "20261101T170219-falling-lift",
+ "status": "reviewed",
+ "question": "How much do you weigh in a falling lift?",
+ "topic": "lift",
+ "created": "2026-11-01T17:02:19+00:00",
+ "updated": "2026-11-01T17:02:19Z",
+ "research": {
+  "claim": "A bathroom scale reads how hard it pushes on you, so in a freely falling lift it reads zero although gravity still pulls.",
+  "explanation": "1. A scale measures the push between it and your feet, not gravity itself.\n2. Parked, the floor pushes up with exactly your weight, so the scale reads 70 kg for a 70 kg person.\n3. To speed you up upward the floor must push harder, so the reading rises; as the lift slows near the top it eases off, so the reading falls. The reading is your weight times (g + a)/g, where a is the lift's upward acceleration.\n4. If the cable snaps, the lift, the scale, you and a released apple all speed up downward at the same rate g, so a = -g and nothing presses on anything: the reading is 0.\n5. Astronauts float for the same reason: their station is falling around the Earth, where gravity is still about nine tenths as strong as on the ground.",
+  "assumptions": [
+   "Gravity is uniform inside the lift (g = 9.8 m/s²).",
+   "Air resistance is ignored, and the lift has no safety brakes.",
+   "The ride’s accelerations (1 m/s²) and the 70 kg person are made up for the example."
+  ],
+  "prediction": "The scale reads 70 kg parked, 77 kg while speeding up upward at 1 m/s², 63 kg while slowing at 1 m/s², and 0 kg in free fall; after playback, the slider from free fall (-g) to +g sets the reading from 0 to 140 kg.",
+  "falsifier": "A scale in a freely falling container that still reads the person’s weight, or a released object that drifts away from a freely falling person.",
+  "limitations": [
+   "Real lifts have safety brakes and air resistance, so a real fall would not stay free.",
+   "The dial eases to each reading like a real scale; the push itself changes at once.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Weightlessness (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Weightlessness",
+    "supports": "Weight sensations \"originate from contact with supporting floors, seats, beds, scales\"; \"Orbital motion is a form of free fall\"; a falling lift with a cut cable; gravity in low Earth orbit is about 9 m/s², against 9.81 m/s² at the surface (about nine tenths)."
+   },
+   {
+    "title": "Apparent weight (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Apparent_weight",
+    "supports": "Apparent weight is \"the force the body exerts on whatever it rests on\"; an astronaut in low Earth orbit has \"an apparent weight of zero\"."
+   },
+   {
+    "title": "Equivalence principle (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Equivalence_principle",
+    "supports": "Einstein: \"If a man falls freely, he would not feel his weight\"; \"all objects, regardless of their composition, fall with precisely the same acceleration\"; an observer in a closed room cannot tell 1 g of gravity from a spaceship accelerating at 1 g."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 24,
+  "controls": "first",
+  "mass": 0,
+  "distance": 1.6,
+  "kind": "lift",
+  "accent": "blue",
+  "title": "How much do you weigh in a falling lift?",
+  "subtitle": "Stand on a bathroom scale in a lift, then imagine the cable snaps. What does the scale read now?",
+  "why": "It is why astronauts float and roller-coaster drops feel weightless, and it was the clue that led Einstein to his theory of gravity.",
+  "opening": "A lift’s cable snaps. How much do you weigh on the way down?",
+  "beats": [
+   {
+    "title": "Standing still",
+    "body": "In a parked lift, you weigh what you always do. Weighing yourself really means reading how hard the scale pushes up on you. The floor pushes up on the scale, and the scale pushes up on you."
+   },
+   {
+    "title": "Riding up",
+    "body": "Speeding you up takes an extra push, so as the lift starts up, you weigh more. As it slows near the top, the floor eases off, and you weigh less. So a scale measures how hard it pushes, not gravity."
+   },
+   {
+    "title": "The cable snaps",
+    "body": "Now nothing holds the lift up, and it falls freely. You, the scale and an apple you let go of all fall together, so nothing has to push anything. The scale reads zero: you weigh nothing, and the apple stays beside you."
+   },
+   {
+    "title": "Weightless, not gravity-free",
+    "body": "Gravity hasn’t switched off: the lift keeps falling faster and faster. Everything inside falls at the same rate, so nothing presses on anything. Astronauts float for the same reason: their station is falling too, but it moves sideways so fast that it keeps missing the Earth."
+   }
+  ],
+  "takeaway": "The weight a scale shows is how hard it pushes on you. When you fall freely, nothing pushes, so you weigh nothing, though gravity still pulls.",
+  "questions": [
+   {
+    "q": "Astronauts on the space station float. Is there no gravity up there?",
+    "a": "There is: about nine tenths as strong as on the ground. They float because they and their station are falling around the Earth together, so nothing pushes on them."
+   },
+   {
+    "q": "A lift starts moving downward. Does the scale read more or less than your weight?",
+    "a": "Less, while the lift speeds up downward: the floor doesn’t need to push as hard. Once it moves at a steady speed, the reading is back to normal."
+   },
+   {
+    "q": "You jump off a diving board with a small scale strapped under your feet. What does it read on the way down?",
+    "a": "Zero. You and the scale fall together, so nothing presses on it."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Parked, the scale reads your weight",
+   "pass": true
+  },
+  {
+   "name": "Speeding up upward, it reads more",
+   "pass": true
+  },
+  {
+   "name": "Slowing on the way up, it reads less",
+   "pass": true
+  },
+  {
+   "name": "With the cable snapped, it reads zero",
+   "pass": true
+  },
+  {
+   "name": "A released apple keeps its place beside you",
+   "pass": true
+  },
+  {
+   "name": "The ride starts and ends at rest",
+   "pass": true
+  },
+  {
+   "name": "Steady at any speed, the scale reads your weight; falling freely, zero",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, a final accuracy, visual and beginner review, and a copy edit."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 24,
+    "controls": "first",
+    "mass": 0,
+    "distance": 1.6,
+    "kind": "lift",
+    "accent": "blue",
+    "title": "How much do you weigh in a falling lift?",
+    "subtitle": "Stand on a bathroom scale in a lift, then imagine the cable snaps. What does the scale read now?",
+    "why": "It is why astronauts float and roller-coaster drops feel weightless, and it was the clue that led Einstein to his theory of gravity.",
+    "opening": "A lift’s cable snaps. How much do you weigh on the way down?",
+    "beats": [
+     {
+      "title": "Standing still",
+      "body": "In a parked lift, you weigh what you always do. Weighing yourself really means reading how hard the scale pushes up on you. The floor pushes up on the scale, and the scale pushes up on you."
+     },
+     {
+      "title": "Riding up",
+      "body": "Speeding you up takes an extra push, so as the lift starts up, you weigh more. As it slows near the top, the floor eases off, and you weigh less. So a scale measures how hard it pushes, not gravity."
+     },
+     {
+      "title": "The cable snaps",
+      "body": "Now nothing holds the lift up, and it falls freely. You, the scale and an apple you let go of all fall together, so nothing has to push anything. The scale reads zero: you weigh nothing, and the apple stays beside you."
+     },
+     {
+      "title": "Weightless, not gravity-free",
+      "body": "Gravity hasn’t switched off: the lift keeps falling faster and faster. Everything inside falls at the same rate, so nothing presses on anything. Astronauts float for the same reason: their station is falling too, but it moves sideways so fast that it keeps missing the Earth."
+     }
+    ],
+    "takeaway": "The weight a scale shows is how hard it pushes on you. When you fall freely, nothing pushes, so you weigh nothing, though gravity still pulls.",
+    "questions": [
+     {
+      "q": "Astronauts on the space station float. Is there no gravity up there?",
+      "a": "There is: about nine tenths as strong as on the ground. They float because they and their station are falling around the Earth together, so nothing pushes on them."
+     },
+     {
+      "q": "A lift starts moving downward. Does the scale read more or less than your weight?",
+      "a": "Less, while the lift speeds up downward: the floor doesn’t need to push as hard. Once it moves at a steady speed, the reading is back to normal."
+     },
+     {
+      "q": "You jump off a diving board with a small scale strapped under your feet. What does it read on the way down?",
+      "a": "Zero. You and the scale fall together, so nothing presses on it."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Parked, the scale reads your weight",
+     "pass": true
+    },
+    {
+     "name": "Speeding up upward, it reads more",
+     "pass": true
+    },
+    {
+     "name": "Slowing on the way up, it reads less",
+     "pass": true
+    },
+    {
+     "name": "With the cable snapped, it reads zero",
+     "pass": true
+    },
+    {
+     "name": "A released apple keeps its place beside you",
+     "pass": true
+    },
+    {
+     "name": "The ride starts and ends at rest",
+     "pass": true
+    },
+    {
+     "name": "Steady at any speed, the scale reads your weight; falling freely, zero",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 12)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 4)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "Every number checks out. A 70 kg person accelerating upward at 1 m/s² reads 77 kg, and 63 kg while the lift slows at the same rate. The reading is 0 kg in free fall and 140 kg at twice gravity. Gravity at the space station's height is about 0.89 of its strength on the ground, so 'about nine tenths' is fair. The guide states plainly that air resistance is ignored, that real lifts have safety brakes and that the fall is shown in slow motion. One small point: the falling-speed label climbs to about 400 km/h, which would take a drop of roughly 640 metres. That is consistent with the physics, but it is a taller drop than any real lift shaft.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "The pictures alone tell most of the story. The parked lift has an upward push arrow and a dial reading 70 kg. When the lift falls, the arrow disappears, the dial drops to 0 kg and the apple floats beside the person, while a falling-speed label keeps climbing. The rising reading on the way up appears only early in that chapter. Each frame matches its subtitle, there are few labels and they are short. The phone view is readable. Two nits: on a phone the speed label sits in the shaft below the lift, and in the last chapter a small orbit picture moves at the same time as the falling lift.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "In one sentence, from the guide alone: a scale shows how hard it pushes on you, and when everything falls together nothing needs to push, so it reads zero even though gravity still pulls. The guide alone answers all three questions. Gravity is still on because the lift keeps speeding up. A lift starting downward reads less because the floor eases off, the mirror of slowing near the top. A scale under a diver reads zero. The guide explains why at each step, not only what happens. It states, but does not explain, why everything falls at the same rate.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T170219-falling-lift/revision-1-0.png",
+    "published/20261101T170219-falling-lift/revision-1-1.png",
+    "published/20261101T170219-falling-lift/revision-1-2.png",
+    "published/20261101T170219-falling-lift/revision-1-3.png",
+    "published/20261101T170219-falling-lift/revision-1-4.png",
+    "published/20261101T170219-falling-lift/revision-1-5.png",
+    "published/20261101T170219-falling-lift/revision-1-6.png",
+    "published/20261101T170219-falling-lift/revision-1-7.png",
+    "published/20261101T170219-falling-lift/revision-1-8.png",
+    "published/20261101T170219-falling-lift/revision-1-9.png"
+   ]
+  }
+ ]
+}

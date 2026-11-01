@@ -1338,7 +1338,8 @@ function drawMoonTides(ctx,w,h,spec,st){
  const ex=small?w*.42:w*.36, ey=small?h*.36:h*.5, Re=Math.min(small?w*.16:w*.15,small?h*.17:h*.27), mx=small?w*.88:w*.8, mr=Re*.27*Math.cbrt(mass);
  // How much of the stretch to show: none while the pulls are compared, growing as the Earth's own fall is taken away.
  const morph=stage===0?1:stage===1?0:stage===2?smooth((since-2.5)/4):1, b=.11*morph*mass;
- const spin=stage>=3?since*.35:0;
+ // Seen from above the North Pole the Earth turns anticlockwise: a negative angle on the canvas.
+ const spin=stage>=3?-since*.35:0;
  const ocean=ctx.createRadialGradient(ex,ey,Re*.9,ex,ey,Re*1.3);ocean.addColorStop(0,'rgba(59,130,246,.35)');ocean.addColorStop(1,'rgba(59,130,246,.2)');
  ctx.beginPath();for(let i=0;i<=120;i++){const th=TAU*i/120,r=Re*(1.08+b*M.shape(th));const x=ex+Math.cos(th)*r,y=ey+Math.sin(th)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fillStyle=ocean;ctx.fill();ctx.strokeStyle='rgba(37,99,235,.45)';ctx.lineWidth=1;ctx.stroke();
  ctx.save();ctx.translate(ex,ey);ctx.rotate(spin);drawEarth(ctx,0,0,Re,{lat:90,lon:-10});ctx.restore();
@@ -1356,8 +1357,8 @@ function drawMoonTides(ctx,w,h,spec,st){
  if(stage>=3){const ang=Math.PI*.75+spin;mark=[ex+Math.cos(ang)*Re,ey+Math.sin(ang)*Re];ctx.beginPath();ctx.arc(...mark,5,0,TAU);ctx.fillStyle=dark;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
   const gx=small?w*.1:w*.6, gw=small?w*.8:w*.32, gy=small?h*.7:h*.72, gh=small?h*.12:h*.14;
   trace(ctx,[[gx,gy+gh/2],[gx+gw,gy+gh/2]]);ctx.strokeStyle='rgba(20,23,28,.15)';ctx.lineWidth=1;ctx.stroke();
-  trace(ctx,Array.from({length:121},(_,i)=>{const f=i/120;return [gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+f*TAU)*gh*.45*mass];}));ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
-  const f=((spin%TAU)+TAU)%TAU/TAU;ctx.beginPath();ctx.arc(gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+spin)*gh*.45*mass,4.5,0,TAU);ctx.fillStyle=dark;ctx.fill();
+  trace(ctx,Array.from({length:121},(_,i)=>{const f=i/120;return [gx+f*gw,gy+gh/2-M.shape(Math.PI*.75-f*TAU)*gh*.45*mass];}));ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
+  const f=((-spin%TAU)+TAU)%TAU/TAU;ctx.beginPath();ctx.arc(gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+spin)*gh*.45*mass,4.5,0,TAU);ctx.fillStyle=dark;ctx.fill();
   if(st.labels){text(ctx,'your water level, one day',gx,gy-12,{size:small?10:11,weight:600,color:'rgba(20,23,28,.65)'});}}
  if(!st.labels)return;
  const size=small?10:11;

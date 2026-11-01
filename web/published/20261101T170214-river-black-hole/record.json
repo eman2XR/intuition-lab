@@ -1,0 +1,305 @@
+{
+ "id": "20261101T170214-river-black-hole",
+ "status": "reviewed",
+ "question": "A black hole as a river of space",
+ "topic": "river",
+ "created": "2026-11-01T17:02:14+00:00",
+ "updated": "2026-11-01T17:02:14Z",
+ "research": {
+  "claim": "Light cannot escape from inside a black hole because, in the river picture, space flows inward faster than light there, while light always moves at light speed through the space around it.",
+  "explanation": "1. A fish swimming upstream near a waterfall gets away where the current is slower than it, holds still where the current matches it, and is swept over past that point.\n2. Space around a non-spinning black hole can be pictured flowing inward at the speed a dropped object reaches, faster closer in.\n3. Light always moves at light speed through the space around it, so outside the horizon light sent outward escapes, at the horizon (where the inflow equals light speed) it stands still, and inside it is carried in.\n4. No speed limit is broken: nothing moves through space faster than light.",
+  "assumptions": [
+   "A non-spinning, uncharged black hole (the Painlevé–Gullstrand form of Einstein’s equations).",
+   "Distances in units of the horizon at full mass; the inflow speed is the square root of (horizon / distance) light speeds.",
+   "Motion is slowed down for viewing."
+  ],
+  "prediction": "Light sent outward from 1.5 horizon sizes, where space flows in at 82% of light speed, escapes; from the horizon it stays put; from inside it is carried in. With the mass set to none after playback, nothing flows and light leaves freely.",
+  "falsifier": "Light or any signal received from inside a black hole’s horizon.",
+  "limitations": [
+   "Space is not a substance; the flowing dots only show the inflow speed.",
+   "The fish and waterfall follow the same rule, but a real river’s current depends on its shape.",
+   "Spinning black holes need a twisting version of the picture.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Hamilton and Lisle, The river model of black holes (arXiv gr-qc/0411060, abstract)",
+    "url": "https://arxiv.org/abs/gr-qc/0411060",
+    "supports": "\"the river of space falls into the black hole at the Newtonian escape velocity, hitting the speed of light at the horizon\"; inside \"the river flows inward faster than light, carrying everything with it\"; \"objects move through the river according to the rules of special relativity\"; stated for a spherical (non-spinning) black hole."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 24,
+  "controls": "both",
+  "kind": "river",
+  "title": "Why light can’t escape a black hole",
+  "subtitle": "Picture space flowing into a black hole like a river towards a waterfall, faster closer in. Light swims through it at light speed, and at the black hole’s edge the flow is just as fast as light.",
+  "accent": "gold",
+  "mass": 1,
+  "distance": 1.9,
+  "takeaway": "A black hole’s horizon is where space flows in at light speed. Inside it, even light swimming outward is carried in.",
+  "beats": [
+   {
+    "title": "A fish near a waterfall",
+    "body": "A river speeds up as it nears a waterfall. A fish swims upstream at a steady speed through the water: far from the edge, it outswims the slow current."
+   },
+   {
+    "title": "The point of no return",
+    "body": "Closer in, the current matches the fish’s speed, and the fish holds still. Past that point the current is faster, and the fish is swept over the edge even as it keeps swimming."
+   },
+   {
+    "title": "A river of space",
+    "body": "Space around a black hole can be pictured the same way: flowing inward, faster closer in. Light is the fish: it always moves at light speed through the space around it."
+   },
+   {
+    "title": "The horizon",
+    "body": "The horizon is the point of no return: there, space flows in at light speed. Light sent outward escapes from outside the horizon, stands still on it, and is carried in from inside it."
+   },
+   {
+    "title": "No speed limit is broken",
+    "body": "Inside, space flows in faster than light, yet light still moves through it at exactly light speed. Space is not really a liquid, but for a black hole that does not spin, this picture matches Einstein’s theory exactly."
+   }
+  ],
+  "why": "It explains a black hole’s edge, the event horizon: the place past which nothing, not even light, can get back out.",
+  "opening": "Light always moves at light speed. So why can’t it escape from inside a black hole?",
+  "questions": [
+   {
+    "q": "Just outside the horizon, can light sent outward escape?",
+    "a": "Yes, slowly: space there flows in a little slower than light."
+   },
+   {
+    "q": "What happens to light sent outward exactly at the horizon?",
+    "a": "It stands still: space flows in exactly at light speed."
+   },
+   {
+    "q": "Does anything move through space faster than light inside the horizon?",
+    "a": "No: light still moves at light speed through the space around it; it is the space that flows in faster."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Flow reaches light speed exactly at the horizon",
+   "pass": true
+  },
+  {
+   "name": "Flow equals the Newtonian escape speed sqrt(2GM/r)",
+   "pass": true
+  },
+  {
+   "name": "Outgoing light just outside the horizon still escapes",
+   "pass": true
+  },
+  {
+   "name": "Outgoing light at the horizon stands still",
+   "pass": true
+  },
+  {
+   "name": "Outgoing light inside the horizon is swept inward",
+   "pass": true
+  },
+  {
+   "name": "With no mass, light moves at light speed",
+   "pass": true
+  },
+  {
+   "name": "A swimmer at the point of no return stays in place",
+   "pass": true
+  },
+  {
+   "name": "A swimmer outside it gets away; one just inside is swept to the edge",
+   "pass": true
+  },
+  {
+   "name": "Space flows in at light speed at the horizon, and not at all without a black hole",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, a final accuracy, visual and beginner review, and a copy edit."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 24,
+    "controls": "both",
+    "kind": "river",
+    "title": "Why light can’t escape a black hole",
+    "subtitle": "Picture space flowing into a black hole like a river towards a waterfall, faster closer in. Light swims through it at light speed, and at the black hole’s edge the flow is just as fast as light.",
+    "accent": "gold",
+    "mass": 1,
+    "distance": 1.9,
+    "takeaway": "A black hole’s horizon is where space flows in at light speed. Inside it, even light swimming outward is carried in.",
+    "beats": [
+     {
+      "title": "A fish near a waterfall",
+      "body": "A river speeds up as it nears a waterfall. A fish swims upstream at a steady speed through the water: far from the edge, it outswims the slow current."
+     },
+     {
+      "title": "The point of no return",
+      "body": "Closer in, the current matches the fish’s speed, and the fish holds still. Past that point the current is faster, and the fish is swept over the edge even as it keeps swimming."
+     },
+     {
+      "title": "A river of space",
+      "body": "Space around a black hole can be pictured the same way: flowing inward, faster closer in. Light is the fish: it always moves at light speed through the space around it."
+     },
+     {
+      "title": "The horizon",
+      "body": "The horizon is the point of no return: there, space flows in at light speed. Light sent outward escapes from outside the horizon, stands still on it, and is carried in from inside it."
+     },
+     {
+      "title": "No speed limit is broken",
+      "body": "Inside, space flows in faster than light, yet light still moves through it at exactly light speed. Space is not really a liquid, but for a black hole that does not spin, this picture matches Einstein’s theory exactly."
+     }
+    ],
+    "why": "It explains a black hole’s edge, the event horizon: the place past which nothing, not even light, can get back out.",
+    "opening": "Light always moves at light speed. So why can’t it escape from inside a black hole?",
+    "questions": [
+     {
+      "q": "Just outside the horizon, can light sent outward escape?",
+      "a": "Yes, slowly: space there flows in a little slower than light."
+     },
+     {
+      "q": "What happens to light sent outward exactly at the horizon?",
+      "a": "It stands still: space flows in exactly at light speed."
+     },
+     {
+      "q": "Does anything move through space faster than light inside the horizon?",
+      "a": "No: light still moves at light speed through the space around it; it is the space that flows in faster."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Flow reaches light speed exactly at the horizon",
+     "pass": true
+    },
+    {
+     "name": "Flow equals the Newtonian escape speed sqrt(2GM/r)",
+     "pass": true
+    },
+    {
+     "name": "Outgoing light just outside the horizon still escapes",
+     "pass": true
+    },
+    {
+     "name": "Outgoing light at the horizon stands still",
+     "pass": true
+    },
+    {
+     "name": "Outgoing light inside the horizon is swept inward",
+     "pass": true
+    },
+    {
+     "name": "With no mass, light moves at light speed",
+     "pass": true
+    },
+    {
+     "name": "A swimmer at the point of no return stays in place",
+     "pass": true
+    },
+    {
+     "name": "A swimmer outside it gets away; one just inside is swept to the edge",
+     "pass": true
+    },
+    {
+     "name": "Space flows in at light speed at the horizon, and not at all without a black hole",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 2)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 3.0 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 11)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 4)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "Every claim matches the river picture of a black hole that does not spin, as published by Hamilton and Lisle: space falls in at the speed a dropped object reaches, that speed equals light speed at the horizon, and light always moves at light speed through the space around it. The motion in the picture follows the exact rule for light sent straight outward. The number we checked is right: at 1.5 horizon sizes, space flows in at about 82% of light speed. The guide says plainly that space is not a liquid and that spinning black holes need a different version of the picture.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "Even with no words, the pictures tell the story: a fish gets away far from the waterfall, holds still at the point of no return and is swept over past it, and then light around a black hole escapes, stands still at the horizon and is carried in from inside. Labels are short and few, the swim and current arrows are easy to read, and the layout works on a phone. One small gap: the light carried in during the horizon chapter has already gone by the end of that chapter, but the next chapter shows it clearly.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "In one sentence: at the horizon, space flows inward as fast as light can move through it, and inside it flows faster, so light aimed outward can at best stand still, and inside it is carried in. All three questions can be answered from the guide alone. The guide explains why, not just what, by starting from a fish in a river that most readers can already picture.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T170214-river-black-hole/revision-1-0.png",
+    "published/20261101T170214-river-black-hole/revision-1-1.png",
+    "published/20261101T170214-river-black-hole/revision-1-2.png",
+    "published/20261101T170214-river-black-hole/revision-1-3.png",
+    "published/20261101T170214-river-black-hole/revision-1-4.png",
+    "published/20261101T170214-river-black-hole/revision-1-5.png",
+    "published/20261101T170214-river-black-hole/revision-1-6.png",
+    "published/20261101T170214-river-black-hole/revision-1-7.png",
+    "published/20261101T170214-river-black-hole/revision-1-8.png",
+    "published/20261101T170214-river-black-hole/revision-1-9.png",
+    "published/20261101T170214-river-black-hole/revision-1-10.png",
+    "published/20261101T170214-river-black-hole/revision-1-11.png"
+   ]
+  }
+ ]
+}
