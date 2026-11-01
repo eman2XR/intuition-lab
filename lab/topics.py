@@ -256,7 +256,10 @@ the Sun's surface (the half of the sky above you has room for about 92,000 Sun d
 the universe has a finite age, about 13.8 billion years: light needs time to travel, so only light from within a limited
 distance has had time to reach us, and stars only shine for limited times (Edward Harrison's analysis: there is nowhere
 near enough time or starlight to fill the sky). The expansion of the universe also stretches and dims distant light, a
-smaller effect. So the dark night sky is everyday evidence that the universe had a beginning. Model numbers
+smaller effect. So the dark night sky tells us the stars have not been shining forever: one clue that the universe had
+a beginning, not a proof (an old, steady, expanding universe could also have a dark sky). Say that light from far
+enough away has not had time to reach us; do not say the universe goes on forever or has an edge, and say that every
+place has its own such bubble (the farthest places we see are now about 46 billion light-years away). Model numbers
 (Physics.nightChecks): Sun-like stars spread evenly, about 10^22 in today's observable universe (a rough count; estimates
 run from 10^22 to 10^24); a sight line then typically travels about 2 x 10^24 light-years before meeting a star, over ten
 trillion times farther than light travels in 13.8 billion years; within 13.8 billion light-years stars cover about 1 part
@@ -275,9 +278,10 @@ labelled "13.8 billion light-years", and the stars inside it shine; with the sec
 inward, labelled "light still on its way": those stars may be there, but their light has not arrived; with the third,
 sight lines go out again: a few end on stars inside the bubble, the rest cross it and find only darkness, so the night
 stays dark. 4 (two or three sentences): the rings fade back into the night landscape during the first sentence (the dark
-night is evidence of a beginning); with the last sentence a wave labelled "oldest light" travels from high in the sky to
+night tells us the stars have not shone forever, one clue to a beginning); with the last sentence a wave labelled "oldest light" travels from high in the sky to
 you, stretching and turning from gold to red as it fades, labelled "stretched out of sight": write that last sentence
-about the expansion of the universe stretching and dimming the oldest, most distant light. After playback field mass
+about the expansion of the universe stretching the oldest, most distant light into microwaves our eyes cannot see
+(the cosmic microwave background). After playback field mass
 sets the age of an unchanging universe (UI "Age of the universe"): 0 is no time at all, so no starlight; 0.07 is today's
 13.8 billion years; each further 0.01 multiplies the time by about 1.5, up to about 10^26 years. Set mass to 0.07 and
 controls to "first"; field distance is unused. The readout is the share of the sky covered by stars whose light has
