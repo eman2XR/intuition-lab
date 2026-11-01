@@ -4,7 +4,7 @@
   "question": "Why does a guitar string only play certain notes?",
   "topic": "standing-waves",
   "created": "2026-10-27T16:09:31.841062+00:00",
-  "updated": "2026-10-29T06:16:58Z",
+  "updated": "2026-11-01T18:08:37Z",
   "research": {
     "claim": "A string held still at both ends can only keep vibrating in patterns where a whole number of half-wavelengths fits between the ends (wavelength = 2L/n). That allows only certain frequencies, f_n = (n/2L)\u00b7\u221a(T/\u03bc). The lowest one, f\u2081, is the pitch you hear. The higher ones (2f\u2081, 3f\u2081, ...) are overtones that colour the tone. So one string at one length gives one note. A guitarist gets other notes by changing the length (frets), the tension (tuning) or the mass per length (string gauge). This is standard, long-established physics, not a new finding.",
     "explanation": "1. A wave travels along a stretched string at a speed set by tension T and mass per length \u03bc: v = \u221a(T/\u03bc) (source 2).\n2. Both ends are fixed: the nut or fret at one end, the saddle at the other. A wave reaching an end bounces back flipped upside down, so waves going left and right overlap.\n3. Two equal waves moving in opposite directions add up to a standing wave. Some points (nodes) never move, and the points between them swing back and forth. The lab scene shows exactly this. It draws y = sin(\u03c9t \u2212 kx) \u2212 a\u00b7sin(\u03c9t + kx), shows both travelling waves dashed, and uses a perfect reflection (a = 1) at the wall.\n4. A fixed end must be a node. The pattern only keeps reinforcing itself if both ends land on nodes, which means kL = n\u03c0: n half-wavelengths fit along the string. Other wavelengths fall out of step after repeated reflections and die away. Source 2 puts it this way: \"only particular frequencies can survive on this string\". The lab's \"Pattern\" control steps n through 1 to 5. Pattern n has n \u2212 1 still points between the ends, so higher patterns (higher frequencies) have more nodes.\n5. A pluck does not choose just one pattern. Source 1 notes that \"a shape can be decomposed into many normal modes\", so the plucked shape is a mixture of all the allowed modes at once. The ear hears the fundamental as the pitch.\n6. The lab's \"Reflection\" control (a) makes the overlap imperfect. Points that would be nodes then move with amplitude |1 \u2212 a|, while the loudest points move with amplitude 1 + a. The readout \"node stillness\" = 1 \u2212 |1 \u2212 a|/(1 + a) = 2a/(1 + a). It is 1 for a perfect reflection and 0 when nothing reflects, leaving a plain travelling wave with no nodes.\nSlider choice: playback already removes the reflection (chapter 1), dips it and brings it back (chapter 3), and sweeps the pattern up to its maximum. The one thing a slider adds is letting the viewer hold the reflection at partial values and watch the nodes blur. That makes \"first\" (Reflection only) a reasonable choice, and \"none\" acceptable. A pattern slider would mostly repeat the sweep in playback.",
@@ -40,7 +40,7 @@
     ]
   },
   "scene": {
-    "title": "Why a Guitar String Plays Only Certain Notes",
+    "title": "Why a guitar string plays only certain notes",
     "subtitle": "Shake one end of a rope tied to a wall. Most speeds only make it jiggle, but a few build a big, steady swing. A guitar string works the same way.",
     "beats": [
       {

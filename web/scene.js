@@ -1616,32 +1616,29 @@ function nightTag(ctx,value,x,y,{align='center',size=11,color='rgba(228,234,255,
  ctx.fillStyle=back;ctx.beginPath();ctx.roundRect?ctx.roundRect(left-6,y-size*.8,width+12,size*1.6,size*.8):ctx.rect(left-6,y-size*.8,width+12,size*1.6);ctx.fill();
  text(ctx,value,x,y,{align,size,weight,color});
 }
-// You, as one solid silhouette sitting on the hilltop with arms wrapped round the knees and the head tipped up to the
-// sky. The head sits where the sight lines meet; a faint rim of skylight traces the outline against the dark hill.
+// You, standing on the hilltop seen from behind, looking out at the stars: one solid silhouette with the arms hanging
+// close to the body. The head sits where the sight lines meet; a faint rim of skylight traces the outline.
 function nightPerson(ctx,x,feet,s,col,rim){
- const P=(dx,dy)=>[x+dx*s,feet+dy*s], hx=x-s*.09, hy=feet-s*.93;
- const outline=()=>{ctx.beginPath();
-  ctx.moveTo(...P(-.34,0));
-  // The back, rounded, up to the shoulders.
-  ctx.bezierCurveTo(...P(-.40,-.22),...P(-.34,-.56),...P(-.2,-.74));
-  ctx.lineTo(...P(-.12,-.8));
-  // The arms reach forward round the knees.
-  ctx.bezierCurveTo(...P(-.02,-.72),...P(.06,-.64),...P(.13,-.63));
-  // The knees, then the shins down to the feet.
-  ctx.bezierCurveTo(...P(.2,-.72),...P(.36,-.7),...P(.39,-.56));
-  ctx.bezierCurveTo(...P(.41,-.48),...P(.39,-.44),...P(.38,-.4));
-  ctx.bezierCurveTo(...P(.36,-.26),...P(.38,-.1),...P(.46,-.04));
-  ctx.quadraticCurveTo(...P(.5,0),...P(.42,0));
-  ctx.closePath();
-  // The head, tipped back, chin up.
-  ctx.moveTo(hx+s*.14,hy);ctx.ellipse(hx,hy,s*.14,s*.15,-.5,0,TAU);
-  ctx.moveTo(hx+s*.07,hy+s*.08);ctx.lineTo(hx+s*.2,hy-s*.03);ctx.lineTo(hx+s*.1,hy-s*.1);ctx.closePath();};
- ctx.save();ctx.lineJoin='round';
- if(rim){outline();ctx.strokeStyle=rim;ctx.lineWidth=2.4;ctx.stroke();}
- outline();ctx.fillStyle=col;ctx.fill();
- // The neck joins head and shoulders without a seam.
- ctx.beginPath();ctx.ellipse(x-s*.12,feet-s*.8,s*.08,s*.07,0,0,TAU);ctx.fill();
- ctx.restore();
+ const cx=x-s*.09, P=(dx,dy)=>[cx+dx*s,feet+dy*s];
+ const shape=grow=>{const g=grow/2;
+  // Torso and shorts: sloping shoulders, a slimmer waist.
+  ctx.beginPath();ctx.moveTo(...P(-.17,-.7));
+  ctx.bezierCurveTo(...P(-.18,-.77),...P(-.12,-.8),...P(-.05,-.81));ctx.lineTo(...P(.05,-.81));
+  ctx.bezierCurveTo(...P(.12,-.8),...P(.18,-.77),...P(.17,-.7));
+  ctx.quadraticCurveTo(...P(.13,-.58),...P(.13,-.47));ctx.lineTo(...P(.15,-.31));ctx.lineTo(...P(-.15,-.31));ctx.lineTo(...P(-.13,-.47));
+  ctx.quadraticCurveTo(...P(-.13,-.58),...P(-.17,-.7));ctx.closePath();
+  if(g){ctx.lineWidth=grow;ctx.lineJoin='round';ctx.stroke();}ctx.fill();
+  // Legs, arms close to the body, and the neck.
+  ctx.lineCap='round';
+  const limb=(pts,width)=>{ctx.lineWidth=width+grow;trace(ctx,pts.map(q=>P(...q)));ctx.stroke();};
+  limb([[-.07,-.33],[-.075,-.17],[-.07,-.03]],.11);limb([[.07,-.33],[.075,-.17],[.07,-.03]],.11);
+  limb([[-.16,-.7],[-.18,-.56],[-.17,-.43]],.075);limb([[.16,-.7],[.18,-.56],[.17,-.43]],.075);
+  limb([[0,-.8],[0,-.86]],.1);
+  // Head, tipped slightly up.
+  ctx.beginPath();ctx.ellipse(...P(0,-.935),s*.105+g,s*.12+g,0,0,TAU);ctx.fill();};
+ ctx.save();
+ if(rim){ctx.strokeStyle=rim;ctx.fillStyle=rim;shape(1.8);}
+ ctx.strokeStyle=col;ctx.fillStyle=col;shape(0);ctx.restore();
 }
 function nightGround(ctx,w,h,L,blaze){
  const far=x=>L.gy-h*.042+h*.016*Math.sin(x/w*6.3+1.1)+h*.011*Math.sin(x/w*15.7+.4);
@@ -2052,7 +2049,7 @@ function drawSky(ctx,w,h,spec,st){
  }
  // The sky: a landscape with the Sun at the upper left and you on the ground; on the Moon, with no air, the sky is
  // black and the ground grey.
- const air=plan.air??1, wx=w*.03, wy=h*.04, ww=w*.94, wh=h*.9, sunF=[small?.16:.1,.2], R=small?14:20;
+ const air=plan.air??1, edge=plan.mode==='thumb', wx=edge?0:w*.03, wy=edge?0:h*.04, ww=edge?w:w*.94, wh=edge?h:h*.9, sunF=[small?.16:.1,.2], R=small?14:20;
  const sx=wx+ww*sunF[0], sy=wy+wh*sunF[1], youF=small?.66:.62, px=wx+ww*youF, ground=skyNear(wy,wh)(youF), eyeY=ground-(small?14:20), skyLow=wy+wh*.76;
  const scatter=plan.mode==='scatter'||plan.mode==='thumb';
  // Sunlight fills the whole sky, drawn as parallel rays from the Sun's direction. All along each ray the air bounces
@@ -2073,7 +2070,7 @@ function drawSky(ctx,w,h,spec,st){
    trace(ctx,[[x0-dir[0]*span,y0-dir[1]*span],[x0+dir[0]*span,y0+dir[1]*span]]);ctx.strokeStyle='rgba(255,250,230,.55)';ctx.lineWidth=small?1.6:2.4;ctx.stroke();}
   for(const [x,y,z] of spots){const age=(T*.45+z)%1, r=age*(small?9:14);
    ctx.beginPath();ctx.arc(x,y,Math.max(.5,r),0,TAU);ctx.strokeStyle=`rgba(29,78,216,${.85*(1-age)})`;ctx.lineWidth=1.6;ctx.stroke();}};
- ctx.save();ctx.beginPath();ctx.roundRect(wx,wy,ww,wh,16);ctx.clip();
+ ctx.save();ctx.beginPath();ctx.roundRect(wx,wy,ww,wh,edge?0:16);ctx.clip();
  skyLand(ctx,wx,wy,ww,wh,{air,sun:sunF,sunR:R,behind:scatter?beams:null});
  if(scatter){
   // Dashed lines to your eye from those places, fanned around the sky: bounced blue arrives from every part of it.

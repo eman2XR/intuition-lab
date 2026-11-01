@@ -379,12 +379,19 @@ body[data-view=article] .hero{padding-top:48px}
 .featured-card h3{font-size:clamp(30px,3.4vw,46px)!important}
 .featured-card .card-excerpt{font-size:clamp(17px,1.4vw,20px)}
 .more{margin:56px auto 0;max-width:1100px}
-.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px}
-.thumb-card{display:flex;flex-direction:column;gap:10px}
-.thumb-card .card-media{aspect-ratio:16/10}
-.thumb-card h3{font:700 19px/1.3 var(--serif);margin:0}
-.thumb-card:hover h3{text-decoration:underline;text-underline-offset:4px}
-.thumb-card:hover .mini-play{transform:scale(1.08);background:var(--orange)}
+/* Grid cards stay quiet: a framed picture that eases in on hover, a small topic line and the title; the whole card
+   is the link, so no play button. */
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:44px 28px}
+.thumb-card{display:flex;flex-direction:column;gap:8px}
+.thumb-card .card-media{aspect-ratio:16/10;border-radius:6px;margin-bottom:6px}
+.thumb-card .card-media::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(20,23,28,.08);pointer-events:none}
+.thumb-card .thumb{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.thumb-card:hover .thumb{transform:scale(1.04)}
+.thumb-card .mini-play{display:none}
+.thumb-card .card-cat{border-bottom:none;padding-bottom:0;font-size:10px;letter-spacing:.22em;color:var(--faint)}
+.thumb-card h3{font:700 19px/1.3 var(--serif);margin:0;text-wrap:pretty}
+.thumb-card:hover h3{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+@media (prefers-reduced-motion:reduce){.thumb-card .thumb{transition:none}.thumb-card:hover .thumb{transform:none}}
 @media (max-width:900px){.featured-card{grid-template-columns:1fr!important;gap:18px!important}}
 
 /* Drafts: owner review only; the checking story and path do not apply. */
@@ -405,7 +412,8 @@ body[data-draft=yes] .draft-note:not(:empty){display:block;max-width:760px;margi
 @media (max-width:600px){.gallery .thumbs{grid-template-columns:1fr;gap:18px}
  .gallery .thumb-card{display:grid;grid-template-columns:128px 1fr;grid-template-rows:auto 1fr;column-gap:14px;row-gap:8px;align-items:start}
  .gallery .thumb-card .card-media{grid-row:1/3}
- .gallery .thumb-card .card-cat{justify-self:start;font-size:9.5px;letter-spacing:.22em}
+ .gallery .thumb-card .card-cat{justify-self:start;font-size:9.5px;letter-spacing:.2em}
+ .gallery .thumb-card .card-media{margin-bottom:0}
  .gallery .thumb-card h3{font-size:16px}
  .gallery .mini-play{left:8px;bottom:8px;width:26px;height:26px}
  .gallery .mini-play::after{left:10px;top:8px;border-left-width:8px;border-top-width:5px;border-bottom-width:5px}}
