@@ -1616,16 +1616,25 @@ function nightTag(ctx,value,x,y,{align='center',size=11,color='rgba(228,234,255,
  ctx.fillStyle=back;ctx.beginPath();ctx.roundRect?ctx.roundRect(left-6,y-size*.8,width+12,size*1.6,size*.8):ctx.rect(left-6,y-size*.8,width+12,size*1.6);ctx.fill();
  text(ctx,value,x,y,{align,size,weight,color});
 }
+// You, as a silhouette sitting on the hilltop: knees up, leaning back on one arm, head tipped up to the sky. The head
+// sits where the sight lines meet; a faint rim of skylight keeps the figure readable against the dark hill.
 function nightPerson(ctx,x,feet,s,col,rim){
- const body=lw=>{ctx.lineWidth=lw;
-  trace(ctx,[[x-s*.13,feet],[x,feet-s*.42],[x+s*.13,feet]]);ctx.stroke();
-  trace(ctx,[[x,feet-s*.42],[x-s*.04,feet-s*.78]]);ctx.stroke();
-  trace(ctx,[[x-s*.03,feet-s*.7],[x+s*.2,feet-s*1.02]]);ctx.stroke();
-  trace(ctx,[[x-s*.03,feet-s*.7],[x-s*.17,feet-s*.47]]);ctx.stroke();
-  ctx.beginPath();ctx.arc(x-s*.09,feet-s*.93,s*.11+(lw-s*.13)/2,0,TAU);ctx.fill();};
+ const hx=x-s*.09, hy=feet-s*.93, hip=[x+s*.06,feet-s*.09], shoulder=[hx-s*.02,hy+s*.21];
+ const knee=[x+s*.34,feet-s*.55], foot=[x+s*.6,feet-s*.04], hand=[x-s*.42,feet-s*.03];
+ const body=grow=>{
+  const limb=(pts,width)=>{ctx.lineWidth=width+grow;trace(ctx,pts);ctx.stroke();};
+  limb([hip,knee,foot],s*.15);
+  limb([shoulder,hip],s*.25);
+  // Leaning back on a straight arm.
+  limb([shoulder,hand],s*.1);
+  // The near arm rests across the knee.
+  limb([[shoulder[0]+s*.04,shoulder[1]+s*.06],[x+s*.22,feet-s*.38],[knee[0]+s*.04,knee[1]+s*.02]],s*.1);
+  // Head tipped back, chin up.
+  ctx.beginPath();ctx.ellipse(hx,hy,s*.13+grow/2,s*.14+grow/2,-.5,0,TAU);ctx.fill();
+  ctx.beginPath();ctx.moveTo(hx+s*.06,hy+s*.05);ctx.lineTo(hx+s*.2+grow/2,hy-s*.02);ctx.lineTo(hx+s*.1,hy-s*.1);ctx.closePath();ctx.fill();};
  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
- if(rim){ctx.strokeStyle=rim;ctx.fillStyle=rim;body(s*.13+2.2);}
- ctx.strokeStyle=col;ctx.fillStyle=col;body(s*.13);ctx.restore();
+ if(rim){ctx.strokeStyle=rim;ctx.fillStyle=rim;body(2.4);}
+ ctx.strokeStyle=col;ctx.fillStyle=col;body(0);ctx.restore();
 }
 function nightGround(ctx,w,h,L,blaze){
  const far=x=>L.gy-h*.042+h*.016*Math.sin(x/w*6.3+1.1)+h*.011*Math.sin(x/w*15.7+.4);
@@ -1712,7 +1721,6 @@ function drawNight(ctx,w,h,spec,st){
  nightGround(ctx,w,h,L,blaze);
  if(!st.labels||m==='thumb')return;
  const ink=blaze>.5?'rgba(52,38,24,.82)':'rgba(226,232,255,.82)';
- text(ctx,'you',L.cx+L.s*.42,L.gy-L.s*.42,{size,weight:600,color:ink});
  if(m==='night'&&plan.gap>0){const [gx,gy,gr]=L.gap;ctx.save();ctx.globalAlpha=plan.gap;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(gx,gy,gr,0,TAU);ctx.strokeStyle='rgba(200,212,255,.55)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
   text(ctx,'dark between stars',gx,gy+gr+(L.small?12:15),{align:'center',size,weight:600,color:'rgba(226,232,255,.85)'});ctx.restore();}
  if(hl>.05){ctx.save();ctx.globalAlpha=hl;

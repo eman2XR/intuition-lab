@@ -247,7 +247,8 @@
   "provider": "reviewed-agents",
   "provenance": {
     "sources_retrieved": true,
-    "retrieved_by": "agent"
+    "retrieved_by": "agent",
+    "intro_note": "The figure of the viewer on the hill was redrawn by hand after the review, at the owner\u2019s request; the frames below show the reviewed version."
   },
   "revisions": [
     {
@@ -634,5 +635,6 @@
         "published/20261101T172324-12e71822/revision-2-9.png"
       ]
     }
-  ]
+  ],
+  "updated": "2026-11-01T17:50:07Z"
 }
