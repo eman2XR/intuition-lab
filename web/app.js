@@ -324,7 +324,7 @@ function simStrip(model,key){
  markStates();
 }
 function stopPreview(){labPreview=null;markStates();refreshDashboard();}
-function markStates(){const current=labPreview?.label||'Live';const run=$('lab-run');if(run)run.textContent=labPreview?.state==='run'?'Stop the run':'Watch a run';$('lab-states')?.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.textContent===current)));}
+function markStates(){const current=labPreview?.label||'Live';$('lab-states')?.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.textContent===current)));}
 function tryState(label){
  const state=LAB_STATES.find(([l])=>l===label)?.[1];
  if(!state){stopPreview();return;}
@@ -418,7 +418,6 @@ if(labCanvas){
   saveNotes([...localNotes(),{id:Date.now(),text:text.slice(0,400),at:Date.now()}]);$('guide-text').value='';renderNotes();
   labEvents.note=performance.now()/1000;drawLabStill();labCanvas.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});};
  $('guide-open').onclick=e=>{e.preventDefault();$('lab').open=true;$('guide-text').focus();};
- $('lab-run').onclick=e=>{e.preventDefault();tryState(labPreview?.state==='run'?'Live':'Sample run');};
  $('lab-states').replaceChildren(...LAB_STATES.map(([label])=>{const b=el('button',{type:'button',className:'chip',textContent:label});b.onclick=()=>tryState(label);return b;}));
  markStates();
  // ?lab=review (or any state's name) opens the page in that state.
