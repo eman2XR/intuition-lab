@@ -228,3 +228,17 @@ class WorkerSyncTests(unittest.TestCase):
             (worker/'notes.txt').write_text('x');git(worker,'add','.');git(worker,'commit','-qm','something else')
             push_from_me('lab/newer.py','y=1\n','newer code')
             self.assertEqual(entry_point().update(worker),'unpushed commits outside the publication, not updated')
+
+
+class RetryTests(unittest.TestCase):
+    def test_an_early_stop_is_retried_once_and_the_latest_first(self):
+        from lab.daily import attempted, retry_order
+        same=lambda entry,q: entry.get('question')==q
+        ledger=[{'question':'A','topic':'a','status':'failed'},{'question':'B','topic':'b','status':'failed'},
+                {'question':'C','topic':'c','status':'needs_review'}]
+        self.assertFalse(attempted(ledger,'A','a',same))
+        self.assertTrue(attempted(ledger,'C','c',same))
+        self.assertTrue(attempted(ledger+[{'question':'A','topic':'a','status':'failed'}],'A','a',same))
+        self.assertFalse(attempted(ledger,'A','other',same))
+        items=[{'question':'A'},{'question':'B'},{'question':'D'}]
+        self.assertEqual([i['question'] for i in retry_order(items,ledger,same)],['D','B','A'])

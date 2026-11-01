@@ -103,15 +103,20 @@ The animation cannot independently verify general relativity. Numeric checks ver
 only the implemented approximation. Keep claims appropriately scoped.'''
 
 
+# Character limits for the design brief; the designer's prompt states them.
+DESIGN_LIMITS = {'idea': 320, 'start': 320, 'belief': 320, 'reason': 500, 'try': 320, 'missing': 500}
+DESIGN_CHAPTER_LIMIT = 400
+
+
 def validate_design(design):
     """A design brief within the bounds the writer and reviewers rely on."""
     validate(design, DESIGN_SCHEMA)
     if not 3 <= len(design['chapters']) <= 6:
         raise ValueError('A design brief needs three to six chapters')
-    limits = {'idea': 240, 'start': 240, 'belief': 240, 'reason': 360, 'try': 240, 'missing': 400}
+    limits = DESIGN_LIMITS
     if any(len(design[k]) > n for k, n in limits.items()) or not design['idea'].strip():
         raise ValueError('Design brief exceeds its bounds')
     for chapter in design['chapters']:
-        if len(chapter['show']) > 300 or len(chapter['changes']) > 300 or len(chapter['label'].split()) > 5:
+        if len(chapter['show']) > DESIGN_CHAPTER_LIMIT or len(chapter['changes']) > DESIGN_CHAPTER_LIMIT or len(chapter['label'].split()) > 5:
             raise ValueError('Design brief chapter exceeds its bounds')
     return design

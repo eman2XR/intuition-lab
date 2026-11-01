@@ -29,6 +29,26 @@ def plannable(items, guides, explored):
     return [i for i in items if i.get('model') in READY and i['model'] not in used and not explored(i['question'], i['model'])]
 
 
+# An attempt that stopped with an error before review (a time limit, a network failure, a malformed brief) says
+# nothing about the question, so it is tried once more; after two such stops the question rests.
+EARLY_STOPS = 2
+
+
+def attempted(ledger, question, model, same):
+    """True once an attempt with this model reached review, or stopped early EARLY_STOPS times."""
+    tries = [a for a in ledger if same(a, question) and model in (None, a.get('topic'))]
+    early = sum(1 for a in tries if a.get('status') == 'failed')
+    return len(tries) > early or early >= EARLY_STOPS
+
+
+def retry_order(items, ledger, same):
+    """Never-tried items first, in teaching order; then retries, the most recent early stop first, since the fix for
+    the latest failure is the freshest."""
+    def last_stop(item):
+        return max((k for k, a in enumerate(ledger) if same(a, item['question']) and a.get('status') == 'failed'), default=-1)
+    return sorted(items, key=lambda item: -last_stop(item) if last_stop(item) >= 0 else float('-inf'))
+
+
 def drafts_index(root):
     path = root/'web'/'drafts'/'index.json'
     return json.loads(path.read_text()) if path.exists() else []
@@ -237,11 +257,11 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
             guides=published+drafts_index(root)
             previous=ledger+guides
             same=lambda entry,q: normalize(entry.get('question') or entry.get('title') or '')==normalize(q)
-            # A question is explored once a guide answers it, or once it was attempted with the same model;
-            # an unpublished attempt does not block a new attempt with a better model.
-            explored=lambda q,model=None: any(same(g,q) for g in guides) or any(same(a,q) and model in (None,a.get('topic')) for a in ledger)
+            # A question is explored once a guide answers it, or once an attempt with the same model reached review
+            # (an early stop is retried; see attempted); an unpublished attempt does not block a better model.
+            explored=lambda q,model=None: any(same(g,q) for g in guides) or attempted(ledger,q,model,same)
             model_of=lambda q: next((i['model'] for i in items if normalize(i['question'])==normalize(q)),None)
-            ready=plannable(items,guides,explored)
+            ready=retry_order(plannable(items,guides,explored),ledger,same)
             request,item=inbox.choice(requests,[i for i in items if i.get('model') in READY],TOPICS,lambda q: explored(q,model_of(q)))
             if not item and not ready:
                 # Nothing meets the quality bar right now; no slot is used and nothing is started. When publishing, the

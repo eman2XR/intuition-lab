@@ -76,7 +76,8 @@ DESIGNER = ('You are the designer. Before any narration is written, decide how t
     'describe, each with what is on screen (show), what changes and on which sentence (changes), and at most one short '
     'label of five words or fewer (label, or empty). try: what the viewer can try with the control after playback. Set '
     'fits_engine to false and say in missing what the picture would need when the model notes cannot show the idea '
-    'well; otherwise leave missing empty.')
+    'well; otherwise leave missing empty. Keep it brief: idea, start, belief and try at most 300 characters each, '
+    'reason and missing at most 480, and each chapter\'s show and changes at most 380.')
 # The blind viewer sees only the pictures: no subtitles, no scene, no research.
 BLIND = ('You see only these pictures, in order, with no words and no sound: a late moment of each chapter of a short '
     'animated guide. In the summary, say chapter by chapter what you see happening and what seems to matter. In changes, '
