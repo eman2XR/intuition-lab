@@ -114,7 +114,7 @@
   },
   "scene": {
     "title": "Why is the night sky dark?",
-    "subtitle": "An endless sky of stars that had always shone would blaze like the Sun. The dark gaps between stars show that starlight has had only limited time to travel.",
+    "subtitle": "An endless universe full of stars should light up the night like the Sun. So why is it dark?",
     "why": "Every clear night shows black sky between the stars. That darkness is a clue that the universe had a beginning.",
     "beats": [
       {
@@ -248,7 +248,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "agent",
-    "intro_note": "The figure of the viewer on the hill was redrawn by hand after the review, at the owner\u2019s request; the frames below show the reviewed version."
+    "intro_note": "At the owner\u2019s request, the figure of the viewer on the hill was redrawn by hand after the review, and the teaser line was rewritten to pose the question; the frames below show the reviewed version."
   },
   "revisions": [
     {
@@ -636,5 +636,5 @@
       ]
     }
   ],
-  "updated": "2026-11-01T17:50:07Z"
+  "updated": "2026-11-01T19:19:30Z"
 }
