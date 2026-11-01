@@ -1,5 +1,13 @@
 [
   {
+    "id": "20261101T172324-12e71822",
+    "question": "Why is the night sky dark?",
+    "topic": "night-sky",
+    "created": "2026-11-01T17:23:24.058415+00:00",
+    "curriculum": "6.1",
+    "title": "Why is the night sky dark?"
+  },
+  {
     "id": "20261101T170219-falling-lift",
     "question": "How much do you weigh in a falling lift?",
     "topic": "lift",

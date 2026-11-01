@@ -1,0 +1,638 @@
+{
+  "id": "20261101T172324-12e71822",
+  "status": "reviewed",
+  "question": "Why is the night sky dark?",
+  "topic": "night-sky",
+  "created": "2026-11-01T17:23:24.058415+00:00",
+  "research": {
+    "claim": "The night sky is dark mainly because the universe has a finite age, about 13.8 billion years, and stars shine only for limited times. Light takes time to travel, so only starlight from a limited distance has had time to reach us, and stars have not existed long enough to fill space with light. The expansion of the universe stretches and dims distant light, but it is the smaller effect. A dark sky is one clue that the stars have not been shining forever. It is not a proof that the universe had a beginning.",
+    "explanation": "Start with what anyone can see on a clear night: thousands of stars with black sky between them. Most people think it is dark because space is empty, or because distant stars are too faint to matter. Both ideas fall apart once you look closely.\n\nThe puzzle (Olbers' paradox). Imagine a universe that goes on forever, never changes, and has stars spread evenly everywhere. Picture space as a set of nested shells around you. A shell twice as far away has four times the area, so it holds four times as many stars. Each of those stars looks a quarter as bright. The two effects cancel, so every shell adds the same amount of light. Faraway stars do not 'not count': together they count just as much as nearby ones. Stars also block the stars behind them. So the sky would not become infinitely bright. Instead, every line of sight would sooner or later end on the surface of a star, and the whole sky would glow as brightly as the Sun's surface. The half of the sky above you has room for about 92,000 discs the size of the Sun, and every one of those places would be filled. Kepler (1610) and Olbers (1823) posed this puzzle. Edgar Allan Poe guessed the answer in 1848, and Lord Kelvin gave the first good mathematical treatment in 1901, as Edward Harrison credited.\n\nWhy it fails. The universe began about 13.8 billion years ago in a hot, dense state. That was not an explosion at a point, and nothing here says what came before. Light needs time to travel, so we can only receive light that has had time to reach us. Think of a bubble around you whose radius is the distance light has travelled in 13.8 billion years. Stars beyond that bubble may well exist, but their light is still on its way. How far would a typical line of sight have to go before it hit a star? In a rough model, with about 10^22 Sun-like stars spread through today's observable universe (estimates range from 10^22 to 10^24), the answer is about 2 x 10^24 light-years. That is roughly 100 trillion times farther than light can travel in 13.8 billion years. So inside the bubble, star surfaces cover only about 1 part in 100 trillion of the sky. The model's figure is about 1 part in 180 trillion. Almost every line of sight crosses the bubble without meeting a star, so the night stays dark. Stars also burn out long before they could fill space with that much light. So there is nowhere near enough time or starlight to brighten the sky. That is Harrison's point: the finite age of the universe and the limited lives of stars together are the main reason.\n\nThe bubble is not an edge. Looking far away means looking back in time. The bubble is just the region whose light has reached us so far. Every place in the universe has its own such bubble. Nothing here says space is finite or that it has an edge or a centre. The figure 13.8 billion light-years is how far the light has travelled. Space kept expanding while the light was on its way, so the farthest places we see are now about 46 billion light-years away.\n\nThe smaller effect: expansion. As space expands, light from far away is stretched to longer wavelengths (redshift) and dimmed. The oldest light comes from about 380,000 years after the beginning, when the whole universe glowed about as hot as a star's surface (about 3000 K). That light does arrive from every direction. But it has been stretched about 1,100 times, into microwaves at about 2.7 K. This is the cosmic microwave background, and our eyes cannot see it. So in a sense every line of sight does end on a glowing surface. The glow has just been stretched out of sight.\n\nIs the sky really dark? Not perfectly. Careful measurements, including some from the New Horizons spacecraft far from the Sun, find a faint optical glow of about 11 to 24 nW per square metre per steradian. That is roughly 10^-15 of the brightness of the Sun's surface, and recent studies find that galaxies supply most or all of it. In microwaves, the sky is bright in every direction. 'Dark' means dark in visible light compared with the surface of a star.",
+    "assumptions": [
+      "The paradox assumes a universe that is infinite, eternal, static and evenly filled with stars, with flat (Euclidean) geometry and stars that shine forever. The resolution works by dropping the 'eternal' assumption and the 'stars shine forever' assumption.",
+      "The age of the universe is about 13.8 billion years, and light travels at a finite speed.",
+      "The line-of-sight model uses about 10^22 Sun-like stars spread evenly through today's observable universe. That is about 0.01 galaxies per cubic megaparsec with about 10^11 stars each. Published estimates range from 10^22 to 10^24 stars, and none of these changes the conclusion.",
+      "Coverage numbers treat stars as Sun-sized discs placed at random. They ignore clustering into galaxies, which changes the details but not the size of the effect.",
+      "The measured optical background (about 11 to 24 nW m^-2 sr^-1) is taken as the real light from outside our galaxy, after zodiacal light and light from our own galaxy are removed."
+    ],
+    "prediction": "If finite age and limited starlight are the main reason, three things should hold. Stars should cover only about 10^-14 of the sky. The diffuse optical glow from outside our galaxy should be roughly 10^-15 of the brightness of a star's surface. And that glow should be accounted for by adding up the light of galaxies whose stars formed during the past 13.8 billion years. Measurements agree: galaxy counts give about 24 nW m^-2 sr^-1 (Driver et al. 2016; SKYSURF 2025), the 2024 New Horizons result fits galaxies alone, and gamma-ray absorption limits match. The 'oldest light' should arrive from every direction as microwaves near 2.7 K, not as visible light.",
+    "falsifier": "Any of these would count against the explanation: a measured optical background near the brightness of a star's surface; a large, confirmed diffuse glow far beyond what 13.8 billion years of star formation could produce; or stars and galaxies found to be reliably much older than the universe's age, which would mean starlight had had far longer to build up. The secondary role of expansion would be challenged if surface brightness did not dim with redshift in the way expansion predicts (the Tolman test). This record has no source for that test.",
+    "limitations": [
+      "The star count (10^22 to 10^24) and the 2 x 10^24 light-year line-of-sight distance are rough model estimates, not measurements. The coverage numbers (about 1 part in 180 trillion inside 13.8 billion light-years, about 1 part in 50 trillion out to 46.5 billion light-years) inherit that uncertainty.",
+      "This record has no verified number for how much darker expansion makes the sky. Wesson's often-quoted result, that expansion darkens the sky by only a factor of about 2 to 3 compared with a static universe of the same age, was not checked.",
+      "Measurements of the optical background still disagree with each other by up to about a factor of 2. Earlier New Horizons results (2021 to 2023) suggested extra light beyond known galaxies, but a 2024 result fits galaxies alone.",
+      "No primary source was loaded for the cosmic microwave background temperature or for the Tolman surface-brightness test. Those statements rely on standard cosmology as summarized in the Wikipedia article.",
+      "Harrison's book 'Darkness at Night' (1987) was not consulted directly. It is cited only through Wikipedia.",
+      "The dark sky is one clue to a beginning, not a proof. An old, steady, expanding universe could also have a dark sky."
+    ],
+    "misconceptions": [
+      "'Space is dark because it is empty.' Space is mostly empty, but an endless, unchanging universe evenly filled with stars would still have a star at the end of every line of sight.",
+      "'Distant stars are too faint to count.' Each one is dimmer, but there are more of them in exactly the right proportion. A shell twice as far holds four times as many stars, each a quarter as bright, so every shell adds the same light.",
+      "'Wait, wouldn't the sky then be infinitely bright?' No. Nearer stars block the ones behind them, so the limit is a sky as bright as the Sun's surface everywhere, not infinite brightness.",
+      "'Dust between the stars blocks the light.' This was Olbers' own answer. Over endless time the dust would absorb starlight, heat up and glow just as brightly itself.",
+      "'It's dark because the universe is expanding.' Expansion helps, but it is the smaller effect. The main reason is finite age, together with the limited lives of stars.",
+      "'The 13.8 billion light-year bubble is the edge of the universe.' It is only the region whose light has had time to reach us. Every place has its own bubble, and nothing says space ends there.",
+      "'So the farthest things we see are 13.8 billion light-years away.' That is how far their light travelled. Because space expanded meanwhile, those places are now about 46 billion light-years away.",
+      "'Wait, then just wait long enough and the sky will light up.' At the rate stars produce light, filling the sky would take something like 10^24 years, far longer than stars live. Stars run out of fuel long before that.",
+      "'The Big Bang was an explosion at a point in space.' 'A beginning' here means a hot, dense early state everywhere, about 13.8 billion years ago, from which everything we see developed.",
+      "'A dark sky proves the universe had a beginning.' It is a strong clue, not a proof. Some other models, such as an old, steady, expanding universe, could also give a dark sky.",
+      "'The sky between the stars has no light at all.' There is a faint visible glow from galaxies, and in microwaves the whole sky glows with the stretched oldest light."
+    ],
+    "questions": [
+      {
+        "q": "In an endless, unchanging universe evenly filled with stars, why wouldn't moving every star twice as far away make the night sky darker?",
+        "a": "Each star would look a quarter as bright, but a shell twice as far holds four times as many stars. The two effects cancel, so the sky would still end up as bright as a star's surface."
+      },
+      {
+        "q": "Someone says the night is dark because dust between the stars soaks up distant starlight. What is wrong with that?",
+        "a": "Dust that keeps absorbing starlight warms up. Given enough time it would glow as brightly as the stars it blocks, so it cannot keep the sky dark."
+      },
+      {
+        "q": "Suppose the universe were 1,000 times older than it is, but stars were spread the same way. Would the night sky be as bright as the Sun?",
+        "a": "No. A line of sight typically has to go about 2 x 10^24 light-years to hit a star, and 13.8 trillion light-years is still far short of that. Most lines of sight would still find darkness, and stars would also have burned out long before."
+      },
+      {
+        "q": "Does the 13.8-billion-light-year bubble mean we are at the centre of the universe, near its edge?",
+        "a": "No. The bubble is just how far light has had time to travel to us. Every place has its own bubble, and nothing says space ends. The farthest places we see are now about 46 billion light-years away."
+      },
+      {
+        "q": "The oldest light left when the whole universe glowed like a star's surface, and it reaches us from every direction. Why doesn't it make the sky bright?",
+        "a": "On the way, the expansion of the universe stretched it about 1,100 times into microwaves (the cosmic microwave background), which our eyes cannot see."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Wikipedia, \"Olbers' paradox\"",
+        "url": "https://en.wikipedia.org/wiki/Olbers%27_paradox",
+        "supports": "The assumptions behind the paradox; the shell (flux) and line-of-sight versions; finite age as the resolution; the last-scattering surface at about 2.7 K; the history (Kepler, Olbers, Poe, Kelvin 1901); the fill time of roughly 10^23 years; the dust objection; and the citation of Harrison, Darkness at Night (Harvard University Press, 1987)."
+      },
+      {
+        "title": "Arpino & Scardigli, Eur. J. Phys. 24 (2003) 39",
+        "url": "https://arxiv.org/abs/astro-ph/0007428",
+        "supports": "Uses the darkness of the night sky to argue that a Newtonian universe should have had an origin at a finite time in the past."
+      },
+      {
+        "title": "Yang, Novosyadlyj & Milinevsky, J. Phys. Stud. 29, 1902 (2025)",
+        "url": "https://arxiv.org/abs/2410.06616",
+        "supports": "Names the particle horizon, the limited volume filled with light sources, and redshift as the factors that resolve the paradox in an expanding universe."
+      },
+      {
+        "title": "Conselice et al., ApJ 830, 83 (2016)",
+        "url": "https://arxiv.org/abs/1607.03909",
+        "supports": "Galaxy number density over cosmic time (about 2 x 10^12 galaxies up to z of about 8), the input to the density of light sources."
+      },
+      {
+        "title": "Driver et al., ApJ 827, 108 (2016)",
+        "url": "https://arxiv.org/abs/1605.01523",
+        "supports": "Optical background of about 24 nW m^-2 sr^-1 from adding up galaxy counts, consistent with very-high-energy gamma-ray limits."
+      },
+      {
+        "title": "Lauer et al. 2021, ApJ (New Horizons)",
+        "url": "https://arxiv.org/abs/2011.03052",
+        "supports": "Optical background measured from beyond most zodiacal light; early indication of light beyond known galaxies."
+      },
+      {
+        "title": "Lauer et al. 2022, ApJL (New Horizons)",
+        "url": "https://arxiv.org/abs/2202.04273",
+        "supports": "Optical background of 16.37 +/- 1.47 nW m^-2 sr^-1 at 0.608 micrometres, about half not explained by known galaxies."
+      },
+      {
+        "title": "Symons et al. 2023, ApJ",
+        "url": "https://arxiv.org/abs/2212.07449",
+        "supports": "Background of about 22 nW m^-2 sr^-1, 2 to 3 times the light from known galaxies; shows the measurements disagree."
+      },
+      {
+        "title": "Postman et al. 2024 (accepted to ApJ)",
+        "url": "https://arxiv.org/abs/2407.06273",
+        "supports": "New Horizons background of 11.16 +/- 1.65 nW m^-2 sr^-1 against 8.17 +/- 1.18 from galaxies; the leftover is consistent with zero."
+      },
+      {
+        "title": "Tompkins et al. 2025, SKYSURF IX (Hubble)",
+        "url": "https://arxiv.org/abs/2507.03412",
+        "supports": "Optical background of 24.45 +/- 0.50 nW m^-2 sr^-1; concludes that galaxies supply almost all of it."
+      }
+    ]
+  },
+  "scene": {
+    "title": "Why is the night sky dark?",
+    "subtitle": "An endless sky of stars that had always shone would blaze like the Sun. The dark gaps between stars show that starlight has had only limited time to travel.",
+    "why": "Every clear night shows black sky between the stars. That darkness is a clue that the universe had a beginning.",
+    "beats": [
+      {
+        "title": "Black sky between the stars",
+        "body": "As night falls, thousands of stars come out, with black sky between them. Why is it dark there: is space empty, are far stars too faint, or does dust hide them?"
+      },
+      {
+        "title": "An endless sky of stars would blaze",
+        "body": "Imagine endless space evenly filled with stars that shine forever, in shells around you like onion layers. A full shell twice as far holds four times the stars, each a quarter as bright, so it adds the same light. Each sight line ends on its first star, so the sky blazes like the Sun; even dust would warm up and glow."
+      },
+      {
+        "title": "Light has only had so long to travel",
+        "body": "The universe began 13.8 billion years ago, so only starlight from this bubble has had time to reach us. It is no edge, and every place has its own; light from stars beyond it is still on its way. Most sight lines cross the bubble without meeting a star, so the night stays dark."
+      },
+      {
+        "title": "A clue to a beginning",
+        "body": "So the dark night is one clue, not a proof, that the stars have not been shining forever. Stars also burn out long before they could fill the sky, so waiting longer would not help. Expanding space helps a little: it stretched the glow of the hot young universe into microwaves we can't see."
+      }
+    ],
+    "mass": 0.07,
+    "distance": 1,
+    "ray_count": 3,
+    "show_reference": false,
+    "show_labels": true,
+    "accent": "gold",
+    "line_width": 2,
+    "duration": 40,
+    "takeaway": "The night is dark because the stars haven't shone long enough for their light to fill the sky.",
+    "controls": "first",
+    "kind": "night-sky"
+  },
+  "checks": [
+    {
+      "name": "Every shell of stars adds the same light, near or far",
+      "pass": true
+    },
+    {
+      "name": "Every shell covers the same share of the sky",
+      "pass": true
+    },
+    {
+      "name": "A shell twice as far holds four times the stars, each a quarter as bright",
+      "pass": true
+    },
+    {
+      "name": "Shells add up: the covered share is the sum of thin shells while it is small",
+      "pass": true
+    },
+    {
+      "name": "With stars forever and unchanging, every sight line ends on a star: the sky is as bright as a star\u2019s surface",
+      "pass": true
+    },
+    {
+      "name": "A sight line typically travels about 2 \u00d7 10^24 light-years before meeting a star",
+      "pass": true
+    },
+    {
+      "name": "That is over ten trillion times farther than light travels in 13.8 billion years",
+      "pass": true
+    },
+    {
+      "name": "Within 13.8 billion light-years, stars cover less than a ten-trillionth of the sky, but not none",
+      "pass": true
+    },
+    {
+      "name": "Even out to today\u2019s 46.5 billion light-years, they cover less than a ten-trillionth",
+      "pass": true
+    },
+    {
+      "name": "No time, no starlight: the slider\u2019s zero covers nothing",
+      "pass": true
+    },
+    {
+      "name": "The covered share grows with time and fills the sky after about 1e25 years",
+      "pass": true
+    },
+    {
+      "name": "The slider marks today at 13.8 billion years",
+      "pass": true
+    },
+    {
+      "name": "The half of the sky above you has room for about 92,000 Sun discs",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 5.2 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 9)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 5)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "agent"
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Why is the night sky dark?",
+        "subtitle": "An endless sky of stars that had shone forever would blaze like the Sun. The dark gaps between the stars show that starlight has only had a limited time to travel.",
+        "why": "Every clear night shows black sky between the stars. That darkness turns out to be a clue that the universe had a beginning.",
+        "beats": [
+          {
+            "title": "Black sky between the stars",
+            "body": "At dusk the stars come out, thousands of them, with black sky in between. Why is the sky between them dark? Most people say space is empty, or that far stars are too faint to matter."
+          },
+          {
+            "title": "An endless sky of stars would blaze",
+            "body": "Imagine endless space filled evenly with stars that shine forever, in shells around you like onion layers. A shell twice as far holds four times as many stars, each a quarter as bright, so it adds the same light. Every sight line ends on some star, near ones hiding far ones, so the whole sky glows like the Sun."
+          },
+          {
+            "title": "Light has only had so long to travel",
+            "body": "The universe began 13.8 billion years ago, so starlight has had only that long to travel to us. The bubble is no edge: stars beyond it may be there, but their light is still on its way. Most sight lines cross the bubble without meeting a star, so the night stays dark."
+          },
+          {
+            "title": "A clue to a beginning",
+            "body": "So the dark night is a clue, not a proof, that the stars have not been shining forever. Stars also burn out, long before they could ever fill the sky with light. The oldest light still arrives, but the growing universe stretched it into microwaves we can't see."
+          }
+        ],
+        "mass": 0.07,
+        "distance": 1,
+        "ray_count": 3,
+        "show_reference": false,
+        "show_labels": true,
+        "accent": "gold",
+        "line_width": 2,
+        "duration": 40,
+        "takeaway": "The night is dark because the stars haven't shone long enough for their light to fill the sky.",
+        "controls": "first",
+        "kind": "night-sky"
+      },
+      "checks": [
+        {
+          "name": "Every shell of stars adds the same light, near or far",
+          "pass": true
+        },
+        {
+          "name": "Every shell covers the same share of the sky",
+          "pass": true
+        },
+        {
+          "name": "A shell twice as far holds four times the stars, each a quarter as bright",
+          "pass": true
+        },
+        {
+          "name": "Shells add up: the covered share is the sum of thin shells while it is small",
+          "pass": true
+        },
+        {
+          "name": "With stars forever and unchanging, every sight line ends on a star: the sky is as bright as a star\u2019s surface",
+          "pass": true
+        },
+        {
+          "name": "A sight line typically travels about 2 \u00d7 10^24 light-years before meeting a star",
+          "pass": true
+        },
+        {
+          "name": "That is over ten trillion times farther than light travels in 13.8 billion years",
+          "pass": true
+        },
+        {
+          "name": "Within 13.8 billion light-years, stars cover less than a ten-trillionth of the sky, but not none",
+          "pass": true
+        },
+        {
+          "name": "Even out to today\u2019s 46.5 billion light-years, they cover less than a ten-trillionth",
+          "pass": true
+        },
+        {
+          "name": "No time, no starlight: the slider\u2019s zero covers nothing",
+          "pass": true
+        },
+        {
+          "name": "The covered share grows with time and fills the sky after about 1e25 years",
+          "pass": true
+        },
+        {
+          "name": "The slider marks today at 13.8 billion years",
+          "pass": true
+        },
+        {
+          "name": "The half of the sky above you has room for about 92,000 Sun discs",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 9)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": false,
+      "physics_review": {
+        "pass": true,
+        "score": 8.5,
+        "summary": "The physics is sound as a teaching approximation. In the shell argument, four times as many stars each look a quarter as bright, so every shell adds the same light. Nearer stars blocking farther ones keeps the sky at the brightness of a star's surface instead of infinite brightness, and the narration says so. Finite age plus the limited lives of stars is correctly given as the main reason, and the bubble is correctly said not to be an edge. The scene calls the dark sky \"a clue, not a proof\", and describes the CMB as light stretched into microwaves. I recomputed the model numbers and they check out. With 10^22 Sun-sized stars inside 46.5 billion light-years, a sight line travels about 2.4 x 10^24 light-years before meeting a star. Stars then cover about 1 part in 180 trillion of the sky inside 13.8 billion light-years and about 1 part in 50 trillion out to 46.5 billion. The half of the sky above you holds about 92,000 Sun discs. The slider range also works: 0.07 is today, each 0.01 step multiplies by 1.5, and the top is about 10^26 years. The frames match the choreography. Chapter 1 shows the dashed ring on a dark patch. Chapter 2 blazes warm with the label \"as bright as the Sun\". In chapter 3 the bubble is centred on \"you\", streaks of light come from beyond it, and the sight lines end at the rim. In chapter 4 the wave fades from gold to red. Chapter 3 shows a few sight lines ending on stars inside the bubble, which overstates how much of the sky stars cover, but the brief asks for this and it reads clearly as an illustration. The remaining issues are honesty points from the brief that the subtitles leave out, plus minor wording. None of them is a physics error.",
+        "changes": [
+          "Chapter 3: say that every place has its own bubble. The brief requires this. Without it, a bubble centred on \"you\" and labelled \"13.8 billion light-years\" invites two misreadings: that we sit at the centre of the universe, and that the farthest things we see are 13.8 billion light-years away. Suggested second sentence: \"The bubble is no edge, and every place has its own: stars beyond it may be there, but their light is still on its way.\" Keep it under the reading-speed limit. If the details panel doesn't already say so, add there that those farthest places are now about 46 billion light-years away.",
+          "Chapter 4, last sentence: write \"expanding universe\" instead of \"growing universe\". \"Growing\" can suggest something swelling into surrounding space. If the timing allows, also say once that expansion is the smaller effect, for example \"Expansion helps a little too: it stretched the oldest light into microwaves we can't see.\" Otherwise make sure the details panel says it.",
+          "Chapter 1 has three subtitle sentences, but the brief specifies two, with the dashed ring arriving on the second. Either merge the first two sentences, or check that the \"dark between stars\" ring appears with the question \"Why is the sky between them dark?\" and not later.",
+          "Optional: chapter 2 says the sky \"glows like the Sun\" and the label reads \"as bright as the Sun\". If the details panel doesn't already say it, add \"as bright as the Sun's surface\" there so nobody reads it as the Sun's total light.",
+          "Optional: in the chapter 3 drawing, the streaks of light still on their way could be about as long as the bubble's radius. Light from every star has been travelling for the same time, which would make that point visible without adding labels."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8.2,
+        "summary": "The guide is clear, follows its choreography and works for beginners. Chapter 1 shows a real-looking night with \"you\" on the hill. The dashed ring labelled \"dark between stars\" arrives as the question is asked, so it makes the puzzle concrete. In chapter 2 the evenly spaced rings make \"stars everywhere, forever\" obvious, and the warm blaze with its single label \"as bright as the Sun\" lands hard. Chapter 3 is the strongest comparison in the guide: the stars inside the gold \"13.8 billion light-years\" bubble shine, and the stars beyond are faint marks whose light is drawn creeping inward (\"light still on its way\"). The sight lines fan out, a few end on stars inside the bubble, and the rest reach its edge with nothing behind. The subtitle says it is no edge, which is honest. Chapter 4 goes back to the landscape and ends on a dim red wiggly wave labelled \"oldest light\" / \"stretched out of sight\", which matches the last sentence about microwaves. Labels stay sparse: at most about 9 words, each next to the thing it names, and still legible on the phone view. The page top on phone reads well, and the why field states the stakes in plain words. The \"first\" slider (Age of the universe) is worth offering: it shows that the sky barely brightens until about 10^24 years, which playback cannot show. I could not check some steps because no sampled frame shows them: the \"nearer shell\" / \"more stars, each dimmer\" highlight, the chapter 2 sight lines before the blaze, the dusk-to-night change (the sky is already fully night at 0:05) and the wave turning from gold to red. The issues below are small wording fixes, not blockers.",
+        "changes": [
+          "beats[1].body sentence 3: \"near ones hiding far ones\" is compressed for a reader who is also watching the sight lines. Suggested: \"Every sight line ends on some star, with nearer stars blocking those behind, so the whole sky glows like the Sun.\"",
+          "beats[3].body last sentence: use \"expanding universe\" instead of \"growing universe\". \"Growing\" can suggest a universe with an outer edge that is getting bigger, which the guide avoids elsewhere. Suggested: \"The oldest light still arrives, but the expanding universe stretched it into microwaves we can't see.\"",
+          "beats[1].body sentence 2 (optional): the slice shows a ring twice as far with about twice as many stars, while the subtitle says four times. To keep the sentence true to the drawing without asking anyone to count, say \"A full shell twice as far holds four times as many stars, each a quarter as bright, so it adds the same light.\"",
+          "beats[0].body: the model specifies two sentences for chapter 1, but this beat has three. The question sentence works well with the dashed ring, so this is acceptable. If you want to match the spec, merge the last two: \"Why is the sky between them dark: is space empty, or are far stars too faint to matter?\"",
+          "Keep controls \"first\" and mass 0.07. The age slider adds intuition beyond playback, and distance is unused."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": false,
+        "score": 6.5,
+        "summary": "Why it matters: the black sky between the stars turns an everyday sight into a clue that the universe had a beginning. It replaces the old picture of endless stars that have always shone.\n\nTransfer answers, using only the guide:\nQ1 (move every star twice as far): Answered. In endless space every sight line still ends on some star. A shell twice as far holds four times as many stars, each a quarter as bright, so it adds the same light. The sky would still glow like the Sun.\nQ2 (dust soaks up the light): Not covered. The guide never mentions dust. It only appears in the objections list, which is not on screen.\nQ3 (universe 1,000 times older): Partly answered. More time lets light arrive from farther away, so more sight lines would end on a star. But the guide says stars burn out long before they could fill the sky, so no, it would not be as bright as the Sun. A beginner cannot tell whether 1,000 times is \"long enough\", but they would probably answer correctly.\nQ4 (are we at the centre, near the edge?): Half answered. The guide says \"the bubble is no edge\" and that stars beyond it may be there with their light still on its way. It never says that every place has its own bubble. The frames always put \"you\" at the centre of the bubble, which may suggest we really are at the centre.\nQ5 (the oldest light comes from every direction, so why is the sky not bright?): Answered. The growing universe stretched it into microwaves we can't see. The guide never says what \"the oldest light\" is, though.\n\nFrames: every frame matches its subtitle: the dusk sky, the \"dark between stars\" circle, the onion shells, the sky \"as bright as the Sun\", the 13.8 billion light-year bubble, the sight lines with \"light still on its way\", the plain sky for \"clue, not a proof\", and the wavy \"oldest light\". The phone view and the phone page top match too.\n\nVerdict: the main idea comes across clearly and the visuals are strong. It fails because a beginner cannot answer Q2 at all and can only half answer Q4, which is more than the one miss allowed. Smaller problems: \"bubble\" and \"oldest light\" are never introduced, and the screen label says light-years while the text says years.",
+        "changes": [
+          "beats[2].body sentence 1: 'bubble' is used in the next sentence without being introduced. Current: \"The universe began 13.8 billion years ago, so starlight has had only that long to travel to us.\" Replacement: \"The universe began 13.8 billion years ago, so only light from a bubble around us has arrived.\"",
+          "beats[2].body sentence 2: the centre objection and Q4 are left unanswered, and the frame always puts 'you' at the centre. Current: \"The bubble is no edge: stars beyond it may be there, but their light is still on its way.\" Replacement: \"Every place has such a bubble; it is no edge, and farther stars' light is still coming.\"",
+          "beats[0].body sentence 3: the dust objection and Q2 are never raised. Current: \"Most people say space is empty, or that far stars are too faint to matter.\" Replacement: \"Most say space is empty, far stars too faint, or dust hides them.\"",
+          "beats[1].body sentence 3: answers the dust point. It drops 'near ones hiding far ones', so keep that idea in the shells sentence or the visual. Current: \"Every sight line ends on some star, near ones hiding far ones, so the whole sky glows like the Sun.\" Replacement: \"Each sight line ends on a star, so the sky glows like the Sun; even dust would heat up and glow.\"",
+          "beats[3].body sentence 3: 'the oldest light' is never defined. Current: \"The oldest light still arrives, but the growing universe stretched it into microwaves we can't see.\" Replacement: \"Glow from the hot early universe still arrives, but growth stretched it into unseen microwaves.\"",
+          "Frame label at chapter 3: the label says '13.8 billion light-years' but the text says '13.8 billion years', and 'light-year' is never defined. Suggest that subtitle or a note say that a light-year is the distance light travels in a year.",
+          "Unanswered objections that could be addressed: the 'expansion is the main reason' objection; the 'Big Bang was an explosion at a point' reading of 'began'; the 46 billion light-year distance today. The 'just wait longer' objection is only implied, by 'Stars also burn out'.",
+          "subtitle, could be shorter. Current: \"The dark gaps between the stars show that starlight has only had a limited time to travel.\" Replacement: \"The dark gaps between stars show starlight has had only limited time to travel.\"",
+          "why line: 23 words, which is within the limit. No change needed."
+        ],
+        "blocking_issues": [
+          "Q2 (dust) is not covered anywhere in the guide text or on screen.",
+          "Q4 (centre of the universe) is only half answered: the guide never says that every place has its own bubble, and the visuals always put 'you' at its centre."
+        ]
+      },
+      "frames": [
+        "published/20261101T172324-12e71822/revision-1-0.png",
+        "published/20261101T172324-12e71822/revision-1-1.png",
+        "published/20261101T172324-12e71822/revision-1-2.png",
+        "published/20261101T172324-12e71822/revision-1-3.png",
+        "published/20261101T172324-12e71822/revision-1-4.png",
+        "published/20261101T172324-12e71822/revision-1-5.png",
+        "published/20261101T172324-12e71822/revision-1-6.png",
+        "published/20261101T172324-12e71822/revision-1-7.png",
+        "published/20261101T172324-12e71822/revision-1-8.png",
+        "published/20261101T172324-12e71822/revision-1-9.png"
+      ]
+    },
+    {
+      "number": 2,
+      "scene": {
+        "title": "Why is the night sky dark?",
+        "subtitle": "An endless sky of stars that had always shone would blaze like the Sun. The dark gaps between stars show that starlight has had only limited time to travel.",
+        "why": "Every clear night shows black sky between the stars. That darkness is a clue that the universe had a beginning.",
+        "beats": [
+          {
+            "title": "Black sky between the stars",
+            "body": "As night falls, thousands of stars come out, with black sky between them. Why is it dark there: is space empty, are far stars too faint, or does dust hide them?"
+          },
+          {
+            "title": "An endless sky of stars would blaze",
+            "body": "Imagine endless space evenly filled with stars that shine forever, in shells around you like onion layers. A full shell twice as far holds four times the stars, each a quarter as bright, so it adds the same light. Each sight line ends on its first star, so the sky blazes like the Sun; even dust would warm up and glow."
+          },
+          {
+            "title": "Light has only had so long to travel",
+            "body": "The universe began 13.8 billion years ago, so only starlight from this bubble has had time to reach us. It is no edge, and every place has its own; light from stars beyond it is still on its way. Most sight lines cross the bubble without meeting a star, so the night stays dark."
+          },
+          {
+            "title": "A clue to a beginning",
+            "body": "So the dark night is one clue, not a proof, that the stars have not been shining forever. Stars also burn out long before they could fill the sky, so waiting longer would not help. Expanding space helps a little: it stretched the glow of the hot young universe into microwaves we can't see."
+          }
+        ],
+        "mass": 0.07,
+        "distance": 1,
+        "ray_count": 3,
+        "show_reference": false,
+        "show_labels": true,
+        "accent": "gold",
+        "line_width": 2,
+        "duration": 40,
+        "takeaway": "The night is dark because the stars haven't shone long enough for their light to fill the sky.",
+        "controls": "first",
+        "kind": "night-sky"
+      },
+      "checks": [
+        {
+          "name": "Every shell of stars adds the same light, near or far",
+          "pass": true
+        },
+        {
+          "name": "Every shell covers the same share of the sky",
+          "pass": true
+        },
+        {
+          "name": "A shell twice as far holds four times the stars, each a quarter as bright",
+          "pass": true
+        },
+        {
+          "name": "Shells add up: the covered share is the sum of thin shells while it is small",
+          "pass": true
+        },
+        {
+          "name": "With stars forever and unchanging, every sight line ends on a star: the sky is as bright as a star\u2019s surface",
+          "pass": true
+        },
+        {
+          "name": "A sight line typically travels about 2 \u00d7 10^24 light-years before meeting a star",
+          "pass": true
+        },
+        {
+          "name": "That is over ten trillion times farther than light travels in 13.8 billion years",
+          "pass": true
+        },
+        {
+          "name": "Within 13.8 billion light-years, stars cover less than a ten-trillionth of the sky, but not none",
+          "pass": true
+        },
+        {
+          "name": "Even out to today\u2019s 46.5 billion light-years, they cover less than a ten-trillionth",
+          "pass": true
+        },
+        {
+          "name": "No time, no starlight: the slider\u2019s zero covers nothing",
+          "pass": true
+        },
+        {
+          "name": "The covered share grows with time and fills the sky after about 1e25 years",
+          "pass": true
+        },
+        {
+          "name": "The slider marks today at 13.8 billion years",
+          "pass": true
+        },
+        {
+          "name": "The half of the sky above you has room for about 92,000 Sun discs",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 5.2 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 9)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8.3,
+        "summary": "This works as a teaching approximation and passes. The shell argument is right: a full shell twice as far holds four times the stars, each a quarter as bright. That is clearly kept apart from the ring-only slice drawing. The blaze comes from sight lines ending on stars and is limited to the Sun's surface brightness, not infinite brightness. The main cause is finite age plus the limited lives of stars, and expansion is correctly called the smaller effect. The scene says \"one clue, not a proof\". It avoids an edge or a centre (\"It is no edge, and every place has its own\") and never calls the beginning an explosion. The oldest-light sentence correctly says expansion stretched it into microwaves.\n\nThe four frames match the choreography:\n- Chapter 1: a ring around an empty patch, labelled \"dark between stars\".\n- Chapter 2: a warm-white sky labelled \"as bright as the Sun\".\n- Chapter 3: a bubble labelled \"13.8 billion light-years\". Light from outer stars is shown creeping inward, and most sight lines end at the bubble edge without meeting a star.\n- Chapter 4: a red wave labelled \"oldest light\" / \"stretched out of sight\" reaching \"you\".\n\nThe chapter 4 line about stars burning out matches the slider model (an unchanging universe that only fills after about 10^24 years) and the \"try\" text. The labels are all listed in the model notes.\n\nThere are no blocking problems. A few gaps are worth fixing: the 46-billion-light-year point is missing, the dust objection is very compressed, and the subtitle overstates the conclusion a little.",
+        "changes": [
+          "Mention the 46-billion-light-year distance somewhere the viewer reads it, at least in the investigation details and ideally in the chapter 3 text. Example: '13.8 billion light-years is how far that light travelled; space has stretched since, so those places are now about 46 billion light-years away.' The model notes ask for this, and the research lists '13.8 billion light-years is the farthest we see' as a misconception. A bubble labelled with that number with no explanation could encourage it.",
+          "Make the dust clause in beat 2 spell out the full reasoning, for example 'even dust would absorb the light, warm up and glow as brightly.' Right now 'even dust would warm up and glow' leaves out why that makes dust fail as an explanation.",
+          "Soften the scene subtitle from 'The dark gaps between stars show that starlight has had only limited time to travel' to 'suggest' or 'are a clue that'. That matches the 'one clue, not a proof' wording used everywhere else.",
+          "Optional: in beat 3, say outright that light takes time to travel, for example 'The universe began 13.8 billion years ago and light takes time to travel, so...'. The brief asks for this, and beginners may not infer it from 'has had time to reach us'.",
+          "Optional: make sure the readout or details text for the 'Age of the universe' slider says it models an unchanging universe whose stars shine forever. Otherwise viewers may take the fill at 10^24 years as a real prediction, which beat 4 says it is not."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "I looked at the ten frames supplied. They are stills, so they show what is on stage at each moment but not whether the motion is smooth. The guide passes, with no blockers: the visuals are clear and build in order, and the open questions are dense wording in a few subtitles.\n\nChapter 1: Dusk turns to night correctly. Late in the chapter a dashed ring and the label \"dark between stars\" mark a dark patch, and the subtitle refers to it as \"there\", which works. The chapter's questions (empty space, faint stars, dust) set up the three wrong ideas well.\n\nChapter 2: The rings of stars spread out to the edge of the stage, and the farther rings visibly hold more stars. The warm-white blaze is striking, and its label \"as bright as the Sun\" is easy to read on the cream sky. The sampled frames did not include the moment the nearer and farther rings are highlighted, or the sight lines.\n\nChapter 3: The comparison works well. The gold bubble shows bright stars inside it and faint marks outside. Lines of light from beyond creep inward. Sight lines fan out from you, and most reach no star. At most 9 label words are on stage at once, which is within the limit. The late frame is moderately busy (sight lines, incoming light, hollow star marks, rings), but everything in it was introduced by a subtitle. One incoming light line passes close to the \"13.8 billion light-years\" label.\n\nChapter 4: The rings fade back to the landscape as described. The \"oldest light\" wave runs from high in the sky down to you, with \"oldest light\" at the top and \"stretched out of sight\" at the bottom. In the late frame the wave is a faint red along its whole length, so the change from gold to red cannot be confirmed from stills.\n\nPhone views: The last chapter fits on screen, and its subtitle wraps to four lines, which is still readable. The page top shows the title, the why text and the stage cleanly.\n\nThe why text gives a beginner a good reason to care. The ideas used later (shells, sight lines, the bubble, microwaves) are each introduced by a subtitle as they appear. The \"Age of the universe\" slider is a good choice: it shows that the starlit share barely moves for a very long time, which playback cannot show.\n\nWeak points in the subtitles:\n- **Chapter 2, sentence 3:** \"even dust would warm up and glow\" is tacked onto a sentence about something else, and nothing on stage shows dust.\n- **Chapter 3, sentence 2:** it leads with an idea that is not on stage (\"It is no edge, and every place has its own\"). The part the stage actually shows (light still on its way) comes after a semicolon, and \"its own\" leaves the reader guessing \"its own what?\".\n- **Chapter 4, last sentence:** \"helps a little\" does not say what expansion helps with, and the sentence never names the cosmic microwave background, which the design brief asked for.\n\nScientific honesty is mostly respected: the guide says the bubble is not an edge and calls the dark sky \"one clue, not a proof\". The subtitles never mention that the farthest places we see are now about 46 billion light-years away. A viewer could therefore read the label \"13.8 billion light-years\" as the present distance to the farthest things we see.",
+        "changes": [
+          "Rewrite chapter 2, sentence 3 so the dust point reads as its own clear reason and stays in the 'what if' mood, for example: \"Every sight line would end on a star, so the whole sky would blaze like the Sun, and dust in the way would just heat up and glow too.\"",
+          "Reorder chapter 3, sentence 2 so it opens with what the stage shows while the incoming light is moving: \"Light from stars beyond it is still on its way, and the bubble is no edge: every place has its own.\"",
+          "Optionally add to chapter 3, sentence 1 or 2 that the farthest places we see are now about 46 billion light-years away. This stops viewers taking the label '13.8 billion light-years' as today's distance. Keep within the 15 characters-per-second reading limit, for example by shortening other wording.",
+          "Rewrite chapter 4's last sentence to say what expansion does and to name the microwave glow: \"Expanding space also darkens the sky a little: it stretched the oldest light into microwaves we can't see, the cosmic microwave background.\"",
+          "Optionally link chapter 4, sentence 2 to the slider: \"Stars also burn out long before they could fill the sky, so waiting longer would not help.\" It is fine as written, but it is currently paired with an unchanging stage. Keep it short.",
+          "Keep controls set to 'first' and mass at 0.07. The 'Age of the universe' slider adds intuition that playback does not show."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Why it matters: the black sky between the stars tells us the stars have not been shining forever in endless space, and it was an everyday clue that the universe had a beginning.\n\nTransfer answers, using only the guide:\n1) Moving every star twice as far away would not darken the sky. A shell of stars twice as far away holds four times as many stars, each a quarter as bright, so every shell adds the same light. In endless space every line of sight still ends on a star, so the sky would still blaze like the Sun.\n2) The dust idea fails because, over endless time, the dust would soak up starlight, warm up and glow too (\"even dust would warm up and glow\").\n3) No. Stars burn out long before they could fill the sky, so a longer wait would not help.\n4) No. The bubble is no edge. Every place has its own bubble, and light from stars beyond ours is still on its way.\n5) Expanding space stretched the glow of the hot young universe into microwaves we can't see. The frame's \"oldest light ... stretched out of sight\" makes the link clear.\n\nAll five can be answered from the guide.\n\nFrames and subtitles: every frame matches its subtitle. The marked dark gap, the onion-layer shells, the sky glowing \"as bright as the Sun\", the 13.8-billion-light-year bubble with \"light still on its way\", the return to the night sky, and the wavy \"oldest light\" line all fit, and the phone views do too.\n\nGaps: the guide never says what a light-year is. The bubble's label could make a beginner think the farthest objects are 13.8 billion light-years away now; the guide doesn't give the present distance of about 46 billion light-years. Nothing explains that \"began\" does not mean an explosion at one point. None of these blocks the main idea.",
+        "changes": [
+          "Undefined word: the on-screen bubble label in beat 3 reads \"13.8 billion light-years\", but 'light-year' is never explained. Replace the label with \"light's reach so far\" (shorter), or define the term in the body.",
+          "Unanswered objection, beat 3 body: the label could suggest the farthest things are 13.8 billion light-years away now, and the guide never gives the present distance of about 46 billion. Current: \"It is no edge, and every place has its own; light from stars beyond it is still on its way.\" Replacement: \"It is no edge; every place has its own bubble, and farther light is still coming.\" The space this saves could carry a short note on the 46 billion light-years.",
+          "Hard to follow on one read, beat 3 body: in \"every place has its own\", the reader can't tell what 'its own' refers to. Current: \"It is no edge, and every place has its own; light from stars beyond it is still on its way.\" Replacement: \"It is not an edge: every place has its own bubble, and farther light is still coming.\"",
+          "Shorter, beat 2 body: 'full' adds nothing. Current: \"A full shell twice as far holds four times the stars, each a quarter as bright, so it adds the same light.\" Replacement: \"A shell twice as far holds four times the stars, each a quarter as bright, so it adds the same light.\"",
+          "Hard to follow, beat 4 body: 'helps' does not say what it helps with. Current: \"Expanding space helps a little: it stretched the glow of the hot young universe into microwaves we can't see.\" Replacement: \"Expanding space keeps it darker too: it stretched the young universe's hot glow into invisible microwaves.\"",
+          "Unanswered objection, beat 3 body: 'The universe began' may suggest an explosion at a point. Current: \"The universe began 13.8 billion years ago, so only starlight from this bubble has had time to reach us.\" Replacement: \"Everywhere began hot and dense 13.8 billion years ago, so only light from this bubble has reached us.\"",
+          "Takeaway: it leaves out star lifetimes, which question 3 depends on. Current: \"The night is dark because the stars haven't shone long enough for their light to fill the sky.\" Replacement: \"Stars haven't shone long enough, and can't live long enough, to fill the sky with light.\""
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261101T172324-12e71822/revision-2-0.png",
+        "published/20261101T172324-12e71822/revision-2-1.png",
+        "published/20261101T172324-12e71822/revision-2-2.png",
+        "published/20261101T172324-12e71822/revision-2-3.png",
+        "published/20261101T172324-12e71822/revision-2-4.png",
+        "published/20261101T172324-12e71822/revision-2-5.png",
+        "published/20261101T172324-12e71822/revision-2-6.png",
+        "published/20261101T172324-12e71822/revision-2-7.png",
+        "published/20261101T172324-12e71822/revision-2-8.png",
+        "published/20261101T172324-12e71822/revision-2-9.png"
+      ]
+    }
+  ]
+}
