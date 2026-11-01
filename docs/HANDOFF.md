@@ -10,8 +10,8 @@ The user is cost-sensitive and prefers existing Claude Code/Codex CLI authentica
 
 ## Repository and hosting
 
-- Repository: https://github.com/eman2XR/the-council
-- Website: https://eman2xr.github.io/the-council/
+- Repository: https://github.com/eman2XR/intuition-lab (renamed from `the-council` on 2026-11-01; GitHub redirects the old repository address)
+- Website: https://eman2xr.github.io/intuition-lab/ (the old `/the-council/` address no longer works: GitHub Pages does not redirect it)
 - Branch: `main`; remote: `origin`.
 - GitHub Pages uses GitHub Actions. The existing deployed demo succeeded in run `40447395106`.
 - GitHub CLI personal account: `eman2XR`. This repository has a local credential helper using `gh auth git-credential` and an explicit personal username. Do not replace global work-account settings.
@@ -247,3 +247,7 @@ At the owner's request the home page follows a magazine layout (after Quanta's):
 - Owner rules: never say a picture is not to scale (removed from engines and agent notes; `lab/topics.py` tells the agents); no "By Intuition Lab" bylines.
 - The six older drafts were prepared for publication at the owner's request: real slider effects (`effect`) so the render checks pass, chapters cut to three sentences, research notes with retrieved sources.
 - 2026-11-01 9 AM run (night-sky) stopped at the designer: "Design brief exceeds its bounds" (the prompt never stated the limits). Now the designer prompt states them and `DESIGN_LIMITS` in `lab/contracts.py` has headroom. The planner retries a question whose attempt stopped with an error before review (`attempted`, `retry_order` in `lab/daily.py`: once more, most recent early stop first; after two early stops it rests), so tomorrow's run retries 6.1 night-sky, then 2.4 and 2.1. Not yet fixed: the worker's inbox (`gh`) fails under launchd ("Inbox unavailable (CalledProcessError)"), so owner notes and picks are not read.
+
+### Repository renamed to intuition-lab (2026-11-01)
+
+At the owner's request the GitHub repository is now `eman2XR/intuition-lab` and the site is `https://eman2xr.github.io/intuition-lab/`. Updated: both checkouts' `origin` remotes (this one and `~/Projects/the-council-worker`), `SITE` in `lab/daily.py`, `REPO` in `lab/inbox.py` and `web/app.js`, the source fetcher's User-Agent, the README. Unchanged on purpose: the `council:` issue labels, browser storage keys, the launch agent `org.the-council.daily`, the worker folder and the local folder names.

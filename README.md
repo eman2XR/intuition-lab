@@ -1,6 +1,6 @@
 # Intuition Lab
 
-**[Open the live website →](https://eman2xr.github.io/the-council/)**
+**[Open the live website →](https://eman2xr.github.io/intuition-lab/)**
 
 The website hosts accepted interactive investigations and a labeled offline example. A local daily runner can select questions, research them, revise their visuals, and push accepted guides to GitHub Pages.
 

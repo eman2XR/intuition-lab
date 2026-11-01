@@ -14,7 +14,7 @@ from .topics import TOPICS, READY
 from .dashboard import Dashboard
 from . import inbox
 
-SITE = 'https://eman2xr.github.io/the-council/'
+SITE = 'https://eman2xr.github.io/intuition-lab/'
 
 def plan_schema(models):
     return obj({'topic':{'type':'string','enum':list(models)}, 'question':{'type':'string','maxLength':180}, 'reason':{'type':'string','maxLength':1000}, 'request':{'type':'integer'}})

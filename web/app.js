@@ -428,7 +428,7 @@ if(labCanvas){
 refreshDashboard();setInterval(refreshDashboard,60000);setInterval(()=>{renderNext();renderPath();},30000);
 
 /* The path: the curriculum, with requests sent as GitHub issues the morning worker reads. */
-const REPO='https://github.com/eman2XR/the-council';
+const REPO='https://github.com/eman2XR/intuition-lab';
 const OWNER='eman2XR';
 let curriculum=null, picks=new Map();
 const norm=s=>(s||'').toLowerCase().replace(/\W+/g,'');

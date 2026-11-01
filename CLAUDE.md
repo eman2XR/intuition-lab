@@ -2,7 +2,7 @@
 
 Read `docs/HANDOFF.md` first, then `README.md`. Inspect `git status` before editing: ongoing work may be uncommitted. Do not discard local changes or delete run history to bypass daily budgets.
 
-The product is a visual physics research lab, not the historical persona debate in `council.py`. Prioritize intuitive interactive visuals, actual browser captures, bounded revision, and honest scientific status. Keep the name **Intuition Lab** (renamed from The Council on 2026-10-29; the repository and site address keep the old name).
+The product is a visual physics research lab, not the historical persona debate in `council.py`. Prioritize intuitive interactive visuals, actual browser captures, bounded revision, and honest scientific status. Keep the name **Intuition Lab** (renamed from The Council on 2026-10-29; the repository and site became `intuition-lab` on 2026-11-01, while the `council:` issue labels, browser storage keys, the launch agent `org.the-council.daily` and the worker folder keep the old names).
 
 The coordinator owns writes, validation, scheduling and publication. Models return structured data. Support both Claude Code and Codex using their existing authentication; direct OpenAI API is optional. Preserve organization-managed CLI settings. Never bypass tool permissions or extract credentials.
 

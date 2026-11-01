@@ -48,7 +48,7 @@ def fetch(url, opener=urllib.request.urlopen, timeout=15):
     """Return (title, text) for an HTML or plain-text page, or None if it cannot be read."""
     if not re.fullmatch(r'https://[^\s<>"]{4,300}', url):
         return None
-    request = urllib.request.Request(url, headers={'User-Agent': 'TheCouncil/1.0 (educational research; github.com/eman2XR/the-council)'})
+    request = urllib.request.Request(url, headers={'User-Agent': 'IntuitionLab/1.0 (educational research; github.com/eman2XR/intuition-lab)'})
     try:
         with opener(request, timeout=timeout) as response:
             kind = response.headers.get('Content-Type', '')
