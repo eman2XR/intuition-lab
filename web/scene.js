@@ -1586,8 +1586,9 @@ function bdayPlan(st){
  if(st.live){const n=Math.max(1,Math.round(1+59*clamp(st.mass)));return {mode:'live',n,arrived:n,pairs:n*(n-1)/2,you:0,t:st.t||0};}
  // 1: 23 people; with the first sentence the 22 chances that someone shares your birthday, one line each.
  if(st.stage===0)return {mode:'you',n:23,arrived:23,pairs:0,you:clamp((t-at(0)-1.2)/2)*22,t};
- // 2: every pair is a chance: all 253 lines, then the count with the second sentence.
- if(st.stage===1)return {mode:'pairs',n:23,arrived:23,pairs:22+clamp((t-at(0)-1)/3.5)*231,you:22,count:smooth((t-at(1)-.2)/.5),t};
+ // 2: every pair is a chance: all 253 lines, then with the second sentence the count, and with the third the chance
+ // that any two match.
+ if(st.stage===1){const count=smooth((t-at(1)-.2)/.5);return {mode:'pairs',n:23,arrived:23,pairs:22+clamp((t-at(0)-1)/3.5)*231,you:22,count,odds:lines.length>2?smooth((t-at(2)-.2)/.5):count,t};}
  // 3: people arrive one at a time through both sentences, each with lines to everyone already there, while the
  // chance of a shared birthday grows.
  if(st.stage===2){const a=1+clamp((t-at(0)-1)/Math.max(3,last+1.5-at(0)-1))*22;return {mode:'arrive',n:23,arrived:a,pairs:null,you:0,bar:1,t};}
@@ -1604,7 +1605,7 @@ function drawBirthdays(ctx,w,h,spec,st){
  const base=Math.floor(N+1e-9), part=N-base, pos=k=>{const ang=n=>-Math.PI/2+TAU*k/n, a=part>1e-9&&k<base?ang(base)+(ang(base+1)-ang(base))*part:ang(part>1e-9?base+1:base);
   return [cx+R*Math.cos(a),cy+R*Math.sin(a)];};
  const arrived=plan.arrived, newest=Math.ceil(arrived-1e-9)-1, fresh=arrived-newest;
- const lineA=whole>30?.045:whole>23?.08:.13;
+ const lineA=whole>30?.075:whole>23?.1:.13;
  // Lines between pairs. While people arrive, a newcomer's lines to everyone already there light up, then settle.
  ctx.lineWidth=whole>30?(small?.5:.7):small?.8:1;
  if(plan.mode==='you'||plan.mode==='pairs'){const total=plan.mode==='you'?Math.ceil(plan.you-1e-9):Math.ceil(plan.pairs-1e-9);let k=0;
@@ -1613,27 +1614,32 @@ function drawBirthdays(ctx,w,h,spec,st){
  else{const upto=Math.min(whole,Math.ceil(arrived-1e-9));
   for(let i=0;i<upto;i++)for(let j=i+1;j<upto;j++){const [x1,y1]=pos(i),[x2,y2]=pos(j), lit=plan.mode==='arrive'&&j===newest?.5*(1-smooth(fresh*1.2))+lineA:lineA;
    const grow=j===newest&&plan.mode!=='live'&&plan.mode!=='thumb'?clamp(fresh*2.5):1;trace(ctx,[[x1,y1],[x1+(x2-x1)*grow,y1+(y2-y1)*grow]]);ctx.strokeStyle=rgba(accent,lit);ctx.stroke();}}
- // People: dark dots; not yet arrived, faint; you, in blue.
+ // People: dark dots; not yet arrived, faint; you, in blue, while the chapters are about your own birthday.
+ const youShown=plan.mode==='you'||plan.mode==='pairs';
  for(let k=0;k<whole;k++){const [x,y]=pos(k), here=plan.mode==='arrive'?clamp(arrived-k):plan.mode==='more'?clamp(arrived-k):1;
   ctx.beginPath();ctx.arc(x,y,(small?3.6:5)*(k===0&&plan.mode==='you'?1.35:1),0,TAU);
-  ctx.fillStyle=k===0&&here>=1?accent:here>=1?'rgba(20,23,28,.72)':`rgba(20,23,28,${.16+.56*here})`;ctx.fill();}
+  ctx.fillStyle=k===0&&youShown&&here>=1?accent:here>=1?'rgba(20,23,28,.72)':`rgba(20,23,28,${.16+.56*here})`;ctx.fill();}
  const people=Math.min(whole,Math.ceil(arrived-1e-9)), pairs=people*(people-1)/2;
  if(st.labels){
   if(plan.mode==='you'||plan.mode==='pairs'){const [x,y]=pos(0);text(ctx,'you',x,y-(small?12:15),{align:'center',size,weight:700,color:accent});}
   const centre=plan.mode==='you'?(plan.you>21.5?'22 pairs with you':''):plan.mode==='pairs'?(plan.count>.5?'253 pairs':''):`${pairs.toLocaleString('en-US')} pair${pairs===1?'':'s'}`;
   if(centre)pill(ctx,centre,cx,cy,{align:'center',size:size+1,weight:700,color:plan.mode==='you'?accent:ink});}
- // Two chances side by side: that someone shares your own birthday, and that any two people match. Each bar has a
- // mark at one half.
+ // Two chances: that someone shares your own birthday, while the chapters are about you, and that any two people
+ // match, which fades in with the pair count in chapter 2 and stays on its own afterwards. Each bar has a mark at one
+ // half.
  const mine=plan.mode==='you'?1-Math.pow(364/365,Math.min(22,plan.you)):Physics.birthdayMine(people), shared=Physics.birthdayShared(people);
- const both=plan.mode!=='you'&&plan.mode!=='pairs';
- const bx=small?w*.1:w*.62, bw=small?w*.7:w*.29, bh=small?11:15, rows=[[mine,'shares your birthday',small?h*.7:h*.4,accent,true],[shared,'any two match',small?h*.85:h*.6,gold,both]];
- for(const [v,name,by,color,show] of rows){if(!show)continue;
+ const anyShow=plan.mode==='you'?0:plan.mode==='pairs'?plan.odds:1;
+ const bx=small?w*.1:w*.62, bw=small?w*.7:w*.29, bh=small?11:15, rows=[[mine,'shares your birthday',small?h*.7:h*.4,accent,youShown?1:0],[shared,'any two match',small?h*.85:h*.6,gold,anyShow]];
+ for(const [v,name,by,color,show] of rows){if(show<=0)continue;
+  ctx.save();ctx.globalAlpha=show;
   ctx.fillStyle='rgba(20,23,28,.08)';ctx.beginPath();ctx.roundRect(bx,by-bh/2,bw,bh,bh/2);ctx.fill();
   if(v>0){ctx.fillStyle=rgba(color,.85);ctx.beginPath();ctx.roundRect(bx,by-bh/2,Math.max(bh,bw*v),bh,bh/2);ctx.fill();}
   trace(ctx,[[bx+bw/2,by-bh/2-4],[bx+bw/2,by+bh/2+4]]);ctx.strokeStyle='rgba(20,23,28,.5)';ctx.lineWidth=1.3;ctx.stroke();
-  if(st.labels){text(ctx,name,bx,by-bh/2-(small?10:13),{size,weight:700,color:ink});
-   text(ctx,v<.995?Math.round(v*100)+'%':(v*100).toFixed(1)+'%',bx+bw+(small?8:12),by,{size:size+1,weight:700,color});}}
- if(st.labels)text(ctx,'half',bx+bw/2,rows[both?1:0][2]+bh/2+(small?11:14),{align:'center',size:size-1,weight:600,color:muted});
+  if(st.labels&&show>.5){text(ctx,name,bx,by-bh/2-(small?10:13),{size,weight:700,color:ink});
+   text(ctx,v<.995?Math.round(v*100)+'%':(v*100).toFixed(1)+'%',bx+bw+(small?8:12),by,{size:size+1,weight:700,color});}
+  ctx.restore();}
+ const lowest=anyShow>.5?rows[1]:rows[0];
+ if(st.labels&&(anyShow>.5||youShown))text(ctx,'half',bx+bw/2,lowest[2]+bh/2+(small?11:14),{align:'center',size:size-1,weight:600,color:muted});
 }
 
 // Why the sky is blue and sunsets are red. With no air, as on the Moon, the daytime sky is black. Light is a wave that
@@ -1651,8 +1657,8 @@ function skyPlan(st){
  // 1: no air, as on the Moon: a black sky. With the second sentence the air arrives and the sky turns blue.
  if(st.stage===0)return {mode:'air',air:smooth((t-at(1)-.3)/1.5),t};
  // 2: one molecule, magnified, in red light and in blue light; the blue one sends out far more, labelled with the
- // second sentence.
- if(st.stage===1)return {mode:'shake',more:smooth((t-at(1)-.6)/.5),t};
+ // sentence that says so (the last one).
+ if(st.stage===1)return {mode:'shake',more:smooth((t-at(Math.max(1,lines.length-1))-.6)/.5),t};
  // 3: sunlight crosses the sky and the air sends blue off in all directions; with the second sentence, lines show
  // blue reaching your eyes from all over the sky.
  if(st.stage===2)return {mode:'scatter',air:1,eye:clamp((t-at(1)-.4)/2.4),t};
@@ -1690,7 +1696,7 @@ function drawSky(ctx,w,h,spec,st){
    ctx.beginPath();ctx.arc(mx,y,small?2.6:3.4,0,TAU);ctx.fillStyle='rgba(20,23,28,.75)';ctx.fill();
    if(st.labels)text(ctx,name,x0,y-h*.13,{size,weight:700,color});}
   if(st.labels){text(ctx,'one molecule, magnified',w/2,h*.07,{align:'center',size,weight:700,color:muted});
-   if(plan.more>.5)pill(ctx,'scatters about 6× more',mx+(small?30:70),lanes[1][2]-h*.12,{size:size+1,weight:700,color:blue});}
+   if(plan.more>.5)pill(ctx,'sends out about 6× more',mx+(small?30:70),lanes[1][2]-h*.12,{size:size+1,weight:700,color:blue});}
   return;
  }
  if(plan.mode==='sunset'||plan.mode==='live'){
@@ -1704,10 +1710,10 @@ function drawSky(ctx,w,h,spec,st){
   const ray=(e,show,tint,label)=>{if(show<=0)return;const {d,L}=path(e), m=Physics.skyAirMass(e), sx=ox+d[0]*(L+gapOut), sy=oy+d[1]*(L+gapOut), ex=ox+d[0]*L, ey=oy+d[1]*L;
    // From the Sun to the edge of the air the light is unchanged; inside the air its colour follows the air crossed.
    const steps=24, upto=show;
-   ctx.lineWidth=small?3:4;ctx.lineCap='round';
+   ctx.lineWidth=small?4:6;ctx.lineCap='round';
    const inside=clamp(upto*2-1), tip=[ex-d[0]*L*inside,ey-d[1]*L*inside];
-   trace(ctx,[[sx,sy],[sx+(ex-sx)*Math.min(1,upto*2),sy+(ey-sy)*Math.min(1,upto*2)],...(inside>0?[tip]:[])]);ctx.strokeStyle='rgba(20,23,28,.16)';ctx.lineWidth=(small?3:4)+3;ctx.stroke();
-   trace(ctx,[[sx,sy],[sx+(ex-sx)*Math.min(1,upto*2),sy+(ey-sy)*Math.min(1,upto*2)]]);ctx.strokeStyle='rgba(255,252,240,.98)';ctx.lineWidth=small?3:4;ctx.stroke();
+   trace(ctx,[[sx,sy],[sx+(ex-sx)*Math.min(1,upto*2),sy+(ey-sy)*Math.min(1,upto*2)],...(inside>0?[tip]:[])]);ctx.strokeStyle='rgba(20,23,28,.16)';ctx.lineWidth=(small?4:6)+3;ctx.stroke();
+   trace(ctx,[[sx,sy],[sx+(ex-sx)*Math.min(1,upto*2),sy+(ey-sy)*Math.min(1,upto*2)]]);ctx.strokeStyle='rgba(255,252,240,.98)';ctx.lineWidth=small?4:6;ctx.stroke();
    for(let i=0;i<steps*inside;i++){const f0=i/steps, f1=Math.min(inside,(i+1)/steps), [r,g,b]=skyLight(m*(tint?f1:0));
     trace(ctx,[[ex-d[0]*L*f0,ey-d[1]*L*f0],[ex-d[0]*L*f1,ey-d[1]*L*f1]]);ctx.strokeStyle=`rgb(${r},${g},${b})`;ctx.stroke();}
    // The Sun itself, in space, gives out white light; only the light that crosses the air changes colour.
@@ -1723,7 +1729,7 @@ function drawSky(ctx,w,h,spec,st){
   else{ray(90,plan.noon,plan.tint,'noon');ray(0,plan.dusk*1.0001,plan.tint,'sunset');}
   drawPerson(ctx,ox,oy,small?5:7,'#14171c');
   if(st.labels){text(ctx,'you',ox+(small?10:14),oy-(small?6:9),{size,weight:700,color:ink});
-   text(ctx,'air, drawn thicker',small?w-6:ox+120,small?oy-H*.1:oy-H*.5,{align:small?'right':'left',size:size-1,weight:600,color:muted});}
+   text(ctx,'air, not to scale',small?w-6:ox+120,small?oy-H*.1:oy-H*.5,{align:small?'right':'left',size:size-1,weight:600,color:muted});}
   return;
  }
  // The sky: a window onto the daytime sky above the ground, with the Sun at the upper left and you on the ground.
@@ -1738,22 +1744,26 @@ function drawSky(ctx,w,h,spec,st){
  ctx.beginPath();ctx.arc(sx,sy,R,0,TAU);ctx.fillStyle='#fffaf0';ctx.fill();
  const px=wx+ww*(small?.66:.62), eyeY=ground-(small?14:20);
  if(plan.mode==='scatter'||plan.mode==='thumb'){
-  // Sunlight fills the whole sky, drawn as parallel rays from the Sun's direction; everywhere the air sends a little
-  // blue off in every direction, drawn as small rings.
+  // Sunlight fills the whole sky, drawn as parallel rays from the Sun's direction. All along each ray the air bounces
+  // a little blue off in every direction, drawn as small blue rings growing out of the rays.
   const ang=Math.atan2(eyeY-sy,px-sx), dir=[Math.cos(ang),Math.sin(ang)], nrm=[-dir[1],dir[0]], span=Math.hypot(ww,wh);
   ctx.save();ctx.beginPath();ctx.rect(wx,wy,ww,ground-wy);ctx.clip();
-  for(let k=0;k<9;k++){const o=(k/8-.15)*span*.7, x0=sx+nrm[0]*o, y0=sy+nrm[1]*o;
+  const rays=[];for(let k=0;k<9;k++){const o=(k/8-.4)*span*.75;rays.push([sx+nrm[0]*o,sy+nrm[1]*o]);}
+  for(const [x0,y0] of rays){
    trace(ctx,[[x0-dir[0]*span,y0-dir[1]*span],[x0+dir[0]*span,y0+dir[1]*span]]);ctx.strokeStyle='rgba(255,250,230,.55)';ctx.lineWidth=small?1.6:2.4;ctx.stroke();}
-  const spot=(u,v)=>[wx+ww*(.04+.92*u),wy+(ground-wy)*(.06+.86*v)];
-  for(const [u,v,z] of SKY_DOTS.slice(0,70)){const [x,y]=spot(u,v), age=(T*.45+z)%1, r=age*(small?9:14);
-   ctx.beginPath();ctx.arc(x,y,Math.max(.5,r),0,TAU);ctx.strokeStyle=`rgba(37,99,235,${.6*(1-age)})`;ctx.lineWidth=1.2;ctx.stroke();}
+  // Ring centres sit on the rays, at fixed scattered places inside the window above the ground.
+  const inside=([x,y])=>x>wx+8&&x<wx+ww-8&&y>wy+8&&y<ground-10;
+  const spots=SKY_DOTS.map(([u,v,z],i)=>{const [x0,y0]=rays[i%9], s=(u-.5)*span;return [x0+dir[0]*s,y0+dir[1]*s,z];}).filter(inside).slice(0,30);
+  for(const [x,y,z] of spots){const age=(T*.45+z)%1, r=age*(small?9:14);
+   ctx.beginPath();ctx.arc(x,y,Math.max(.5,r),0,TAU);ctx.strokeStyle=`rgba(37,99,235,${.75*(1-age)})`;ctx.lineWidth=1.4;ctx.stroke();}
   ctx.restore();
-  // Lines from all over the sky to your eye: blue arrives from every direction.
-  if(plan.eye>0)SKY_DOTS.slice(0,40).filter(([u,v])=>v<.7).slice(0,9).forEach(([u,v],i)=>{const show=clamp(plan.eye*9-i);if(show<=0)return;
-   const [qx,qy]=spot(u,v), ex=qx+(px-qx)*show, ey=qy+(eyeY-qy)*show;
+  // Dashed lines from places on the rays spread across the sky to your eye: bounced blue arrives from every part of it.
+  const high=spots.filter(([x,y])=>y<ground-(ground-wy)*.25).sort((a,b)=>a[0]-b[0]), from=high.length>9?Array.from({length:9},(_,i)=>high[Math.round(i*(high.length-1)/8)]):high;
+  if(plan.eye>0)from.forEach(([qx,qy],i)=>{const show=clamp(plan.eye*9-i);if(show<=0)return;
+   const ex=qx+(px-qx)*show, ey=qy+(eyeY-qy)*show;
    ctx.setLineDash([4,5]);trace(ctx,[[qx,qy],[ex,ey]]);ctx.strokeStyle='rgba(37,99,235,.75)';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);});
   if(st.labels){pill(ctx,'sunlight',sx+R+(small?36:60),sy-(small?14:18),{size,weight:700,color:ink});
-   if(plan.eye>.95)pill(ctx,'blue from everywhere',px+(small?12:18),ground+(small?16:24),{size,weight:700,color:blue});}
+   if(plan.eye>.95)pill(ctx,'bounced blue',px+(small?12:18),ground+(small?16:24),{size,weight:700,color:blue});}
  }
  ctx.restore();
  drawPerson(ctx,px,ground,small?5:7,air>.5?'#14171c':'#e5e7eb');
@@ -2026,14 +2036,14 @@ const LAB_FROM={choose:'door',research:'write',record:'research',design:'record'
 let labPan=null, labXf=null, labHits=[];
 function drawLab(ctx,w,h,lab={}){
  const {t=0,still=false,mode='resting',phase='',since=0,question='',rejected=0,reviews=[0,0,0,0],wall=0,outcome='',notes=[],events={}}=lab;
- const VW=1300, VH=320, phone=w/h<2.9, span=phone?560:VW, k=Math.min(w/span,h/VH);
+ const VW=1300, VH=320, phone=w/h<2.9, span=phone?560:VW, k=Math.abs(w/span-h/VH)<.02*h/VH?w/span:Math.min(w/span,h/VH);
  const working=mode==='working', open=mode!=='closed', resting=mode==='resting', T=still?5.6:t;
  const noteAge=events.note==null||still?Infinity:T-events.note, plane=noteAge<1.7?noteAge/1.7:-1;
  const aim=!phone?0:noteAge<6?740:!working?(mode==='done'?526:0):({research:130,record:250,design:400,render:700,review:740,publish:740}[phase]??526);
  labPan=still||labPan===null||!phone?aim:labPan+(aim-labPan)*.06;
  const ox=(w-span*k)/2, oy=h-VH*k;labXf={ox,oy,k,pan:labPan};labHits=[];
  ctx.save();ctx.translate(ox,oy);ctx.scale(k,k);ctx.translate(-labPan,0);
- ctx.beginPath();ctx.roundRect(labPan+4,4,span-8,VH-8,14);ctx.clip();
+ ctx.beginPath();ctx.rect(labPan,0,span,VH);ctx.clip();
  const FL=296, bt=250, BASE=270, u=1.22, ink='#1f2937', glass='rgba(255,255,255,.72)', edge='rgba(31,41,55,.42)', wood='#a47c5b', top='#cdb08c', ai='#7c3aed';
  const at=p=>working&&phase===p, s=Math.max(0,since), busy=open&&!still;
  ctx.lineCap='round';ctx.lineJoin='round';
@@ -2515,9 +2525,9 @@ const ENGINES={
   // The modelled effect for the render checks: the share of the Sun's blue light that reaches you directly.
   effect:a=>a<=0?0:Physics.skyThrough(450,clamp(a)*90),
   measure:['Sunlight’s blue that gets through',a=>SKY.mode==='live'?(v=>v<.01?(v*100).toFixed(2)+'%':Math.round(v*100)+'%')(a<=0?0:Physics.skyThrough(450,clamp(a)*90)):''],scale:'',demoEnd:()=>1,
-  disclosure:'Scattering by the molecules of clean air at sea level, which grows as the inverse fourth power of the wavelength; blue is taken as 450 nm and red as 700 nm. Sunlight shakes the electrons every way across its path, so they send light out in all directions, most strongly forward and back. The air is drawn many times thicker than it is: sunset light really crosses about 38 times as much air as light from overhead. Dust and haze add to real sunsets.',
+  disclosure:'Scattering by the molecules of clean air at sea level; it grows as the inverse fourth power of the wavelength, with blue taken as 450 nm and red as 700 nm. Sunlight shakes the electrons across its path, so they send light out in all directions, most strongly forward and back. The air is drawn many times thicker than it really is: sunset light crosses about 38 times as much air as light from overhead. Dust and haze add to real sunsets.',
   try:'Lower the Sun to the horizon: almost none of its blue gets through, and the light that reaches you turns red.',
-  aria:'On the Moon, with no air, the daytime sky is black. On Earth, air molecules shaken by sunlight send light in every direction, blue about six times as much as red, so blue reaches you from all over the sky. At sunset the light crosses far more air and loses most of its blue, so it looks red and orange.'},
+  aria:'On the Moon, with no air, the daytime sky is black. On Earth, sunlight shakes tiny charged specks in the air, which send light off in every direction, blue about six times as much as red. That bounced blue reaches you from all over the sky: it is the blue sky. At sunset the light crosses far more air and loses almost all its blue the same way, so what is left looks red and orange.'},
  'seasons':{draw:drawSeasons,demo:false,tryAny:true,a:['Tilt','how far Earth’s axis leans'],b:['Unused','',''],
   fa:a=>`${Math.round(clamp(a)*40)}°`,fb:b=>'',
   // The modelled effect for the render checks: how much more sunlight a June day gets than a December day, 40° north.

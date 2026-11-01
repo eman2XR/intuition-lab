@@ -102,9 +102,9 @@ function card(entry,record){
  if(current&&(current.id===id||(isExample&&current.provider==='fixture'))){badge.textContent='Now showing';badge.dataset.kind='now';}
  else if(!isExample&&!watched.has(id)&&Date.now()-new Date(entry.created).getTime()<36*3600*1000){badge.textContent='New';badge.dataset.kind='new';}
  else if(watched.has(id)){badge.textContent='Watched';badge.dataset.kind='seen';}
- const meta=el('p',{className:'card-meta'},el('em',{textContent:'By'}),' Intuition Lab',el('span',{className:'sep'}),isExample?'Hand-written example':day(entry.created,{month:'long',day:'numeric'}),badge);
+ const meta=el('p',{className:'card-meta'},el('span',{className:'card-go',textContent:'Watch the guide'}),el('span',{className:'card-by'},'— ',el('em',{textContent:'By'}),' Intuition Lab',el('span',{className:'sep'}),isExample?'Hand-written example':day(entry.created,{month:'long',day:'numeric'}),badge));
  const excerpt=el('p',{className:'card-excerpt',textContent:record?.scene?.subtitle||entry.question||''});
- link.append(media,el('div',{className:'card-body'},el('span',{className:'card-cat',textContent:isExample?'Example':topicOf(record||entry)}),el('h3',{textContent:(entry.title||entry.question||'').replace(/\n/g,' ')}),meta,excerpt));
+ link.append(media,el('div',{className:'card-body'},el('span',{className:'card-cat',textContent:isExample?'Example':topicOf(record||entry)}),el('h3',{textContent:(entry.title||entry.question||'').replace(/\n/g,' ')}),excerpt,meta));
  if(record?.scene){canvas.scene=record.scene;thumbs.add(canvas);visible.observe(canvas);}
  return link;
 }
@@ -396,7 +396,7 @@ function paintLab(now){
 }
 function drawLabStill(){if(reduceMotion)paintLab(0);}
 if(labCanvas){
- labCanvas.setAttribute('aria-hidden','true');$('lab').before(el('div',{className:'lab-wrap'},labCanvas,labTip));
+ labCanvas.setAttribute('aria-hidden','true');document.querySelector('.lab-caption').before(el('div',{className:'lab-wrap'},labCanvas,labTip));
  new IntersectionObserver(([entry])=>{labVisible=entry.isIntersecting;if(labVisible)comeBack();else labAway=performance.now();}).observe(labCanvas);
  addEventListener('visibilitychange',()=>{if(document.hidden)labAway=performance.now();else comeBack();});
  const tick=now=>{if(labVisible&&!document.hidden){if(labEvents.arrive===null)noticeVisitor();paintLab(now);}requestAnimationFrame(tick);};

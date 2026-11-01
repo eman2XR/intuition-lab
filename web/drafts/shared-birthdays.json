@@ -17,32 +17,32 @@
   "kind": "birthdays",
   "accent": "blue",
   "title": "Why do 23 people give even odds of a shared birthday?",
-  "subtitle": "In a room of just 23 people, at least two share a birthday about half the time. Many people guess you would need far more.",
-  "why": "Counting pairs explains why coincidences turn up so often in groups, and why two different files can share a digital fingerprint sooner than you would guess.",
-  "opening": "How many people must be in a room before two of them probably share a birthday? Many people guess about half of 365.",
+  "subtitle": "In a room of just 23 people, at least two share a birthday about half the time. Most people guess you would need far more.",
+  "why": "Coincidences in a group are more common than they feel, because every pair is a chance for a match, not just pairs that include you.",
+  "opening": "How many people must be in a room before two of them probably share a birthday? Most people guess far more than 23.",
   "beats": [
    {
-    "title": "Your own birthday",
-    "body": "In a room of 23 people, the chance that someone shares your birthday is only about 6%. You are in just 22 pairs, one with each other person."
+    "title": "Just you: 22 chances",
+    "body": "In a room of 23 people, the chance that someone shares your birthday is only about 6%. You are in just 22 pairs, one with each other person, and each pair is a 1 in 365 chance."
    },
    {
-    "title": "Every pair counts",
-    "body": "But a match can be between any two people, not just you. 23 people make 253 pairs, and each pair has a 1 in 365 chance of matching."
+    "title": "Anyone with anyone: 253 chances",
+    "body": "But a match can be between any two people. 23 people make 253 pairs, each a 1 in 365 chance. About 253 such chances give even odds: a match half the time."
    },
    {
-    "title": "One at a time",
-    "body": "Let people arrive one by one. Each newcomer must avoid every birthday already taken: the 2nd has a 1 in 365 chance of a match, the 23rd 22 in 365. The chance that nobody matches shrinks with every arrival, and after the 23rd it is just under one half."
+    "title": "One arrival at a time",
+    "body": "Now let people arrive one by one. Each newcomer has more birthdays to hit, so a match gets likelier with every arrival. After the 23rd, the chance that nobody matches has fallen to just under half, so the chance of a match is just over half."
    },
    {
-    "title": "Pairs grow fast",
-    "body": "Pairs grow much faster than people: 50 people make 1,225 of them. With 50 in the room, a shared birthday is 97% likely."
+    "title": "Why 50 is almost certain",
+    "body": "Pairs grow far faster than people: 50 people make 1,225 pairs, almost five times as many as 23 people make. With 50 in the room, a shared birthday is 97% likely."
    }
   ],
-  "takeaway": "You are not checking one birthday, you are checking every pair of people. 23 people make 253 pairs, enough for about even odds that two share a birthday.",
+  "takeaway": "A match can be between any two people, so 23 people make 253 chances, not 22. That is enough for about even odds that two share a birthday.",
   "questions": [
    {
     "q": "How many other people would you need before someone probably shares your own birthday?",
-    "a": "About 253: that many 1 in 365 chances give about even odds, and 23 people make exactly 253 pairs. Even 180 others would give you only a 39% chance."
+    "a": "About 253, since that many 1 in 365 chances give even odds; 23 people happen to make exactly 253 pairs. Even 180 others would give you only a 39% chance."
    },
    {
     "q": "Do 253 pairs mean a 253 in 365 chance, about 69%?",

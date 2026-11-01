@@ -17,40 +17,40 @@
   "kind": "sky-colour",
   "accent": "blue",
   "title": "Why is the sky blue, but the sunset red?",
-  "subtitle": "Sunlight looks white, yet the sky glows blue and sunsets glow red. Both colours come from the way air sends light off in new directions.",
-  "why": "The blue sky shows something you cannot see directly: light is a wave, and the shorter the wave, the more the air sends it off course.",
-  "opening": "Sunlight looks white, yet the sky glows blue and sunsets glow red. Where do those colours come from?",
+  "subtitle": "Sunlight looks white, yet the sky glows blue and sunsets glow red. Both colours come from the way air bounces light off in new directions.",
+  "why": "Air bounces blue light around far more than red. That one fact explains both the blue sky and the red sunset.",
+  "opening": "Sunlight looks white, yet the sky glows blue and the setting Sun glows red. Where do those colours come from?",
   "beats": [
    {
-    "title": "No air, no blue",
+    "title": "No air, black sky",
     "body": "On the Moon, with no air, the daytime sky is black. On Earth the same sunlight crosses air, and the sky glows blue."
    },
    {
-    "title": "Shaking electrons",
-    "body": "Light is a wave that shakes the electrons in each air molecule, and they scatter it in every direction. Blue’s shorter wave shakes them about as far as red, but more often, and scatters about six times as much."
+    "title": "Light shakes the air",
+    "body": "Light is a wave. It shakes the electrons, tiny charged specks inside each air molecule, and they send light off in every direction. Blue light’s shorter waves shake them faster, so they send out about six times as much blue as red."
    },
    {
-    "title": "Blue from everywhere",
-    "body": "So all along its way, sunlight loses some of its blue to the air. That blue reaches your eyes from all over the sky."
+    "title": "The sky is bounced blue",
+    "body": "All along the sunlight’s path, the air bounces some of its blue off sideways. That bounced blue is the blue sky, reaching your eyes from every direction."
    },
    {
-    "title": "Red sunsets",
-    "body": "At sunset the light crosses about 38 times as much air to reach you. Almost all its blue is sent away on the way, but a quarter of the red is left, so the Sun looks red."
+    "title": "Why the Sun turns red",
+    "body": "At sunset the light crosses about 38 times as much air as when the Sun is overhead. On the way, the air bounces almost all the light’s blue off sideways, the same bouncing that makes the sky blue. What is left is mostly red and orange, so the setting Sun looks red."
    }
   ],
-  "takeaway": "Air sends blue sunlight off in every direction far more than red, so blue comes at you from the whole sky. At sunset the light has crossed so much air that its blue is gone, leaving red and orange.",
+  "takeaway": "Air bounces blue sunlight all over the sky, so the sky looks blue. At sunset the light crosses so much air that almost all its blue is bounced away, and the Sun looks red.",
   "questions": [
    {
-    "q": "Violet is scattered even more than blue. Why isn’t the sky violet?",
-    "a": "Sunlight has less violet than blue, and our eyes are less sensitive to it. The mix of scattered colours that reaches us looks sky blue."
+    "q": "Air bounces violet even more than blue. Why isn’t the sky violet?",
+    "a": "Sunlight has less violet than blue, and our eyes are less sensitive to it. The mix of bounced colours that reaches us looks sky blue."
    },
    {
     "q": "Why are clouds white, not blue?",
-    "a": "Unlike air molecules, cloud droplets are far bigger than light’s waves, so they scatter every colour about equally, and an equal mix looks white."
+    "a": "Unlike air molecules, cloud droplets are far bigger than light’s waves, so they bounce every colour about equally, and an equal mix looks white."
    },
    {
     "q": "Is air blue, like tinted glass?",
-    "a": "No. Blue glass turns the light passing through it blue by soaking up the red. Air does the opposite: light that crosses a lot of air turns orange, as at sunset. The blue sky is light sent sideways."
+    "a": "No. Blue glass turns the light passing through it blue by soaking up the red. Air does the opposite: light that crosses a lot of air turns orange, as at sunset. The blue sky is light bounced sideways."
    }
   ]
  },
