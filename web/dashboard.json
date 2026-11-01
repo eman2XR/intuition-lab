@@ -3,30 +3,10 @@
   "question": "Why is the night sky dark?",
   "topic": "night-sky",
   "id": "20261101T172324-12e71822",
-  "revision": 1,
+  "revision": 2,
   "guidance": 0,
-  "updated": "2026-11-01T17:31:00.767016+00:00",
+  "updated": "2026-11-01T17:33:03.617622+00:00",
   "events": [
-    {
-      "at": "2026-11-01T17:28:18.272189+00:00",
-      "message": "Revision 1: rendering desktop and mobile frames."
-    },
-    {
-      "at": "2026-11-01T17:28:27.433977+00:00",
-      "message": "Revision 1: reviewers are inspecting the rendered frames."
-    },
-    {
-      "at": "2026-11-01T17:29:01.019722+00:00",
-      "message": "Revision 1: blind_review saved."
-    },
-    {
-      "at": "2026-11-01T17:29:23.630400+00:00",
-      "message": "Revision 1: physics_review saved."
-    },
-    {
-      "at": "2026-11-01T17:29:43.274028+00:00",
-      "message": "Revision 1: learner_review saved."
-    },
     {
       "at": "2026-11-01T17:29:47.169692+00:00",
       "message": "Revision 1: visual_review saved."
@@ -38,6 +18,26 @@
     {
       "at": "2026-11-01T17:31:00.763231+00:00",
       "message": "Revision 2: rendering desktop and mobile frames."
+    },
+    {
+      "at": "2026-11-01T17:31:13.476501+00:00",
+      "message": "Revision 2: reviewers are inspecting the rendered frames."
+    },
+    {
+      "at": "2026-11-01T17:32:00.876316+00:00",
+      "message": "Revision 2: blind_review saved."
+    },
+    {
+      "at": "2026-11-01T17:32:12.936172+00:00",
+      "message": "Revision 2: physics_review saved."
+    },
+    {
+      "at": "2026-11-01T17:32:13.160187+00:00",
+      "message": "Revision 2: learner_review saved."
+    },
+    {
+      "at": "2026-11-01T17:33:03.615185+00:00",
+      "message": "Revision 2: visual_review saved."
     }
   ],
   "schedule": {
