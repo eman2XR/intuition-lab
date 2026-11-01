@@ -6,6 +6,13 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="A team of AI agents making short, intuitive guides that explain why things work.">
 <title>Intuition Lab — short visual guides to why things work</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Intuition Lab">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="style.css?v=dev">
 </head>
 <body>
@@ -119,7 +126,8 @@
  <div class="sheet-head"><div><h2 id="proposals-title">Proposals</h2><p class="muted">Ideas from the lab's daily project review. Approve the ones you want built. Nothing changes until you do.</p></div><button id="proposals-close" class="round quiet" type="button" aria-label="Close">×</button></div>
  <div id="proposals-list" class="proposals"></div>
 </dialog>
-<footer><span class="wordmark small">Intuition Lab</span><nav class="foot-links"><a href="./">Investigations</a></nav><span>Curiosity first. Evidence always.</span></footer>
+<footer><span class="wordmark small">Intuition Lab</span><nav class="foot-links"><a href="./">Investigations</a><button id="notify-open" type="button" hidden>Notify me of new guides</button></nav><span>Curiosity first. Evidence always.</span></footer>
+<div id="notify-panel" class="notify-panel" hidden><p id="notify-msg"></p><div id="notify-share"><textarea id="notify-code" rows="3" readonly aria-label="Notification code"></textarea><button id="notify-copy" class="pill" type="button">Copy</button></div></div>
 <script src="physics.js?v=dev"></script><script src="scene.js?v=dev"></script><script src="app.js?v=dev"></script>
 </body>
 </html>

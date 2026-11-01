@@ -31,7 +31,9 @@ jobs:
         run: |
           mkdir _site
           cp web/index.html web/style.css web/app.js web/scene.js web/physics.js web/example.json web/curriculum.json _site/
-          cp -R web/example-frames _site/
+          # Installed web app: manifest, icons, and the service worker at a stable, unversioned address.
+          cp web/manifest.webmanifest web/sw.js web/push.json _site/
+          cp -R web/example-frames web/icons _site/
           if [ -f web/dashboard.json ]; then cp web/dashboard.json _site/; fi
           if [ -f web/featured.json ]; then cp web/featured.json _site/; fi
           if [ -f web/proposals.json ]; then cp web/proposals.json _site/; fi

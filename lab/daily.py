@@ -13,6 +13,7 @@ from .pipeline import ROOT, run, write_json, approved, DESIGNER
 from .topics import TOPICS, READY
 from .dashboard import Dashboard
 from . import inbox
+from . import push as webpush
 
 SITE = 'https://eman2xr.github.io/intuition-lab/'
 
@@ -173,6 +174,20 @@ def publish(root=ROOT):
         git('push','origin','main')
 
 
+def announce(ledger, root=ROOT):
+    """After a successful push to GitHub, notify the owner's devices once about each newly exported guide.
+    Only export_accepted marks an attempt pending, so drafts, fixtures and failures never notify."""
+    for attempt in ledger:
+        if attempt.get('notify')!='pending':
+            continue
+        attempt['notify']='sent'
+        try:
+            scene=json.loads((root/'web'/'published'/attempt['run_id']/'record.json').read_text())['scene']
+        except (KeyError, OSError, ValueError):
+            continue
+        webpush.notify(scene['title'],scene.get('subtitle',''),f'{SITE}?guide={attempt["run_id"]}',root/'.council-state')
+
+
 def report(number, state, requests, day):
     """Tell the owner what happened to their request; picks and questions close once attempted."""
     outcome={'reviewed':f'It passed review and is published at {SITE}?guide={state["id"]} (the site can take a few minutes to update).',
@@ -325,6 +340,7 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
                     state['curriculum']=attempt.get('curriculum')
                     export_accepted(state,root)
                     attempt['exported']=True
+                    attempt['notify']='pending'
                 if push and plan['request'] and plan['request'] not in {r['number'] for r in notes}:
                     report(plan['request'],state,requests,day)
                 if push:
@@ -352,5 +368,8 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
                 publish(root)
             except Exception as error:
                 print(f'Publication pending ({type(error).__name__}); retry the daily command.',flush=True)
+            else:
+                announce(ledger,root)
+                write_json(ledger_path,ledger)
         print(f'Daily cycle complete. History: {ledger_path}',flush=True)
         return ledger

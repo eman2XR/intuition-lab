@@ -13,7 +13,8 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export'])
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push'])
+    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
     parser.add_argument('--model',help='Optional CLI model override; required for the direct OpenAI API.')
@@ -26,6 +27,8 @@ def main():
     parser.add_argument('--topic',choices=list(TOPICS),default='light-bending')
     parser.add_argument('--question',help='Optional question for a single run; defaults to the topic question.')
     args=parser.parse_args()
+    if args.push_args and args.command!='push':
+        parser.error('unexpected arguments: '+' '.join(args.push_args))
     if not 1<=args.rounds<=4:
         parser.error('--rounds must be 1–4')
     if not math.isfinite(args.timeout) or not math.isfinite(args.minutes) or args.timeout<=0 or args.minutes<=0:
@@ -37,6 +40,23 @@ def main():
             return OpenAIProvider(args.model or os.environ.get('OPENAI_MODEL'),max_calls=(4 if args.command=='daily' else 3)+4*args.rounds)
         return CLIProvider(args.provider,args.model or os.environ.get(f'COUNCIL_{args.provider.upper()}_MODEL'),
                            max_calls=(4 if args.command=='daily' else 3)+4*args.rounds,timeout=args.timeout,minutes=args.minutes)
+    if args.command=='push':
+        # Owner-only notifications; keys and subscriptions stay in this checkout's ignored .council-state folder.
+        from . import push
+        from .daily import SITE
+        action,rest=(args.push_args or [''])[0],args.push_args[1:]
+        if action=='keys' and not rest:
+            print(f'Public key (put it in web/push.json): {push.keys()}')
+        elif action=='add' and len(rest)==1:
+            try:
+                print('Subscription added.' if push.add(rest[0]) else 'Subscription updated.')
+            except ValueError as error:
+                parser.exit(2,f'Not a valid notification code: {error}\n')
+        elif action=='test' and not rest:
+            raise SystemExit(0 if push.notify('Intuition Lab','Notifications are working',SITE) else 1)
+        else:
+            parser.error("push needs: keys | add '<code>' | test")
+        return
     if args.command=='schedule':
         from .schedule import write_schedule
         print(write_schedule(args.hour,args.count,args.provider))

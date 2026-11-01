@@ -426,6 +426,11 @@ body[data-paused=no] .talk{display:contents}
 .foot-links{display:flex;gap:18px}
 .foot-links a{color:var(--muted);font-size:13px}
 .foot-links a:hover{color:var(--ink)}
+.foot-links button{color:var(--muted);font-size:13px}
+.foot-links button:hover{color:var(--ink)}
+.notify-panel{max-width:1240px;margin:-26px auto 40px;padding:0 32px;font-size:13px;color:var(--muted)}
+.notify-panel p{margin:0 0 8px}
+.notify-panel textarea{display:block;width:100%;margin:0 0 8px;padding:9px 11px;font:16px/1.4 ui-monospace,Menlo,monospace;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;resize:none;word-break:break-all}
 body[data-draft=yes] .behind{display:none}
 
 /* Why it matters. */

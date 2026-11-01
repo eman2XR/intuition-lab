@@ -167,6 +167,17 @@ The dashboard shows the current question, phase, revision, recent activity, dail
 
 The public homepage opens the newest accepted guide; archive links retain older guides. If no guide has passed review, it displays the labeled offline example. GitHub Actions only tests and deploys files; model work stays on your machine.
 
+## Install on iPhone
+
+Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, and send the code it shows to the owner. The owner runs this once in the worker folder (`~/Projects/the-council-worker`):
+
+```sh
+python3 -m lab push add '<code>'
+python3 -m lab push test
+```
+
+After that, the daily run sends a notification whenever a reviewed guide is published. There is no server: the worker's `.council-state` holds the key pair (`vapid.json`, created with `python3 -m lab push keys`; its public key is `web/push.json`) and the subscriptions, and `scripts/push.mjs` sends standard Web Push with Node's built-in crypto.
+
 ## Verify
 
 ```sh

@@ -133,6 +133,36 @@ class DailyTests(unittest.TestCase):
             runner.assert_not_called()
             self.assertEqual(result[0]['status'],'interrupted')
 
+    def test_notifies_only_after_a_reviewed_guide_is_pushed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);curriculum(root,READY_ITEMS);state=self.accepted(root)
+            with patch('lab.daily.inbox.fetch',return_value=[]),patch('lab.daily.run',return_value=state),\
+                 patch('lab.daily.publish',side_effect=RuntimeError('offline')),patch('lab.push.notify') as notify:
+                ledger=daily(FixtureProvider,push=True,root=root)
+            notify.assert_not_called()
+            self.assertEqual(ledger[0]['notify'],'pending')
+            # The next cycle's successful push sends it once; the day's slot is already used, so nothing new starts.
+            with patch('lab.daily.inbox.fetch',return_value=[]),patch('lab.daily.run') as runner,\
+                 patch('lab.daily.publish'),patch('lab.push.notify') as notify:
+                daily(FixtureProvider,push=True,root=root)
+                daily(FixtureProvider,push=True,root=root)
+            runner.assert_not_called()
+            notify.assert_called_once_with(state['scene']['title'],state['scene']['subtitle'],
+                                           f'https://eman2xr.github.io/intuition-lab/?guide={state["id"]}',root/'.council-state')
+
+    def test_drafts_and_unpublished_runs_never_notify(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);curriculum(root,READY_ITEMS)
+            with patch('lab.daily.inbox.fetch',return_value=[]),patch('lab.daily.run',return_value={'status':'needs_review','id':'draft'}),\
+                 patch('lab.daily.publish'),patch('lab.push.notify') as notify:
+                daily(FixtureProvider,push=True,root=root)
+            notify.assert_not_called()
+            state=self.accepted(root)
+            with patch('lab.daily.run',return_value=state),patch('lab.push.notify') as notify:
+                ledger=daily(FixtureProvider,count=2,root=root)
+            notify.assert_not_called()
+            self.assertTrue(ledger[-1]['exported'])
+
 
 class PauseTests(unittest.TestCase):
     def test_pause_flag_starts_nothing_and_uses_no_slot(self):

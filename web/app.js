@@ -543,3 +543,42 @@ loadProposals();
 const readbar=$('readbar');
 new IntersectionObserver(([e])=>readbar.classList.toggle('on',!e.isIntersecting&&e.boundingClientRect.top<0)).observe($('title'));
 addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;readbar.style.setProperty('--read',max>0?Math.min(1,scrollY/max):0);},{passive:true});
+
+
+/* Installed app: offline copy through the service worker, and the owner's new-guide notifications.
+   Capture pages are served from an insecure origin, so they never register it. */
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const worker='serviceWorker' in navigator&&isSecureContext?navigator.serviceWorker.register('sw.js').catch(()=>null):Promise.resolve(null);
+const keyBytes=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(s.length/4)*4,'=')),c=>c.charCodeAt(0));
+function notifyPanel(message,subscription){
+ put('notify-msg',message);
+ $('notify-share').hidden=!subscription;
+ if(subscription){$('notify-code').value=JSON.stringify(subscription);put('notify-copy','Copy');}
+ $('notify-panel').hidden=false;
+}
+async function notifySetup(){
+ if(!standalone||!('PushManager' in window)||!(await worker))return;
+ const button=$('notify-open'),ready=navigator.serviceWorker.ready;
+ if(!(await ready).pushManager)return;
+ if(await (await ready).pushManager.getSubscription().catch(()=>null))button.textContent='Notifications are on';
+ button.hidden=false;
+ button.onclick=async()=>{
+  try{
+   if(await Notification.requestPermission()!=='granted')return notifyPanel('Notifications are off. Allow them for Intuition Lab in Settings, then try again.');
+   const push=(await ready).pushManager;
+   let subscription=await push.getSubscription();
+   if(!subscription){
+    const {publicKey}=await (await fetch('push.json',{cache:'no-store'})).json();
+    subscription=await push.subscribe({userVisibleOnly:true,applicationServerKey:keyBytes(publicKey)});
+   }
+   button.textContent='Notifications are on';
+   notifyPanel('Send this code to the lab’s owner to turn on notifications.',subscription);
+  }catch(error){notifyPanel(`Notifications could not be turned on (${error.name||'error'}).`);}
+ };
+ $('notify-copy').onclick=async()=>{
+  const code=$('notify-code');
+  try{await navigator.clipboard.writeText(code.value);}catch{code.select();document.execCommand('copy');}
+  put('notify-copy','Copied');
+ };
+}
+notifySetup().catch(()=>{});
