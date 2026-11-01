@@ -2,9 +2,11 @@
 
 **[Open the live website →](https://eman2xr.github.io/intuition-lab/)**
 
-The website hosts accepted interactive investigations and a labeled offline example. A local daily runner can select questions, research them, revise their visuals, and push accepted guides to GitHub Pages.
+Short visual guides that explain why things work the way they do. A team of AI agents researches, builds and reviews each one.
 
-An open-source visual research lab. Agents investigate an idea, design an intuitive explanation, inspect actual rendered frames, and revise it. Supported interactive models explain **why gravity bends light** and **why stationary clocks at different distances from a mass accumulate different amounts of time**.
+Each guide is a short animated picture narrated one subtitle at a time, built on an exact model with automated checks, followed by a control to explore it yourself. Topics so far include gravity and time, light and spacetime, waves and quanta, black holes, why the night sky is dark, why the sky is blue, chance, and how AI reads text.
+
+How a guide is made: once a day a scheduled run on the owner's Mac picks the next question whose picture is ready. A researcher gathers sources, a scientist writes the research record, a designer plans how the picture will show the reason, and a writer writes the chapters. The coordinator renders real browser frames and runs the checks, and four reviewers (accuracy, visual, beginner, and a blind viewer who sees only the pictures) must all pass, with up to three rounds of revision. Accepted guides are pushed to GitHub Pages. A few guides were made by hand in coding sessions and say so on their page.
 
 The original persona debate CLI remains in `council.py`. The new visual lab is in `lab/` and `web/`.
 
