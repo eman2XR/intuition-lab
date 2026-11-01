@@ -4,7 +4,7 @@
  "question": "Why is the sky blue, but the sunset red?",
  "topic": "sky-colour",
  "created": "2026-11-01T07:18:13+00:00",
- "updated": "2026-11-01T07:18:13Z",
+ "updated": "2026-11-01T07:55:32Z",
  "research": {
   "claim": "Air molecules scatter short-wavelength light far more than long: the scattering grows as the inverse fourth power of the wavelength, so blue light at 450 nm is scattered about 5.9 times as much as red light at 700 nm. Blue scattered out of the sunlight reaches the eye from every direction, so the whole sky looks blue. Near the horizon, sunlight crosses about 38 times as much air as from overhead, so almost all of its blue is scattered out of the direct beam while about a quarter of its red gets through, and the setting Sun looks red and orange.",
   "explanation": "1. Light is an electromagnetic wave. Its electric field shakes the electrons in each air molecule, and a shaken electron sends light out in all directions.\n2. Air molecules are far smaller than the wavelength of light. For such small scatterers the scattered light grows as the inverse fourth power of the wavelength (Rayleigh scattering), so (700/450)⁴ ≈ 5.9.\n3. Overhead, clean air at sea level scatters about a fifth of sunlight’s blue out of the beam and about 4% of its red. The scattered light, rich in blue, arrives from all over the sky.\n4. The path through the air grows as the Sun sinks. For a spherical atmosphere and an observer at sea level, the path at the horizon is about 38 times the path overhead (the air mass). Along it, the beam keeps about 0.02% of its blue but about 24% of its red.",
@@ -264,7 +264,7 @@
    "visual_review": {
     "pass": true,
     "score": 8,
-    "summary": "Each frame shows what its subtitle says: a black sky on the Moon against a blue sky on Earth; red and blue waves, the blue about 1.5 times shorter; blue rings growing out of the sunbeams with dashed “bounced blue” lines meeting at “you” from all over the sky; a long sunset path that turns orange-red against a short noon path. No frame has more than three or four short labels, and the story can be followed from the pictures alone. The bounced-blue frame is the busiest but still readable.",
+    "summary": "Re-reviewed after the picture was redrawn (a cratered Moon under a black sky, a landscape under the blue, the sunset seen from space with a view of what you see). Every frame shows what its subtitle says, light is drawn the right way round (the Sun stays white in space and only the beam that crosses the air reddens), and each picture stays calm. A viewer of the pictures alone told the whole story. Its three suggestions were applied: bounced blue from every side of the sky, stronger blue rings, and a Sun that is never white when low.",
     "changes": [],
     "blocking_issues": []
    },

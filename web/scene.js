@@ -996,7 +996,7 @@ function riverPlan(st){
  const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since);
  const ch0=timeline?.chapters?.[0], first=ch0?ch0.end-ch0.start:12;
  if(st.since===undefined){const T=st.t||0;return {mode:'hole',rs:1,t:T,horizon:1,pulses:[{r0:1.8,from:T-3,ang:-.95},{r0:1,from:T-30,ang:0},{r0:.62,from:T-.8,ang:.75}]};}
- if(st.live){const rs=Math.max(.05,st.mass), re=.6+(st.distance-1);return {mode:'hole',rs,t,pulses:[{r0:re,every:2.6,label:true}],live:true};}
+ if(st.live){const rs=clamp(st.mass), re=.6+(st.distance-1);return {mode:'hole',rs,t,pulses:[{r0:re,every:2.6,label:true}],live:true};}
  // 1: one fish far from the falls gets away.
  if(st.stage===0)return {mode:'river',t,fish:[{r0:2.4,tau:t*RIVER_K,arrows:true}],line:0};
  // 2: it keeps going; a second fish holds still at the point of no return; a third, just past it, is swept over.
@@ -1080,8 +1080,10 @@ function drawRiver(ctx,w,h,spec,st){
  // Top view of a black hole: space pictured flowing inward along spokes, faster closer in; light pulses swim outward.
  const rs=plan.rs, cx=w/2, cy=h*(small?.5:.53), rmax=3, k=Math.min(w*(small?.45:.4),h*(small?.41:.43))/rmax, tau=plan.t*RIVER_K;
  RIVER.rs=rs;
- const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,rmax*k);glow.addColorStop(0,'rgba(20,23,28,.16)');glow.addColorStop(1,'rgba(20,23,28,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,rmax*k,0,TAU);ctx.fill();
- ctx.beginPath();ctx.arc(cx,cy,rs*k,0,TAU);const inner=ctx.createRadialGradient(cx,cy,0,cx,cy,rs*k);inner.addColorStop(0,'#05060a');inner.addColorStop(1,'#1b2233');ctx.fillStyle=inner;ctx.fill();
+ const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,rmax*k);glow.addColorStop(0,`rgba(20,23,28,${.16*Math.min(1,rs)})`);glow.addColorStop(1,'rgba(20,23,28,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,rmax*k,0,TAU);ctx.fill();
+ // After playback the mass can be turned down to none: then there is no hole and no inflow, and light simply travels out.
+ const hole=rs>=.01;
+ if(hole){ctx.beginPath();ctx.arc(cx,cy,rs*k,0,TAU);const inner=ctx.createRadialGradient(cx,cy,0,cx,cy,rs*k);inner.addColorStop(0,'#05060a');inner.addColorStop(1,'#1b2233');ctx.fillStyle=inner;ctx.fill();
  const hz=plan.horizon??0;ctx.setLineDash([6,5]);ctx.strokeStyle=`rgba(217,119,6,${.6+.4*hz})`;ctx.lineWidth=2+1.5*hz;ctx.stroke();ctx.setLineDash([]);
  // Flowing space: dots on spokes, each carried inward at the local inflow speed, with a trail as long as its speed.
  const span=(2/3)*(Math.pow(rmax,1.5)-Math.pow(.06,1.5))/Math.sqrt(rs), spokes=small?12:16;
@@ -1090,8 +1092,8 @@ function drawRiver(ctx,w,h,spec,st){
   for(let j=0;j<5;j++){const u=((tau+(j/5+hash(i*1.3)*.2)*span)%span+span)%span, r=Math.pow(Math.max(0,Math.pow(rmax,1.5)-1.5*Math.sqrt(rs)*u),2/3);if(r<.08)continue;
    const v=Math.sqrt(rs/r), len=Math.min(k*.5,k*.07*v), x=cx+Math.cos(ang)*r*k, y=cy+Math.sin(ang)*r*k, inside=r<rs;
    trace(ctx,[[x,y],[x+Math.cos(ang)*len,y+Math.sin(ang)*len]]);ctx.strokeStyle=inside?'rgba(180,200,255,.55)':'rgba(37,99,235,.45)';ctx.lineWidth=1.6;ctx.lineCap='round';ctx.stroke();
-   ctx.beginPath();ctx.arc(x,y,2.2,0,TAU);ctx.fillStyle=inside?'rgba(200,215,255,.8)':'rgba(37,99,235,.75)';ctx.fill();}}
- if(st.labels){pill(ctx,'horizon',cx-rs*k-10,cy,{align:'right',size:lsize,weight:600,color:'rgba(180,83,9,.95)'});
+   ctx.beginPath();ctx.arc(x,y,2.2,0,TAU);ctx.fillStyle=inside?'rgba(200,215,255,.8)':'rgba(37,99,235,.75)';ctx.fill();}}}
+ if(st.labels){if(hole)pill(ctx,'horizon',cx-rs*k-10,cy,{align:'right',size:lsize,weight:600,color:'rgba(180,83,9,.95)'});
  arrowLegend(ctx,w/2,h*(small?.1:.07),['light','space flows in'],small);}
  // Light pulses, each sent outward along its own direction.
  const states=[];
@@ -1100,7 +1102,7 @@ function drawRiver(ctx,w,h,spec,st){
   // After playback the light is sent again every few seconds; the newest pulse carries the arrows.
   const draws=plan.live?Array.from({length:3},(_,n)=>plan.t%q.every+n*q.every):[plan.t-start];
   draws.forEach((age,n)=>{if(age<0)return;
-   const m=P.riverSwim(q.r0/rs,1,age*RIVER_K*(q.slow||1)), r=m.r*rs;if(m.fell>=0)return;if(r>rmax*1.02)return;
+   const m=P.riverSwim(q.r0,rs,age*RIVER_K*(q.slow||1)), r=m.r;if(m.fell>=0)return;if(r>rmax*1.02)return;
    const x=cx+Math.cos(ang)*r*k, y=cy+Math.sin(ang)*r*k, fade=Math.min(1,age/.4)*smooth((r-.06)/.12)*(n?.55:1);
    const g=ctx.createRadialGradient(x,y,0,x,y,14);g.addColorStop(0,`rgba(255,196,80,${.95*fade})`);g.addColorStop(1,'rgba(255,196,80,0)');ctx.fillStyle=g;ctx.fillRect(x-14,y-14,28,28);
    ctx.beginPath();ctx.arc(x,y,4,0,TAU);ctx.fillStyle=`rgba(255,250,235,${fade})`;ctx.fill();
@@ -1113,7 +1115,7 @@ function drawRiver(ctx,w,h,spec,st){
   const ray=(x0,y0,len,dir,col)=>{const x1=x0+dir*ux*len, y1=y0+dir*uy*len;trace(ctx,[[x0,y0],[x1,y1]]);ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.stroke();
    ctx.beginPath();ctx.moveTo(x1+dir*ux*3,y1+dir*uy*3);ctx.lineTo(x1-dir*ux*5+px*.7,y1-dir*uy*5+py*.7);ctx.lineTo(x1-dir*ux*5-px*.7,y1-dir*uy*5-py*.7);ctx.closePath();ctx.fillStyle=col;ctx.fill();};
   if(q.quiet)continue;
-  ray(x+px,y+py,own,1,'#d97706');ray(x-px,y-py,Math.min(own*2.6,own*v),-1,'#2563eb');
+  ray(x+px,y+py,own,1,'#d97706');if(v>.01)ray(x-px,y-py,Math.min(own*2.6,own*v),-1,'#2563eb');
   if(!st.labels)continue;
   const note=r<rs*.985?'carried in':Math.abs(r-rs)<.015*rs?'stands still':'escapes', inflow=Math.round(v*100);
   const lx=x+ux*(own+16)+(ux>=0?4:-4), ly=y+uy*(own+16), align=ux>=-.2?'left':'right';
@@ -1176,7 +1178,7 @@ function drawViews(ctx,w,h,spec,st){
  if(!held&&by>M.t&&by<h-8)pill(ctx,'scale: 0',sx+size*1.6,by-size*.6,{size:10,weight:600,color:accent});
  if(stage>=3){const mid=V.T/2;
   pill(ctx,'straight',X(mid),Y(V.h(mid)-shift(mid))-16,{align:'center',size:size2,weight:600,color:accent});
-  pill(ctx,'pushed',X(mid),Y(-shift(mid))+18,{align:'center',size:size2,weight:600,color:dark});
+  if(grav>.05)pill(ctx,'pushed',X(mid),Y(-shift(mid))+18,{align:'center',size:size2,weight:600,color:dark});
  }
 }
 
@@ -1236,10 +1238,11 @@ function drawTides(ctx,w,h,spec,st){
   return;
  }
  // Tides: a small ring falling from high above, and the same ring seen floating with its middle ball.
- const r0=3, rho=.3, n=12, tEnd=P.fallTime(r0,2.3), tt=tEnd*onceInChapter(st);
+ // After playback the viewer sets the Earth's mass; the fall lasts as long as with the real mass (Physics.tideStretch).
+ const r0=3, rho=.3, n=12, Q=st.live?Physics.tides(clamp(st.mass)):P, tEnd=(st.live?Physics.tides(1):P).fallTime(r0,2.3), tt=tEnd*onceInChapter(st);
  const Re=small?h*.085:h*.14, ex=small?w*.26:w*.3, ey=small?h*.62:h*.82;
  drawEarth(ctx,ex,ey,Re);
- const start=[[0,r0],...Array.from({length:n},(_,i)=>{const a=TAU*i/n;return [rho*Math.cos(a),r0+rho*Math.sin(a)];})], now=start.map(([x,y])=>P.fall(x,y,tt));
+ const start=[[0,r0],...Array.from({length:n},(_,i)=>{const a=TAU*i/n;return [rho*Math.cos(a),r0+rho*Math.sin(a)];})], now=start.map(([x,y])=>Q.fall(x,y,tt));
  now.forEach(([x,y],i)=>dot(ex+x*Re,ey-y*Re,i?2.6:3.4,i?accent:dark));
  const [cx0,cy0]=[ex+now[0][0]*Re,ey-now[0][1]*Re], box=rho*Re*2.2;
  ctx.strokeStyle='rgba(20,23,28,.3)';ctx.lineWidth=1;ctx.strokeRect(cx0-box,cy0-box,box*2,box*2);
@@ -1248,13 +1251,16 @@ function drawTides(ctx,w,h,spec,st){
  ctx.beginPath();ctx.arc(ix,iy,Ri,0,TAU);ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(20,23,28,.3)';ctx.stroke();ctx.setLineDash([]);
  const rel=now.slice(1).map(([x,y])=>[ix+(x-now[0][0])/rho*Ri,iy-(y-now[0][1])/rho*Ri]);
  trace(ctx,[...rel,rel[0]]);ctx.strokeStyle=rgba(accent,.5);ctx.lineWidth=1.4;ctx.stroke();rel.forEach(([x,y])=>dot(x,y,5,accent));dot(ix,iy,5.5,dark);
- if(!st.labels||tt<tEnd*.4)return;
- text(ctx,'stretched ↕',ix+Ri*.9,iy-Ri*1.25,{size:small?10:11,weight:600,color:warm});text(ctx,'squeezed ↔',ix+Ri*1.05,iy+Ri*.3,{size:small?10:11,weight:600,color:warm});
+ if(!st.labels||tt<tEnd*.4||(st.live&&st.mass<.05))return;
+ text(ctx,'stretched ↕',ix+Ri*.9,iy-Ri*1.25,{size:small?10:11,weight:600,color:warm});text(ctx,'squeezed ↔',small?ix:ix+Ri*1.05,small?iy+Ri*1.95:iy+Ri*.3,{align:small?'center':'left',size:small?10:11,weight:600,color:warm});
 }
 
 // A person on a bathroom scale in a lift: parked at the bottom, one ride to the top, then the cable snaps and the lift
 // falls freely for the rest of the guide. Each chapter continues where the last one ended; nothing loops.
 const LIFT_SLOW=.28, LIFT_SNAP=1;
+// The explore control: the lift's upward acceleration, from falling freely (-g) at the left, through steady (0), to +g.
+const liftAccel=a=>Physics.lift().g*(2*clamp(a)-1);
+const liftSpeedUp=a=>{const acc=liftAccel(a);return a<.005?'falling freely':Math.abs(acc)<.15?'steady':`${Math.round(Math.abs(acc)*3.6)} km/h a second, ${acc>0?'up':'down'}`;};
 function liftFallTime(stage,since){
  // Seconds of free fall, slowed down for viewing; the last chapter carries on from the end of the previous one.
  const ch=timeline?.chapters?.[2], before=ch?Math.max(0,ch.end-ch.start-LIFT_SNAP):0;
@@ -1265,13 +1271,16 @@ function drawLift(ctx,w,h,spec,st){
  const sx0=small?w*.08:w*.28, sx1=small?w*.56:w*.5, top=small?40:30, bot=h*(small?.66:.94), carH=Math.min((bot-top)*.45,small?150:210), carW=(sx1-sx0)*.74, k=(bot-top-carH)/24;
  // Where the car is (metres above the lowest stop), its upward acceleration, and whether the cable still holds.
  const climb=t=>{let v=0,y=0;for(let q=0;q<t;q+=.02){v+=L.accelAt(q)*.02;y+=v*.02;}return y;}, topY=1+climb(30);
+ // After playback the viewer sets how the lift speeds up (liftAccel): falling freely at the left, steady in the middle.
+ const live=!!st.live, accLive=live?liftAccel(st.mass):0, readLive=live?L.reading(accLive):1;
  let yc=1,a=0,snapped=false,fall=0,tf=0;
- if(stage===1){yc=1+climb(since);a=L.accelAt(since);}
+ if(live){yc=topY;a=accLive;snapped=readLive<.005;}
+ else if(stage===1){yc=1+climb(since);a=L.accelAt(since);}
  else if(stage>=2){tf=liftFallTime(stage,since);yc=topY;if(tf>0){snapped=true;fall=.5*L.g*tf*tf;a=-L.g;yc=topY-fall;}}
  // The dial's needle eases to each new reading instead of jumping: averaged over the last 0.7 s of the ride,
  // and swinging down over 0.7 s once the cable snaps. Computed from time alone, so seeking stays exact.
  const settle=.7, sinceSnap=stage===2?since-LIFT_SNAP:stage>2?99:-1;
- const reading=stage===1?Array.from({length:15},(_,i)=>L.reading(L.accelAt(Math.max(0,since-settle*i/14)))).reduce((x,y)=>x+y)/15
+ const reading=live?readLive:stage===1?Array.from({length:15},(_,i)=>L.reading(L.accelAt(Math.max(0,since-settle*i/14)))).reduce((x,y)=>x+y)/15
   :sinceSnap>0?1-smooth(sinceSnap/settle):1;
  const offset=snapped?fall:0, floorY=yw=>bot-(yw+offset)*k, cx=(sx0+sx1)/2;
  // The shaft: walls with a mark at every floor. While falling, the view follows the car and the walls stream past.
@@ -1289,7 +1298,7 @@ function drawLift(ctx,w,h,spec,st){
  ctx.fillStyle='#e9e4da';ctx.strokeStyle='rgba(20,23,28,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(px-size*1.2,feet,size*2.4,scaleH,3);ctx.fill();ctx.stroke();
  ctx.fillStyle=reading>.01?warm:'rgba(20,23,28,.25)';ctx.fillRect(px-size*.3,feet+scaleH*.25,size*.6,scaleH*.5);
  // Floating: once nothing pushes, you drift gently off the scale, bobbing and turning a little; so does the apple.
- const drift=sinceSnap>0?smooth(sinceSnap/1.6):0, lift=size*drift*(.45+.12*Math.sin(since*1.3)), sway=.09*drift*Math.sin(since*.7);
+ const drift=live?clamp(1-reading*4):sinceSnap>0?smooth(sinceSnap/1.6):0, lift=size*drift*(.45+.12*Math.sin(since*1.3)), sway=.09*drift*Math.sin(since*.7);
  ctx.save();ctx.translate(px,feet-lift-size*1.3);ctx.rotate(sway);drawPerson(ctx,0,size*1.3,size,dark);ctx.restore();
  // The push: the scale pushing up on your feet, as long as the reading; gone once nothing pushes.
  if(reading>.03){const ux=px-size*1.7, len=size*1.5*reading;trace(ctx,[[ux,feet],[ux,feet-len]]);ctx.strokeStyle=warm;ctx.lineWidth=2.2;ctx.lineCap='round';ctx.stroke();
@@ -1306,7 +1315,7 @@ function drawLift(ctx,w,h,spec,st){
  ctx.beginPath();ctx.arc(dx,dy,R,Math.PI*.9,ang(reading));ctx.strokeStyle=reading>.01?warm:'rgba(20,23,28,.15)';ctx.stroke();ctx.lineCap='butt';
  for(const f of [0,1,2]){const t=ang(f);trace(ctx,[[dx+Math.cos(t)*R*.78,dy+Math.sin(t)*R*.78],[dx+Math.cos(t)*R*.9,dy+Math.sin(t)*R*.9]]);ctx.strokeStyle='rgba(20,23,28,.4)';ctx.lineWidth=1.5;ctx.stroke();}
  const na=ang(reading);trace(ctx,[[dx,dy],[dx+Math.cos(na)*R*.72,dy+Math.sin(na)*R*.72]]);ctx.strokeStyle=dark;ctx.lineWidth=3;ctx.lineCap='round';ctx.stroke();ctx.beginPath();ctx.arc(dx,dy,5,0,TAU);ctx.fillStyle=dark;ctx.fill();
- if(stage>=3&&!small){const ex=w*.88,ey=h*.16,er=16,ang2=st.t*.6;drawEarth(ctx,ex,ey,er);ctx.beginPath();ctx.arc(ex,ey,er*2.1,0,TAU);ctx.setLineDash([2,4]);ctx.strokeStyle='rgba(20,23,28,.3)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+ if(stage>=3&&!small&&!live){const ex=w*.88,ey=h*.16,er=16,ang2=st.t*.6;drawEarth(ctx,ex,ey,er);ctx.beginPath();ctx.arc(ex,ey,er*2.1,0,TAU);ctx.setLineDash([2,4]);ctx.strokeStyle='rgba(20,23,28,.3)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
   ctx.beginPath();ctx.arc(ex+Math.cos(ang2)*er*2.1,ey+Math.sin(ang2)*er*2.1,3.5,0,TAU);ctx.fillStyle=dark;ctx.fill();}
  if(!st.labels)return;
  text(ctx,'you weigh',dx,dy-R-(small?34:40),{align:'center',size:small?11:12,weight:600,color:'rgba(20,23,28,.6)'});
@@ -1315,23 +1324,25 @@ function drawLift(ctx,w,h,spec,st){
 
  if(snapped&&stage===2)pill(ctx,'apple let go',ax+size*.6,ay-size*.5,{size:10,weight:600,color:'#b3362f'});
  // While falling: how fast, so "faster and faster" can be seen; the fall is shown in slow motion.
- if(snapped){text(ctx,`falling at ${Math.round(L.g*tf*3.6)} km/h`,cx,small?bot+18:h*.06,{align:'center',size:small?11:12,weight:600,color:accent});
+ if(snapped&&!live){text(ctx,`falling at ${Math.round(L.g*tf*3.6)} km/h`,cx,small?bot+18:h*.06,{align:'center',size:small?11:12,weight:600,color:accent});
   }
- if(stage>=3&&!small)text(ctx,'orbiting',w*.88,h*.16+40,{align:'center',size:10,color:'rgba(20,23,28,.6)'});
+ if(stage>=3&&!small&&!live)text(ctx,'orbiting',w*.88,h*.16+40,{align:'center',size:10,color:'rgba(20,23,28,.6)'});
 }
 
 // The Moon stretches the Earth: it pulls the near side more and the far side less than the centre, so the oceans bulge both ways.
 function drawMoonTides(ctx,w,h,spec,st){
  const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', warm='#c2410c', small=w<520, since=st.since??st.t, stage=st.stage, M=Physics.moonTides();
+ // After playback the viewer sets the Moon's mass (1 = the real Moon): the bulges grow in step, and the Moon keeps its density.
+ const mass=st.live?clamp(st.mass):1;
  // On a phone the Earth sits nearer the middle and a little smaller, so every label stays on screen.
- const ex=small?w*.42:w*.36, ey=small?h*.36:h*.5, Re=Math.min(small?w*.16:w*.15,small?h*.17:h*.27), mx=small?w*.88:w*.8, mr=Re*.27;
+ const ex=small?w*.42:w*.36, ey=small?h*.36:h*.5, Re=Math.min(small?w*.16:w*.15,small?h*.17:h*.27), mx=small?w*.88:w*.8, mr=Re*.27*Math.cbrt(mass);
  // How much of the stretch to show: none while the pulls are compared, growing as the Earth's own fall is taken away.
- const morph=stage===0?1:stage===1?0:stage===2?smooth((since-2.5)/4):1, b=.11*morph;
+ const morph=stage===0?1:stage===1?0:stage===2?smooth((since-2.5)/4):1, b=.11*morph*mass;
  const spin=stage>=3?since*.35:0;
  const ocean=ctx.createRadialGradient(ex,ey,Re*.9,ex,ey,Re*1.3);ocean.addColorStop(0,'rgba(59,130,246,.35)');ocean.addColorStop(1,'rgba(59,130,246,.2)');
  ctx.beginPath();for(let i=0;i<=120;i++){const th=TAU*i/120,r=Re*(1.08+b*M.shape(th));const x=ex+Math.cos(th)*r,y=ey+Math.sin(th)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fillStyle=ocean;ctx.fill();ctx.strokeStyle='rgba(37,99,235,.45)';ctx.lineWidth=1;ctx.stroke();
  ctx.save();ctx.translate(ex,ey);ctx.rotate(spin);drawEarth(ctx,0,0,Re,{lat:90,lon:-10});ctx.restore();
- ctx.beginPath();ctx.arc(mx,ey,mr,0,TAU);const moon=ctx.createRadialGradient(mx-mr*.3,ey-mr*.3,mr*.1,mx,ey,mr);moon.addColorStop(0,'#f4f1ea');moon.addColorStop(1,'#a9a39a');ctx.fillStyle=moon;ctx.fill();
+ if(mr>.5){ctx.beginPath();ctx.arc(mx,ey,mr,0,TAU);const moon=ctx.createRadialGradient(mx-mr*.3,ey-mr*.3,mr*.1,mx,ey,mr);moon.addColorStop(0,'#f4f1ea');moon.addColorStop(1,'#a9a39a');ctx.fillStyle=moon;ctx.fill();}
  // Arrows: the Moon's pull at the near side, centre and far side (differences enlarged), or the stretch left after the Earth's own fall.
  if(stage===1||stage===2){const c=M.centre[0], E=.45/(M.tide(1,0)[0]/c), Lc=Re*.55;
   const pts=[[1,0],[0,0],[-1,0],[0,1],[0,-1]];
@@ -1345,13 +1356,13 @@ function drawMoonTides(ctx,w,h,spec,st){
  if(stage>=3){const ang=Math.PI*.75+spin;mark=[ex+Math.cos(ang)*Re,ey+Math.sin(ang)*Re];ctx.beginPath();ctx.arc(...mark,5,0,TAU);ctx.fillStyle=dark;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
   const gx=small?w*.1:w*.6, gw=small?w*.8:w*.32, gy=small?h*.7:h*.72, gh=small?h*.12:h*.14;
   trace(ctx,[[gx,gy+gh/2],[gx+gw,gy+gh/2]]);ctx.strokeStyle='rgba(20,23,28,.15)';ctx.lineWidth=1;ctx.stroke();
-  trace(ctx,Array.from({length:121},(_,i)=>{const f=i/120;return [gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+f*TAU)*gh*.45];}));ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
-  const f=((spin%TAU)+TAU)%TAU/TAU;ctx.beginPath();ctx.arc(gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+spin)*gh*.45,4.5,0,TAU);ctx.fillStyle=dark;ctx.fill();
+  trace(ctx,Array.from({length:121},(_,i)=>{const f=i/120;return [gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+f*TAU)*gh*.45*mass];}));ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
+  const f=((spin%TAU)+TAU)%TAU/TAU;ctx.beginPath();ctx.arc(gx+f*gw,gy+gh/2-M.shape(Math.PI*.75+spin)*gh*.45*mass,4.5,0,TAU);ctx.fillStyle=dark;ctx.fill();
   if(st.labels){text(ctx,'your water level, one day',gx,gy-12,{size:small?10:11,weight:600,color:'rgba(20,23,28,.65)'});}}
  if(!st.labels)return;
  const size=small?10:11;
- text(ctx,'Moon',small?w-8:mx,ey+mr+16,{align:small?'right':'center',size:10,color:'rgba(20,23,28,.55)'});
- if(stage===0||stage>=3){pill(ctx,'high tide',ex+Re*1.25,ey-Re*.28,{size,weight:600,color:accent});pill(ctx,'high tide',ex-Re*1.25,ey-Re*.28,{align:'right',size,weight:600,color:accent});
+ if(mass>.05)text(ctx,'Moon',small?w-8:mx,ey+Re*.27+16,{align:small?'right':'center',size:10,color:'rgba(20,23,28,.55)'});
+ if(stage===0||stage>=3&&mass>.05){pill(ctx,'high tide',ex+Re*1.25,ey-Re*.28,{size,weight:600,color:accent});pill(ctx,'high tide',ex-Re*1.25,ey-Re*.28,{align:'right',size,weight:600,color:accent});
   if(stage===0){pill(ctx,'low tide',ex,ey-Re*1.12-14,{align:'center',size,color:'rgba(20,23,28,.6)'});}}
  if(stage===1){pill(ctx,'pulled most',ex+Re*1.08,ey+24,{align:'center',size,weight:600,color:warm});pill(ctx,'centre',ex,ey+24,{align:'center',size,weight:600,color:dark});pill(ctx,'pulled least',ex-Re*1.08,ey+24,{align:'center',size,weight:600,color:warm});
   }
@@ -1497,6 +1508,227 @@ function drawLimit(ctx,w,h,spec,st){
   text(ctx,'equal pushes',chart.x1,chart.base+(small?12:15),{align:'right',size:size-1,weight:600,color:muted});
   if(shown>0)pill(ctx,limitPct(v),last[0]+10,last[1]+(small?14:16),{size:size+1,weight:700,color:accent});}
  ctx.restore();
+}
+
+// Why the night sky is dark (Olbers' paradox). You stand on a hill under the night sky. If stars filled space evenly,
+// forever and unchanging, each shell of stars around you would add the same light and every sight line would end on a
+// star, so the sky would blaze like the Sun's surface. The universe began 13.8 billion years ago, so only light from a
+// bubble around you has arrived, and within it stars cover a tiny share of the sky (Physics.nightCover). The shells are
+// a slice through space. After playback the viewer sets how long the stars have shone in an unchanging universe.
+// Layouts and star layers are cached per stage size (the player and the previews differ).
+const NIGHT={mode:'',sky:new Map(),field:new Map()};
+const nightKeep=(map,key,value)=>{if(map.size>5)map.delete(map.keys().next().value);map.set(key,value);return value;};
+const nightRand=seed=>{let x=seed;return ()=>{x=(x*1103515245+12345)%2147483648;return x/2147483648;};};
+// Fixed stars and Milky Way dust, as fractions of the sky, so every frame matches.
+const NIGHT_STARS=(()=>{const r=nightRand(17);return Array.from({length:280},()=>[r(),r(),r(),r()]);})();
+const NIGHT_DUST=(()=>{const r=nightRand(29);return Array.from({length:1400},()=>[r(),(r()+r()+r()-1.5)/1.5,r()]);})();
+const nightMix=(a,b,f)=>a.map((v,i)=>Math.round(v+(b[i]-v)*clamp(f)));
+const nightRgb=(c,a=1)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+// Years in words, from "no time" to powers of ten.
+function nightAge(y){
+ if(y<=0)return 'no time';
+ if(y<1e15){const [s,name]=y>=1e12?[1e12,'trillion']:[1e9,'billion'], x=y/s;return `${x<100?x.toFixed(1).replace(/\.0$/,''):Math.round(x).toLocaleString('en-US')} ${name} years`;}
+ let e=Math.floor(Math.log10(y)), m=Math.round(y/10**e);if(m>=10){m=1;e++;}
+ return `${m===1?'':m+' × '}10${String(e).split('').map(d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+d]).join('')} years`;
+}
+// A share of the sky in words: tiny shares as one part in so many.
+function nightShare(v){
+ if(v<=0)return 'none';
+ if(v>=.9995)return 'all of it';
+ if(v>=.01)return Math.round(v*100)+'%';
+ if(v>=1e-3)return (v*100).toFixed(1)+'%';
+ const n=1/v;
+ for(const [s,name] of [[1e12,'trillion'],[1e9,'billion'],[1e6,'million'],[1e3,'thousand']])
+  if(n>=s){const x=n/s;return `1 part in ${x<10?x.toFixed(1).replace(/\.0$/,''):Math.round(x).toLocaleString('en-US')} ${name}`;}
+ return `1 part in ${Math.round(n)}`;
+}
+function nightPlan(st){
+ const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ const last=at(Math.max(1,lines.length-1));
+ if(st.since===undefined)return {mode:'thumb',t:2};
+ if(st.live)return {mode:'live',years:Physics.nightYears(clamp(st.mass)),t:st.t||0};
+ // 1: dusk turns to night while the stars come out; with the second sentence a dark gap between them is ringed.
+ if(st.stage===0)return {mode:'night',night:smooth((t-.2)/Math.max(2.4,at(1)-.4)),gap:smooth((t-at(1)-.3)/.8),t};
+ // 2: shells of stars appear one after another out to the stage edge; with the second sentence a near and a far shell
+ // are compared; with the last, sight lines reach out until each ends on a star, and the sky blazes.
+ if(st.stage===1)return {mode:'shells',shells:clamp((t-.3)/Math.max(1.6,at(1)-1)),compare:smooth((t-at(1)+.4)/.5)*(1-smooth((t-last+.1)/.5)),reach:clamp((t-last-.3)/3.6),t};
+ // 3: the blaze fades and a bubble grows around you to the distance light has crossed since the beginning; with the
+ // second sentence light from stars beyond it creeps inward, still on its way; with the last, sight lines go out and
+ // most find only darkness.
+ if(st.stage===2)return {mode:'bubble',fade:smooth(t/.9),grow:smooth((t-.7)/Math.max(1.6,at(1)-1)),travel:Math.max(0,t-at(1)-.2),way:smooth((t-at(1)-.2)/.6),look:lines.length>2?clamp((t-last-.3)/1.8):0,t};
+ // 4: back to the night; with the last sentence the oldest light travels toward you, stretching and fading.
+ return {mode:'end',back:smooth(t/1.2),wave:lines.length>1?clamp((t-last-.2)/3.4):0,t};
+}
+function nightLayout(w,h){
+ const small=w<520, gy=h*(small?.84:.8), cx=w*.5, s=small?20:25, eye=[cx-s*.09,gy-s*.93];
+ const ax=small?(w/2-8)/9:(w/2-18)/14, ay=small?(eye[1]-10)/15:Math.min(ax*.8,(eye[1]-12)/12);
+ return {small,gy,cx,s,eye,ax,ay,rho:Math.max(1.9,.075*Math.sqrt(ax*ay)),H:3.4,gap:small?[w*.72,h*.3,22]:[w*.73,h*.36,30]};
+}
+// The slice of space: shells k = 1, 2, ... around your eye, 2k stars on shell k (even spacing in the slice), each
+// covering the same share of the shell, so every shell covers the same share of the sky. Sight lines spread evenly
+// across the sky end on the first star they meet; the layout is chosen so each ends on a star inside the stage.
+function nightField(L,w,h){
+ const key=`${w}x${h}`;if(NIGHT.field.has(key))return NIGHT.field.get(key);
+ const K=L.small?24:22, rays=L.small?15:25, lo=L.small?.5:.2, hi=Math.PI-lo, pos=(k,a)=>[L.eye[0]+k*Math.cos(a)*L.ax,L.eye[1]-k*Math.sin(a)*L.ay];
+ const inside=([x,y])=>x>8&&x<w-8&&y>8;
+ let best=null;
+ for(let seed=1;seed<400&&!(best&&best.hits.length===rays);seed++){
+  const r=nightRand(seed*7919+3), stars=[];
+  for(let k=1;k<=K;k++)for(let i=0;i<k;i++){const a=(i+.15+.7*r())/k*Math.PI;stars.push({k,a,half:.24/k,p:pos(k,a)});}
+  const hits=[];
+  for(let j=0;j<rays;j++){const th=lo+(hi-lo)*(j+.5)/rays, star=stars.find(s=>Math.abs(s.a-th)<=s.half);if(star&&inside(star.p))hits.push({th,star});}
+  if(!best||hits.length>best.hits.length)best={stars,hits};
+ }
+ // Stars beyond the bubble whose light is shown on its way, spread around the sky at varied distances.
+ const pulses=[];
+ for(let i=0;i<8;i++){const want=.35+(Math.PI-.7)*i/7, wantK=L.H+3+(i*3)%6;
+  const pick=best.stars.filter(s=>s.k>=L.H+3&&inside(s.p)&&s.p[1]>24&&!pulses.includes(s)).sort((a,b)=>Math.abs(a.a-want)*6+Math.abs(a.k-wantK)-(Math.abs(b.a-want)*6+Math.abs(b.k-wantK)))[0];
+  if(pick)pulses.push(pick);}
+ return nightKeep(NIGHT.field,key,{K,pos,stars:best.stars,hits:best.hits,pulses,far:Math.max(...best.hits.map(x=>x.star.k))});
+}
+// The sky's own stars and the Milky Way, drawn once per stage size.
+function nightStarsLayer(w,h,L){
+ const dpr=window.devicePixelRatio||1, key=`${w}x${h}x${dpr}`;
+ if(NIGHT.sky.has(key))return NIGHT.sky.get(key);
+ const c=document.createElement('canvas');c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);
+ const g=c.getContext('2d');g.scale(dpr,dpr);
+ const A=[-.05*w,L.gy*.95], B=[1.05*w,L.gy*.0], dx=B[0]-A[0], dy=B[1]-A[1], len=Math.hypot(dx,dy), nx=-dy/len, ny=dx/len, wide=h*(L.small?.075:.1);
+ g.save();g.translate((A[0]+B[0])/2,(A[1]+B[1])/2);g.rotate(Math.atan2(dy,dx));g.scale(1,wide*1.7/(len/2));
+ const band=g.createRadialGradient(0,0,0,0,0,len/2);band.addColorStop(0,'rgba(178,186,236,.17)');band.addColorStop(.55,'rgba(150,160,220,.08)');band.addColorStop(1,'rgba(150,160,220,0)');
+ g.fillStyle=band;g.beginPath();g.arc(0,0,len/2,0,TAU);g.fill();g.restore();
+ const [gx,gy,gr]=L.gap, clear=(x,y)=>Math.hypot(x-gx,y-gy)>gr*1.15;
+ for(const [u,n,s] of NIGHT_DUST){const x=A[0]+dx*u+nx*n*wide, y=A[1]+dy*u+ny*n*wide;if(!clear(x,y))continue;
+  g.fillStyle=`rgba(215,222,255,${((.1+.28*s)*(1-Math.abs(n)*.85)).toFixed(3)})`;g.fillRect(x,y,.9,.9);}
+ for(const [u,v,s,warm] of NIGHT_STARS){const x=u*w, y=v*(L.gy-8);if(!clear(x,y))continue;
+  const fade=clamp((L.gy-y)/(h*.2)), r=.45+1.5*s**5, col=nightMix([200,214,255],[255,224,190],warm), a=(.3+.7*s)*fade;
+  if(s>.965){const halo=g.createRadialGradient(x,y,0,x,y,r*6);halo.addColorStop(0,nightRgb(col,.35*fade));halo.addColorStop(1,nightRgb(col,0));g.fillStyle=halo;g.fillRect(x-r*6,y-r*6,r*12,r*12);
+   g.strokeStyle=nightRgb(col,.3*fade);g.lineWidth=.7;trace(g,[[x-r*5,y],[x+r*5,y]]);g.stroke();trace(g,[[x,y-r*5],[x,y+r*5]]);g.stroke();}
+  g.beginPath();g.arc(x,y,r,0,TAU);g.fillStyle=nightRgb(col,a.toFixed(3));g.fill();}
+ return nightKeep(NIGHT.sky,key,c);
+}
+function nightDot(ctx,x,y,r,a){
+ const g=ctx.createRadialGradient(x,y,0,x,y,r*2.6);g.addColorStop(0,`rgba(255,253,244,${a})`);g.addColorStop(.3,`rgba(255,236,196,${a*.8})`);g.addColorStop(.45,`rgba(255,220,160,${a*.25})`);g.addColorStop(1,'rgba(255,214,150,0)');
+ ctx.fillStyle=g;ctx.fillRect(x-r*2.6,y-r*2.6,r*5.2,r*5.2);
+}
+function nightTag(ctx,value,x,y,{align='center',size=11,color='rgba(228,234,255,.9)',back='rgba(5,9,24,.72)',weight=600}={}){
+ ctx.font=`${weight} ${size}px ${FONT}`;const width=ctx.measureText(value).width, left=align==='right'?x-width:align==='center'?x-width/2:x;
+ ctx.fillStyle=back;ctx.beginPath();ctx.roundRect?ctx.roundRect(left-6,y-size*.8,width+12,size*1.6,size*.8):ctx.rect(left-6,y-size*.8,width+12,size*1.6);ctx.fill();
+ text(ctx,value,x,y,{align,size,weight,color});
+}
+function nightPerson(ctx,x,feet,s,col,rim){
+ const body=lw=>{ctx.lineWidth=lw;
+  trace(ctx,[[x-s*.13,feet],[x,feet-s*.42],[x+s*.13,feet]]);ctx.stroke();
+  trace(ctx,[[x,feet-s*.42],[x-s*.04,feet-s*.78]]);ctx.stroke();
+  trace(ctx,[[x-s*.03,feet-s*.7],[x+s*.2,feet-s*1.02]]);ctx.stroke();
+  trace(ctx,[[x-s*.03,feet-s*.7],[x-s*.17,feet-s*.47]]);ctx.stroke();
+  ctx.beginPath();ctx.arc(x-s*.09,feet-s*.93,s*.11+(lw-s*.13)/2,0,TAU);ctx.fill();};
+ ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+ if(rim){ctx.strokeStyle=rim;ctx.fillStyle=rim;body(s*.13+2.2);}
+ ctx.strokeStyle=col;ctx.fillStyle=col;body(s*.13);ctx.restore();
+}
+function nightGround(ctx,w,h,L,blaze){
+ const far=x=>L.gy-h*.042+h*.016*Math.sin(x/w*6.3+1.1)+h*.011*Math.sin(x/w*15.7+.4);
+ const near=x=>L.gy+((x-L.cx)/(w*.5))**2*h*(L.small?.06:.085)+h*.005*Math.sin((x-L.cx)/w*21);
+ const shape=(f,col)=>{ctx.beginPath();ctx.moveTo(0,h);for(let x=0;x<=w+4;x+=4)ctx.lineTo(x,f(x));ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=col;ctx.fill();};
+ const glow=ctx.createLinearGradient(0,L.gy-h*.14,0,L.gy);glow.addColorStop(0,'rgba(80,100,170,0)');glow.addColorStop(1,`rgba(80,100,170,${.2*(1-blaze)})`);
+ ctx.fillStyle=glow;ctx.fillRect(0,L.gy-h*.14,w,h*.14);
+ shape(far,nightRgb(nightMix([16,24,50],[150,118,96],blaze)));
+ shape(near,nightRgb(nightMix([6,9,19],[52,40,34],blaze)));
+ ctx.beginPath();for(let x=0;x<=w+4;x+=4)x?ctx.lineTo(x,near(x)):ctx.moveTo(x,near(x));
+ ctx.strokeStyle=blaze>0?`rgba(255,238,205,${.85*blaze})`:'rgba(140,160,230,.2)';ctx.lineWidth=1.2;ctx.stroke();
+ // Two pines on the hillside.
+ const dark=nightRgb(nightMix([4,6,14],[40,30,26],blaze));ctx.fillStyle=dark;
+ for(const [fx,fh] of [[L.small?.34:.27,L.small?.13:.16],[L.small?.42:.31,L.small?.09:.11]]){
+  const tx=L.cx+w*fx, ty=near(tx)+2, th=h*fh;ctx.fillRect(tx-th*.025,ty-th*.2,th*.05,th*.22);
+  for(let i=0;i<4;i++){const y0=ty-th*.14-i*th*.19, wd=th*(.27-.05*i);ctx.beginPath();ctx.moveTo(tx-wd,y0);ctx.lineTo(tx,y0-th*.36);ctx.lineTo(tx+wd,y0);ctx.closePath();ctx.fill();}}
+ nightPerson(ctx,L.cx,L.gy+1,L.s,dark,blaze>.5?null:'rgba(150,170,240,.22)');
+}
+function drawNight(ctx,w,h,spec,st){
+ const plan=nightPlan(st), L=nightLayout(w,h), F=['shells','bubble','end'].includes(plan.mode)?nightField(L,w,h):null, size=L.small?10:12, m=plan.mode, [ex,ey]=L.eye;
+ NIGHT.mode=m;
+ let night=1, blaze=0, diagram=0, bg=1;
+ if(m==='night')night=plan.night;
+ // Live: the eye judges brightness by ratios, so the glow follows the covered share on a log scale, from a
+ // ten-thousandth (no visible glow) to all of it; the readout gives the real share.
+ if(m==='live'){const c=Physics.nightCover(plan.years);blaze=c>0?clamp(1+Math.log10(c)/4):0;bg=plan.years>0?1:0;}
+ if(m==='shells'){diagram=1;bg=.35;blaze=smooth((plan.reach-.72)/.22);}
+ if(m==='bubble'){diagram=1;bg=.35;blaze=1-plan.fade;}
+ if(m==='end'){diagram=1-plan.back;bg=.35+.65*plan.back;}
+ // The sky: dusk to night, then the stars and the Milky Way.
+ const sky=ctx.createLinearGradient(0,0,0,L.gy);
+ sky.addColorStop(0,nightRgb(nightMix([38,58,112],[3,6,18],night)));sky.addColorStop(.62,nightRgb(nightMix([110,100,142],[8,13,34],night)));sky.addColorStop(1,nightRgb(nightMix([240,164,112],[22,32,64],night)));
+ ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+ const starsOn=bg*smooth((night-.25)/.6);
+ if(starsOn>0){ctx.save();ctx.globalAlpha=starsOn;ctx.drawImage(nightStarsLayer(w,h,L),0,0,w,h);ctx.restore();}
+ const lit=m==='bubble'?plan.grow*L.H:Infinity, shown=m==='shells'?plan.shells*F.K:F?F.K:0, NEAR=3, FAR=6, hl=m==='shells'?plan.compare:0;
+ if(diagram>0){
+  ctx.save();ctx.globalAlpha=diagram;
+  // The shells, then their stars: the same size everywhere, each looking dimmer from farther away.
+  for(let k=1;k<=F.K;k++){const on=clamp(shown-k+1);if(on<=0)break;const focus=k===NEAR||k===FAR;
+   ctx.beginPath();ctx.ellipse(ex,ey,k*L.ax,k*L.ay,0,Math.PI,TAU);ctx.strokeStyle=`rgba(150,172,255,${((.13+(focus?.4*hl:0))*on*(1-(focus?0:.6*hl))*(k>lit?.5:1)).toFixed(3)})`;ctx.lineWidth=focus&&hl>0?1.5:1;ctx.stroke();}
+  if(m==='bubble'&&lit>0){
+   // The bubble whose light has had time to reach you since the beginning.
+   const fill=ctx.createRadialGradient(ex,ey,0,ex,ey,lit*Math.max(L.ax,L.ay));fill.addColorStop(0,'rgba(120,150,255,.03)');fill.addColorStop(1,'rgba(120,150,255,.12)');
+   ctx.beginPath();ctx.ellipse(ex,ey,lit*L.ax,lit*L.ay,0,Math.PI,TAU);ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+   ctx.beginPath();ctx.ellipse(ex,ey,lit*L.ax,lit*L.ay,0,Math.PI,TAU);ctx.strokeStyle='rgba(255,214,150,.75)';ctx.lineWidth=1.6;ctx.stroke();}
+  const front=m==='shells'?plan.reach/.7*(F.far+.4):0;
+  const ended=new Set(F.hits.filter(x=>front>=x.star.k).map(x=>x.star));
+  for(const s of F.stars){const on=clamp(shown-s.k+1);if(on<=0)continue;const [x,y]=s.p;if(y<-10||x<-10||x>w+10)continue;
+   const focus=s.k===NEAR||s.k===FAR, a=on*Math.min(1,1.6/Math.sqrt(s.k))*(1-(focus?0:.6*hl));
+   // Beyond the bubble the stars are there, but their light has not arrived: faint marks, rings for those whose light is shown.
+   if(s.k>lit){if(m==='bubble'&&plan.way>0&&F.pulses.includes(s)){ctx.beginPath();ctx.arc(x,y,L.rho*1.1,0,TAU);ctx.strokeStyle=`rgba(255,214,150,${(.55*plan.way).toFixed(3)})`;ctx.lineWidth=1;ctx.stroke();}
+    else{ctx.beginPath();ctx.arc(x,y,L.rho*.55,0,TAU);ctx.fillStyle='rgba(170,185,240,.16)';ctx.fill();}continue;}
+   nightDot(ctx,x,y,L.rho*(ended.has(s)?1.25:1),ended.has(s)?1:a);}
+  if(front>0){
+   // Sight lines spread across the sky; each ends on the first star it meets.
+   ctx.lineWidth=1.1;
+   for(const {star} of F.hits){const f=clamp(front/star.k), [x,y]=star.p;
+    trace(ctx,[[ex,ey],[ex+(x-ex)*f,ey+(y-ey)*f]]);ctx.strokeStyle='rgba(255,226,170,.5)';ctx.stroke();}}
+  if(m==='bubble'&&plan.way>0){
+   // Light from stars beyond the bubble, still on its way toward you.
+   for(const s of F.pulses){const [x,y]=s.p, d=Math.min(.3+plan.travel*.22,s.k-L.H-.6), f=d/s.k, px=x+(ex-x)*f, py=y+(ey-y)*f;
+    ctx.save();ctx.globalAlpha*=plan.way;const g=ctx.createLinearGradient(x,y,px,py);g.addColorStop(0,'rgba(255,214,150,0)');g.addColorStop(1,'rgba(255,214,150,.75)');
+    trace(ctx,[[x,y],[px,py]]);ctx.strokeStyle=g;ctx.lineWidth=1.6;ctx.stroke();nightDot(ctx,px,py,L.small?1.8:2.4,1);ctx.restore();}}
+  if(m==='bubble'&&plan.look>0){
+   // Sight lines again: a few end on stars inside the bubble; the rest cross it and find only darkness.
+   ctx.lineWidth=1.1;
+   for(const [j,{th,star}] of F.hits.entries()){if(j%2)continue;const inner=star.k<=L.H, k=(inner?star.k:L.H+1.4)*plan.look, [tx,ty]=inner?star.p:F.pos(L.H+1.4,th);
+    const f=clamp(k/(inner?star.k:L.H+1.4)), px=ex+(tx-ex)*f, py=ey+(ty-ey)*f, g=ctx.createLinearGradient(ex,ey,tx,ty);
+    g.addColorStop(0,'rgba(255,226,170,.5)');g.addColorStop(inner?1:L.H/(L.H+1.4),'rgba(255,226,170,.5)');g.addColorStop(1,inner?'rgba(255,226,170,.5)':'rgba(255,226,170,0)');
+    trace(ctx,[[ex,ey],[px,py]]);ctx.strokeStyle=g;ctx.stroke();}}
+  ctx.restore();}
+ // The blaze: warm gold as it grows, so the sky brightens like sunlight rather than greying.
+ if(blaze>0){const top=nightMix([255,196,120],[255,252,243],blaze), low=nightMix([255,170,90],[255,228,176],blaze), b=ctx.createLinearGradient(0,0,0,L.gy);
+  b.addColorStop(0,nightRgb(top,(blaze**1.6).toFixed(3)));b.addColorStop(1,nightRgb(low,(blaze**.6).toFixed(3)));ctx.fillStyle=b;ctx.fillRect(0,0,w,L.gy+h*.02);}
+ // The oldest light comes in from far away, stretching as space expands, from gold through red to out of sight.
+ let wave=null;
+ if(m==='end'&&plan.wave>0){
+  const u=plan.wave, P0=[w*(L.small?.16:.2),h*(L.small?.07:.09)], P1=[ex+L.s*.05,ey-L.s*.25], dx=P1[0]-P0[0], dy=P1[1]-P0[1], len=Math.hypot(dx,dy), ux=dx/len, uy=dy/len;
+  const reach=len*(.06+.92*smooth(u)), lam=(L.small?8:10)*(1+3.2*u), amp=L.small?3.4:4.4, col=nightMix(nightMix([255,224,150],[244,104,64],u*1.7),[214,84,96],u*1.7-.7), alpha=1-.7*smooth(u);
+  ctx.beginPath();for(let d=0;d<=reach;d+=1.2){const off=amp*Math.sin(TAU*(d-reach)/lam), x=P0[0]+ux*d-uy*off, y=P0[1]+uy*d+ux*off;d?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  ctx.strokeStyle=nightRgb(col,alpha.toFixed(3));ctx.lineWidth=2.1;ctx.lineCap='round';ctx.stroke();
+  wave={P0,head:[P0[0]+ux*reach,P0[1]+uy*reach],u,ux,uy};}
+ nightGround(ctx,w,h,L,blaze);
+ if(!st.labels||m==='thumb')return;
+ const ink=blaze>.5?'rgba(52,38,24,.82)':'rgba(226,232,255,.82)';
+ text(ctx,'you',L.cx+L.s*.42,L.gy-L.s*.42,{size,weight:600,color:ink});
+ if(m==='night'&&plan.gap>0){const [gx,gy,gr]=L.gap;ctx.save();ctx.globalAlpha=plan.gap;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(gx,gy,gr,0,TAU);ctx.strokeStyle='rgba(200,212,255,.55)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+  text(ctx,'dark between stars',gx,gy+gr+(L.small?12:15),{align:'center',size,weight:600,color:'rgba(226,232,255,.85)'});ctx.restore();}
+ if(hl>.05){ctx.save();ctx.globalAlpha=hl;
+  nightTag(ctx,'nearer shell',ex,ey-NEAR*L.ay-(L.small?9:11),{size});
+  nightTag(ctx,'more stars, each dimmer',ex,ey-FAR*L.ay-(L.small?9:11),{size});ctx.restore();}
+ if(m==='shells'&&blaze>.5){ctx.save();ctx.globalAlpha=smooth((blaze-.5)/.4);text(ctx,'as bright as the Sun',w/2,h*(L.small?.2:.17),{align:'center',size:size+3,weight:700,color:'rgba(120,70,10,.85)'});ctx.restore();}
+ if(m==='live'&&Physics.nightCover(plan.years)>.99)text(ctx,'as bright as the Sun',w/2,h*(L.small?.2:.17),{align:'center',size:size+3,weight:700,color:'rgba(120,70,10,.85)'});
+ if(m==='bubble'&&plan.grow>.6){ctx.save();ctx.globalAlpha=smooth((plan.grow-.6)/.3);nightTag(ctx,'13.8 billion light-years',ex,ey-L.H*L.ay-(L.small?10:12),{size,color:'rgba(255,222,170,.95)'});ctx.restore();}
+ if(m==='bubble'&&plan.way>0&&F.pulses.length){
+  // The pulse nearest the upper right whose label stays clear of the bubble's label and inside the stage.
+  const where=s=>{const d=Math.min(.3+plan.travel*.22,s.k-L.H-.6), f=d/s.k;return [s.p[0]+(ex-s.p[0])*f,s.p[1]+(ey-s.p[1])*f];};
+  const clear=s=>{const [x,y]=where(s);return y<ey-L.H*L.ay-(L.small?40:34)&&y>30;};
+  const s=[...F.pulses].sort((a,b)=>Math.abs(a.a-.75)-Math.abs(b.a-.75)).find(clear)||F.pulses[0], [px,py]=where(s);
+  ctx.font=`600 ${size}px ${FONT}`;const right=px+16+ctx.measureText('light still on its way').width<w-6;
+  ctx.save();ctx.globalAlpha=plan.way;nightTag(ctx,'light still on its way',right?px+10:px-10,py-(L.small?12:14),{align:right?'left':'right',size});ctx.restore();}
+ if(wave){ctx.save();ctx.globalAlpha=smooth(wave.u/.15);text(ctx,'oldest light',wave.P0[0]+(L.small?6:10),wave.P0[1]-(L.small?11:13),{size,weight:600,color:'rgba(255,214,160,.9)'});ctx.restore();
+  if(wave.u>.6){ctx.save();ctx.globalAlpha=smooth((wave.u-.6)/.25);text(ctx,'stretched out of sight',wave.head[0]-(L.small?10:16),wave.head[1]-(L.small?16:20),{align:'right',size,weight:600,color:'rgba(226,232,255,.85)'});ctx.restore();}}
 }
 
 // Why a positive test for a rare disease is usually a false alarm. A thousand people take a test that is right 99
@@ -1671,6 +1903,52 @@ function skyLight(m){
  const T=nm=>Math.exp(-Physics.skyDepth(nm)*m), r=T(700);
  return [255,Math.round(255*Math.pow(T(550)/r,.45)),Math.round(255*Math.pow(T(450)/r,.45))];
 }
+// A landscape under the sky in the box x, y, w, h: the sky is black with stars without air, blue with it (deep overhead,
+// pale at the horizon), and gold near the horizon at dusk. Without air the ground is grey and cratered, with the Earth
+// hanging in the black sky; with air there are hazy hills, green ground and a tree. air and dusk run from 0 to 1; sun
+// gives the Sun's place as fractions of the box; behind draws things in the sky that the hills hide. Returns the
+// height of the near ground at a fraction across the box.
+// The height of the near ground in a landscape box at top y and height h, at a fraction u across it.
+const skyNear=(y,h)=>u=>y+h*.86-h*.022*(.6*Math.sin(.7*u*TAU+2.4)+.4*Math.sin(1.61*u*TAU+4.08));
+function skyLand(ctx,x,y,w,h,{air=1,dusk=0,sun=[.12,.2],sunR=20,sunCol=[255,250,240],tree=true,behind=null}={}){
+ const mix=(a,b,f)=>a.map((v,i)=>Math.round(v+(b[i]-v)*f)), c=a=>`rgb(${a})`, horizon=y+h*.74;
+ const top=mix(mix([5,7,14],[44,104,196],air),[34,44,100],dusk), mid=mix(mix([9,11,20],[112,166,228],air),[154,110,150],dusk), low=mix(mix([14,16,26],[200,226,247],air),[255,160,86],dusk);
+ const g=ctx.createLinearGradient(0,y,0,horizon);g.addColorStop(0,c(top));g.addColorStop(.6,c(mid));g.addColorStop(1,c(low));ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
+ const stars=1-air;
+ if(stars>.02){for(const [u,v,z] of SKY_DOTS.slice(60,130)){ctx.beginPath();ctx.arc(x+w*u,y+h*.66*v,z<.2?1.4:.8,0,TAU);ctx.fillStyle=`rgba(255,255,255,${stars*(.3+.6*z)})`;ctx.fill();}
+  // The Earth seen from the Moon: half lit, with a white swirl of cloud.
+  const ex=x+w*.8, ey=y+h*.2, er=Math.max(6,h*.05);ctx.globalAlpha=stars;
+  ctx.beginPath();ctx.arc(ex,ey,er,0,TAU);ctx.fillStyle='#3b82c4';ctx.fill();
+  ctx.beginPath();ctx.ellipse(ex-er*.2,ey-er*.25,er*.55,er*.18,-.4,0,TAU);ctx.fillStyle='rgba(255,255,255,.8)';ctx.fill();
+  ctx.beginPath();ctx.arc(ex,ey,er,-Math.PI/2,Math.PI/2);ctx.ellipse(ex,ey,er*.35,er,0,Math.PI/2,-Math.PI/2,true);ctx.fillStyle='rgba(5,7,14,.7)';ctx.fill();ctx.globalAlpha=1;}
+ // The Sun, with a glow of light scattered by air around it, so no glow without air.
+ const sx=x+w*sun[0], sy=y+h*sun[1];
+ if(air>0){const gc=mix([255,248,225],[255,176,96],dusk), glow=ctx.createRadialGradient(sx,sy,0,sx,sy,sunR*(4+3*dusk));
+  glow.addColorStop(0,`rgba(${gc},${.9*air})`);glow.addColorStop(1,`rgba(${gc},0)`);ctx.fillStyle=glow;ctx.fillRect(sx-sunR*7,sy-sunR*7,sunR*14,sunR*14);}
+ ctx.beginPath();ctx.arc(sx,sy,sunR,0,TAU);ctx.fillStyle=c(sunCol);ctx.fill();
+ behind?.();
+ const ridge=(base,amp,f,ph)=>u=>base-amp*(.6*Math.sin(f*u*TAU+ph)+.4*Math.sin(2.3*f*u*TAU+ph*1.7));
+ const fill=(at,col)=>{ctx.beginPath();ctx.moveTo(x,y+h);for(let i=0;i<=60;i++)ctx.lineTo(x+w*i/60,at(i/60));ctx.lineTo(x+w,y+h);ctx.closePath();ctx.fillStyle=c(col);ctx.fill();};
+ fill(ridge(horizon,h*.05,1.1,.8),mix(mix([62,62,68],[150,182,188],air),[112,84,108],dusk));
+ const near=skyNear(y,h);
+ fill(near,mix(mix([112,112,116],[126,172,100],air),[82,92,70],dusk));
+ // Craters on the Moon's ground.
+ if(stars>.02)for(const [u,v,z] of SKY_DOTS.slice(10,22)){const cx=x+w*u, cy=near(u)+h*(.03+.09*v), r=w*(.012+.03*z);
+  ctx.beginPath();ctx.ellipse(cx,cy,r,r*.32,0,0,TAU);ctx.fillStyle=`rgba(60,60,66,${.5*stars})`;ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx,cy+r*.06,r*.8,r*.22,0,0,Math.PI);ctx.fillStyle=`rgba(170,170,176,${.45*stars})`;ctx.fill();}
+ // A tree on the Earth's ground.
+ if(tree&&air>.02){const tx=x+w*.86, ty=near(.86), s=h*.1;ctx.globalAlpha=air;
+  ctx.fillStyle=c(mix([92,68,48],[60,44,40],dusk));ctx.fillRect(tx-s*.06,ty-s*.7,s*.12,s*.72);
+  for(const [dx,dy,r] of [[0,-.95,.42],[-.28,-.72,.3],[.28,-.72,.3]]){ctx.beginPath();ctx.arc(tx+dx*s,ty+dy*s,r*s,0,TAU);ctx.fillStyle=c(mix([70,128,72],[56,70,52],dusk));ctx.fill();}
+  ctx.globalAlpha=1;}
+ return u=>near(u);
+}
+// A round view of what you see when the Sun is e degrees up: its colour and the sky's follow the air its light crosses.
+function skyView(ctx,cx,cy,r,e,dusk,sunCol){
+ ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.clip();
+ skyLand(ctx,cx-r,cy-r,2*r,2*r,{air:1,dusk,sun:[.42,.72-.58*clamp(e/90)],sunR:r*.12,sunCol,tree:true});
+ ctx.restore();ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=3;ctx.stroke();
+}
 function drawSky(ctx,w,h,spec,st){
  const plan=skyPlan(st), small=w<520, ink='rgba(20,23,28,.8)', muted='rgba(20,23,28,.55)', size=small?10:12, T=plan.t;
  const blue=ACCENT.blue, red='#dc2626';
@@ -1679,96 +1957,120 @@ function drawSky(ctx,w,h,spec,st){
   // One molecule, magnified, twice: a red wave and a blue wave pass at the same speed; the blue one is shorter and
   // quicker, so it shakes the electrons faster, and the rings of light they send out are about six times as bright.
   const x0=w*.08, x1=w*.92, mx=w*(small?.5:.42), speed=small?60:90, lanes=[[red,'red light',small?h*.28:h*.3,small?70:120,1],[blue,'blue light',small?h*.66:h*.66,(small?70:120)*450/700,Physics.skyScatter(450)]];
+  // A pale sky behind the magnified molecule, so this chapter sits in the same world as the others.
+  const pale=ctx.createLinearGradient(0,h*.03,0,h*.97);pale.addColorStop(0,'#eaf2fd');pale.addColorStop(1,'#f6f9fe');
+  ctx.beginPath();ctx.roundRect(w*.03,h*.03,w*.94,h*.94,16);ctx.fillStyle=pale;ctx.fill();
   for(const [color,name,y,len,bright] of lanes){
    const k=TAU/len, field=x=>Math.sin(k*(x-x0-speed*T));
    // Rings: one per wave, growing at the wave's speed and fading out before they reach the other lane. Sunlight
    // shakes the electrons every way across its path, so they send light out in every direction: forward and back
-   // most, sideways half as much.
-   const period=len/speed, reach=h*.17;
-   for(let j=0;j<6;j++){const age=(T%period)+j*period, r=age*speed;if(r<6||r>reach)continue;const a0=Math.min(.95,.12*bright)*(1-(r/reach)**2);
+   // most, sideways half as much. The blue molecule's rings are brighter, thicker and reach farther, as it sends out
+   // about six times as much light.
+   const strong=bright>1, period=len/speed, reach=h*(strong?.22:.12);
+   for(let j=0;j<6;j++){const age=(T%period)+j*period, r=age*speed;if(r<6||r>reach)continue;const a0=(strong?.9:.3)*(1-(r/reach)**2);
     for(let q=0;q<48;q++){const th=q/48*TAU, way=(1+Math.cos(th)**2)/2;
-     ctx.beginPath();ctx.arc(mx,y,r,th,th+TAU/48+.005);ctx.strokeStyle=rgba(color,a0*way);ctx.lineWidth=small?1.6:2.4;ctx.stroke();}}
+     ctx.beginPath();ctx.arc(mx,y,r,th,th+TAU/48+.005);ctx.strokeStyle=rgba(color,a0*way);ctx.lineWidth=(small?1.6:2.4)*(strong?1.8:1);ctx.stroke();}}
    const pts=[];for(let x=x0;x<=x1;x+=3)pts.push([x,y-(small?14:20)*field(x)]);
    trace(ctx,pts);ctx.strokeStyle=rgba(color,.8);ctx.lineWidth=2;ctx.stroke();
-   // The molecule: a nucleus and its electron cloud, pushed up and down by the wave's field.
-   const shift=(small?5:7)*field(mx);
-   ctx.beginPath();ctx.arc(mx,y-shift,small?10:14,0,TAU);ctx.fillStyle='rgba(20,23,28,.12)';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.3)';ctx.lineWidth=1;ctx.stroke();
-   ctx.beginPath();ctx.arc(mx,y,small?2.6:3.4,0,TAU);ctx.fillStyle='rgba(20,23,28,.75)';ctx.fill();
+   // The molecule: a soft cloud of electrons around its nucleus, pushed up and down by the wave's field.
+   const shift=(small?5:7)*field(mx), cr=small?15:24, cloud=ctx.createRadialGradient(mx,y-shift,0,mx,y-shift,cr);
+   cloud.addColorStop(0,'rgba(99,102,241,.42)');cloud.addColorStop(.7,'rgba(99,102,241,.16)');cloud.addColorStop(1,'rgba(99,102,241,0)');
+   ctx.beginPath();ctx.arc(mx,y-shift,cr,0,TAU);ctx.fillStyle=cloud;ctx.fill();
+   ctx.beginPath();ctx.arc(mx,y,small?2.6:3.4,0,TAU);ctx.fillStyle='rgba(20,23,28,.8)';ctx.fill();
    if(st.labels)text(ctx,name,x0,y-h*.13,{size,weight:700,color});}
-  if(st.labels){text(ctx,'one molecule, magnified',w/2,h*.07,{align:'center',size,weight:700,color:muted});
+  if(st.labels){text(ctx,'air molecules, magnified',w/2,h*.07,{align:'center',size,weight:700,color:muted});
    if(plan.more>.5)pill(ctx,'sends out about 6× more',mx+(small?30:70),lanes[1][2]-h*.12,{size:size+1,weight:700,color:blue});}
   return;
  }
  if(plan.mode==='sunset'||plan.mode==='live'){
-  // A slice of the Earth with its air, drawn many times thicker than it is. Light from the Sun crosses the air to
-  // you: from overhead it crosses little; from the horizon, far more, losing its blue on the way.
-  const Re=small?h*.75:h*1.6, H=small?h*.09:h*.13, ox=small?w*.62:w/2, oy=small?h*.62:h*.74, ecx=ox, ecy=oy+Re, gapOut=small?36:110;
+  // Space, and a slice of the Earth with the glow of its air. Light from the Sun crosses the air to you: from overhead
+  // it crosses little; from the horizon, far more, losing its blue on the way. A round view shows what you see.
+  const Re=small?h*.75:h*1.6, H=small?h*.09:h*.13, ox=small?w*.66:w/2, oy=small?h*.62:h*.74, ecx=ox, ecy=oy+Re, gapOut=small?14:110;
   const path=e=>{const a=e*Math.PI/180, d=[-Math.cos(a),-Math.sin(a)], b=Re*Math.sin(a), L=Math.sqrt((Re+H)**2-Re*Re*Math.cos(a)**2)-b;return {d,L};};
-  ctx.beginPath();ctx.arc(ecx,ecy,Re+H,0,TAU);ctx.fillStyle='rgba(106,168,232,.22)';ctx.fill();
-  ctx.beginPath();ctx.arc(ecx,ecy,Re,0,TAU);ctx.fillStyle='#b9cf9f';ctx.fill();
+  const bx=w*.02, by=h*.03, bw=w*.96, bh=h*.94;
+  ctx.save();ctx.beginPath();ctx.roundRect(bx,by,bw,bh,16);ctx.clip();
+  const space=ctx.createLinearGradient(0,by,0,by+bh);space.addColorStop(0,'#090e1f');space.addColorStop(1,'#1b2648');ctx.fillStyle=space;ctx.fillRect(bx,by,bw,bh);
+  for(const [u,v,z] of SKY_DOTS.slice(0,80)){ctx.beginPath();ctx.arc(bx+bw*u,by+bh*.62*v,z<.15?1.3:.7,0,TAU);ctx.fillStyle=`rgba(255,255,255,${.2+.5*z})`;ctx.fill();}
+  const atm=ctx.createRadialGradient(ecx,ecy,Re,ecx,ecy,Re+H);atm.addColorStop(0,'rgba(132,190,255,.8)');atm.addColorStop(.55,'rgba(110,170,250,.35)');atm.addColorStop(1,'rgba(110,170,250,0)');
+  ctx.beginPath();ctx.arc(ecx,ecy,Re+H,0,TAU);ctx.fillStyle=atm;ctx.fill();
+  const sea=ctx.createLinearGradient(0,oy,0,oy+Re*.45);sea.addColorStop(0,'#3274b8');sea.addColorStop(1,'#132f5c');
+  ctx.beginPath();ctx.arc(ecx,ecy,Re,0,TAU);ctx.fillStyle=sea;ctx.fill();
+  ctx.save();ctx.beginPath();ctx.arc(ecx,ecy,Re,0,TAU);ctx.clip();
+  ctx.beginPath();ctx.ellipse(ox+w*.03,oy+Re*.07,w*(small?.32:.2),Re*.12,0,0,TAU);ctx.fillStyle='#6d9a5a';ctx.fill();
+  ctx.beginPath();ctx.ellipse(ox-w*(small?.5:.3),oy+Re*.2,w*.12,Re*.06,.2,0,TAU);ctx.fillStyle='#5f8a52';ctx.fill();ctx.restore();
   drawPerson(ctx,ox,oy,small?5:7,'#14171c');
   const ray=(e,show,tint,label)=>{if(show<=0)return;const {d,L}=path(e), m=Physics.skyAirMass(e), sx=ox+d[0]*(L+gapOut), sy=oy+d[1]*(L+gapOut), ex=ox+d[0]*L, ey=oy+d[1]*L;
    // From the Sun to the edge of the air the light is unchanged; inside the air its colour follows the air crossed.
    const steps=24, upto=show;
    ctx.lineWidth=small?4:6;ctx.lineCap='round';
    const inside=clamp(upto*2-1), tip=[ex-d[0]*L*inside,ey-d[1]*L*inside];
-   trace(ctx,[[sx,sy],[sx+(ex-sx)*Math.min(1,upto*2),sy+(ey-sy)*Math.min(1,upto*2)],...(inside>0?[tip]:[])]);ctx.strokeStyle='rgba(20,23,28,.16)';ctx.lineWidth=(small?4:6)+3;ctx.stroke();
    trace(ctx,[[sx,sy],[sx+(ex-sx)*Math.min(1,upto*2),sy+(ey-sy)*Math.min(1,upto*2)]]);ctx.strokeStyle='rgba(255,252,240,.98)';ctx.lineWidth=small?4:6;ctx.stroke();
-   for(let i=0;i<steps*inside;i++){const f0=i/steps, f1=Math.min(inside,(i+1)/steps), [r,g,b]=skyLight(m*(tint?f1:0));
-    trace(ctx,[[ex-d[0]*L*f0,ey-d[1]*L*f0],[ex-d[0]*L*f1,ey-d[1]*L*f1]]);ctx.strokeStyle=`rgb(${r},${g},${b})`;ctx.stroke();}
+   // Inside the air the light's colour follows the air crossed so far, drawn as one smooth stroke.
+   if(inside>0){const gr=ctx.createLinearGradient(ex,ey,tip[0],tip[1]);
+    for(let i=0;i<=steps;i++){const f=i/steps, [r,g,b]=skyLight(m*(tint?f*inside:0));gr.addColorStop(f,`rgb(${r},${g},${b})`);}
+    trace(ctx,[[ex,ey],tip]);ctx.strokeStyle=gr;ctx.stroke();}
    // The Sun itself, in space, gives out white light; only the light that crosses the air changes colour.
-   const R=small?11:16, glow=ctx.createRadialGradient(sx,sy,0,sx,sy,R*2.6);
-   glow.addColorStop(0,'rgba(255,244,214,.6)');glow.addColorStop(1,'rgba(255,244,214,0)');ctx.fillStyle=glow;ctx.fillRect(sx-R*3,sy-R*3,R*6,R*6);
-   ctx.beginPath();ctx.arc(sx,sy,R,0,TAU);ctx.fillStyle='#fffaf0';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.25)';ctx.lineWidth=1;ctx.stroke();
+   const R=small?11:16, glow=ctx.createRadialGradient(sx,sy,0,sx,sy,R*3.4);
+   glow.addColorStop(0,'rgba(255,244,214,.75)');glow.addColorStop(1,'rgba(255,244,214,0)');ctx.fillStyle=glow;ctx.fillRect(sx-R*4,sy-R*4,R*8,R*8);
+   ctx.beginPath();ctx.arc(sx,sy,R,0,TAU);ctx.fillStyle='#fffaf0';ctx.fill();
    // Blue leaving the ray along its way through the air, as small rings: plenty where the light enters the air, none
    // by the time its blue has run out.
    if(tint>0)for(const [u,v,z] of SKY_DOTS.slice(0,48)){const f=u*inside, left=Math.exp(-Physics.skyDepth(450)*m*f), px=ex-d[0]*L*f, py=ey-d[1]*L*f, age=((T*.6+v+z)%1);
-    ctx.beginPath();ctx.arc(px,py,Math.max(.5,age*(small?8:12)),0,TAU);ctx.strokeStyle=rgba(blue,.75*(1-age)*tint*left*clamp(m/8));ctx.lineWidth=1.1;ctx.stroke();}
-   if(st.labels&&label&&inside>=1)pill(ctx,label,sx,sy+(small?20:28),{align:'center',size,weight:700,color:ink});};
+    ctx.beginPath();ctx.arc(px,py,Math.max(.5,age*(small?8:12)),0,TAU);ctx.strokeStyle=rgba('#7db4ff',.85*(1-age)*tint*left*clamp(m/8));ctx.lineWidth=1.2;ctx.stroke();}
+   if(st.labels&&label&&inside>=1)pill(ctx,label,Math.max(sx,bx+(small?30:40)),sy+(small?20:28),{align:'center',size,weight:700,color:ink});};
+  // What you see: the Sun high in a blue sky at noon. With the second sentence it sinks to the horizon, and the Sun
+  // and the sky near the horizon take the colours the model gives for its height, turning gold and red.
+  let view=null;
+  const seen=e=>({e,dusk:1-Physics.skyThrough(450,e)/Physics.skyThrough(450,90),col:skyLight(Physics.skyAirMass(e))});
+  if(plan.mode==='live')view={...seen(Math.max(0,plan.sun)),show:1};
+  else view={...seen(90*(1-plan.tint)),show:plan.noon};
   if(plan.mode==='live')ray(Math.max(0,plan.sun),1,1,'');
   else{ray(90,plan.noon,plan.tint,'noon');ray(0,plan.dusk*1.0001,plan.tint,'sunset');}
   drawPerson(ctx,ox,oy,small?5:7,'#14171c');
-  if(st.labels){text(ctx,'you',ox+(small?10:14),oy-(small?6:9),{size,weight:700,color:ink});
-   text(ctx,'air, not to scale',small?w-6:ox+120,small?oy-H*.1:oy-H*.5,{align:small?'right':'left',size:size-1,weight:600,color:muted});}
+  ctx.restore();
+  const vr=small?w*.17:h*.21, vx=small?w*.25:w*.82, vy=small?h*.17:h*.31;
+  if(view.show>0){ctx.globalAlpha=view.show;skyView(ctx,vx,vy,vr,view.e,view.dusk,view.col);ctx.globalAlpha=1;}
+  if(st.labels){text(ctx,'you',ox+(small?10:14),oy-(small?6:9),{size,weight:700,color:'#f8fafc'});
+   if(view.show>.5)text(ctx,'what you see',vx,small?vy+vr+14:vy-vr-14,{align:'center',size,weight:700,color:'#f8fafc'});}
   return;
  }
- // The sky: a window onto the daytime sky above the ground, with the Sun at the upper left and you on the ground.
- const air=plan.air??1, wx=w*.05, wy=h*.05, ww=w*.9, wh=h*.8, ground=wy+wh*.82;
- const mix=(a,b,f)=>a.map((v,i)=>Math.round(v+(b[i]-v)*f)), top=mix([11,15,25],[86,150,222],air), low=mix([24,28,40],[176,212,244],air);
- ctx.save();ctx.beginPath();ctx.roundRect(wx,wy,ww,wh,14);ctx.clip();
- const sky=ctx.createLinearGradient(0,wy,0,ground);sky.addColorStop(0,`rgb(${top})`);sky.addColorStop(1,`rgb(${low})`);ctx.fillStyle=sky;ctx.fillRect(wx,wy,ww,wh);
- ctx.fillStyle=`rgb(${mix([142,142,142],[167,196,138],air)})`;ctx.fillRect(wx,ground,ww,wh);
- const sx=wx+ww*(small?.16:.1), sy=wy+wh*.2, R=small?14:20, sg=ctx.createRadialGradient(sx,sy,0,sx,sy,R*3);
- // The glow around the Sun is light scattered by air, so there is none without air.
- sg.addColorStop(0,`rgba(255,250,230,${.9*air})`);sg.addColorStop(1,'rgba(255,250,230,0)');ctx.fillStyle=sg;ctx.fillRect(sx-R*3,sy-R*3,R*6,R*6);
- ctx.beginPath();ctx.arc(sx,sy,R,0,TAU);ctx.fillStyle='#fffaf0';ctx.fill();
- const px=wx+ww*(small?.66:.62), eyeY=ground-(small?14:20);
- if(plan.mode==='scatter'||plan.mode==='thumb'){
-  // Sunlight fills the whole sky, drawn as parallel rays from the Sun's direction. All along each ray the air bounces
-  // a little blue off in every direction, drawn as small blue rings growing out of the rays.
-  const ang=Math.atan2(eyeY-sy,px-sx), dir=[Math.cos(ang),Math.sin(ang)], nrm=[-dir[1],dir[0]], span=Math.hypot(ww,wh);
-  ctx.save();ctx.beginPath();ctx.rect(wx,wy,ww,ground-wy);ctx.clip();
-  const rays=[];for(let k=0;k<9;k++){const o=(k/8-.4)*span*.75;rays.push([sx+nrm[0]*o,sy+nrm[1]*o]);}
+ // The sky: a landscape with the Sun at the upper left and you on the ground; on the Moon, with no air, the sky is
+ // black and the ground grey.
+ const air=plan.air??1, wx=w*.03, wy=h*.04, ww=w*.94, wh=h*.9, sunF=[small?.16:.1,.2], R=small?14:20;
+ const sx=wx+ww*sunF[0], sy=wy+wh*sunF[1], youF=small?.66:.62, px=wx+ww*youF, ground=skyNear(wy,wh)(youF), eyeY=ground-(small?14:20), skyLow=wy+wh*.76;
+ const scatter=plan.mode==='scatter'||plan.mode==='thumb';
+ // Sunlight fills the whole sky, drawn as parallel rays from the Sun's direction. All along each ray the air bounces
+ // a little blue off in every direction, drawn as small blue rings growing out of the rays; the hills hide both.
+ const ang=Math.atan2(eyeY-sy,px-sx), dir=[Math.cos(ang),Math.sin(ang)], nrm=[-dir[1],dir[0]], span=Math.hypot(ww,wh);
+ const rays=[];for(let k=0;k<9;k++){const o=(k/8-.4)*span*.75;rays.push([sx+nrm[0]*o,sy+nrm[1]*o]);}
+ const inside=([x,y])=>x>wx+8&&x<wx+ww-8&&y>wy+8&&y<skyLow-h*.06;
+ const spots=SKY_DOTS.map(([u,v,z],i)=>{const [x0,y0]=rays[i%9], s=(u-.5)*span;return [x0+dir[0]*s,y0+dir[1]*s,z];}).filter(inside).slice(0,24);
+ // Places on the rays that your eye sees in nine directions fanned evenly across the sky, from low on the left to low
+ // on the right: where each sight line meets a ray at about the middle distance. They get rings too.
+ const cross=(a,b)=>a[0]*b[1]-a[1]*b[0], from=[];
+ for(let i=0;i<9;i++){const th=-2.85+2.55*i/8, look=[Math.cos(th),Math.sin(th)], want=wh*(small?.36:.42);let best=null;
+  for(const [x0,y0] of rays){const den=cross(look,dir);if(Math.abs(den)<1e-6)continue;const t=cross([x0-px,y0-eyeY],dir)/den, q=[px+look[0]*t,eyeY+look[1]*t];
+   if(t>0&&inside(q)&&q[1]<skyLow-h*.12&&(!best||Math.abs(t-want)<Math.abs(best[2]-want)))best=[q[0],q[1],t];}
+  if(best){from.push(best);spots.push([best[0],best[1],SKY_DOTS[i][2]]);}}
+ const beams=()=>{
   for(const [x0,y0] of rays){
    trace(ctx,[[x0-dir[0]*span,y0-dir[1]*span],[x0+dir[0]*span,y0+dir[1]*span]]);ctx.strokeStyle='rgba(255,250,230,.55)';ctx.lineWidth=small?1.6:2.4;ctx.stroke();}
-  // Ring centres sit on the rays, at fixed scattered places inside the window above the ground.
-  const inside=([x,y])=>x>wx+8&&x<wx+ww-8&&y>wy+8&&y<ground-10;
-  const spots=SKY_DOTS.map(([u,v,z],i)=>{const [x0,y0]=rays[i%9], s=(u-.5)*span;return [x0+dir[0]*s,y0+dir[1]*s,z];}).filter(inside).slice(0,30);
   for(const [x,y,z] of spots){const age=(T*.45+z)%1, r=age*(small?9:14);
-   ctx.beginPath();ctx.arc(x,y,Math.max(.5,r),0,TAU);ctx.strokeStyle=`rgba(37,99,235,${.75*(1-age)})`;ctx.lineWidth=1.4;ctx.stroke();}
-  ctx.restore();
-  // Dashed lines from places on the rays spread across the sky to your eye: bounced blue arrives from every part of it.
-  const high=spots.filter(([x,y])=>y<ground-(ground-wy)*.25).sort((a,b)=>a[0]-b[0]), from=high.length>9?Array.from({length:9},(_,i)=>high[Math.round(i*(high.length-1)/8)]):high;
+   ctx.beginPath();ctx.arc(x,y,Math.max(.5,r),0,TAU);ctx.strokeStyle=`rgba(29,78,216,${.85*(1-age)})`;ctx.lineWidth=1.6;ctx.stroke();}};
+ ctx.save();ctx.beginPath();ctx.roundRect(wx,wy,ww,wh,16);ctx.clip();
+ skyLand(ctx,wx,wy,ww,wh,{air,sun:sunF,sunR:R,behind:scatter?beams:null});
+ if(scatter){
+  // Dashed lines to your eye from those places, fanned around the sky: bounced blue arrives from every part of it.
   if(plan.eye>0)from.forEach(([qx,qy],i)=>{const show=clamp(plan.eye*9-i);if(show<=0)return;
    const ex=qx+(px-qx)*show, ey=qy+(eyeY-qy)*show;
-   ctx.setLineDash([4,5]);trace(ctx,[[qx,qy],[ex,ey]]);ctx.strokeStyle='rgba(37,99,235,.75)';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);});
+   ctx.setLineDash([4,5]);trace(ctx,[[qx,qy],[ex,ey]]);ctx.strokeStyle='rgba(30,64,175,.85)';ctx.lineWidth=1.6;ctx.stroke();ctx.setLineDash([]);});
   if(st.labels){pill(ctx,'sunlight',sx+R+(small?36:60),sy-(small?14:18),{size,weight:700,color:ink});
    if(plan.eye>.95)pill(ctx,'bounced blue',px+(small?12:18),ground+(small?16:24),{size,weight:700,color:blue});}
  }
  ctx.restore();
- drawPerson(ctx,px,ground,small?5:7,air>.5?'#14171c':'#e5e7eb');
- if(st.labels){text(ctx,'you',px+(small?10:14),ground-(small?16:22),{size,weight:700,color:air>.5?'#14171c':'#f8fafc'});
-  if(plan.mode==='air')text(ctx,air<.5?'no air, like the Moon':'with air',wx+14,wy+(small?14:18),{size,weight:700,color:air<.5?'rgba(248,250,252,.85)':'rgba(20,23,28,.7)'});}
+ drawPerson(ctx,px,ground,small?5:7,'#14171c');
+ if(st.labels){text(ctx,'you',px+(small?10:14),ground-(small?16:22),{size,weight:700,color:'#14171c'});
+  if(plan.mode==='air')text(ctx,air<.5?'no air, like the Moon':'with air',wx+16,wy+(small?16:20),{size,weight:700,color:'rgba(248,250,252,.92)'});}
 }
 
 // Why we have seasons. Many people think summer comes when Earth is closest to the Sun, but the orbit is almost a
@@ -2449,7 +2751,7 @@ const ENGINES={
   // The modelled effect for the render checks: how far the chosen energy sits above the trap's floor.
   effect:a=>trapE(a)+Physics.trapDepth,
   measure:[()=>({live:'This energy',atom:'Colours given off',all:'Allowed energies',sweep:'Allowed energies found'})[TRAP.mode]||'',()=>TRAP.mode==='live'?(TRAP.fits?'allowed':'not allowed'):TRAP.mode==='atom'?String(TRAP.colours):TRAP.mode==='inside'||TRAP.mode==='walls'||TRAP.mode==='corner'?'':String(TRAP.found)],scale:'',demoEnd:()=>2,
-  disclosure:'Exact one-dimensional quantum model of a particle in a square pit, in units where ħ = 1 and 2m = 1; wave heights are not to scale. Each wave is drawn at one instant: an allowed wave keeps its shape over time, and a wave that grows without end is not a possible state at all. The energy control clicks onto an allowed energy when it comes close. A real atom traps its electrons with a pull of a different shape, and the colours are illustrative.',
+  disclosure:'Exact one-dimensional quantum model of a particle in a square pit, in units where ħ = 1 and 2m = 1. Each wave is drawn at one instant: an allowed wave keeps its shape over time, and a wave that grows without end is not a possible state at all. The energy control clicks onto an allowed energy when it comes close. A real atom traps its electrons with a pull of a different shape, and the colours are illustrative.',
   try:'Slide “Energy” until the wave fades into both walls; it does so only at the marked energies. Then widen the trap: more energies fit, and they sit lower.',aria:'A particle’s wave in a pit. At most energies the wave grows without end in one wall, which is impossible; only at a few energies does it fade into both walls. Those are the allowed energies, and drops between them give off light of certain colours.'},
  'falling-time':{draw:drawFall,a:['Gravity','how strong gravity is'],b:['Time in the air','between leaving and meeting again',''],
   fa:a=>a<.005?'none':Math.round(a*100)+'%',fb:b=>(2+2*(b-1)).toFixed(1)+' units',
@@ -2462,40 +2764,50 @@ const ENGINES={
  'twin-trip':{draw:drawTwinTrip,a:['Speed','how fast the rocket flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
   measure:['Traveller comes home younger by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',demoEnd:()=>2.5,
-  disclosure:'Ages and speeds are exact special relativity; the rocket turns around instantly, and the drawing is not to scale.',
+  disclosure:'Ages and speeds are exact special relativity; the rocket turns around instantly.',
   try:'Set Speed to zero: do the twins still agree? Speed up, then make the trip longer and compare the two bars.',aria:'Twins: one stays on Earth while the other flies to a star and back. Two bars show how much each twin has aged.'},
  'light-clock':{draw:(ctx,w,h,spec,st)=>drawLightClocks(ctx,w,h,spec,st,{vplan:Physics.speed(st.stage===timeline?.chapters?.length-1?1:spec.mass)}),
   demo:(p,spec)=>({mass:spec.mass+(1-spec.mass)*smooth(p/.12),distance:spec.distance}),a:['Speed','how fast the rocket flies'],b:['Unused','',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>'',
   measure:['Rocket clock ticks slower by',a=>(Physics.agingGap(a)*100).toFixed(0)+'%'],scale:'Seen from Earth',demoEnd:s=>s.distance,
-  disclosure:'Exact special relativity: light moves at the same speed for every observer. The clocks are slowed down for viewing and not to scale; the rocket clock ticks normally for its crew.',
+  disclosure:'Exact special relativity: light moves at the same speed for every observer. The clocks are slowed down for viewing; the rocket clock ticks normally for its crew.',
   try:'Slide the speed down to zero: the clocks agree. Push it toward light speed: the slanted path grows and the rocket clock nearly stops.',aria:'Two light clocks: one on Earth with light going straight up and down, one on a moving rocket whose light must slant to hit the moving mirrors, so it ticks less often.'},
  'spacetime-paths':{draw:drawPaths,drag:dragPaths,demo:false,a:['Speed','how fast the traveller flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
   measure:['Traveller’s clock counts less by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',demoEnd:()=>2.5,
-  disclosure:'Exact special relativity in years and light-years; the turnaround is instant. The light clocks are slowed down for viewing and not to scale. Distances on the page are not spacetime lengths: tilted paths look longer than they hold.',
+  disclosure:'Exact special relativity in years and light-years; the turnaround is instant. The light clocks are slowed down for viewing. Distances on the page are not spacetime lengths: tilted paths look longer than they hold.',
   try:'Drag the turnaround sideways: a faster trip leaves less time on the traveller’s clock. Drag it back to the home path: the twins agree again.',aria:'A spacetime diagram: the home twin’s straight path and the traveller’s bent path between the same goodbye and reunion, with one dot per year of each twin’s own time.'},
  'river':{draw:drawRiver,demo:false,tryAny:true,a:['Black hole mass','sets the size of the horizon'],b:['Light starts at','how far from the centre the light is sent',''],
-  fa:a=>a<.06?'tiny':Math.round(a*100)+'%',fb:b=>{const re=.6+(b-1);return re.toFixed(2)+' units out';},
-  measure:['Where the light starts, space flows in at',(a,b)=>RIVER.live?Math.round(Math.sqrt(Math.max(.05,RIVER.rs)/Math.max(.05,RIVER.re))*100)+'% of light speed':''],scale:'',demoEnd:()=>1,
-  disclosure:'A picture with exact numbers: for a non-rotating black hole, Einstein’s equations can be written as if space flowed inward at the speed a dropped object reaches (the river, or Painlevé–Gullstrand, picture), and light always moves at light speed through the space around it. Space is not a substance and nothing is really carried; the flowing dots only show the inflow speed. Distances are in horizon sizes and motion is slowed down. The fish and the waterfall are an analogy that follows the same rule; a real river’s current depends on its shape.',
+  fa:a=>a<.005?'none':Math.round(clamp(a)*100)+'%',fb:b=>{const re=.6+(b-1);return re.toFixed(2)+' units out';},
+  // The modelled effect for the render checks: how fast space flows in where the light starts, in light speeds.
+  effect:(a,b)=>Physics.riverInflow(clamp(a),.6+(b-1)),
+  measure:['Where the light starts, space flows in at',(a,b)=>RIVER.live?Math.round(Physics.riverInflow(clamp(a),.6+(b-1))*100)+'% of light speed':''],scale:'',demoEnd:()=>1,
+  disclosure:'A picture with exact numbers: for a non-rotating black hole, Einstein’s equations can be written as if space flowed inward at the speed a dropped object reaches (the river, or Painlevé–Gullstrand, picture), and light always moves at light speed through the space around it. Space is not a substance and nothing is really carried; the flowing dots only show the inflow speed. Distances are measured in units of the horizon at full mass, and motion is slowed down. The fish and the waterfall are an analogy that follows the same rule; a real river’s current depends on its shape.',
   try:'Move “Light starts at” inside the horizon: can the light get out? Then make the black hole smaller and try again.',aria:'A fish swims upstream in a river that speeds up toward a waterfall: far away it gets away, at one point it holds still, and past it it is swept over. Then space flows into a black hole the same way, and light, always moving at light speed through it, escapes from outside the horizon, stands still on it and is carried in from inside.'},
- 'fall-views':{draw:drawViews,demo:false,measure:null,a:['Gravity','how strong gravity is'],b:['Time in the air','between the toss and the catch',''],
-  fa:a=>a<.005?'none':Math.round(a*100)+'%',fb:b=>Physics.views(1,b).T.toFixed(1)+' units',scale:'',demoEnd:()=>1.6,
-  disclosure:'Schematic units; air resistance is ignored. The view from the ball’s perspective is exact for a short toss. The first chapter, with no gravity, uses its own height scale so the whole path fits.',
-  try:'',aria:'A ball tossed up and caught, drawn on a map of height and time, first as seen from the ground and then as seen from the ball, where the ball stays still and the ground moves.'},
- 'tides':{draw:drawTides,demo:false,measure:null,a:['Planet mass','how strongly it pulls'],b:['Unused','',''],
-  fa:a=>Math.round(a*100)+'%',fb:b=>b.toFixed(2),scale:'',demoEnd:()=>1,
-  disclosure:'The ball is an analogy: a curved surface in space. Spacetime curvature also makes straight paths come together or spread apart, but it involves time and cannot be drawn exactly. The balls follow exact Newtonian free fall, accurate for weak gravity; sizes are not to scale. In three dimensions, a small floating ring away from the Earth stretches one way and squeezes in the other two, so its volume stays the same.',
-  try:'',aria:'Two walkers heading north on a globe come together; a ring of falling balls around the Earth shrinks; a small falling ring stretches into an egg shape.'},
- 'lift':{draw:drawLift,demo:false,measure:null,a:['Unused','',''],b:['Unused','',''],
-  fa:a=>a.toFixed(2),fb:b=>b.toFixed(2),scale:'',demoEnd:()=>1.25,
-  disclosure:'Newtonian physics, exact for a lift on Earth: a scale reads the floor’s push, your weight times (g + a)/g. The ride’s speeds, the 70 kg reading and the shaft are illustrative; air resistance is ignored, and real lifts have safety brakes. The dial’s needle eases to each reading like a real scale’s; the push itself changes at once, and the fall is shown in slow motion.',
-  try:'',aria:'A person stands on a bathroom scale in a lift. The dial reads their weight when parked, more or less while the lift speeds up or slows down, and zero when the cable snaps.'},
- 'moon-tides':{draw:drawMoonTides,demo:false,measure:null,a:['Unused','',''],b:['Unused','',''],
-  fa:a=>a.toFixed(2),fb:b=>b.toFixed(2),scale:'',demoEnd:()=>1.25,
-  disclosure:'The arrows come from the exact Newtonian pull at the real Earth–Moon distance, with differences enlarged; the bulges are hugely exaggerated, and the Moon is drawn far too close and too big. Real tides are also shaped by coastlines and ocean depth.',
-  try:'',aria:'The Earth with its oceans and the Moon. The Moon pulls the near side most and the far side least, so the oceans bulge toward and away from the Moon, and a place on the coast passes two high tides a day.'},
+ 'fall-views':{draw:drawViews,demo:false,tryAny:true,measure:null,a:['Gravity','how strong gravity is'],b:['Time in the air','between the toss and the catch',''],
+  fa:a=>a<.005?'none':Math.round(a*100)+'% of Earth’s',fb:b=>Physics.views(1,b).T.toFixed(1)+' units',scale:'',demoEnd:()=>1.6,
+  // The modelled effect for the render checks: how fast, seen from the ball, the ground speeds up (the push on you).
+  effect:(a,b)=>Physics.views(clamp(a),b).g,
+  disclosure:'Air resistance is ignored, and heights and times are in made-up units. The view from the ball is exact for a short toss. The first chapter, with no gravity, uses its own height scale so the whole path fits.',
+  try:'Turn gravity down to none: from the ball, the ground drifts away in a straight line, and nothing pushes you. Turn it up: the ground curves back to the ball, pushed harder.',aria:'A ball tossed up and caught, drawn on a map of height and time, first as seen from the ground and then as seen from the ball, where the ball stays still and the ground moves.'},
+ 'tides':{draw:drawTides,demo:false,tryAny:true,measure:null,a:['Earth’s mass','how strongly it pulls'],b:['Unused','',''],
+  fa:a=>a<.005?'none':Math.round(a*100)+'% of real',fb:b=>'',scale:'',demoEnd:()=>1,
+  // The modelled effect for the render checks: how much the small falling ring has stretched by the end of its fall.
+  effect:a=>Physics.tideStretch(clamp(a)),
+  disclosure:'The ball is an analogy: a curved surface in space. Curved spacetime also makes straight paths come together or spread apart, but it involves time and cannot be drawn exactly. The balls follow Newton’s law of gravity exactly, which is accurate for weak gravity like the Earth’s. In three dimensions, a small falling ring stretches one way and squeezes in the other two, so at first the space it encloses stays the same.',
+  try:'Set Earth’s mass to none: the small ring stays round. Give the Earth back its mass and the ring stretches again.',aria:'Two walkers heading north on a globe come together; a ring of falling balls around the Earth shrinks; a small falling ring stretches into an egg shape.'},
+ 'lift':{draw:drawLift,demo:false,tryAny:true,measure:null,a:['Lift speeds up','falling freely at the left, steady in the middle'],b:['Unused','',''],
+  fa:liftSpeedUp,fb:b=>'',scale:'',demoEnd:()=>1.25,
+  // The modelled effect for the render checks: the scale's reading, in units of your weight.
+  effect:a=>Physics.lift().reading(liftAccel(a)),
+  disclosure:'Newtonian physics, exact for a lift on Earth: a scale reads the floor’s push, which is your weight times (g + a)/g, where g is gravity’s pull and a is how fast the lift speeds up upward. The ride’s speeds and the 70 kg person are made up for the example; air resistance is ignored, and real lifts have safety brakes. The dial’s needle eases to each reading like a real scale’s, and the fall is shown in slow motion.',
+  try:'Slide to the left end: the lift falls freely and the scale reads 0 kg. Slide right of the middle: the lift speeds up upward and you weigh more.',aria:'A person stands on a bathroom scale in a lift. The dial reads their weight when parked, more or less while the lift speeds up or slows down, and zero when the cable snaps.'},
+ 'moon-tides':{draw:drawMoonTides,demo:false,tryAny:true,measure:null,a:['Moon’s mass','how heavy the Moon is'],b:['Unused','',''],
+  fa:a=>a<.005?'no Moon':Math.round(clamp(a)*100)+'% of real',fb:b=>'',scale:'',demoEnd:()=>1.25,
+  // The modelled effect for the render checks: how much harder the Moon pulls the near side than the Earth's centre.
+  effect:a=>Physics.moonTides(60.3,clamp(a)).tide(1,0)[0],
+  disclosure:'The arrows come from Newton’s law of gravity at the real distance between the Earth and the Moon. Real tides are also shaped by coastlines and the depth of the oceans, and the Sun raises tides about half as big as the Moon’s.',
+  try:'Slide the Moon’s mass down to none: its two bulges flatten away. Half the mass gives half the stretch.',aria:'The Earth with its oceans and the Moon. The Moon pulls the near side most and the far side least, so the oceans bulge toward and away from the Moon, and a place on the coast passes two high tides a day.'},
  'speed-limit':{draw:drawLimit,demo:false,tryAny:true,a:['Pushes','how many times the rocket fires the same push'],b:['Unused','',''],
   fa:a=>{const n=Math.round(clamp(a)*10);return `${n} push${n===1?'':'es'}`;},fb:b=>'',
   // The modelled effect for the render checks: the speed seen from the ground after the chosen number of pushes.
@@ -2504,6 +2816,14 @@ const ENGINES={
   disclosure:'Exact special relativity for equal pushes: each push leaves the rocket moving at half light speed relative to a marker it dropped just before, so the speed seen from the ground after n pushes is tanh(0.549 n) times light speed. Motion on screen is slowed for viewing.',
   try:'Set “Pushes” to 10: the speed seen from the ground is 99.997% of light speed, never 100%.',
   aria:'A rocket fires the same push again and again. Seen from the ground, light from the moving rocket travels at the same speed as light from a lamp on the ground, and the crew see their own light pull away at full light speed after every push. So, seen from the ground, the rocket’s speed climbs to 50%, 80%, 93% of light speed, ever closer but never reaching it.'},
+ 'night-sky':{draw:drawNight,demo:false,tryAny:true,a:['Age of the universe','if the stars had shone, unchanged, that long'],b:['Unused','',''],
+  fa:a=>nightAge(Physics.nightYears(clamp(a))),fb:b=>'',
+  // The modelled effect for the render checks: the share of the sky covered by stars whose light has arrived.
+  effect:a=>Physics.nightCover(Physics.nightYears(clamp(a))),
+  measure:['Sky covered by stars',a=>NIGHT.mode==='live'?nightShare(Physics.nightCover(Physics.nightYears(clamp(a)))):''],scale:'',demoEnd:()=>1,
+  disclosure:'Stars are treated as Sun-like and spread evenly: about 10²² of them in today’s observable universe, a rough count (estimates run from 10²² to 10²⁴). A sight line then travels about 2 × 10²⁴ light-years, on average, before it meets a star. Within the 13.8 billion light-years that light has crossed since the beginning, stars cover about 1 part in 180 trillion of the sky. The slider imagines an unchanging universe whose stars have shone for the chosen time. The picture is a slice through space: a ring twice as far holds twice as many stars, where a full shell holds four times as many. The expansion of the universe, which stretches and dims distant light further, is left out of the numbers.',
+  try:'Set the age to 13.8 billion years: stars cover about 1 part in 180 trillion of the sky. How old would an unchanging universe have to be before the whole night sky lit up?',
+  aria:'You stand on a hill under a dark, starry sky. If stars filled endless, unchanging space, every shell of stars around you would add the same light and every line of sight would end on a star, so the whole sky would blaze like the Sun. But the universe began about 13.8 billion years ago, so only light from a bubble around you has had time to arrive; light from farther stars is still on its way, and the night stays dark.'},
  'base-rate':{draw:drawRate,demo:false,tryAny:true,a:['How common','how many people have the disease'],b:['Unused','',''],
   fa:a=>{const p=Physics.ratePrevalence(a);return p<=0?'nobody':`1 in ${Math.round(1/p).toLocaleString('en-US')}`;},fb:b=>'',
   // The modelled effect for the render checks: the share of positive results that are right.
@@ -2525,7 +2845,7 @@ const ENGINES={
   // The modelled effect for the render checks: the share of the Sun's blue light that reaches you directly.
   effect:a=>a<=0?0:Physics.skyThrough(450,clamp(a)*90),
   measure:['Sunlight’s blue that gets through',a=>SKY.mode==='live'?(v=>v<.01?(v*100).toFixed(2)+'%':Math.round(v*100)+'%')(a<=0?0:Physics.skyThrough(450,clamp(a)*90)):''],scale:'',demoEnd:()=>1,
-  disclosure:'Scattering by the molecules of clean air at sea level; it grows as the inverse fourth power of the wavelength, with blue taken as 450 nm and red as 700 nm. Sunlight shakes the electrons across its path, so they send light out in all directions, most strongly forward and back. The air is drawn many times thicker than it really is: sunset light crosses about 38 times as much air as light from overhead. Dust and haze add to real sunsets.',
+  disclosure:'Scattering by the molecules of clean air at sea level; it grows as the inverse fourth power of the wavelength, with blue taken as 450 nm and red as 700 nm. Sunlight shakes the electrons across its path, so they send light out in all directions, most strongly forward and back. Dust and haze add to real sunsets.',
   try:'Lower the Sun to the horizon: almost none of its blue gets through, and the light that reaches you turns red.',
   aria:'On the Moon, with no air, the daytime sky is black. On Earth, sunlight shakes tiny charged specks in the air, which send light off in every direction, blue about six times as much as red. That bounced blue reaches you from all over the sky: it is the blue sky. At sunset the light crosses far more air and loses almost all its blue the same way, so what is left looks red and orange.'},
  'seasons':{draw:drawSeasons,demo:false,tryAny:true,a:['Tilt','how far Earth’s axis leans'],b:['Unused','',''],

@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id);
 const put=(id,text)=>{const el=$(id);if(el)el.textContent=text??'';};
 const el=(tag,props={},...children)=>{const node=Object.assign(document.createElement(tag),props);node.append(...children);return node;};
-const TOPICS={'gravity-clocks':'Gravity and time','light-bending':'Gravity and light','spacetime':'Space and time','twin-trip':'Space and time','interference':'Waves','standing-waves':'Waves','two-slit-particles':'Quanta','tunneling':'Quanta','wave-packet':'Quanta','quantum-well':'Quanta','falling-time':'Gravity and time','diffraction':'Waves','spacetime-paths':'Space and time','light-clock':'Space and time','river':'Black holes','fall-views':'Gravity and time','tides':'Curved spacetime','lift':'Gravity and time','moon-tides':'Gravity and time','attention':'How AI reads','speed-limit':'Space and time','base-rate':'Chance and evidence','birthdays':'Chance and evidence','sky-colour':'Light and colour','seasons':'Earth and sky'};
+const TOPICS={'gravity-clocks':'Gravity and time','light-bending':'Gravity and light','spacetime':'Space and time','twin-trip':'Space and time','interference':'Waves','standing-waves':'Waves','two-slit-particles':'Quanta','tunneling':'Quanta','wave-packet':'Quanta','quantum-well':'Quanta','falling-time':'Gravity and time','diffraction':'Waves','spacetime-paths':'Space and time','light-clock':'Space and time','river':'Black holes','fall-views':'Gravity and time','tides':'Curved spacetime','lift':'Gravity and time','moon-tides':'Gravity and time','attention':'How AI reads','speed-limit':'Space and time','base-rate':'Chance and evidence','birthdays':'Chance and evidence','sky-colour':'Light and colour','seasons':'Earth and sky','night-sky':'The universe'};
 // The accuracy reviewer checks physics for physics guides and the mathematics for the others.
 const REVIEWED={'attention':'accuracy','birthdays':'maths'};
 const STATUS={planning:'Choosing a question',running:'Investigating now',reviewed:'Passed review',needs_review:'Draft, not published',failed:'Attempt stopped',interrupted:'Run interrupted',idle:'Resting'};
@@ -102,7 +102,7 @@ function card(entry,record){
  if(current&&(current.id===id||(isExample&&current.provider==='fixture'))){badge.textContent='Now showing';badge.dataset.kind='now';}
  else if(!isExample&&!watched.has(id)&&Date.now()-new Date(entry.created).getTime()<36*3600*1000){badge.textContent='New';badge.dataset.kind='new';}
  else if(watched.has(id)){badge.textContent='Watched';badge.dataset.kind='seen';}
- const meta=el('p',{className:'card-meta'},el('span',{className:'card-go',textContent:'Watch the guide'}),el('span',{className:'card-by'},'— ',el('em',{textContent:'By'}),' Intuition Lab',el('span',{className:'sep'}),isExample?'Hand-written example':day(entry.created,{month:'long',day:'numeric'}),badge));
+ const meta=el('p',{className:'card-meta'},el('span',{className:'card-go',textContent:'Watch the guide'}),el('span',{className:'card-by'},isExample?'Hand-written example':day(entry.created,{month:'long',day:'numeric'}),badge));
  const excerpt=el('p',{className:'card-excerpt',textContent:record?.scene?.subtitle||entry.question||''});
  link.append(media,el('div',{className:'card-body'},el('span',{className:'card-cat',textContent:isExample?'Example':topicOf(record||entry)}),el('h3',{textContent:(entry.title||entry.question||'').replace(/\n/g,' ')}),excerpt,meta));
  if(record?.scene){canvas.scene=record.scene;thumbs.add(canvas);visible.observe(canvas);}
@@ -213,7 +213,8 @@ function nextRun(s){
 function renderNext(){
  if(schedule?.enabled){
   const {label,wait}=nextRun(schedule), hours=Math.floor(wait/3600), minutes=Math.floor(wait%3600/60);
-  put('next-title',labActive?'':`${label} · in ${hours?hours+' h ':''}${minutes} min`);
+  // One short phrase; the exact time is in the tooltip.
+  put('next-title',labActive?'':`Next run in ${hours?hours+' h ':''}${minutes} min`);$('next-title').title=label;
   if(labPreview)labPreview.shown='';
   put('dashboard-schedule','One new investigation each morning. Only investigations that pass physics and visual review are published.');
  }else{

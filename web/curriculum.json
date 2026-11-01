@@ -124,6 +124,19 @@
      "model": "attention"
     }
    ]
+  },
+  {
+   "number": 6,
+   "title": "The universe",
+   "engine": "night sky and starlight",
+   "items": [
+    {
+     "id": "6.1",
+     "question": "Why is the night sky dark?",
+     "model": "night-sky",
+     "ready": true
+    }
+   ]
   }
  ]
 }

@@ -171,6 +171,16 @@ def entry_point():
 
 
 class WorkerSyncTests(unittest.TestCase):
+    def test_waits_for_the_network_and_gives_up_without_starting(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            git,origin,worker,push_from_me=checkouts(tmp)
+            self.assertEqual(entry_point().online(worker,minutes=1),0)
+            missing=Path(tmp)/'not-a-checkout';missing.mkdir()
+            now=[0];waits=[]
+            def sleep(seconds):waits.append(seconds);now[0]+=seconds
+            self.assertIsNone(entry_point().online(missing,minutes=2,every=30,clock=lambda:now[0],sleep=sleep))
+            self.assertEqual(waits,[30,30,30,30])
+
     def test_publish_replays_its_commit_when_github_moved_during_the_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             git,origin,worker,push_from_me=checkouts(tmp)

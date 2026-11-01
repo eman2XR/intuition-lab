@@ -237,6 +237,48 @@
         'At everyday speeds the two ways of adding agree': near(this.combine(1e-6, 1e-6), 2e-6, 1e-15),
       }).map(([name, pass]) => ({name, pass}));
     },
+    // Why the night sky is dark (Olbers' paradox), in light-years and years. Stars are treated as Sun-like and spread
+    // evenly: about 1e22 of them in today's observable universe (radius 46.5 billion light-years), a common rough count
+    // (estimates run from 1e22 to 1e24). A shell of radius r and thickness dr holds density 4 pi r^2 dr stars, each
+    // seen 1 / (4 pi r^2) as bright, so every shell adds the same light and covers the same share of the sky. For stars
+    // placed at random, the share of sky covered by discs closer than D is 1 - exp(-D / L), where L = 1 / (density pi R^2)
+    // is the typical distance a sight line travels before meeting a star; the sky's brightness, as a fraction of a
+    // star's surface, is that same share (distance does not dim a surface, it only shrinks it). In an unchanging
+    // universe whose stars have shone for t years, only light from within D = t light-years has arrived. Expansion is
+    // left out: it stretches and dims distant light further, a smaller effect.
+    nightModel: {stars: 1e22, reach: 4.65e10, radius: 6.957e5 / 9.4607e12, age: 1.38e10, sunAngle: 6.957e5 / 1.496e8},
+    nightDensity() { const {stars, reach} = this.nightModel; return stars / (4 / 3 * Math.PI * reach ** 3); },
+    nightFree() { return 1 / (this.nightDensity() * Math.PI * this.nightModel.radius ** 2); },
+    // Share of the sky covered by star discs closer than D light-years (exact for randomly placed stars).
+    nightCover(D) { return D <= 0 ? 0 : D === Infinity ? 1 : -Math.expm1(-D / this.nightFree()); },
+    // Stars in a thin shell, the light each sends you (per unit of one star's output), and the sky share it covers.
+    nightShellStars(r, dr) { return this.nightDensity() * 4 * Math.PI * r * r * dr; },
+    nightShellLight(r, dr) { return this.nightShellStars(r, dr) / (4 * Math.PI * r * r); },
+    nightShellCover(r, dr) { return this.nightShellStars(r, dr) * Math.PI * this.nightModel.radius ** 2 / (4 * Math.PI * r * r); },
+    // How many Sun discs fit in the half of the sky above you.
+    nightSunDiscs() { return 2 / this.nightModel.sunAngle ** 2; },
+    // The slider (steps of 0.01): 0 is no time at all; 0.07 is today, 13.8 billion years; each further 0.01 multiplies
+    // the time by 10^0.17, up to about 10^26 years at 1.
+    nightYears(a) { return a <= 0 ? 0 : this.nightModel.age * 10 ** (17 * (Math.min(1, a) - this.nightToday())); },
+    nightToday() { return .07; },
+    nightChecks() {
+      const rel = (a, b, e = 1e-9) => Math.abs(a - b) <= e * Math.abs(b), L = this.nightFree(), {age, reach} = this.nightModel;
+      return Object.entries({
+        'Every shell of stars adds the same light, near or far': [1, 1e3, 1e9, 1e20].every(r => rel(this.nightShellLight(r, 1), this.nightShellLight(10, 1))),
+        'Every shell covers the same share of the sky': [1, 1e6, 1e15].every(r => rel(this.nightShellCover(r, 1), this.nightShellCover(10, 1))),
+        'A shell twice as far holds four times the stars, each a quarter as bright': rel(this.nightShellStars(2e9, 1) / this.nightShellStars(1e9, 1), 4) && rel((1 / (2e9) ** 2) / (1 / (1e9) ** 2), .25),
+        'Shells add up: the covered share is the sum of thin shells while it is small': rel(this.nightCover(1e12), 1e12 * this.nightShellCover(5e11, 1), 1e-6),
+        'With stars forever and unchanging, every sight line ends on a star: the sky is as bright as a star’s surface': this.nightCover(Infinity) === 1 && this.nightCover(100 * L) === 1,
+        'A sight line typically travels about 2 × 10^24 light-years before meeting a star': L > 1e24 && L < 1e25,
+        'That is over ten trillion times farther than light travels in 13.8 billion years': L / age > 1e13,
+        'Within 13.8 billion light-years, stars cover less than a ten-trillionth of the sky, but not none': this.nightCover(age) > 0 && this.nightCover(age) < 1e-13,
+        'Even out to today’s 46.5 billion light-years, they cover less than a ten-trillionth': this.nightCover(reach) < 1e-13,
+        'No time, no starlight: the slider’s zero covers nothing': this.nightYears(0) === 0 && this.nightCover(this.nightYears(0)) === 0,
+        'The covered share grows with time and fills the sky after about 1e25 years': [0, .2, .5, .8, .9, .95].every(a => this.nightCover(this.nightYears(a + .05)) > this.nightCover(this.nightYears(a))) && this.nightCover(this.nightYears(1)) > .999,
+        'The slider marks today at 13.8 billion years': rel(this.nightYears(this.nightToday()), age),
+        'The half of the sky above you has room for about 92,000 Sun discs': this.nightSunDiscs() > 9e4 && this.nightSunDiscs() < 9.5e4,
+      }).map(([name, pass]) => ({name, pass}));
+    },
     // Attention for guessing the next word, on one hand-made sentence: "I grew up in France, so I speak fluent ___".
     // The guess (the query) is scored against every earlier word (its key) by a scaled dot product, and the scores
     // become shares by a softmax, as in "Attention Is All You Need" (2017). Key and query features: [a country,
@@ -307,6 +349,8 @@
         r += d * (k1 + 2 * k2 + 2 * k3 + k4) / 6; u += d; if (r <= .05) return {r: .05, fell: t - u}; }
       return {r, fell: -1};
     },
+    // The speed at which space flows in at distance r from a black hole whose horizon is at rs, in light speeds.
+    riverInflow(rs, r) { return rs <= 0 ? 0 : Math.sqrt(rs / Math.max(r, 1e-4)); },
     // One toss seen from the ground and from the ball (weak gravity, schematic units). The throw speed is fixed;
     // gravity g = 0.8*a, so with a = 0 the ball keeps going and with a = 1 it comes back after T.
     views(a, b) {
@@ -328,6 +372,12 @@
       const fallTime=(r0,r)=>GM>0?Math.sqrt(r0**3/(2*GM))*(Math.sqrt((r/r0)*(1-r/r0))+Math.acos(Math.sqrt(r/r0))):Infinity;
       return {GM,fall,fallTime};
     },
+    // The small ring of the tides chapter (radius 0.3 around a ball 3 Earth radii out), let go for as long as it takes
+    // with the real mass to fall to 2.3: how much longer its height has grown than at the start (0 = still round).
+    tideStretch(a) {
+      const P=this.tides(a), t=this.tides(1).fallTime(3,2.3), top=P.fall(0,3.3,t), bottom=P.fall(0,2.7,t);
+      return (top[1]-bottom[1])/(3.3-2.7)-1;
+    },
     // A bathroom scale in a lift reads the floor's push: your weight times (g + a)/g, a being the lift's upward acceleration.
     lift() {
       const g=9.8, reading=a=>Math.max(0,(g+a)/g);
@@ -337,9 +387,9 @@
       return {g,reading,ride,accelAt};
     },
     // The Moon's tidal stretch (Newtonian, exact): its pull at a point minus its pull at the Earth's centre.
-    // Units: Earth radius 1, the Moon's GM = 1, the Moon on the +x axis at distance D (real distance about 60 Earth radii).
-    moonTides(D = 60.3) {
-      const pull=(x,y)=>{const dx=D-x,dy=-y,r=Math.hypot(dx,dy);return [dx/r**3,dy/r**3];};
+    // Units: Earth radius 1, the Moon's GM = m (1 for the real Moon), the Moon on the +x axis at distance D (real distance about 60 Earth radii).
+    moonTides(D = 60.3, m = 1) {
+      const pull=(x,y)=>{const dx=D-x,dy=-y,r=Math.hypot(dx,dy);return [m*dx/r**3,m*dy/r**3];};
       const centre=pull(0,0), tide=(x,y)=>{const p=pull(x,y);return [p[0]-centre[0],p[1]-centre[1]];};
       // Ocean height along the surface (equilibrium tide shape), with the angle measured from the Earth-Moon line.
       const shape=angle=>(3*Math.cos(angle)**2-1)/2;
@@ -523,7 +573,7 @@
     // Which checks belong to each visual model; light bending uses checks().
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'base-rate':this.rateChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'seasons':this.seasonChecks};
+        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'base-rate':this.rateChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'seasons':this.seasonChecks,'night-sky':this.nightChecks};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },
     // Every model's checks, run in CI.
@@ -574,6 +624,7 @@
         'With no mass, light moves at light speed':near(this.river(0,1.8).light(1,1,1.5),2.5,1e-9),
         'A swimmer at the point of no return stays in place':near(this.riverSwim(1.2,1.2,5).r,1.2,1e-9),
         'A swimmer outside it gets away; one just inside is swept to the edge':this.riverSwim(2.4,1.2,3).r>2.4&&this.riverSwim(.97,1.2,6).fell>0,
+        'Space flows in at light speed at the horizon, and not at all without a black hole':this.riverInflow(1.2,1.2)===1&&this.riverInflow(0,1)===0,
       }).map(([name,pass])=>({name,pass}));
     },
     viewsChecks() {
@@ -601,6 +652,7 @@
         'Balls released one above the other drift apart':d(...stack)>.2,
         'Stretching starts at twice the squeezing':Math.abs(st/sq+2)<.05,
         'Without the planet nothing drifts':this.tides(0).fall(.1,3,2)[0]===.1&&this.tides(0).fall(.1,3,2)[1]===3,
+        'Without the planet the small ring stays round; with it, it stretches':this.tideStretch(0)===0&&this.tideStretch(1)>0&&this.tideStretch(.5)<this.tideStretch(1),
         'Fall time from the formula matches the simulation':Math.abs(Math.hypot(...P.fall(0,2.3,P.fallTime(2.3,1.5)))-1.5)<1e-3,
       }).map(([name,pass])=>({name,pass}));
     },
@@ -616,6 +668,7 @@
         'With the cable snapped, it reads zero':L.reading(-L.g)===0,
         'A released apple keeps its place beside you':near(gap(0),gap(2.5)),
         'The ride starts and ends at rest':near(net,0),
+        'Steady at any speed, the scale reads your weight; falling freely, zero':near(L.reading(0),1)&&L.reading(-L.g)===0,
       }).map(([name,pass])=>({name,pass}));
     },
     moonChecks() {
@@ -630,6 +683,7 @@
         'The squeeze is about half the stretch':near(side/((a+b)/2),.5,.03),
         'Twice as far away, the stretch is about eight times weaker':near(far.tide(1,0)[0]*8/a,1,.03),
         'Two high tides in one turn of the Earth':peaks===2,
+        'No Moon, no stretch; half the Moon’s mass, half the stretch':this.moonTides(M.D,0).tide(1,0)[0]===0&&near(this.moonTides(M.D,.5).tide(1,0)[0]*2/a,1,1e-9),
       }).map(([name,pass])=>({name,pass}));
     },
     attentionChecks() {

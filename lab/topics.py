@@ -23,7 +23,8 @@ demonstrates the controls: during its first half the first control dips to about
 the second control (field "distance") moves to 2.5. Write the last chapter's sentences to describe those changes in that
 order. The viewer reads one subtitle sentence at a time below the stage; screenshots show exactly what playback shows.
 ray_count is unused. The stage carries no scale or magnification disclaimers: drawings are illustrations, and each model's
-caveats are shown once in the investigation details. Do not ask for on-stage "not to scale" or "magnified" labels.
+caveats are shown once in the investigation details. Never say that a picture is not to scale, enlarged or magnified,
+on the stage or in any text: drawings are obviously illustrations. Do not ask for such labels or sentences.
 Field controls chooses which sliders the viewer gets: none, first, second or both. Offer a slider only when moving
 it builds intuition beyond what playback already shows; otherwise choose none.
 The stage shows only a few short labels (each five words or fewer, at most about a dozen words at once, checked
@@ -49,7 +50,7 @@ I = (1 + a^2 + 2a cos(k*path difference)) / (1+a)^2. Field mass sets the second 
 0 means off); field distance sets source spacing 1.6*distance wavelengths (UI "Source spacing"). The readout is fringe
 contrast 2a/(1+a^2). Supported questions: superposition (waves add and pass through each other), constructive and
 destructive interference, why stripes need two coherent sources, why wider spacing packs stripes closer. Amplitude falls off
-as 1/sqrt(distance) (2D). Not to scale; no light/sound specifics beyond analogy, no single-photon claims, no diffraction
+as 1/sqrt(distance) (2D). No light/sound specifics beyond analogy, no single-photon claims, no diffraction
 from slit width. No new-discovery claims.'''+COMMON
 
 PARTICLE_NOTES = '''ONE-AT-A-TIME TWO-SLIT EXPERIMENT. A source sends particles toward a barrier with two slits; each arrival
@@ -60,7 +61,7 @@ which slit a particle used. Field mass sets the second slit's amplitude a (UI "S
 field distance sets slit spacing (UI "Slit spacing"). show_reference draws the predicted pattern as a dashed curve. The
 readout is fringe contrast 2a/(1+a^2). Supported questions: why single particles still build stripes, why closing a slit
 removes them, probability amplitudes adding. Do not model measurement/which-path detectors, decoherence, or specific
-particles' wavelengths; electrons and photons both show this, but the sketch is generic and not to scale.
+particles' wavelengths; electrons and photons both show this, but the sketch is generic.
 No new-discovery claims.'''+COMMON
 
 ROPE_NOTES = '''STANDING WAVES ON A ROPE. A drawn hand shakes one end of a rope tied to a wall; the rope is simulated
@@ -117,7 +118,7 @@ one at a time, each giving off light of one colour (bigger drop, bluer; colours 
 Readouts: allowed energies found, allowed energies, colours given off; after playback, whether the chosen energy is allowed.
 After playback field mass sets the trial energy (UI "Energy"; it clicks onto an allowed energy when close) and field
 distance the trap's width, 1 to 2.5 (UI "Trap width"; a wider trap holds more, lower energies). Supported questions: why a
-trapped particle has only certain energies, why atoms glow in certain colours. Energies are to scale; wave heights are not.
+trapped particle has only certain energies, why atoms glow in certain colours. Energies are to scale.
 A square pit is not an atom; no spin or 3D. No new-discovery claims.'''+COMMON
 
 FALL_NOTES = '''MOST-TIME PATH (WHY THINGS FALL). Weak gravity, slow motion, schematic units with effects hugely exaggerated.
@@ -140,7 +141,7 @@ with dashed lines at the first dark directions sin(angle) = wavelength / gap. Fi
 entirely (no spreading); higher values narrow it from 4.2 to 0.7 units (UI "Gap"). Field distance sets the wavelength
 0.7 to 1.15 units (UI "Wavelength"). The readout is the angle of the first dark direction (90 degrees when the gap is
 narrower than the wavelength). Supported questions: why waves spread after a narrow gap, why narrower gaps and longer
-waves spread more, why sound bends around doorways more than light. Not to scale; no single-photon claims.
+waves spread more, why sound bends around doorways more than light. No single-photon claims.
 No new-discovery claims.'''+COMMON
 
 TWIN_NOTES = '''TWIN TRIP. Special relativity, exact, in years and light-years (light speed 1), drawn as a concrete scene:
@@ -185,7 +186,7 @@ rocket clock ticks, 1 - 1/gamma. Supported questions: why a moving clock ticks s
 light speed, why clocks agree again when the rocket stops. Honesty points: the rocket clock ticks normally for anyone on
 board; the slowing is how the moving clock runs as measured from Earth, and the crew would say the same of Earth's clocks
 while both coast; every kind of clock, and the crew's bodies, slow the same way, or the crew could tell they were moving.
-No twin-paradox resolution, acceleration, gravity or Doppler effects. Slowed down for viewing and not to scale.
+No twin-paradox resolution, acceleration, gravity or Doppler effects. Slowed down for viewing.
 No new-discovery claims.'''+COMMON
 
 ATTENTION_NOTES = '''HOW ATTENTION LED TO CHATBOTS. Exact softmax attention (scaled dot products of hand-made four-number vectors, as in
@@ -246,10 +247,61 @@ signals cannot outrun light rests on cause and effect and is not covered; distan
 because space itself expands, which is not motion through space and is not covered here. Motion on screen is slowed for
 viewing.'''+COMMON
 
+NIGHT_NOTES = '''DARK NIGHT SKY (OLBERS' PARADOX: WHY IS THE NIGHT SKY DARK?). The belief it confronts: space is dark because it
+is empty, or because distant stars are too far and faint to count. Start from what anyone can see: thousands of stars,
+black sky between them. The idea: if space were endless, unchanging and evenly filled with stars, a shell of stars twice
+as far would hold four times as many stars, each a quarter as bright, so every shell would add the same light; and in
+every direction a sight line would sooner or later end on the surface of a star, so the whole sky would be as bright as
+the Sun's surface (the half of the sky above you has room for about 92,000 Sun discs). The night is dark mainly because
+the universe has a finite age, about 13.8 billion years: light needs time to travel, so only light from within a limited
+distance has had time to reach us, and stars only shine for limited times (Edward Harrison's analysis: there is nowhere
+near enough time or starlight to fill the sky). The expansion of the universe also stretches and dims distant light, a
+smaller effect. So the dark night sky is everyday evidence that the universe had a beginning. Model numbers
+(Physics.nightChecks): Sun-like stars spread evenly, about 10^22 in today's observable universe (a rough count; estimates
+run from 10^22 to 10^24); a sight line then typically travels about 2 x 10^24 light-years before meeting a star, over ten
+trillion times farther than light travels in 13.8 billion years; within 13.8 billion light-years stars cover about 1 part
+in 180 trillion of the sky (out to today's 46.5 billion light-years, about 1 part in 50 trillion). Four chapters with fixed
+choreography and no slider demo; the label "you" stands by a person on a hill throughout. 1 (two sentences): a night
+landscape; dusk turns to night during the first sentence while the stars and the Milky Way come out; with the second a
+dashed ring circles a dark patch between the stars, labelled "dark between stars". 2 (three sentences): the sky dims and
+rings of stars around you, a slice through space, appear one after another out to the edge of the stage during the
+first sentence (the thought experiment: stars evenly everywhere, forever, never changing); with the second, a nearer
+and a farther ring are highlighted, labelled "nearer shell" and "more stars, each dimmer"; with the third, sight lines
+spread from you across the sky, each ending on the first star it meets, and then the whole sky blazes warm white,
+labelled "as bright as the Sun". In the slice a ring twice as far holds twice as many stars (a full shell, four times):
+never ask viewers to count them. 3 (three sentences): the blaze fades and the stars become faint marks; during the first
+sentence (the universe began about 13.8 billion years ago and light takes time to travel) a bubble grows around you,
+labelled "13.8 billion light-years", and the stars inside it shine; with the second, light from stars beyond it creeps
+inward, labelled "light still on its way": those stars may be there, but their light has not arrived; with the third,
+sight lines go out again: a few end on stars inside the bubble, the rest cross it and find only darkness, so the night
+stays dark. 4 (two or three sentences): the rings fade back into the night landscape during the first sentence (the dark
+night is evidence of a beginning); with the last sentence a wave labelled "oldest light" travels from high in the sky to
+you, stretching and turning from gold to red as it fades, labelled "stretched out of sight": write that last sentence
+about the expansion of the universe stretching and dimming the oldest, most distant light. After playback field mass
+sets the age of an unchanging universe (UI "Age of the universe"): 0 is no time at all, so no starlight; 0.07 is today's
+13.8 billion years; each further 0.01 multiplies the time by about 1.5, up to about 10^26 years. Set mass to 0.07 and
+controls to "first"; field distance is unused. The readout is the share of the sky covered by stars whose light has
+arrived (about 1 part in 180 trillion today); the sky's glow follows it on a log scale and fills only after about 10^24 to
+10^25 years. Supported questions: why the night sky is dark; why more distant stars do not make up for looking dimmer;
+why the dark sky shows the universe had a beginning; why we cannot see beyond a certain distance; why dust between the
+stars is not the answer (it would absorb starlight, warm up and glow as brightly itself). Honesty points: finite age,
+together with the limited lives of stars, is the main reason; expansion and the stretching of light (redshift) are
+secondary; looking far away is looking back in time, so the bubble is the region whose light has had time to reach us,
+not an edge of space, and nothing here claims the universe is finite in size; 13.8 billion light-years is the distance
+light has travelled; because space expanded meanwhile, the farthest places we see are now about 46 billion light-years
+away; "a beginning" means the hot, dense early state about 13.8 billion years ago from which everything we see
+developed, not an explosion at a point, and say nothing about what came before; the oldest light, from about 380,000
+years after the beginning when the whole universe glowed like a star's surface, arrives from every direction stretched
+about 1,100 times into microwaves (the cosmic microwave background), far too stretched to see; Kepler (1610) and Olbers
+(1823) posed the puzzle, and Edgar Allan Poe guessed the answer in 1848. Suggested sources: Wikipedia "Olbers's paradox"
+and "Observable universe"; Edward Harrison, "Darkness at Night: A Riddle of the Universe" (Harvard University Press,
+1987); NASA's WMAP pages on the age of the universe and the cosmic microwave background; ESA's Planck results.'''+COMMON
+
 # Only these are planned; the others wait for a redesign. attention (2026-10-29) was added at the owner's request
-# for the next run after subagent beginner tests; the owner has not reviewed its picture yet.
+# for the next run after subagent beginner tests; the owner has not reviewed its picture yet. night-sky (2026-11-01)
+# was added at the owner's request for the next run.
 READY = {'light-bending', 'gravity-clocks', 'spacetime-paths', 'light-clock', 'interference',
-         'diffraction', 'speed-limit'}
+         'diffraction', 'speed-limit', 'night-sky'}
 # Not ready (2026-10-28): twin-trip shows what rather than why; spacetime, falling-time and tunneling are graph-style;
 # standing-waves, quantum-well (five chapters), attention (six) and wave-packet (four chapters) are hand-made guides
 # with fixed choreography, which agent-written scenes would not match;
@@ -272,5 +324,6 @@ TOPICS = {
     'diffraction': {'label':'Spreading through a gap', 'question':'Why do waves spread out after passing a narrow gap?', 'notes':GAP_NOTES},
     'quantum-well': {'label':'Allowed energies in a well', 'question':'Why can a trapped particle only have certain energies?', 'notes':WELL_NOTES},
     'speed-limit': {'label':'Speed limit', 'question':'Why can nothing travel faster than light?', 'notes':SPEED_NOTES},
+    'night-sky': {'label':'Dark night sky', 'question':'Why is the night sky dark?', 'notes':NIGHT_NOTES},
     'attention': {'label':'Attention in language AI', 'question':'What does the “attention” in “Attention Is All You Need” do when an AI reads a sentence?', 'notes':ATTENTION_NOTES},
 }
