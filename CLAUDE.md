@@ -8,4 +8,4 @@ The coordinator owns writes, validation, scheduling and publication. Models retu
 
 Tests: `python3 -m unittest discover -s tests -v`. Renderer check: `python3 -m lab run --provider fixture --topic gravity-clocks --rounds 2`. Live calls consume usage; inspect existing run records before starting another. Read the handoff's current-state section for unfinished verification.
 
-Only accepted live investigations may enter `web/published/`. Never promote fixtures, failed scientific reviews, or drafts. Never force-push. The daily scheduler must retain its per-day cap and lock, and must not execute an unbounded agent loop.
+Only accepted live investigations, or hand-made guides the owner explicitly asks to publish, may enter `web/published/`. A hand-made guide must pass the render checks, its model checks and a final accuracy, visual and beginner review, and its record must say in `provenance.intro_note` that it was made in a coding session. Never promote fixtures, failed scientific reviews, or drafts the owner has not approved. Never force-push. The daily scheduler must retain its per-day cap and lock, and must not execute an unbounded agent loop.

@@ -1,5 +1,19 @@
 [
   {
+    "id": "20261101T071813-sky-colour",
+    "question": "Why is the sky blue, but the sunset red?",
+    "topic": "sky-colour",
+    "created": "2026-11-01T07:18:13+00:00",
+    "title": "Why is the sky blue, but the sunset red?"
+  },
+  {
+    "id": "20261101T071812-shared-birthdays",
+    "question": "Why do 23 people give even odds of a shared birthday?",
+    "topic": "birthdays",
+    "created": "2026-11-01T07:18:12+00:00",
+    "title": "Why do 23 people give even odds of a shared birthday?"
+  },
+  {
     "id": "20261029T175059-82fa6e44",
     "question": "How did \u201cAttention Is All You Need\u201d lead to ChatGPT?",
     "topic": "attention",

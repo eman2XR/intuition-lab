@@ -1,0 +1,292 @@
+{
+ "id": "20261101T071813-sky-colour",
+ "status": "reviewed",
+ "question": "Why is the sky blue, but the sunset red?",
+ "topic": "sky-colour",
+ "created": "2026-11-01T07:18:13+00:00",
+ "updated": "2026-11-01T07:18:13Z",
+ "research": {
+  "claim": "Air molecules scatter short-wavelength light far more than long: the scattering grows as the inverse fourth power of the wavelength, so blue light at 450 nm is scattered about 5.9 times as much as red light at 700 nm. Blue scattered out of the sunlight reaches the eye from every direction, so the whole sky looks blue. Near the horizon, sunlight crosses about 38 times as much air as from overhead, so almost all of its blue is scattered out of the direct beam while about a quarter of its red gets through, and the setting Sun looks red and orange.",
+  "explanation": "1. Light is an electromagnetic wave. Its electric field shakes the electrons in each air molecule, and a shaken electron sends light out in all directions.\n2. Air molecules are far smaller than the wavelength of light. For such small scatterers the scattered light grows as the inverse fourth power of the wavelength (Rayleigh scattering), so (700/450)⁴ ≈ 5.9.\n3. Overhead, clean air at sea level scatters about a fifth of sunlight’s blue out of the beam and about 4% of its red. The scattered light, rich in blue, arrives from all over the sky.\n4. The path through the air grows as the Sun sinks. For a spherical atmosphere and an observer at sea level, the path at the horizon is about 38 times the path overhead (the air mass). Along it, the beam keeps about 0.02% of its blue but about 24% of its red.",
+  "assumptions": [
+   "Clean, dry air at sea level, with scattering only by molecules much smaller than the wavelength.",
+   "Blue is taken as 450 nm and red as 700 nm; the overhead optical depths are about 0.22 for blue and 0.037 for red.",
+   "The horizon air mass is about 38, for a spherical atmosphere, as in standard models."
+  ],
+  "prediction": "With the Sun overhead, about 80% of its blue and 96% of its red reach the ground directly; at 30° up, 64% and 93%; at 10° up, 29% and 81%; on the horizon, about 0.02% and 24%. The direct beam reddens steadily as the Sun sinks.",
+  "falsifier": "The explanation would be wrong if skylight were not much richer in short wavelengths than direct sunlight, if the reddening of the low Sun did not grow with the amount of air crossed, or if scattering by clean air did not fall off steeply with wavelength.",
+  "limitations": [
+   "Dust, smoke and haze add their own scattering and colour to real skies and sunsets.",
+   "Air scatters violet even more than blue, but sunlight holds less violet and our eyes are less sensitive to it, so the sky looks blue; the guide does not model the eye.",
+   "Ozone absorption, which deepens the blue of the twilight sky, is left out.",
+   "Sources were retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw pages."
+  ],
+  "sources": [
+   {
+    "title": "Rayleigh scattering (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Rayleigh_scattering",
+    "supports": "Scattering by particles much smaller than the wavelength grows as the inverse fourth power of the wavelength; scattered blue light from all parts of the sky makes it blue, and blue is scattered out of the line of sight near the horizon, which reddens sunsets."
+   },
+   {
+    "title": "Air mass (astronomy) (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Air_mass_(astronomy)",
+    "supports": "The horizon air mass for a spherical atmosphere and an observer at sea level is about 38 (38.87 for a uniform model; about 38 in Kasten and Young’s), usually less than 40."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 30,
+  "controls": "first",
+  "mass": 1,
+  "distance": 0,
+  "kind": "sky-colour",
+  "accent": "blue",
+  "title": "Why is the sky blue, but the sunset red?",
+  "subtitle": "Sunlight looks white, yet the sky glows blue and sunsets glow red. Both colours come from the way air bounces light off in new directions.",
+  "why": "Air bounces blue light around far more than red. That one fact explains both the blue sky and the red sunset.",
+  "opening": "Sunlight looks white, yet the sky glows blue and the setting Sun glows red. Where do those colours come from?",
+  "beats": [
+   {
+    "title": "No air, black sky",
+    "body": "On the Moon, with no air, the daytime sky is black. On Earth the same sunlight crosses air, and the sky glows blue."
+   },
+   {
+    "title": "Light shakes the air",
+    "body": "Light is a wave. It shakes the electrons, tiny charged specks inside each air molecule, and they send light off in every direction. Blue light’s shorter waves shake them faster, so they send out about six times as much blue as red."
+   },
+   {
+    "title": "The sky is bounced blue",
+    "body": "All along the sunlight’s path, the air bounces some of its blue off sideways. That bounced blue is the blue sky, reaching your eyes from every direction."
+   },
+   {
+    "title": "Why the Sun turns red",
+    "body": "At sunset the light crosses about 38 times as much air as when the Sun is overhead. On the way, the air bounces almost all the light’s blue off sideways, the same bouncing that makes the sky blue. What is left is mostly red and orange, so the setting Sun looks red."
+   }
+  ],
+  "takeaway": "Air bounces blue sunlight all over the sky, so the sky looks blue. At sunset the light crosses so much air that almost all its blue is bounced away, and the Sun looks red.",
+  "questions": [
+   {
+    "q": "Air bounces violet even more than blue. Why isn’t the sky violet?",
+    "a": "Sunlight has less violet than blue, and our eyes are less sensitive to it. The mix of bounced colours that reaches us looks sky blue."
+   },
+   {
+    "q": "Why are clouds white, not blue?",
+    "a": "Unlike air molecules, cloud droplets are far bigger than light’s waves, so they bounce every colour about equally, and an equal mix looks white."
+   },
+   {
+    "q": "Is air blue, like tinted glass?",
+    "a": "No. Blue glass turns the light passing through it blue by soaking up the red. Air does the opposite: light that crosses a lot of air turns orange, as at sunset. The blue sky is light bounced sideways."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Blue light (450 nm) is scattered about six times as much as red (700 nm)",
+   "pass": true
+  },
+  {
+   "name": "Blue light is a wave about one and a half times as quick as red",
+   "pass": true
+  },
+  {
+   "name": "With the Sun overhead, sunlight crosses one air mass",
+   "pass": true
+  },
+  {
+   "name": "With the Sun on the horizon it crosses about 38 times as much air",
+   "pass": true
+  },
+  {
+   "name": "Overhead, about four fifths of the blue gets through",
+   "pass": true
+  },
+  {
+   "name": "At the horizon almost none of the blue gets through, but about a quarter of the red does",
+   "pass": true
+  },
+  {
+   "name": "The lower the Sun, the less of its blue gets through",
+   "pass": true
+  },
+  {
+   "name": "Blue is always dimmed more than red",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, blind-viewer, skeptic and first-time-reader tests, and a copy edit. The reviews below are from that session’s final review."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 30,
+    "controls": "first",
+    "mass": 1,
+    "distance": 0,
+    "kind": "sky-colour",
+    "accent": "blue",
+    "title": "Why is the sky blue, but the sunset red?",
+    "subtitle": "Sunlight looks white, yet the sky glows blue and sunsets glow red. Both colours come from the way air bounces light off in new directions.",
+    "why": "Air bounces blue light around far more than red. That one fact explains both the blue sky and the red sunset.",
+    "opening": "Sunlight looks white, yet the sky glows blue and the setting Sun glows red. Where do those colours come from?",
+    "beats": [
+     {
+      "title": "No air, black sky",
+      "body": "On the Moon, with no air, the daytime sky is black. On Earth the same sunlight crosses air, and the sky glows blue."
+     },
+     {
+      "title": "Light shakes the air",
+      "body": "Light is a wave. It shakes the electrons, tiny charged specks inside each air molecule, and they send light off in every direction. Blue light’s shorter waves shake them faster, so they send out about six times as much blue as red."
+     },
+     {
+      "title": "The sky is bounced blue",
+      "body": "All along the sunlight’s path, the air bounces some of its blue off sideways. That bounced blue is the blue sky, reaching your eyes from every direction."
+     },
+     {
+      "title": "Why the Sun turns red",
+      "body": "At sunset the light crosses about 38 times as much air as when the Sun is overhead. On the way, the air bounces almost all the light’s blue off sideways, the same bouncing that makes the sky blue. What is left is mostly red and orange, so the setting Sun looks red."
+     }
+    ],
+    "takeaway": "Air bounces blue sunlight all over the sky, so the sky looks blue. At sunset the light crosses so much air that almost all its blue is bounced away, and the Sun looks red.",
+    "questions": [
+     {
+      "q": "Air bounces violet even more than blue. Why isn’t the sky violet?",
+      "a": "Sunlight has less violet than blue, and our eyes are less sensitive to it. The mix of bounced colours that reaches us looks sky blue."
+     },
+     {
+      "q": "Why are clouds white, not blue?",
+      "a": "Unlike air molecules, cloud droplets are far bigger than light’s waves, so they bounce every colour about equally, and an equal mix looks white."
+     },
+     {
+      "q": "Is air blue, like tinted glass?",
+      "a": "No. Blue glass turns the light passing through it blue by soaking up the red. Air does the opposite: light that crosses a lot of air turns orange, as at sunset. The blue sky is light bounced sideways."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Blue light (450 nm) is scattered about six times as much as red (700 nm)",
+     "pass": true
+    },
+    {
+     "name": "Blue light is a wave about one and a half times as quick as red",
+     "pass": true
+    },
+    {
+     "name": "With the Sun overhead, sunlight crosses one air mass",
+     "pass": true
+    },
+    {
+     "name": "With the Sun on the horizon it crosses about 38 times as much air",
+     "pass": true
+    },
+    {
+     "name": "Overhead, about four fifths of the blue gets through",
+     "pass": true
+    },
+    {
+     "name": "At the horizon almost none of the blue gets through, but about a quarter of the red does",
+     "pass": true
+    },
+    {
+     "name": "The lower the Sun, the less of its blue gets through",
+     "pass": true
+    },
+    {
+     "name": "Blue is always dimmed more than red",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 12)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 5)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "Every number checks out: (700/450)⁴ ≈ 5.9, so “about six times” is right; the horizon air mass is about 38; after 38 air masses clean air keeps roughly 0.02% of the blue but about a quarter of the red, so “almost all the light’s blue” is fair. The answers on clouds, violet and tinted glass are correct, and the notes cover the air drawn not to scale and the role of dust and haze. “Shake them faster, so six times as much” skips why faster shaking sends out more light, an acceptable simplification.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "Each frame shows what its subtitle says: a black sky on the Moon against a blue sky on Earth; red and blue waves, the blue about 1.5 times shorter; blue rings growing out of the sunbeams with dashed “bounced blue” lines meeting at “you” from all over the sky; a long sunset path that turns orange-red against a short noon path. No frame has more than three or four short labels, and the story can be followed from the pictures alone. The bounced-blue frame is the busiest but still readable.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "In one sentence: air bounces blue light off in all directions far more than red, so blue reaches you from the whole sky; at sunset the light crosses so much air that nearly all its blue is bounced away before it reaches you, leaving red and orange. The tinted-glass question follows from chapters 3 and 4; the violet and cloud answers go beyond the chapters but are short, plain and self-contained.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T071813-sky-colour/revision-1-0.png",
+    "published/20261101T071813-sky-colour/revision-1-1.png",
+    "published/20261101T071813-sky-colour/revision-1-2.png",
+    "published/20261101T071813-sky-colour/revision-1-3.png",
+    "published/20261101T071813-sky-colour/revision-1-4.png",
+    "published/20261101T071813-sky-colour/revision-1-5.png",
+    "published/20261101T071813-sky-colour/revision-1-6.png",
+    "published/20261101T071813-sky-colour/revision-1-7.png",
+    "published/20261101T071813-sky-colour/revision-1-8.png",
+    "published/20261101T071813-sky-colour/revision-1-9.png"
+   ]
+  }
+ ]
+}

@@ -1,17 +1,5 @@
 [
  {
-  "id": "sky-colour",
-  "title": "Why is the sky blue, but the sunset red?",
-  "created": "2026-10-30T01:10:00-07:00",
-  "kind": "sky-colour"
- },
- {
-  "id": "shared-birthdays",
-  "title": "Why do 23 people give even odds of a shared birthday?",
-  "created": "2026-10-30T00:20:00-07:00",
-  "kind": "birthdays"
- },
- {
   "id": "falling-lift",
   "title": "How much do you weigh in a falling lift?",
   "created": "2026-10-28T00:30:00-07:00",

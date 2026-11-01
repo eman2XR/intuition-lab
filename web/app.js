@@ -3,7 +3,7 @@ const put=(id,text)=>{const el=$(id);if(el)el.textContent=text??'';};
 const el=(tag,props={},...children)=>{const node=Object.assign(document.createElement(tag),props);node.append(...children);return node;};
 const TOPICS={'gravity-clocks':'Gravity and time','light-bending':'Gravity and light','spacetime':'Space and time','twin-trip':'Space and time','interference':'Waves','standing-waves':'Waves','two-slit-particles':'Quanta','tunneling':'Quanta','wave-packet':'Quanta','quantum-well':'Quanta','falling-time':'Gravity and time','diffraction':'Waves','spacetime-paths':'Space and time','light-clock':'Space and time','river':'Black holes','fall-views':'Gravity and time','tides':'Curved spacetime','lift':'Gravity and time','moon-tides':'Gravity and time','attention':'How AI reads','speed-limit':'Space and time','base-rate':'Chance and evidence','birthdays':'Chance and evidence','sky-colour':'Light and colour','seasons':'Earth and sky'};
 // The accuracy reviewer checks physics for physics guides and the mathematics for the others.
-const REVIEWED={'attention':'accuracy'};
+const REVIEWED={'attention':'accuracy','birthdays':'maths'};
 const STATUS={planning:'Choosing a question',running:'Investigating now',reviewed:'Passed review',needs_review:'Draft, not published',failed:'Attempt stopped',interrupted:'Run interrupted',idle:'Resting'};
 const STEPS=['Question','Research','Design','Write','Render','Review','Publish'];
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;

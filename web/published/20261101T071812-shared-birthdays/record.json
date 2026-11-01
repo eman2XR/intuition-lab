@@ -1,0 +1,292 @@
+{
+ "id": "20261101T071812-shared-birthdays",
+ "status": "reviewed",
+ "question": "Why do 23 people give even odds of a shared birthday?",
+ "topic": "birthdays",
+ "created": "2026-11-01T07:18:12+00:00",
+ "updated": "2026-11-01T07:18:12Z",
+ "research": {
+  "claim": "In a group of 23 people, with 365 equally likely birthdays, the chance that at least two share a birthday is 50.7%, while the chance that someone shares one particular person’s birthday is only 5.9%. The difference comes from counting pairs: one person is in 22 pairs, but 23 people make 253 pairs, and each pair matches with a chance of 1 in 365. With 50 people there are 1,225 pairs, and a match is 97.0% likely.",
+  "explanation": "1. Your own birthday: each of the 22 others misses it with a chance of 364/365, so someone matches it with a chance of 1 − (364/365)²² ≈ 5.9%.\n2. Any two people: n people make n(n − 1)/2 pairs, 253 for 23 people.\n3. The exact chance of no match: people arrive one by one, and each must miss every birthday already taken, so the chance is (365/365) × (364/365) × … × (343/365) ≈ 0.493 for 23 people. A match therefore has a chance of about 0.507.\n4. A check: treating the 253 pairs as separate 1-in-365 chances gives 1 − (364/365)²⁵³ ≈ 50.0%, almost the same, because about 253 such chances give even odds.",
+  "assumptions": [
+   "365 equally likely birthdays; 29 February is ignored.",
+   "Birthdays are independent (no twins)."
+  ],
+  "prediction": "The exact chance of a shared birthday is 50.7% with 23 people and 47.6% with 22, so 23 is the smallest group with even odds; it is about 71% with 30 people, 89% with 40 and 97% with 50.",
+  "falsifier": "The explanation would be wrong if, across many random groups of 23 people with birthdays spread evenly over the year, the share of groups with a match differed clearly from about 51%.",
+  "limitations": [
+   "Real birthdays are slightly uneven across the year, which makes a match a little more likely; 23 people still give just over even odds.",
+   "The source was retrieved in the coding session through a page-summary tool, and the quotes were not checked against the raw page."
+  ],
+  "sources": [
+   {
+    "title": "Birthday problem (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/Birthday_problem",
+    "supports": "With 23 people the chance of a shared birthday is about 50.7%; 23 people make 253 pairs; with 50 people the chance is about 97.0%."
+   }
+  ]
+ },
+ "scene": {
+  "ray_count": 1,
+  "show_reference": true,
+  "show_labels": true,
+  "line_width": 2.5,
+  "duration": 30,
+  "controls": "first",
+  "mass": 0.3728813559322034,
+  "distance": 0,
+  "kind": "birthdays",
+  "accent": "blue",
+  "title": "Why do 23 people give even odds of a shared birthday?",
+  "subtitle": "In a room of just 23 people, at least two share a birthday about half the time. Most people guess you would need far more.",
+  "why": "Coincidences in a group are more common than they feel, because every pair is a chance for a match, not just pairs that include you.",
+  "opening": "How many people must be in a room before two of them probably share a birthday? Most people guess far more than 23.",
+  "beats": [
+   {
+    "title": "Just you: 22 chances",
+    "body": "In a room of 23 people, the chance that someone shares your birthday is only about 6%. You are in just 22 pairs, one with each other person, and each pair is a 1 in 365 chance."
+   },
+   {
+    "title": "Anyone with anyone: 253 chances",
+    "body": "But a match can be between any two people. 23 people make 253 pairs, each a 1 in 365 chance. About 253 such chances give even odds: a match half the time."
+   },
+   {
+    "title": "One arrival at a time",
+    "body": "Now let people arrive one by one. Each newcomer has more birthdays to hit, so a match gets likelier with every arrival. After the 23rd, the chance that nobody matches has fallen to just under half, so the chance of a match is just over half."
+   },
+   {
+    "title": "Why 50 is almost certain",
+    "body": "Pairs grow far faster than people: 50 people make 1,225 pairs, almost five times as many as 23 people make. With 50 in the room, a shared birthday is 97% likely."
+   }
+  ],
+  "takeaway": "A match can be between any two people, so 23 people make 253 chances, not 22. That is enough for about even odds that two share a birthday.",
+  "questions": [
+   {
+    "q": "How many other people would you need before someone probably shares your own birthday?",
+    "a": "About 253, since that many 1 in 365 chances give even odds; 23 people happen to make exactly 253 pairs. Even 180 others would give you only a 39% chance."
+   },
+   {
+    "q": "Do 253 pairs mean a 253 in 365 chance, about 69%?",
+    "a": "No. 253 divided by 365 is how many matching pairs to expect on average, about 0.7. Some rooms have two or three matches, and about half have none, so the chance of at least one is 51%."
+   },
+   {
+    "q": "Real birthdays bunch up in some months. Does that make a match more or less likely?",
+    "a": "Slightly more likely: when some dates are more common, two people land on the same one a little more often. 23 people still give just over even odds."
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "Someone among 22 others shares your birthday about 6% of the time",
+   "pass": true
+  },
+  {
+   "name": "23 people make 253 pairs",
+   "pass": true
+  },
+  {
+   "name": "With 23 people a shared birthday is just more likely than not (50.7%)",
+   "pass": true
+  },
+  {
+   "name": "With 22 people it is still less likely than not, so 23 is the smallest such group",
+   "pass": true
+  },
+  {
+   "name": "With 30 people it is about 71%, and with 50 about 97%",
+   "pass": true
+  },
+  {
+   "name": "50 people make 1,225 pairs",
+   "pass": true
+  },
+  {
+   "name": "The chance only grows as people arrive",
+   "pass": true
+  },
+  {
+   "name": "One person alone shares a birthday with nobody",
+   "pass": true
+  },
+  {
+   "name": "Treating the 253 pairs as separate one-in-365 bets gives almost the same answer",
+   "pass": true
+  }
+ ],
+ "provider": "reviewed-agents",
+ "provenance": {
+  "sources_retrieved": true,
+  "retrieved_by": "coordinator",
+  "intro_note": "This investigation was made in a coding session at the owner’s request, not by the daily run: an AI coding agent wrote the picture, the model and all wording, and AI reviewers checked them with the render checks, blind-viewer, skeptic and first-time-reader tests, and a copy edit. The reviews below are from that session’s final review."
+ },
+ "revisions": [
+  {
+   "number": 1,
+   "scene": {
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2.5,
+    "duration": 30,
+    "controls": "first",
+    "mass": 0.3728813559322034,
+    "distance": 0,
+    "kind": "birthdays",
+    "accent": "blue",
+    "title": "Why do 23 people give even odds of a shared birthday?",
+    "subtitle": "In a room of just 23 people, at least two share a birthday about half the time. Most people guess you would need far more.",
+    "why": "Coincidences in a group are more common than they feel, because every pair is a chance for a match, not just pairs that include you.",
+    "opening": "How many people must be in a room before two of them probably share a birthday? Most people guess far more than 23.",
+    "beats": [
+     {
+      "title": "Just you: 22 chances",
+      "body": "In a room of 23 people, the chance that someone shares your birthday is only about 6%. You are in just 22 pairs, one with each other person, and each pair is a 1 in 365 chance."
+     },
+     {
+      "title": "Anyone with anyone: 253 chances",
+      "body": "But a match can be between any two people. 23 people make 253 pairs, each a 1 in 365 chance. About 253 such chances give even odds: a match half the time."
+     },
+     {
+      "title": "One arrival at a time",
+      "body": "Now let people arrive one by one. Each newcomer has more birthdays to hit, so a match gets likelier with every arrival. After the 23rd, the chance that nobody matches has fallen to just under half, so the chance of a match is just over half."
+     },
+     {
+      "title": "Why 50 is almost certain",
+      "body": "Pairs grow far faster than people: 50 people make 1,225 pairs, almost five times as many as 23 people make. With 50 in the room, a shared birthday is 97% likely."
+     }
+    ],
+    "takeaway": "A match can be between any two people, so 23 people make 253 chances, not 22. That is enough for about even odds that two share a birthday.",
+    "questions": [
+     {
+      "q": "How many other people would you need before someone probably shares your own birthday?",
+      "a": "About 253, since that many 1 in 365 chances give even odds; 23 people happen to make exactly 253 pairs. Even 180 others would give you only a 39% chance."
+     },
+     {
+      "q": "Do 253 pairs mean a 253 in 365 chance, about 69%?",
+      "a": "No. 253 divided by 365 is how many matching pairs to expect on average, about 0.7. Some rooms have two or three matches, and about half have none, so the chance of at least one is 51%."
+     },
+     {
+      "q": "Real birthdays bunch up in some months. Does that make a match more or less likely?",
+      "a": "Slightly more likely: when some dates are more common, two people land on the same one a little more often. 23 people still give just over even odds."
+     }
+    ]
+   },
+   "checks": [
+    {
+     "name": "Someone among 22 others shares your birthday about 6% of the time",
+     "pass": true
+    },
+    {
+     "name": "23 people make 253 pairs",
+     "pass": true
+    },
+    {
+     "name": "With 23 people a shared birthday is just more likely than not (50.7%)",
+     "pass": true
+    },
+    {
+     "name": "With 22 people it is still less likely than not, so 23 is the smallest such group",
+     "pass": true
+    },
+    {
+     "name": "With 30 people it is about 71%, and with 50 about 97%",
+     "pass": true
+    },
+    {
+     "name": "50 people make 1,225 pairs",
+     "pass": true
+    },
+    {
+     "name": "The chance only grows as people arrive",
+     "pass": true
+    },
+    {
+     "name": "One person alone shares a birthday with nobody",
+     "pass": true
+    },
+    {
+     "name": "Treating the 253 pairs as separate one-in-365 bets gives almost the same answer",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 12)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 4)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "physics_review": {
+    "pass": true,
+    "score": 10,
+    "summary": "Every number is correct: 22 chances give 5.9% (“about 6%”); 23 people make 253 pairs and have a 50.7% chance of a match; 253 separate 1-in-365 chances give 50.0%, which supports “about 253 give even odds”; 50 people make 1,225 pairs, almost five times 253, with a 97.0% chance. The answers check out too (180 others give 39%; on average 0.69 matching pairs; 49% of rooms have no match). Nothing is overclaimed, and the notes state the assumption of 365 equally likely birthdays.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "visual_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "Every frame shows what its subtitle says: 22 lines from “you” and a 6% bar; the full web of 253 pairs with a bar reaching the half mark; people arriving one at a time while the pair count and the bar grow; 50 people, 1,225 pairs and 97%. It stays calm, with at most about five short labels at once and one moving thing per chapter, and the story can be followed from the pictures alone.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "learner_review": {
+    "pass": true,
+    "score": 9,
+    "summary": "In one sentence: a match can happen between any two people, not just between you and someone else, so 23 people make 253 pairs, each a 1-in-365 chance, and that many chances add up to about even odds. All three questions can be answered from the guide; why 253 chances come to a half rather than 253/365 is left to the second question, which is not blocking.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261101T071812-shared-birthdays/revision-1-0.png",
+    "published/20261101T071812-shared-birthdays/revision-1-1.png",
+    "published/20261101T071812-shared-birthdays/revision-1-2.png",
+    "published/20261101T071812-shared-birthdays/revision-1-3.png",
+    "published/20261101T071812-shared-birthdays/revision-1-4.png",
+    "published/20261101T071812-shared-birthdays/revision-1-5.png",
+    "published/20261101T071812-shared-birthdays/revision-1-6.png",
+    "published/20261101T071812-shared-birthdays/revision-1-7.png",
+    "published/20261101T071812-shared-birthdays/revision-1-8.png",
+    "published/20261101T071812-shared-birthdays/revision-1-9.png"
+   ]
+  }
+ ]
+}
