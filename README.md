@@ -2,11 +2,11 @@
 
 ![The lab at work: AI agents researching, drawing and reviewing a guide](docs/images/lab.png)
 
-Short, intuitive guides that explain why things work. Why is the sky blue? Why is the night dark? Each guide answers one question with a short animation you can play with.
+Intuition Lab is a team of AI agents working together to produce short, intuitive guides that explain why things work. Why is the sky blue? Why do just 23 people give even odds of a shared birthday? Each guide answers one question with a short animation you can play with.
 
 **[Open the site →](https://eman2xr.github.io/intuition-lab/)**
 
-A team of AI agents makes them, one a day. One reads up and finds sources, one writes up the science, one plans the picture and one writes the words. Four reviewers then check the rendered result: one for accuracy, one for the visuals, one reading as a beginner, and one who sees only the pictures. If any of them isn't convinced, it goes back for another draft. Only guides that pass all four go live.
+They make one a day. One reads up and finds sources, one writes up the science, one plans the picture and one writes the words. Four reviewers then check the rendered result: one for accuracy, one for the visuals, one reading as a beginner, and one who sees only the pictures. If any of them isn't convinced, it goes back for another draft. Only guides that pass all four go live.
 
 The pictures are drawn in code on top of exact models, so the numbers you see are the real ones.
 
