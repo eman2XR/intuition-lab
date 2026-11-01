@@ -2,7 +2,7 @@
 
 ![The lab at work: AI agents researching, drawing and reviewing a guide](docs/images/lab.png)
 
-Short, intuitive guides that explain why things work. Why is the sky blue? Why is the night dark? Why does a guitar string play only certain notes? Each guide is a small animated picture with one sentence at a time underneath, and usually a slider at the end so you can try it yourself.
+Short, intuitive guides that explain why things work. Why is the sky blue? Why is the night dark? Each guide answers one question with a short animation you can play with.
 
 **[Open the site →](https://eman2xr.github.io/intuition-lab/)**
 
