@@ -1,0 +1,429 @@
+{
+  "id": "20261102T170016-a02e7bd6",
+  "status": "reviewed",
+  "question": "Why can nothing travel faster than light?",
+  "topic": "speed-limit",
+  "created": "2026-11-02T17:00:16.436227+00:00",
+  "research": {
+    "claim": "Nothing with mass can be pushed up to light speed, however hard or long it is pushed. The reason is a measured fact: every observer, moving or not, measures light at the same speed. Light from a moving lamp is no faster, and a moving lab measures light at the same speed in every direction. If light's speed is the same for everyone, speeds cannot simply add. They combine by the rule v = (u + w)/(1 + uw/c\u00b2). Under that rule, equal pushes (each the same as the crew feel it) give ground speeds of 50%, 80%, 93%, 98%, 99.2%, 99.7% and so on, always below light speed. Put another way, a flash that leaves the rocket always pulls away from the crew at full light speed, so they never gain on it. Things with no mass, such as light, always move at light speed. Why signals cannot go faster than light is a separate argument from cause and effect, and it is not covered here.",
+    "explanation": "Start with what is measured. Light from a fast-moving source is not faster than light from a source at rest. A lab riding on the moving Earth measures light at the same speed in every direction. Both statements come from the model notes. The everyday rule for adding speeds says the opposite: a ball thrown forward from a moving train goes train speed plus throw speed. So the everyday rule must be slightly wrong, and the error only becomes noticeable near light speed.\n\nDefine a push as the crew feel it. Just before a push, the rocket drops a marker. After the push, the rocket moves away from that marker at half light speed. The crew feel every push exactly the same.\n\nChapter 1 (everyday expectation). Seen from the ground, the first push takes the rocket from rest to half light speed. Everyday adding then predicts that a second push reaches light speed and a third goes past it.\n\nChapter 2 (ground view, the measured fact). The rocket coasts at half light speed past a lamp post. The rocket's lamp and the post's lamp flash at the same moment. Both flashes travel side by side at light speed, and the rocket falls behind them. The rocket's speed adds nothing to its light.\n\nChapter 3 (rocket view, the reason). In the crew's view the rocket stays still and the ground streams backward. A flash from the crew's lamp pulls away at full light speed. After another push, that same flash, which is already ahead, still pulls away at exactly full light speed. Since this happens after every push, the crew never close any distance on light and can never catch it. Both views are correct. From the ground, the flash pulls ahead of the rocket at only half light speed (light speed minus rocket speed). The crew measure full light speed. The two measurements differ because moving clocks and rulers differ (see the light-clock guide).\n\nChapter 4 (the consequence on the ground's chart). If speeds simply added, the crew would gain on light, which contradicts chapter 3. The rule that keeps light at light speed for everyone is also the rule that combines the rocket's speeds. Half plus half gives (0.5 + 0.5)/(1 + 0.5 \u00d7 0.5) = 1/1.25 = 80%, not 100%. Each further identical push adds less ground speed than the one before: 93%, 98%, 99.2%, 99.7%. For n equal pushes the exact result is tanh(0.549 n), which is 99.997% after ten pushes and never 100%.\n\nAt everyday speeds, the correction term uw/c\u00b2 is tiny. For two speeds of 30 m/s it is about 10\u207b\u00b9\u2074, so ordinary adding works.\n\nEnergy can be mentioned as a consequence, not as the reason. Seen from the ground, each push adds more kinetic energy per kilogram than the last, with no upper limit. The amount per kilogram grows as (\u03b3 \u2212 1)c\u00b2, where \u03b3 = 1/\u221a(1 \u2212 v\u00b2/c\u00b2). This is stated per kilogram because a rocket that burns fuel loses mass. On board, every push still feels the same.\n\nHonesty points:\n- Nothing on board gets heavier.\n- The crew feel no resistance and no limit.\n- Light speed is not a wall to break through.\n- The crew do not see the ground's \"half light speed\" gap. They measure full light speed.",
+    "assumptions": [
+      "Principle of relativity: the laws of physics are the same for every observer moving at constant velocity. No experiment inside a coasting rocket can tell that it is moving.",
+      "The speed of light in vacuum is the same for every such observer. This is taken from experiment (the moving-source and moving-lab tests in the model notes). It can also be derived from the symmetry of spacetime plus a consistent cause-and-effect order.",
+      "Motion is local and spacetime is effectively flat. The rocket travels through space, and the expansion of space between distant galaxies is excluded.",
+      "Each push is identical in the rocket's own frame: half light speed relative to a marker dropped just before it. This gives equal steps of rapidity (0.549 each), so the ground speed after n pushes is tanh(0.549 n).",
+      "The rocket has real, positive mass. Massless things such as light always move at light speed and are not pushed at all.",
+      "The signalling part of the speed limit (why information cannot outrun light) rests on causality and relativity of simultaneity. It is assumed but not derived here."
+    ],
+    "prediction": "1. Light emitted by a source moving at any speed is measured at the same speed c, by an observer at rest and by the moving source itself.\n2. Two velocities of half light speed, each measured from the previous frame, combine to 0.8c as seen from the original frame, not to c.\n3. Objects moving at 0.6c in opposite directions see each other at about 0.88c, not 1.2c.\n4. Particles given ever more energy approach c ever more closely without reaching or passing it.\n5. Neutrinos, gravitational waves and every other carrier of energy arrive no earlier than light would. GW170817 gravitational waves matched light speed to about one part in 10\u00b9\u2075. ICARUS neutrinos were consistent with c.",
+    "falsifier": "Any of the following would count against the account:\n- A reproducible measurement of light in vacuum from a moving source arriving faster or slower by the source's speed.\n- A lab measuring different light speeds in different directions beyond the stated limits on Lorentz violation.\n- A massive particle, or any carrier of energy or information, measured locally to travel faster than c in vacuum, after systematic errors are ruled out. The OPERA 2011 claim is the cautionary example: its final analysis was consistent with c, and ICARUS found arrival consistent with c.\n- Accelerated particles whose speed keeps climbing past c as energy is added.",
+    "limitations": [
+      "The two headline experiments in the model notes were not retrieved this session, and no URL is cited for them. They are the 1964 CERN test (gamma rays from particles at 99.975% of c still moving at c) and Michelson-Morley 1887. The same applies to Bertozzi 1964 (electron speed versus energy), Kennedy-Thorndike, Ives-Stilwell and Einstein 1905.",
+      "Several cited sources were reached only as arXiv abstract pages (OPERA, Mattingly, Kostelecky-Russell, Will). Claims drawn from them are limited to what those abstracts state.",
+      "This guide explains the limit for motion of massive objects. It does not cover the causality argument for why signals cannot outrun light, which is the basis of the information limit.",
+      "Cosmological recession faster than c (expansion of space, not motion through space) is not covered.",
+      "Hypothetical tachyons, quantum microcausality, entanglement, fast-light media, and general-relativity solutions such as warp drives or wormholes are not covered.",
+      "Energy appears only as a consequence in one optional sentence. The picture shows no energy.",
+      "The reason that both the ground's and the crew's measurements are correct (moving clocks and rulers differ) is deferred to the light-clock guide and not derived here.",
+      "Microcausality in quantum field theory is not rigorously proven and does not include gravity (Gibbs FAQ). The deepest form of the limit therefore rests partly on assumptions.",
+      "Motion on screen is slowed for viewing.",
+      "2 reference(s) the researcher could not retrieve were removed from the sources."
+    ],
+    "misconceptions": [
+      "\"Just push harder or longer and you'll get there.\" Each push still leaves the rocket at half light speed relative to its marker, and every push feels the same. Seen from the ground, the gains shrink and never reach c.",
+      "\"Half light speed plus half light speed is light speed.\" Everyday adding fails near c. The combination rule gives 80%.",
+      "\"Light from a fast rocket's headlight must move faster than light from a lamp post.\" Measurements show it moves at the same speed.",
+      "\"If I'm already chasing a flash at half light speed, it should pull away from me at only half light speed.\" The crew measure full light speed after every push. Only the ground sees a half-light-speed gap.",
+      "\"Wait, but which view is true, the ground's half-speed gap or the crew's full speed?\" Both are. Moving clocks and rulers differ.",
+      "\"Things get heavier as they go faster, and that's what stops them.\" Nothing on board gets heavier. The 'relativistic mass' picture misleads.",
+      "\"The crew must feel the rocket getting sluggish or hitting resistance near light speed.\" They feel nothing different.",
+      "\"Light speed is a barrier, like the sound barrier, that a powerful enough engine could break.\" There is nothing to break through. No finite number of pushes gets there.",
+      "\"It's all about energy: you'd need infinite fuel.\" Energy without limit is a consequence. The reason is that light keeps the same speed for everyone.",
+      "\"Then why does adding speeds work for a ball thrown from a car?\" At everyday speeds the correction is about one part in 10\u00b9\u2074.",
+      "\"Two ships each at 0.6c heading toward each other approach at 1.2c, so that breaks the rule.\" Each measures the other at about 0.88c.",
+      "\"A laser spot swept across the Moon, or a shadow, can go faster than light.\" It can, but no object or signal travels from one spot to the next.",
+      "\"Distant galaxies move away faster than light, so the rule is broken.\" That is space expanding, not motion through space, and it is not covered here.",
+      "\"Entangled particles signal each other instantly.\" The correlations cannot carry a message.",
+      "\"Light itself could be slowed and then sped back up past c.\" Light in vacuum always moves at c. Slower light in water or glass does not change the vacuum limit."
+    ],
+    "questions": [
+      {
+        "q": "A rocket coasting at 90% of light speed past Earth switches on its headlight. How fast does someone on Earth measure that light to be moving?",
+        "a": "Exactly light speed, not 190%. The rocket's speed adds nothing to its light."
+      },
+      {
+        "q": "The crew have already pushed five times, and a flash they sent out is far ahead. After a sixth push, does that flash pull away from them more slowly?",
+        "a": "No. They still measure it pulling away at full light speed, so they never gain on it and can never catch light."
+      },
+      {
+        "q": "Each push takes the rocket to half light speed relative to the marker it just dropped. Why don't two pushes give light speed from the ground's view?",
+        "a": "The rule that keeps light at the same speed for everyone also combines speeds: (0.5 + 0.5)/(1 + 0.5 \u00d7 0.5) = 80%."
+      },
+      {
+        "q": "As the rocket gets closer to light speed, do the crew feel each push getting weaker or meeting resistance?",
+        "a": "No. Every push feels the same on board. Only the ground sees each step add less speed (93%, 98%, 99.2%...)."
+      },
+      {
+        "q": "Why does simple adding work when you throw a ball forward from a moving car?",
+        "a": "The correction term (speed \u00d7 speed / c\u00b2) is about 10\u207b\u00b9\u2074 at car speeds, far too small to notice."
+      }
+    ],
+    "sources": [
+      {
+        "title": "P. Gibbs, Is Faster-Than-Light Travel or Communication Possible? (Physics FAQ, UC Riverside)",
+        "url": "https://math.ucr.edu/home/baez/physics/Relativity/SpeedOfLight/FTL.html",
+        "supports": "Energy and causality arguments for the limit, and that the energy argument alone does not forbid FTL. Also: closing speed (0.6c + 0.6c gives about 0.88c), laser spots and shadows, rigid rods, light in materials, group velocity versus signal velocity, superluminal quasar jets, and that entanglement cannot signal."
+      },
+      {
+        "title": "S. Chase, updated by J. Baez, Tachyons (UC Riverside)",
+        "url": "https://math.ucr.edu/home/baez/physics/ParticleAndNuclear/tachyons.html",
+        "supports": "Hypothetical FTL particles would need imaginary mass, could not carry information faster than light, and have no experimental evidence. Background for the out-of-scope note."
+      },
+      {
+        "title": "T. Davis and C. Lineweaver, Expanding Confusion (arXiv:astro-ph/0310808)",
+        "url": "https://arxiv.org/abs/astro-ph/0310808",
+        "supports": "Galaxies receding faster than c because space expands does not violate special relativity. Supports the out-of-scope honesty point."
+      },
+      {
+        "title": "LIGO/Virgo/Fermi/INTEGRAL, GW170817 and GRB 170817A (arXiv:1710.05834)",
+        "url": "https://arxiv.org/abs/1710.05834",
+        "supports": "Gravitational waves arrived about 1.74 s from the gamma rays, limiting the speed of gravity to between -3e-15 and +7e-16 of c away from c."
+      },
+      {
+        "title": "ICARUS, measurement of neutrino velocity (arXiv:1203.3433)",
+        "url": "https://arxiv.org/abs/1203.3433",
+        "supports": "Seven neutrino events, each consistent with arrival at c, contradicting the OPERA 2011 early-arrival claim."
+      },
+      {
+        "title": "D. Mattingly, Modern Tests of Lorentz Invariance (arXiv:gr-qc/0502097)",
+        "url": "https://arxiv.org/abs/gr-qc/0502097",
+        "supports": "Abstract only: review of laboratory and astrophysical limits on breaking the symmetry behind the speed limit."
+      },
+      {
+        "title": "A. Kostelecky and N. Russell, Data Tables for Lorentz and CPT Violation (arXiv:0801.0287)",
+        "url": "https://arxiv.org/abs/0801.0287",
+        "supports": "Abstract only: compiled tables of measured limits on Lorentz violation for matter, photons, neutrinos and gravity."
+      },
+      {
+        "title": "B. Hensen et al., Loophole-free Bell inequality violation over 1.3 km (arXiv:1508.05949)",
+        "url": "https://arxiv.org/abs/1508.05949",
+        "supports": "Entangled correlations at spacelike-separated sites are real (S = 2.42 +/- 0.20). Paired with the Gibbs FAQ's point that they cannot send a signal."
+      }
+    ]
+  },
+  "scene": {
+    "title": "Why can nothing travel faster than light?",
+    "subtitle": "A rocket that keeps pushing should keep speeding up, and the crew never feel it get harder. So why can it never reach light speed?",
+    "why": "A ball thrown forward from a moving train gets the train's speed added on. Light never does, and that one measured fact sets the universe's speed limit.",
+    "beats": [
+      {
+        "title": "Everyday adding says two pushes reach light speed",
+        "body": "One push takes the rocket from rest to half light speed, and the crew feel every push the same. Everyday adding says a second push reaches light speed and a third goes past it."
+      },
+      {
+        "title": "Light from a moving lamp is no faster",
+        "body": "Seen from the ground, the rocket coasts at half light speed and its lamp flashes with the post's lamp. The two flashes travel side by side at light speed, while the rocket falls behind. So the rocket's speed adds nothing to its light, just as experiments with fast particles show."
+      },
+      {
+        "title": "The crew's flash always pulls away at full light speed",
+        "body": "Seen from the rocket, the ground streams back and the crew's flash pulls away at full light speed. After another push, that same flash still pulls away just as fast, so the crew never gain on light. Both views are right: from the ground it pulls ahead at half speed, because moving clocks and rulers differ."
+      },
+      {
+        "title": "Equal pushes add less and less, never reaching light speed",
+        "body": "Each push leaves a marker dropped just before at half light speed, yet the ground sees 80%, then 93%. Adding can't be right, or the crew would gain on light; next come 98%, 99.2% and 99.7%. Up close the last steps sit just below the line: no number of pushes reaches light speed."
+      }
+    ],
+    "mass": 0.6,
+    "distance": 1,
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "accent": "blue",
+    "line_width": 2,
+    "duration": 40,
+    "takeaway": "Light always pulls away from you at full speed, however fast you go, so no number of pushes ever catches it.",
+    "controls": "first",
+    "kind": "speed-limit"
+  },
+  "checks": [
+    {
+      "name": "One push from rest reaches half light speed",
+      "pass": true
+    },
+    {
+      "name": "Two pushes reach 80% of light speed, not light speed",
+      "pass": true
+    },
+    {
+      "name": "Speeds combine as (u + v) / (1 + uv)",
+      "pass": true
+    },
+    {
+      "name": "No number of pushes reaches light speed",
+      "pass": true
+    },
+    {
+      "name": "Each push adds less speed than the one before",
+      "pass": true
+    },
+    {
+      "name": "Everyday adding would reach light speed after two pushes and pass it after three",
+      "pass": true
+    },
+    {
+      "name": "Light from a moving lamp still travels at light speed",
+      "pass": true
+    },
+    {
+      "name": "In the crew\u2019s own view, light leaves at light speed after every push",
+      "pass": true
+    },
+    {
+      "name": "Each push adds more energy than the one before",
+      "pass": true
+    },
+    {
+      "name": "The energy grows without limit",
+      "pass": true
+    },
+    {
+      "name": "At everyday speeds the two ways of adding agree",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 5.7 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 5)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "agent"
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Why can nothing travel faster than light?",
+        "subtitle": "A rocket that keeps pushing should keep speeding up, and the crew never feel it get harder. So why can it never reach light speed?",
+        "why": "A ball thrown forward from a moving train gets the train's speed added on. Light never does, and that one measured fact sets the universe's speed limit.",
+        "beats": [
+          {
+            "title": "Everyday adding says two pushes reach light speed",
+            "body": "One push takes the rocket from rest to half light speed, and the crew feel every push the same. Everyday adding says a second push reaches light speed and a third goes past it."
+          },
+          {
+            "title": "Light from a moving lamp is no faster",
+            "body": "Seen from the ground, the rocket coasts at half light speed and its lamp flashes with the post's lamp. The two flashes travel side by side at light speed, while the rocket falls behind. So the rocket's speed adds nothing to its light, just as experiments with fast particles show."
+          },
+          {
+            "title": "The crew's flash always pulls away at full light speed",
+            "body": "Seen from the rocket, the ground streams back and the crew's flash pulls away at full light speed. After another push, that same flash still pulls away just as fast, so the crew never gain on light. Both views are right: from the ground it pulls ahead at half speed, because moving clocks and rulers differ."
+          },
+          {
+            "title": "Equal pushes add less and less, never reaching light speed",
+            "body": "Each push leaves a marker dropped just before at half light speed, yet the ground sees 80%, then 93%. Adding can't be right, or the crew would gain on light; next come 98%, 99.2% and 99.7%. Up close the last steps sit just below the line: no number of pushes reaches light speed."
+          }
+        ],
+        "mass": 0.6,
+        "distance": 1,
+        "ray_count": 1,
+        "show_reference": true,
+        "show_labels": true,
+        "accent": "blue",
+        "line_width": 2,
+        "duration": 40,
+        "takeaway": "Light always pulls away from you at full speed, however fast you go, so no number of pushes ever catches it.",
+        "controls": "first",
+        "kind": "speed-limit"
+      },
+      "checks": [
+        {
+          "name": "One push from rest reaches half light speed",
+          "pass": true
+        },
+        {
+          "name": "Two pushes reach 80% of light speed, not light speed",
+          "pass": true
+        },
+        {
+          "name": "Speeds combine as (u + v) / (1 + uv)",
+          "pass": true
+        },
+        {
+          "name": "No number of pushes reaches light speed",
+          "pass": true
+        },
+        {
+          "name": "Each push adds less speed than the one before",
+          "pass": true
+        },
+        {
+          "name": "Everyday adding would reach light speed after two pushes and pass it after three",
+          "pass": true
+        },
+        {
+          "name": "Light from a moving lamp still travels at light speed",
+          "pass": true
+        },
+        {
+          "name": "In the crew\u2019s own view, light leaves at light speed after every push",
+          "pass": true
+        },
+        {
+          "name": "Each push adds more energy than the one before",
+          "pass": true
+        },
+        {
+          "name": "The energy grows without limit",
+          "pass": true
+        },
+        {
+          "name": "At everyday speeds the two ways of adding agree",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 5.7 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The physics is correct and the numbers check out. One push gives 0.5c, and the rapidity atanh(0.5) is 0.5493. Then tanh(0.549n) gives 80%, 92.9%, 97.6% (shown as 98%), 99.18%, 99.73% and 99.997% at ten pushes. Other checks: 0.6c+0.6c combines to 0.882c, the everyday correction at 30 m/s is about 1e-14, and the GW170817 bound of -3e-15 to +7e-16 matches the source. Per-kilogram energy (\u03b3\u22121)c\u00b2 grows by more with each equal push, because \u03b3 = cosh of the rapidity. The frames match the choreography. In chapter 2 the rocket has covered about half the distance the light has since the post, which is right for 0.5c, and the two flashes are lined up. In chapter 3 the view is labelled as seen from the rocket and the single flash with its trail is the one singled out. In chapter 4 the steps shrink under the light-speed line, the dashed everyday line crosses it at push 2, and a magnifier is shown. The honesty points are respected: light speed is never called a wall, there is no claim of extra weight or resistance, and nothing is said about distant galaxies or signals. The limitations say plainly that the headline experiments were not retrieved. There are three weaknesses. A chapter 3 sentence is wrong for the moment it plays. Chapter 4 never says the rule that gives 80%. And the magnifier barely separates the last step from the line.",
+        "changes": [
+          "Chapter 3, sentence 3: it plays after the second push, when the ground sees the rocket at 80% of light speed. From the ground, the flash then pulls ahead at only 20% of light speed, not half, so 'from the ground it pulls ahead at half speed' is wrong at that point. It could also suggest the ground sees no change. Suggested fix: 'Both views are right: from the ground it pulls ahead of the rocket more and more slowly, because moving clocks and rulers differ.' Alternatively, say 'at half light speed before that push'. Also change 'half speed' to 'half light speed'.",
+          "Chapter 4, sentence 1: 'Each push leaves a marker dropped just before at half light speed' can be read as the marker moving at half light speed. Suggested wording: 'Each push leaves the rocket at half light speed from a marker it just dropped, yet the ground sees 80%, then 93%.'",
+          "Chapter 4 should say the step the brief asks for: the rule that keeps light at light speed for everyone also combines the rocket's speeds, so half plus half gives (0.5+0.5)/(1+0.5\u00d70.5) = 80%. At the moment the subtitles say only that adding is wrong. They never say what replaces it or why the result is 80%. Fold this into sentence 2, keeping within the character-rate limit.",
+          "Chapter 4 magnifier: in the end frame the rightmost zoomed step almost touches the orange line. Zoom in more, or centre the view on the last two steps, so that the gap below the line is clearly visible as the brief requires.",
+          "Research assumptions: the symmetry-plus-causality argument shows that some invariant speed exists. Experiment is what identifies that speed with light. Say so in that assumption."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 7,
+        "summary": "I looked at the ten frames supplied. The guide progresses clearly and the stage is uncluttered. Labels are short and placed next to what they name: \"light speed\", \"everyday adding\", \"same speed\", \"seen from the rocket\", \"full light speed\", \"zoomed in\", plus the axis labels. At most a few appear at once.\n\nChapter by chapter:\n- Chapter 1 shows the single push to 50%. Then the window fades and the dashed everyday line crosses light speed at the second push and passes it at the third, a clear picture of the wrong expectation.\n- In chapter 2 the late frame shows the two flashes level, with faint trails back to the post and the rocket left behind. The \"same speed\" tie between the flashes makes the comparison easy to see.\n- In chapter 3 the rocket stays put, the ground ticks stream past and a single flash pulls away with its trail. The sampled frames do not show the second push or the ground speeding up, so I cannot confirm that beat.\n- In chapter 4 the shrinking steps under the faint dashed line work well. The magnifier shows the last steps just under the line, though in the inset the top step sits very close to the line.\n- On the phone, the layout fits and the \"why\" text above the player is understandable to a beginner.\n\nThe Pushes slider (controls \"first\") is justified. It lets the viewer test \"push longer\" up to 10 pushes and 99.997%, beyond the 6 pushes playback shows.\n\nWeaknesses:\n1. Chapter 3, sentence 3 says that from the ground the flash \"pulls ahead at half speed\". It plays after the second push, when the ground sees the rocket at 80%, so the gap then grows at 20% of light speed. \"Half speed\" is also unclear: half of what?\n2. Chapter 4, sentence 1 (\"Each push leaves a marker dropped just before at half light speed\") is a garden-path sentence. It reads as if the marker was dropped at half light speed. The idea of a marker also first appears here, with no earlier setup.\n3. The subtitles never state the key link the brief asks for: the rule that keeps light at one speed for everyone is the same rule that combines the rocket's speeds, so half plus half gives 80%. Without it, the steps on the chart look asserted rather than explained.\n4. \"Because moving clocks and rulers differ\" brings in an idea this guide never explains. It does not name another guide, which is acceptable, but a beginner gets no help with it.\n\nNone of these blocks the guide. Fixing issues 1 and 3 would noticeably improve accuracy and the reasoning.",
+        "changes": [
+          "beats[2].body sentence 3: fix the timing slip and the unclear 'half speed'. For example: 'Both views are right: from the ground the gap grows more slowly, by light speed minus the rocket's speed, because moving clocks and rulers differ.' If the owner wants to keep the brief's wording, set it before the push: 'Before that push, the ground saw the gap grow at only half light speed; both views are right, because moving clocks and rulers differ.'",
+          "beats[3].body sentence 1: replace the garden-path wording. For example: 'Each push takes the rocket to half light speed past a marker it just dropped, yet the ground sees 80%, then 93%.'",
+          "beats[3].body sentence 2: state the rule the chart follows instead of only listing numbers. For example: 'If speeds simply added, the crew would gain on light, so the rule that keeps light's speed fixed also combines speeds: half plus half is 80%.' Then move '98%, 99.2% and 99.7%' into sentence 3, e.g. 'Next come 98%, 99.2% and 99.7%, each step smaller, all just below the line.' Check that the 98% to 99.7% steps still play during the sentence that names them, and that the magnifier appears after the last one.",
+          "beats[0].body sentence 1: introduce the marker definition here so chapter 4 is not its first appearance. For example: 'One push takes the rocket from rest to half light speed past a marker it drops, and the crew feel every push the same.' Keep the pace under 15 characters per second.",
+          "beats[1].body sentence 3: name what the experiment actually measured, for a beginner. For example: 'So the rocket's speed adds nothing to its light, as measured for light from particles moving at nearly light speed.'",
+          "Keep controls 'first' (Pushes 0 to 10). It goes beyond what playback shows."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 7.5,
+        "summary": "Why it matters: the guide shows that light's speed never gets a moving lamp's speed added on, the way a ball thrown from a train does, and this replaces everyday adding of speeds with a limit: equal pushes give 50%, 80%, 93%... of light speed and never reach it. Answers from the guide alone: (1) Rocket at 90% switches on its headlight: Earth measures ordinary light speed, the same as light from a lamp post. The rocket's speed adds nothing (beat 2, 'same speed' frame). (2) After a sixth push, the flash does not pull away more slowly. The crew still see it pull away at full light speed (beat 3). (3) Two pushes don't give light speed because if they did, the crew would gain on light, yet they always see their flash pull away at full speed. The ground sees 80% instead (beat 4). (4) The crew do not feel pushes getting weaker. They feel every push the same (beat 1). (5) Why simple adding works for a ball thrown from a car: not covered. The why line says the ball's speeds add, but never says why that works at everyday speeds. Four of five answerable. The frames match their subtitles except two soft spots: the late chapter-3 frame stays in the rocket view while the subtitle talks about the ground's half-speed gap, and the 'marker' in chapter 4 never appears on screen. Neither contradicts the text. The core reason (you never gain on light, so you never reach it) comes through clearly. 'Moving clocks and rulers differ' is a hand-wave, but it doesn't block the main idea.",
+        "changes": [
+          "beats[3].body: undefined word and hard to follow on one read. 'marker' is never shown or defined, and 'dropped just before at half light speed' is hard to parse. Current: 'Each push leaves a marker dropped just before at half light speed, yet the ground sees 80%, then 93%.' Replacement: 'Each push gives half light speed past a marker just dropped, yet the ground sees 80%, then 93%.'",
+          "beats[2].body: 'half speed' is ambiguous (half of what?) and 'differ' has no object. Current: 'Both views are right: from the ground it pulls ahead at half speed, because moving clocks and rulers differ.' Replacement: 'Both are right: the ground sees the gap grow at half light speed; moving clocks and rulers disagree.'",
+          "Subtitle/frame (chapter 3, late frame at 1:04): the subtitle describes the ground's view of a half-speed gap, but the frame still shows only the rocket view labelled 'full light speed'. Show the ground view, or the gap, while this line plays. Also, 'After another push' is not visible: the graph stays at 50% through chapter 3.",
+          "Subtitle/frame (chapter 4, frame at 1:13): no marker appears on screen while the subtitle talks about one. Show the dropped marker in the rocket strip, or drop the word as in the replacement above.",
+          "why: unanswered objection and transfer question 5 (why adding works for a ball from a car). The line is also about 26 words. Current: 'A ball thrown forward from a moving train gets the train's speed added on. Light never does, and that one measured fact sets the universe's speed limit.' Replacement: 'A ball thrown from a train gets the train's speed added, nearly exactly at low speeds. Light never does, and that sets the speed limit.'",
+          "beats[1].body: 'the post' appears without introduction. Current: 'its lamp flashes with the post's lamp' Replacement: 'it flashes as it passes a lamp post'",
+          "beats[0].body: the 'things get heavier' objection is left unanswered. Current: 'One push takes the rocket from rest to half light speed, and the crew feel every push the same.' Replacement: 'One push gives half light speed; every push feels the same, and nothing aboard gets heavier.'",
+          "beats[1].body: 'fast particles' is unexplained and could be shorter. Current: 'just as experiments with fast particles show' Replacement: 'as experiments confirm'",
+          "Objections left unanswered in the guide text: the 'you'd need infinite fuel/energy' objection, two ships at 0.6c closing at 1.2c, a laser spot or shadow sweeping faster than light, galaxies receding faster than light, entanglement, and slowed light in glass. These are optional for the main idea. The energy and two-ships objections are the most likely to come up."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261102T170016-a02e7bd6/revision-1-0.png",
+        "published/20261102T170016-a02e7bd6/revision-1-1.png",
+        "published/20261102T170016-a02e7bd6/revision-1-2.png",
+        "published/20261102T170016-a02e7bd6/revision-1-3.png",
+        "published/20261102T170016-a02e7bd6/revision-1-4.png",
+        "published/20261102T170016-a02e7bd6/revision-1-5.png",
+        "published/20261102T170016-a02e7bd6/revision-1-6.png",
+        "published/20261102T170016-a02e7bd6/revision-1-7.png",
+        "published/20261102T170016-a02e7bd6/revision-1-8.png",
+        "published/20261102T170016-a02e7bd6/revision-1-9.png"
+      ]
+    }
+  ]
+}
