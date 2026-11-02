@@ -6,7 +6,8 @@ text is passed to models as quoted data rather than instructions.
 import json
 import re
 import subprocess
-from .pipeline import ROOT
+import time
+from . import ROOT
 
 OWNER = 'eman2XR'
 REPO = 'eman2XR/intuition-lab'
@@ -29,16 +30,31 @@ def curriculum(root=ROOT):
     return [item for chapter in json.loads(path.read_text())['chapters'] for item in chapter['items']]
 
 
-def fetch(runner=subprocess.run):
-    """Return open owner issues with Council labels; any failure yields an empty inbox."""
-    try:
-        result = runner(['gh', 'issue', 'list', '--repo', REPO, '--state', 'open', '--author', OWNER,
-                         '--limit', '20', '--json', 'number,title,body,labels,author'],
-                        text=True, capture_output=True, check=True, timeout=60)
-        issues = json.loads(result.stdout)
-    except Exception as error:
-        print(f'Inbox unavailable ({type(error).__name__}); planning without requests.', flush=True)
-        return []
+def reason(error):
+    """The last line gh printed, which names the problem (authentication, network, rate limit), else the kind of failure."""
+    lines = error.stderr.strip().splitlines() if isinstance(getattr(error, 'stderr', None), str) else []
+    return lines[-1][:160] if lines else type(error).__name__
+
+
+def fetch(runner=subprocess.run, wait=time.sleep):
+    """Return open owner issues with Council labels; a failing gh is retried once, then the inbox is empty."""
+    for retry in (False, True):
+        try:
+            result = runner(['gh', 'issue', 'list', '--repo', REPO, '--state', 'open', '--author', OWNER,
+                             '--limit', '100', '--json', 'number,title,body,labels,author'],
+                            text=True, capture_output=True, check=True, timeout=60)
+            issues = json.loads(result.stdout)
+            break
+        except subprocess.CalledProcessError as error:
+            if not retry:
+                print(f'Inbox: gh failed ({reason(error)}); retrying in 15 s.', flush=True)
+                wait(15)
+                continue
+            print(f'Inbox unavailable ({reason(error)}); planning without requests.', flush=True)
+            return []
+        except Exception as error:
+            print(f'Inbox unavailable ({reason(error)}); planning without requests.', flush=True)
+            return []
     inbox = []
     for issue in issues:
         if (issue.get('author') or {}).get('login') != OWNER:
@@ -70,7 +86,7 @@ def comment(number, text, runner=subprocess.run):
                text=True, capture_output=True, check=True, timeout=60)
         return True
     except Exception as error:
-        print(f'Could not comment on issue #{number} ({type(error).__name__}).', flush=True)
+        print(f'Could not comment on issue #{number} ({reason(error)}).', flush=True)
         return False
 
 
@@ -79,4 +95,4 @@ def close(number, runner=subprocess.run):
         runner(['gh', 'issue', 'close', str(number), '--repo', REPO],
                text=True, capture_output=True, check=True, timeout=60)
     except Exception as error:
-        print(f'Could not close issue #{number} ({type(error).__name__}).', flush=True)
+        print(f'Could not close issue #{number} ({reason(error)}).', flush=True)

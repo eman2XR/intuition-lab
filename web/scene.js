@@ -94,7 +94,7 @@ function drawLight(ctx,w,h,spec,st){
   if(st.labels&&main){
    const end=points[n], size=small?10:11, x=Math.min(w-16,end[0]);
    // Name the light where it enters: beside its start when there is room, else just above it.
-   const [lx0,ly0]=points[0];if(lx0>70)text(ctx,'LIGHT',lx0-10,ly0,{align:'right',size:10,weight:600,spacing:'1.5px'});else text(ctx,'LIGHT',lx0+6,ly0+16,{size:10,weight:600,spacing:'1.5px'});
+   const [lx0,ly0]=points[0];if(lx0>70)text(ctx,'LIGHT',lx0-10,ly0,{align:'right',size:10,weight:600,spacing:'1.5px'});else text(ctx,'LIGHT',Math.max(6,lx0+6),ly0+16,{size:10,weight:600,spacing:'1.5px'});
    if(m>.001){text(ctx,'straightest line across the mesh',x,Math.min(h-14,end[1]+16),{align:'right',size,weight:600,color:accent});
     if(spec.show_reference)text(ctx,'dashed: without the mass',Math.min(w-16,cx+7.5*s),cy-(st.distance+(count-1)*.4)*s*lift-14,{align:'right',size});}
    else text(ctx,'flat mesh: light goes straight',x,end[1]+16,{align:'right',size,weight:600,color:accent});
@@ -293,9 +293,9 @@ function drawParticles(ctx,w,h,spec,st){
 
 // The rope: simulated, not drawn from a formula. Each chapter has its own shaking plan; the simulation runs from the
 // chapter's start, is advanced frame by frame during playback and rebuilt when seeking, so frames match playback.
-const ROPE={key:'',s:null,rate:0,size:0,on:0,held:0};
+const ROPE={key:'',s:null,rate:0,size:0,held:0};
 function ropePlan(spec,st){
- const lines=timeline?.chapters?.[st.stage]?.lines||[], c0=timeline?.chapters?.[st.stage]?.start||0;
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0;
  const third=lines[1]?lines[1].start-c0:8;
  if(st.stage===0)return {key:'pulse',plan:{pulse:true},t:Math.max(0,st.since-1.2)*.125,rate:0};
  const rates=st.stage===1?[[.8,1]]:st.stage===2?[[.8,1.5]]:[[.8,2],[third,3]];
@@ -306,9 +306,15 @@ function ropeAdvance(spec,st){
  const P=Physics, {key,plan,t,rate,held}=ropePlan(spec,st);
  if(ROPE.key!==key||!ROPE.s||t<ROPE.s.t-1e-6){ROPE.key=key;ROPE.s=P.ropeStart();}
  P.ropeStep(ROPE.s,t,P.ropeHand(plan));
- ROPE.rate=rate;ROPE.held=held??0;ROPE.on=st.stage===0?0:1;
+ ROPE.rate=rate;ROPE.held=held??0;
  ROPE.size=ROPE.rate>0?P.ropeSize(ROPE.s,ROPE.rate):0;
- return ROPE.s;
+ return {y:ROPE.s.y,t:ROPE.s.t,rate:ROPE.rate,size:ROPE.size,held:ROPE.held};
+}
+// Previews: a still frame of the steady swing at two shakes a second, in two loops at their biggest, sized by the exact
+// steady swing; the player's simulation is left alone.
+function ropeStill(){
+ const {N,A}=Physics.ropeModel, size=Physics.ropeSteady(2);
+ return {y:Array.from({length:N+1},(_,i)=>size*A*Math.sin(2*Math.PI*i/N)),t:0,rate:2,size,held:Infinity};
 }
 // A fist gripping the rope's end, seen from the side: the forearm in a sleeve, the back of the hand, four curled
 // fingers wrapped around the rope and the thumb laid across them. (x, y) is where the rope leaves the fist.
@@ -333,7 +339,7 @@ function drawHand(ctx,x,y,size){
 const GUITAR={active:false,len:1,plucked:[],tAbs:null,lastSince:-1,lastLen:null,key:''};
 const guitarLen=b=>1-(b-1)/1.5*.5;
 function guitarPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0;
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0;
  const press=lines[2]?lines[2].start-c0:9;
  return {plucks:[[.9,1],[press+.9,.5]],press};
 }
@@ -386,9 +392,9 @@ function drawGuitar(ctx,w,h,spec,st){
 }
 function drawRope(ctx,w,h,spec,st){
  if(st.stage>=4||st.live)return drawGuitar(ctx,w,h,spec,st);
- GUITAR.active=false;
+ const still=st.since===undefined;if(!still)GUITAR.active=false;
  const accent=ACCENT[spec.accent]||ACCENT.gold, warm='#c2410c', small=w<520, P=Physics, A=P.ropeModel.A, N=P.ropeModel.N;
- const s=ropeAdvance(spec,st), y=s.y, x0=w*(small?.22:.17), x1=w*(small?.9:.86), yc=h*.46, W=x1-x0, size=small?15:24;
+ const r=still?ropeStill():ropeAdvance(spec,st), y=r.y, x0=w*(small?.22:.17), x1=w*(small?.9:.86), yc=h*.46, W=x1-x0, size=small?15:24;
  // Heights use the rope's own scale; on a phone they are drawn 2.2 times taller so the swing stays easy to see.
  const V=small?W*2.2:W, X=i=>x0+i/N*W, Y=v=>yc-v*V;
  trace(ctx,[[x0,yc],[x1,yc]]);ctx.strokeStyle='rgba(20,23,28,.1)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);
@@ -401,18 +407,19 @@ function drawRope(ctx,w,h,spec,st){
  trace(ctx,pts);ctx.strokeStyle=accent;ctx.lineWidth=spec.line_width||2.5;ctx.stroke();
  drawHand(ctx,x0,Y(y[0]),size);
  // In step at a whole-number rate: mark the still points between the loops.
- const n=Math.round(ROPE.rate), inStep=ROPE.size>3.2&&ROPE.held>2.5&&n>=1&&Math.abs(ROPE.rate-n)<.04;
+ const n=Math.round(r.rate), inStep=r.size>3.2&&r.held>2.5&&n>=1&&Math.abs(r.rate-n)<.04;
  if(inStep)for(let m=1;m<n;m++){ctx.beginPath();ctx.arc(x0+m/n*W,yc,4.5,0,TAU);ctx.fillStyle=warm;ctx.fill();}
  if(!st.labels)return;
- const lsize=small?10:11, base=yc+h*.3;
- if(st.stage===0)text(ctx,'your hand',x0-size*1.2,base,{align:'center',size:lsize,weight:600,color:'rgba(20,23,28,.7)'});
+ const lsize=small?10:11, base=yc+h*.3, rsize=small?11:13, shakes=r.rate, rateText=st.stage===0?'one shake, 8× slower':`${shakes%1?shakes.toFixed(1):shakes} shake${shakes===1?'':'s'} a second`;
+ // The hand's labels sit under it, kept inside the stage.
+ ctx.font=`600 ${rsize}px ${FONT}`;const hx=Math.max(x0-size*1.2,ctx.measureText(rateText).width/2+6);
+ if(st.stage===0)text(ctx,'your hand',hx,base,{align:'center',size:lsize,weight:600,color:'rgba(20,23,28,.7)'});
  if(st.stage===0)text(ctx,'wall',small?w-6:x1+10,base,{align:small?'right':'center',size:lsize,weight:600,color:'rgba(20,23,28,.7)'});
- const shakes=ROPE.rate, rateText=st.stage===0?'one shake, 8× slower':`${shakes%1?shakes.toFixed(1):shakes} shake${shakes===1?'':'s'} a second`;
- text(ctx,rateText,x0-size*1.2,base+18,{align:'center',size:small?11:13,weight:600,color:'rgba(20,23,28,.78)'});
+ text(ctx,rateText,hx,base+18,{align:'center',size:rsize,weight:600,color:'rgba(20,23,28,.78)'});
  if(st.stage===0){
   // Follow the hump: out to the wall, then back upside down.
   let k=4;for(let i=4;i<N;i++)if(Math.abs(y[i])>Math.abs(y[k]))k=i;
-  const leg=Math.floor(Math.max(0,2*(s.t-.15)));
+  const leg=Math.floor(Math.max(0,2*(r.t-.15)));
   if(leg<2&&Math.abs(y[k])>.25*A){const up=y[k]>0;pill(ctx,leg?'← back, upside down':'hump →',X(k),Y(y[k])+(up?-22:22),{align:'center',size:lsize,weight:600,color:leg?warm:accent});}
  }else if(inStep){
   text(ctx,`in step: ${n} loop${n>1?'s':''}`,(x0+x1)/2,base,{align:'center',size:small?11:12,weight:600,color:accent});
@@ -450,10 +457,10 @@ function drawTunnel(ctx,w,h,spec,st){
 // A blend of waves. A long beep is one pitch; adding pitches in between, all at their crests in one place, makes a
 // short click. A particle's wave works the same way, each wave length being a different speed. Each chapter has a
 // fixed plan; after playback the viewer sets how wide the blend of speeds is.
-const BLEND={mode:'',count:1};
+const BLEND={count:1};
 const blendSk=a=>a<.02?0:.5*clamp(a);
 function blendPlan(st){
- const P=Physics, c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since);
+ const P=Physics, c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since);
  const bell=sk=>P.blendRange(sk).map(j=>[j,P.blendAmp(j,sk),1]);
  if(st.since===undefined)return {mode:'particle',comps:bell(.25),rows:1,particle:1,band:1,speeds:0};
  if(st.live){const sk=blendSk(st.mass);return {mode:'live',sk,comps:bell(sk),rows:0,particle:1,band:1,speeds:1,brackets:1,extremes:true};}
@@ -476,7 +483,7 @@ function drawPacket(ctx,w,h,spec,st){
  const accent=ACCENT[spec.accent]||ACCENT.blue, small=w<520, P=Physics, plan=blendPlan(st), D=P.blendDelta, KC=P.blendCentre, warm='#c2410c';
  const half=small?12:16, X=x=>w/2+x/half*w*(small?.46:.45), lsize=small?10:12;
  const comps=plan.comps.filter(([,a])=>a>1e-3), B=P.blendWaves(comps.map(([j,a])=>[j,a])), total=comps.reduce((s,[,a])=>s+a,0)||1;
- Object.assign(BLEND,{mode:plan.mode,count:comps.filter(([,a])=>a>.02).length,sk:plan.sk??null,sound:plan.particle<=.5});
+ Object.assign(BLEND,{count:comps.filter(([,a])=>a>.02).length,sk:plan.sk??null,sound:plan.particle<=.5});
  // Each wave length has its own colour, from blue-green for the longest to violet for the shortest.
  const hue=(j,al=1)=>`hsla(${232+j*11},70%,${46-Math.min(6,Math.abs(j))}%,${al})`;
  const word=(sound,particle)=>plan.particle>.5?particle:sound, speedWord=(sound,particle)=>(plan.speeds??0)>.5?particle:sound;
@@ -554,7 +561,7 @@ function dropColour(f){
  const c=v=>Math.round(255*Math.pow(clamp(v),.8));return {nm,css:`rgb(${c(r)},${c(g)},${c(b)})`};
 }
 function trapPlan(st){
- const P=Physics, V=P.trapDepth, c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, dur=c?c.end-c.start:14;
+ const P=Physics, V=P.trapDepth, c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, dur=c?c.end-c.start:14;
  const at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since);
  if(st.live){const L=trapL(st.distance), lv=P.trapLevels(L);return {mode:'live',L,E:trapSnap(trapE(st.mass),lv),levels:lv,found:lv.map((_,i)=>i)};}
  const L=2, lv=P.trapLevels(L), mid=(lv[1]+lv[2])/2, floor=-V+.4;
@@ -903,7 +910,7 @@ function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
  const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', light='#d97706', small=w<520, v=Physics.speed(st.mass), since=Math.max(0,(st.since??st.t)-1);
  const L=small?h*.13:Math.min(h*.24,130), lanes=small?[h*.33,h*.7]:[h*.3,h*.7], xa=w*(small?.16:.12), xb=w*(small?.9:.88);
  // Light's speed on screen is chosen so the rocket crosses the stage about once per chapter: its slanted trail stays visible.
- const ch=timeline?.chapters?.[st.stage], span=ch?Math.max(6,ch.end-ch.start+1):18;
+ const ch=st.chapters?.[st.stage], span=ch?Math.max(6,ch.end-ch.start+1):18;
  const c=Math.min(L/1.1,(xb-xa)/(Math.max(vplan??Physics.speed(spec.mass),.2)*span)), slow=1/Physics.lightTick(v), moving=v>.01;
  const bounce=y=>{const f=((y%2)+2)%2;return f<1?f:2-f;}, step=L/c/5;
  const mirrors=(x,y0)=>{ctx.lineCap='round';for(const y of [y0-L/2,y0+L/2]){trace(ctx,[[x-18,y],[x+18,y]]);ctx.strokeStyle='rgba(20,23,28,.7)';ctx.lineWidth=3;ctx.stroke();}};
@@ -923,11 +930,10 @@ function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
  else{path([[xa,ry+L/2],[xa,ry-L/2]]);dots(Array.from({length:6},(_,k)=>[xa,ry-L/2+k*L/5]));}
  drawRocket(ctx,x,ry+L/2+(small?16:22),small?12:16,1,moving,st.t);mirrors(x,ry);photon(...at(since));
  if(!st.labels)return;
- const size=small?11:13, note=small?10:12, ticks=n=>`${n} tick${n===1?'':'s'}`;
+ const size=small?11:13, ticks=n=>`${n} tick${n===1?'':'s'}`;
  text(ctx,`Earth: ${ticks(Math.floor(homeTicks))}`,xa+40,ey-L/2+4,{size,weight:600,color:dark});
  const head=`Rocket: ${ticks(Math.floor(rocketTicks))}`;
  text(ctx,head,xa,ry-L/2-(small?34:42),{size,weight:600,color:accent});
- 
  if(moving&&since>6)pill(ctx,`${Math.round(slow*10)} ticks to Earth’s 10`,w/2,small?h*.94:h*.9,{align:'center',size:small?11:13,weight:600});
 }
 
@@ -959,7 +965,7 @@ function drawPaths(ctx,w,h,spec,st){
  drawEarth(ctx,x0,sy,r);if(v>.001)drawStar(ctx,map(v*T,0)[0],sy,r*.8,1);
  if(v>.001&&tc>0&&tc<H)drawRocket(ctx,map(xAt(tc),0)[0],sy-r*1.3,r*.7,tc<=T?1:-1,true,st.t);
  if(!st.labels)return;
- const size=small?10:11, T2=n=>n.toFixed(1), leg=T/g;
+ const size=small?10:11, T2=n=>n.toFixed(1);
  const intro=st.stage===0, ty0=(bottom+map(0,H)[1])/2;if(Math.abs(hy-ty0)>22)text(ctx,'time ↑',x0-14,ty0,{align:'right',size:10});
  text(ctx,'space →',x0+L.k*4.4,bottom+14,{size:10});
  if(intro)text(ctx,'goodbye',x0,bottom+14,{align:'center',size,weight:600,color:'rgba(20,23,28,.75)'});
@@ -971,13 +977,8 @@ function drawPaths(ctx,w,h,spec,st){
  if(v>.001)text(ctx,'STAR',close?sx+r+8:sx,close?sy:sy+r+12,{align:close?'left':'center',size:9,weight:600,spacing:'1px'});
  pill(ctx,`${T2(tc)} yr`,hx-14,hy,{align:'right',size,weight:600,color:'rgba(20,23,28,.85)'});
  if(v>.001&&tc>0)pill(ctx,`${T2(own)} yr`,tx+14,ty,{size,weight:600,color:accent});
- // Each twin's own clock so far: one dot per year on that twin's path.
- const px=small?w*.08:w*.56, right=small?w*.92:w*.93, py=small?h*.775:h*.3, lh=small?23:40, dark='rgba(20,23,28,.85)';
- 
- 
- 
-
- if(tc>=H-1e-6&&v>.001)pill(ctx,`traveller: ${T2(H-H/g)} years younger`,small?w/2:(px+right)/2,small?h*.95:py+lh*3.3,{align:'center',size:small?11:13,weight:600});
+ // At the reunion: how much younger the traveller is.
+ if(tc>=H-1e-6&&v>.001)pill(ctx,`traveller: ${T2(H-H/g)} years younger`,small?w/2:w*.745,small?h*.95:h*.3+132,{align:'center',size:small?11:13,weight:600});
 }
 function dragPaths(w,h,spec,st,x,y,grab){
  const L=pathsLayout(w,h,st);
@@ -990,11 +991,11 @@ function dragPaths(w,h,spec,st,x,y,grab){
 // its own fixed speed; where the current matches that speed the fish holds still, and past it the fish is swept over.
 // Then space around a black hole, pictured flowing inward the same way, with light as the swimmer. Both follow
 // Physics.riverSwim: outward speed 1 through the flowing medium, inflow sqrt(rs/r). Fixed plan per chapter.
-const RIVER={mode:'',re:1,rs:1};
+const RIVER={live:false};
 const RIVER_K=.25;
 function riverPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since);
- const ch0=timeline?.chapters?.[0], first=ch0?ch0.end-ch0.start:12;
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since);
+ const ch0=st.chapters?.[0], first=ch0?ch0.end-ch0.start:12;
  if(st.since===undefined){const T=st.t||0;return {mode:'hole',rs:1,t:T,horizon:1,pulses:[{r0:1.8,from:T-3,ang:-.95},{r0:1,from:T-30,ang:0},{r0:.62,from:T-.8,ang:.75}]};}
  if(st.live){const rs=clamp(st.mass), re=.6+(st.distance-1);return {mode:'hole',rs,t,pulses:[{r0:re,every:2.6,label:true}],live:true};}
  // 1: one fish far from the falls gets away.
@@ -1003,12 +1004,12 @@ function riverPlan(st){
  if(st.stage===1)return {mode:'river',t,line:smooth((t-at(0)-.2)/.8),fish:[{r0:2.4,tau:(first+t)*RIVER_K,dim:true},
   {r0:1.2,tau:(t-at(0)-.2)*RIVER_K,show:smooth((t-at(0)-.2)/.6),arrows:true},{r0:.75,tau:(t-at(1)-.2)*RIVER_K,show:smooth((t-at(1)-.2)/.6),arrows:true,below:true}]};
  // 3: space around a black hole flows inward; light, far out, swims outward through it and gets away.
- const c2=timeline?.chapters?.[2], l2=c2?.lines||[], third=c2?c2.end-c2.start:15, from3=l2[1]?l2[1].start-c2.start-.4:6;
+ const c2=st.chapters?.[2], l2=c2?.lines||[], third=c2?c2.end-c2.start:15, from3=l2[1]?l2[1].start-c2.start-.4:6;
  if(st.stage===2)return {mode:'hole',rs:1,t,pulses:[{r0:2.3,from:from3,ang:-.95}]};
  // 4: at the horizon light holds still; just outside it escapes, slowly; inside it is carried in.
  if(st.stage===3)return {mode:'hole',rs:1,t,horizon:smooth((t-.4)/.8),pulses:[{r0:2.3,from:from3-third,ang:-.95,quiet:true},{r0:1,from:at(0)+.4,ang:0},{r0:1.35,from:at(1)+.2,ang:-.5},{r0:.62,from:at(1)+.2,ang:.75}]};
  // 5: inside, space flows in faster than light, yet light still moves through it at light speed.
- return {mode:'hole',rs:1,t,horizon:1,limit:smooth((t-at(0)-.6)/.8),pulses:[{r0:.75,from:at(0)+.2,ang:.75,slow:.5},{r0:1,from:-30,ang:0,quiet:true}]};
+ return {mode:'hole',rs:1,t,horizon:1,pulses:[{r0:.75,from:at(0)+.2,ang:.75,slow:.5},{r0:1,from:-30,ang:0,quiet:true}]};
 }
 function drawFish(ctx,x,y,size,flap,alpha=1){
  // A small fish facing left, upstream: body, flapping tail and an eye.
@@ -1036,8 +1037,8 @@ function arrowLegend(ctx,x,y,names,small,dirs=[1,-1]){
  arrow(dirs[1]>0?x0:x0+22,blue,dirs[1]);text(ctx,names[1],x0+28,y,{size,weight:600,color:blue});
 }
 function drawRiver(ctx,w,h,spec,st){
- const accent=ACCENT[spec.accent]||ACCENT.gold, small=w<520, P=Physics, plan=riverPlan(st), lsize=small?10:12, warm='#c2410c';
- RIVER.mode=plan.mode;RIVER.live=!!plan.live;
+ const small=w<520, P=Physics, plan=riverPlan(st), lsize=small?10:12, warm='#c2410c';
+ RIVER.live=!!plan.live;
  if(plan.mode==='river'){
   // Side view: the river runs left to right into a waterfall. r is the distance upstream from the edge.
   const R=small?3.3:4.2, rs=1.2, xe=w*(small?.84:.84), sx=(xe-w*(small?.03:.05))/R, X=r=>xe-r*sx;
@@ -1048,7 +1049,7 @@ function drawRiver(ctx,w,h,spec,st){
   // The falls: the water sheet curves over the edge and drops.
   const fall=u=>[xe+u*w*(small?.1:.09),yw+u*u*(h-yw)*1.05];
   ctx.beginPath();ctx.moveTo(xe,yw);for(let i=1;i<=30;i++){const [x,y]=fall(i/30);ctx.lineTo(x,y);}
-  for(let i=30;i>=0;i--){const [x,y]=fall(i/30);ctx.lineTo(x-w*.02*(1-i/30)*0,y+(yb-yw)*(1-i/30));}ctx.closePath();
+  for(let i=30;i>=0;i--){const [x,y]=fall(i/30);ctx.lineTo(x,y+(yb-yw)*(1-i/30));}ctx.closePath();
   const sheet=ctx.createLinearGradient(xe,yw,xe,h);sheet.addColorStop(0,'#5d97d6');sheet.addColorStop(1,'rgba(220,235,250,.95)');ctx.fillStyle=sheet;ctx.fill();
   for(let i=0;i<14;i++){const u=hash(i*3.3), [fx,fy]=fall(.55+.45*hash(i*7.1));ctx.beginPath();ctx.arc(fx+u*20-10,Math.min(h-4,fy),3+5*hash(i*1.7),0,TAU);ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();}
   // The current: streaks carried along, faster near the edge.
@@ -1059,9 +1060,7 @@ function drawRiver(ctx,w,h,spec,st){
   // The point of no return: where the current equals the fish's own speed.
   if(plan.line>0){ctx.globalAlpha=plan.line;trace(ctx,[[X(rs),yw-(small?34:44)],[X(rs),yb]]);ctx.strokeStyle=warm;ctx.lineWidth=1.6;ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);
    if(st.labels)pill(ctx,'point of no return',X(rs),yw-(small?44:56),{align:'center',size:lsize,weight:600,color:warm});ctx.globalAlpha=1;}
-  if(st.labels){text(ctx,'WATERFALL',Math.min(w-8,xe+w*.05),h*.9,{align:small?'right':'center',size:lsize,weight:600,spacing:'1.5px',color:'rgba(255,255,255,.9)'});
-
-   }
+  if(st.labels)text(ctx,'WATERFALL',Math.min(w-8,xe+w*.05),h*.9,{align:small?'right':'center',size:lsize,weight:600,spacing:'1.5px',color:'rgba(255,255,255,.9)'});
   // The fish: each swims upstream at the same speed through the water.
   plan.fish.forEach((f,i)=>{const show=f.show??1;if(show<=0)return;
    const m=P.riverSwim(f.r0,rs,Math.max(0,f.tau)), size=small?26:38, y=yw+(yb-yw)*[.3,.55,.8][i%3];
@@ -1072,14 +1071,15 @@ function drawRiver(ctx,w,h,spec,st){
    if(f.arrows&&m.fell<0&&show>.6){ctx.globalAlpha=show;const own=small?30:48;
     swimArrows(ctx,x,f.below?yy+size*.62:yy-size*.75,-1,own,own*flow(m.r),{small,labels:false,names:[]});ctx.globalAlpha=1;}
    if(st.labels&&show>.6&&!f.dim){const drift=1-flow(m.r), note=m.fell>=0?'swept over':Math.abs(drift)<.01?'holds still':drift>0?'gets away':'swept along';
-    pill(ctx,note,x+size*.8,yy,{size:lsize,weight:600,color:note==='gets away'?'#1f6f43':warm});}
+    // Beside the fish, or before it where the stage ends.
+    ctx.font=`600 ${lsize}px ${FONT}`;const right=x+size*.8+ctx.measureText(note).width+10<w;
+    pill(ctx,note,right?x+size*.8:x-size*.8,yy,{align:right?'left':'right',size:lsize,weight:600,color:note==='gets away'?'#1f6f43':warm});}
   });
   if(st.labels)arrowLegend(ctx,w/2,h*(small?.08:.1),['swims','current'],small,[-1,1]);
   return;
  }
  // Top view of a black hole: space pictured flowing inward along spokes, faster closer in; light pulses swim outward.
  const rs=plan.rs, cx=w/2, cy=h*(small?.5:.53), rmax=3, k=Math.min(w*(small?.45:.4),h*(small?.41:.43))/rmax, tau=plan.t*RIVER_K;
- RIVER.rs=rs;
  const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,rmax*k);glow.addColorStop(0,`rgba(20,23,28,${.16*Math.min(1,rs)})`);glow.addColorStop(1,'rgba(20,23,28,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,rmax*k,0,TAU);ctx.fill();
  // After playback the mass can be turned down to none: then there is no hole and no inflow, and light simply travels out.
  const hole=rs>=.01;
@@ -1109,7 +1109,6 @@ function drawRiver(ctx,w,h,spec,st){
    if(n===0)states.push({x,y,r,ang,q,i});
   });
  });
- RIVER.re=plan.pulses[0].r0;
  for(const s0 of states){const {x,y,r,q,ang}=s0, own=small?24:34, v=Math.sqrt(rs/Math.max(r,.05)), ux=Math.cos(ang), uy=Math.sin(ang), px=-uy*7, py=ux*7;
   // Along the light's own line: its own speed outward (gold) and the inflow carrying it in (blue).
   const ray=(x0,y0,len,dir,col)=>{const x1=x0+dir*ux*len, y1=y0+dir*uy*len;trace(ctx,[[x0,y0],[x1,y1]]);ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.stroke();
@@ -1117,13 +1116,12 @@ function drawRiver(ctx,w,h,spec,st){
   if(q.quiet)continue;
   ray(x+px,y+py,own,1,'#d97706');if(v>.01)ray(x-px,y-py,Math.min(own*2.6,own*v),-1,'#2563eb');
   if(!st.labels)continue;
-  const note=r<rs*.985?'carried in':Math.abs(r-rs)<.015*rs?'stands still':'escapes', inflow=Math.round(v*100);
-  const lx=x+ux*(own+16)+(ux>=0?4:-4), ly=y+uy*(own+16), align=ux>=-.2?'left':'right';
+  const note=r<rs*.985?'carried in':Math.abs(r-rs)<.015*rs?'stands still':'escapes', align=ux>=-.2?'left':'right', left=align==='left';
+  // Past the arrow's tip, kept inside the stage.
+  ctx.font=`700 ${lsize}px ${FONT}`;const room=ctx.measureText(note).width+9;
+  const lx=clamp(x+ux*(own+16)+(ux>=0?4:-4),left?9:room,left?w-room:w-9), ly=y+uy*(own+16);
   pill(ctx,note,lx,ly,{align,size:lsize,weight:700,color:note==='escapes'?'#1f6f43':warm});
-
  }
- // Inside the horizon: light still moves at light speed through space; it is the space that flows in faster.
-
 }
 
 // One toss, two views: from the ground (the ball arcs) and floating with the ball (the ground moves).
@@ -1185,11 +1183,11 @@ function drawViews(ctx,w,h,spec,st){
 // What curvature means: straight paths that start side by side come together or spread apart.
 // Progress 0..1 of a motion that plays once per chapter, finishing at three quarters of it, then holds.
 function onceInChapter(st,lead=.8){
- const c=timeline?.chapters?.[st.stage], span=c?Math.max(3,(c.end-c.start)*.75-lead):10;
+ const c=st.chapters?.[st.stage], span=c?Math.max(3,(c.end-c.start)*.75-lead):10;
  return clamp(((st.since??st.t)-lead)/span);
 }
 function drawTides(ctx,w,h,spec,st){
- const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', warm='#c2410c', small=w<520, since=st.since??st.t, stage=st.stage, P=Physics.tides(Math.max(st.mass,1e-6));
+ const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', warm='#c2410c', small=w<520, stage=st.stage, P=Physics.tides(Math.max(st.mass,1e-6));
  const dot=(x,y,r,c)=>{ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle=c;ctx.fill();};
  if(stage===0){
   // A plain ball seen from a little above its middle; two walkers start side by side and walk straight ahead.
@@ -1204,7 +1202,7 @@ function drawTides(ctx,w,h,spec,st){
   const a=G(lat,lons[0]),b=G(lat,lons[1]);trace(ctx,[a,b]);ctx.setLineDash([2,3]);ctx.strokeStyle=warm;ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
   dot(...a.slice(0,2),6,accent);dot(...b.slice(0,2),6,accent);
   if(!st.labels)return;
-  const gap=Math.sin(Math.acos(Math.sin(lat)**2+Math.cos(lat)**2*Math.cos(.7))/2)/Math.sin(.35);
+  const gap=Physics.walkersGap(lat,lons[1]-lons[0])/Physics.walkersGap(0,lons[1]-lons[0]);
   if(gap>.06)pill(ctx,'gap',(a[0]+b[0])/2,(a[1]+b[1])/2+16,{align:'center',size:small?10:11,weight:600,color:warm});
   else{const pole=G(Math.PI/2,0);pill(ctx,'they meet',pole[0],pole[1]-16,{align:'center',size:small?10:11,weight:600,color:warm});}
   return;
@@ -1261,10 +1259,10 @@ const LIFT_SLOW=.28, LIFT_SNAP=1;
 // The explore control: the lift's upward acceleration, from falling freely (-g) at the left, through steady (0), to +g.
 const liftAccel=a=>Physics.lift().g*(2*clamp(a)-1);
 const liftSpeedUp=a=>{const acc=liftAccel(a);return a<.005?'falling freely':Math.abs(acc)<.15?'steady':`${Math.round(Math.abs(acc)*3.6)} km/h a second, ${acc>0?'up':'down'}`;};
-function liftFallTime(stage,since){
+function liftFallTime(st,since){
  // Seconds of free fall, slowed down for viewing; the last chapter carries on from the end of the previous one.
- const ch=timeline?.chapters?.[2], before=ch?Math.max(0,ch.end-ch.start-LIFT_SNAP):0;
- return stage===2?Math.max(0,since-LIFT_SNAP)*LIFT_SLOW:(before+since)*LIFT_SLOW;
+ const ch=st.chapters?.[2], before=ch?Math.max(0,ch.end-ch.start-LIFT_SNAP):0;
+ return st.stage===2?Math.max(0,since-LIFT_SNAP)*LIFT_SLOW:(before+since)*LIFT_SLOW;
 }
 function drawLift(ctx,w,h,spec,st){
  const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', warm='#c2410c', small=w<520, since=st.since??st.t, stage=st.stage, L=Physics.lift();
@@ -1276,7 +1274,7 @@ function drawLift(ctx,w,h,spec,st){
  let yc=1,a=0,snapped=false,fall=0,tf=0;
  if(live){yc=topY;a=accLive;snapped=readLive<.005;}
  else if(stage===1){yc=1+climb(since);a=L.accelAt(since);}
- else if(stage>=2){tf=liftFallTime(stage,since);yc=topY;if(tf>0){snapped=true;fall=.5*L.g*tf*tf;a=-L.g;yc=topY-fall;}}
+ else if(stage>=2){tf=liftFallTime(st,since);yc=topY;if(tf>0){snapped=true;fall=.5*L.g*tf*tf;a=-L.g;yc=topY-fall;}}
  // The dial's needle eases to each new reading instead of jumping: averaged over the last 0.7 s of the ride,
  // and swinging down over 0.7 s once the cable snaps. Computed from time alone, so seeking stays exact.
  const settle=.7, sinceSnap=stage===2?since-LIFT_SNAP:stage>2?99:-1;
@@ -1383,24 +1381,24 @@ function limitPct(v){const d=Math.max(0,Math.floor(-Math.log10(Math.max(1e-9,1-v
 // Light's speed on screen, in strip widths per second, shared by chapters 1 to 3 so light and the rocket keep their
 // speeds: slow enough that chapter 2's flashes (fired a second before its second sentence) and chapter 3's flash (fired
 // early in its first sentence) are still in flight as each chapter ends.
-function limitLight(){
- const timing=i=>{const c=timeline?.chapters?.[i], lines=c?.lines||[], c0=c?.start||0, at=k=>lines[k]?lines[k].start-c0:3+4*k;return {lines,at,end:c?.end!=null?c.end-c0:null};};
+function limitLight(chapters){
+ const timing=i=>{const c=chapters?.[i], lines=c?.lines||[], c0=c?.start||0, at=k=>lines[k]?lines[k].start-c0:3+4*k;return {lines,at,end:c?.end!=null?c.end-c0:null};};
  const two=timing(1), three=timing(2), flash=two.lines[1]?Math.max(1.2,two.at(1)-1):two.at(0)+1.2, crew=three.at(0)+.6;
  const speed=Math.min(.8/Math.max(3,(two.end??flash+6)-flash-.2),.84/Math.max(3,(three.end??crew+8)-crew-.2));
  return {flash,crew,speed};
 }
 function limitPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
  if(st.since===undefined)return {mode:'thumb',n:4,t:2};
  if(st.live)return {mode:'live',n:Math.round(clamp(st.mass)*10),t:st.t||0};
  // 1: the rocket fires one push and coasts at half light speed along the strip; with the second sentence the strip
  // fades and everyday adding draws its line through light speed.
  if(st.stage===0)return {mode:'add',n:clamp((t-.5)/.6),everyday:smooth((t-at(1)-.2)/1.6),strip:1-smooth((t-at(1)+.4)/.6),t};
  // 2: seen from the ground, the rocket coasts past a lamp post; both lamps flash and the flashes travel side by side.
- if(st.stage===1)return {mode:'lamp',n:1,flash:limitLight().flash,dim:smooth(t/.6),t};
+ if(st.stage===1)return {mode:'lamp',n:1,flash:limitLight(st.chapters).flash,dim:smooth(t/.6),t};
  // 3: seen from the rocket: the ground streams back at half light speed and the crew's flash leaves at light speed;
  // with the second sentence another push makes the ground stream faster, and the flash still pulls away at light speed.
- if(st.stage===2)return {mode:'crew',n:1,push:at(1)+.5,first:limitLight().crew,dim:1,t};
+ if(st.stage===2)return {mode:'crew',n:1,push:at(1)+.5,first:limitLight(st.chapters).crew,dim:1,t};
  // 4: the same push again and again: 80% and 93% with the first sentence, then 98%, 99.2% and 99.7%, under the faint
  // line of everyday adding.
  let n=1;for(const p of [at(0)+.9,at(0)+2.5,at(1)+.5,at(1)+1.5,at(1)+2.5])n+=clamp((t-p)/.6);
@@ -1418,7 +1416,7 @@ function drawLimit(ctx,w,h,spec,st){
  // past the lamp post in chapter 2's flash time; the rocket coasts at half that speed.
  const x0=chart.x0, x1=chart.x1, lane=x1-x0, lampX=x0+lane*.2, win={top:h*(small?.11:.05),base:h*(small?.42:.31)};
  const ry=h*(small?.21:.12), gy=h*(small?.36:.25), head=gy-(small?16:20), r=small?13:19, lampY=ry-r*.4;
- const c=limitLight().speed*lane;
+ const c=limitLight(st.chapters).speed*lane;
  const frame=(a,name)=>{ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.roundRect(x0-14,win.top,lane+28,win.base-win.top,10);ctx.fill();
   ctx.strokeStyle='rgba(20,23,28,.1)';ctx.lineWidth=1;ctx.stroke();
   trace(ctx,[[x0,ry+r*.9],[x1,ry+r*.9]]);ctx.strokeStyle='rgba(20,23,28,.08)';ctx.stroke();
@@ -1489,8 +1487,9 @@ function drawLimit(ctx,w,h,spec,st){
  for(let k=1;k<=shown;k++){const s=Physics.limitSpeed(Math.min(k,n)), x=xOf(k), y=yOf(s);
   trace(ctx,[last,[x,last[1]],[x,y]]);ctx.strokeStyle=rgba(accent,.85);ctx.lineWidth=2.2;ctx.stroke();
   ctx.beginPath();ctx.arc(x,y,small?3.4:4,0,TAU);ctx.fillStyle=accent;ctx.fill();last=[x,y];}
- // Zoomed in on the last steps: from 96.5% to 100.5% of light speed, they stay clearly below the line.
- if(plan.zoom>0&&shown>=6){const R=small?38:58, cx=xOf(small?7.4:8.2), cy=chart.top-(small?62:78), zx=k=>cx-R*.75+(k-4)*R*.62, zy=v=>cy-R*.45+(1.005-v)/.04*R*1.1;
+ // Zoomed in on the last steps: from 96.5% to 100.5% of light speed, they stay clearly below the line. It sits above
+ // the chart, smaller on short stages so that it and its label stay inside.
+ if(plan.zoom>0&&shown>=6){const R=clamp((chart.top-44)/2,16,small?38:58), cx=xOf(small?7.4:8.2), cy=chart.top-R-(small?24:20), zx=k=>cx-R*.75+(k-4)*R*.62, zy=v=>cy-R*.45+(1.005-v)/.04*R*1.1;
   ctx.save();ctx.globalAlpha*=plan.zoom;
   trace(ctx,[[xOf(5),chart.top+4],[cx-R*.72,cy+R*.7]]);ctx.strokeStyle='rgba(20,23,28,.25)';ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.stroke();ctx.setLineDash([]);
   ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fillStyle='rgba(255,255,255,.96)';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.3)';ctx.lineWidth=1.2;ctx.stroke();
@@ -1544,7 +1543,7 @@ function nightShare(v){
  return `1 part in ${Math.round(n)}`;
 }
 function nightPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
  const last=at(Math.max(1,lines.length-1));
  if(st.since===undefined)return {mode:'thumb',t:2};
  if(st.live)return {mode:'live',years:Physics.nightYears(clamp(st.mass)),t:st.t||0};
@@ -1724,7 +1723,6 @@ function drawNight(ctx,w,h,spec,st){
   wave={P0,head:[P0[0]+ux*reach,P0[1]+uy*reach],u,ux,uy};}
  nightGround(ctx,w,h,L,blaze);
  if(!st.labels||m==='thumb')return;
- const ink=blaze>.5?'rgba(52,38,24,.82)':'rgba(226,232,255,.82)';
  if(m==='night'&&plan.gap>0){const [gx,gy,gr]=L.gap;ctx.save();ctx.globalAlpha=plan.gap;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(gx,gy,gr,0,TAU);ctx.strokeStyle='rgba(200,212,255,.55)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
   text(ctx,'dark between stars',gx,gy+gr+(L.small?12:15),{align:'center',size,weight:600,color:'rgba(226,232,255,.85)'});ctx.restore();}
  if(hl>.05){ctx.save();ctx.globalAlpha=hl;
@@ -1744,80 +1742,6 @@ function drawNight(ctx,w,h,spec,st){
   if(wave.u>.6){ctx.save();ctx.globalAlpha=smooth((wave.u-.6)/.25);text(ctx,'stretched out of sight',wave.head[0]-(L.small?10:16),wave.head[1]-(L.small?16:20),{align:'right',size,weight:600,color:'rgba(226,232,255,.85)'});ctx.restore();}}
 }
 
-// Why a positive test for a rare disease is usually a false alarm. A thousand people take a test that is right 99
-// times in 100 for a disease that 1 person in 1,000 has. The test catches the sick person but also wrongly flags about
-// 10 of the 999 healthy ones, so of the 11 who test positive only 1 is sick; with 1 in 100 sick, right positives match
-// the false alarms. Dots are the expected numbers rounded to whole people (Physics.rateTest); after playback the viewer
-// sets how common the disease is.
-const RATE={mode:''};
-// Seats in the grid, shuffled once: the sick take seats from the front of the list, false alarms from the back.
-const RATE_SEATS=(()=>{const s=[...Array(1000).keys()];let x=11;for(let i=999;i>0;i--){x=(x*1103515245+12345)%2147483648;const j=x%(i+1);[s[i],s[j]]=[s[j],s[i]];}return s;})();
-function ratePlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
- if(st.since===undefined)return {mode:'thumb',sick:1,caught:1,red:1,ring:1,alarms:10,gather:1,t:0};
- if(st.live){const p=Physics.ratePrevalence(st.mass), r=Physics.rateTest(p);
-  return {mode:'live',p,share:r.share,sick:Math.round(r.sick),caught:Math.round(r.caught),red:1,ring:1,alarms:Math.round(r.alarms),gather:1,t:st.t||0};}
- // 1: a thousand people; with the first sentence one of them turns red.
- if(st.stage===0)return {mode:'meet',sick:1,caught:1,red:smooth((t-at(0)-1)/.6),ring:0,alarms:0,gather:0,t};
- // 2: the test catches the sick person, then with the second sentence wrongly flags ten healthy people, one by one.
- if(st.stage===1)return {mode:'test',sick:1,caught:1,red:1,ring:smooth((t-at(0)-.8)/.5),alarms:clamp((t-at(1)-.8)/3)*10,gather:0,t};
- // 3: everyone who tested positive gathers on the right, and the count of the sick among them follows.
- if(st.stage===2)return {mode:'gather',sick:1,caught:1,red:1,ring:1,alarms:10,gather:clamp((t-at(0)-.6)/2.4),count:smooth((t-at(0)-3.2)/.5),t};
- // 4: the healthy group is far bigger than the sick one; with the second sentence nine more people are sick, as if 1
- // in 100 had the disease: all are caught and join the positives, as many as the false alarms.
- const more=clamp((t-at(1)-1)/3)*9;
- return {mode:'common',sick:1+more,caught:1+more,red:1,ring:1,alarms:10,gather:1,count:1,healthy:smooth((t-at(0)-.4)/.6)*(1-smooth((t-at(1)-.2)/.5)),t};
-}
-function drawRate(ctx,w,h,spec,st){
- const plan=ratePlan(st), small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, red='#dc2626', ink='rgba(20,23,28,.8)', muted='rgba(20,23,28,.55)', size=small?10:12;
- RATE.mode=plan.mode;
- // The thousand seats: 40 across and 25 down, on the left of wide stages and at the top of phones.
- const s=small?Math.min(w*.86/40,h*.42/25):Math.min(w*.4/40,h*.56/25), gx=small?(w-40*s)/2:w*.07, gy=small?h*.1:h*.5-12.5*s;
- const seat=i=>[gx+(i%40+.5)*s,gy+(Math.floor(i/40)+.5)*s], dot=s*.3;
- const sick=Math.ceil(plan.sick-1e-9), caughtN=Math.ceil(plan.caught-1e-9), alarmN=Math.ceil(plan.alarms-1e-9);
- const sickSeats=RATE_SEATS.slice(0,sick), alarmSeats=Array.from({length:alarmN},(_,k)=>RATE_SEATS[999-k]);
- // Everyone who tested positive, sick first; each flies to its place in the group on the right, one after another.
- const positives=[...sickSeats.slice(0,caughtN).map((i,k)=>({i,sick:true,grow:k===0?1:clamp(plan.sick-k)})),...alarmSeats.map((i,k)=>({i,sick:false,grow:clamp(plan.alarms-k)}))];
- // The group on the right: the sick who tested positive on the top rows, the false alarms below, both from the left
- // edge, so their lengths compare like bars.
- const count=positives.length, per=small?12:14, room=small?h*.34:h*.66, nA=positives.filter(p=>p.sick).length, nB=count-nA;
- const la=Math.ceil(nA/per), lb=Math.ceil(nB/per), span=Math.max(0,la+lb-1+(la&&lb?.4:0));
- const gap=Math.min(small?24:28,room/(span+1),(small?w*.86:w*.4)/per), block={x:small?w/2:w*.76,y:small?h*.73:h*.5}, rr=Math.min(small?5:7,gap*.26), left=block.x-(per-1)/2*gap;
- const slot=k=>{const inA=k<nA, j=inA?k:k-nA, row=inA?Math.floor(j/per):la+(la?.4:0)+Math.floor(j/per);return [left+(j%per)*gap,block.y+(row-span/2)*gap];};
- const fly=k=>plan.mode==='common'&&k>0&&k<caughtN?clamp((positives[k].grow-.45)/.55):clamp(plan.gather*(count+3)/3-k/3);
- const flown=new Map(positives.map((p,k)=>[p.i,{p,k,f:fly(k)}]));
- // The grid: healthy people grey, the sick red; a ring marks a positive test.
- const healthyA=.2+.25*(plan.healthy||0);
- for(let i=0;i<1000;i++){const [x,y]=seat(i), f=flown.get(i)?.f||0;
-  if(f>=1){ctx.beginPath();ctx.arc(x,y,dot*1.1,0,TAU);ctx.strokeStyle=rgba(accent,.4);ctx.lineWidth=1;ctx.stroke();continue;}
-  const sk=sickSeats.indexOf(i);
-  if(sk<0||f>0){if(f>0)continue;ctx.beginPath();ctx.arc(x,y,dot,0,TAU);ctx.fillStyle=`rgba(20,23,28,${healthyA})`;ctx.fill();continue;}
-  const a=sk===0?plan.red:clamp((plan.sick-sk)/.45);
-  ctx.beginPath();ctx.arc(x,y,dot*(1+.4*a),0,TAU);ctx.fillStyle=a<1?`rgba(20,23,28,${healthyA*(1-a)})`:red;ctx.fill();
-  if(a>0&&a<1){ctx.beginPath();ctx.arc(x,y,dot*(1+.4*a),0,TAU);ctx.fillStyle=rgba(red,a);ctx.fill();}}
- const ringAt=(x,y,r,a)=>{if(a<=0)return;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.strokeStyle=rgba(accent,a);ctx.lineWidth=small?1.3:1.7;ctx.stroke();};
- positives.forEach((p,k)=>{const f=flown.get(p.i).f, [sx,sy]=seat(p.i), [tx,ty]=slot(k), e=smooth(f), x=sx+(tx-sx)*e, y=sy+(ty-sy)*e;
-  const ring=p.sick?(k===0?plan.ring:clamp((p.grow-.25)/.2)):1, pop=p.sick?1:1+.8*(1-clamp((p.grow)/.25));
-  if(!p.sick&&p.grow<=0)return;
-  const r=dot+(rr-dot)*e;
-  if(f>0){ctx.beginPath();ctx.arc(x,y,r*(p.sick?1.35:1),0,TAU);ctx.fillStyle=p.sick?red:'rgba(20,23,28,.42)';ctx.fill();}
-  ringAt(x,y,(f>0?r*1.65:dot*2.1)*pop,ring*(p.sick?1:clamp(p.grow/.25)));});
- // Missed by the test: the few sick people without a ring stay in the grid.
- if(st.labels){
-  // In the live view the heading gives the average number of sick people, which need not be whole.
-  const avg=plan.mode==='live'?1000*plan.p:0, many=avg>=9.95||Math.abs(avg-Math.round(avg))<.05?Math.round(avg).toLocaleString('en-US'):avg.toFixed(1);
-  const title=(plan.healthy||0)>.5?'999 healthy · 1 sick':`1,000 people · ${plan.mode==='common'&&plan.sick>1.01?10:plan.mode==='live'?many:1} sick`;
-  text(ctx,title,gx,gy-(small?10:14),{size,weight:700,color:ink});
-  if(plan.mode==='meet'&&plan.red>.5){const [x,y]=seat(RATE_SEATS[0]);pill(ctx,'sick',x+(small?9:12),y,{size,weight:700,color:red});}
-  if(plan.mode==='test'&&plan.alarms>9.5)text(ctx,'1 found · 10 false alarms',gx,gy+25*s+(small?12:18),{size,weight:600,color:accent});
-  const top=block.y-span/2*gap-rr*1.65-(small?10:13), bottom=block.y+span/2*gap+rr*1.65+(small?13:16);
-  if(plan.gather>.3)text(ctx,'tested positive',left-rr,top,{size,weight:700,color:accent});
-  if((plan.count||0)>.5||plan.mode==='live'||plan.mode==='thumb'){let right=positives.filter((p,k)=>p.sick&&fly(k)>=1).length, all=positives.filter((p,k)=>fly(k)>=1).length;
-   // The live view gives the exact long-run share in the guide's own terms; the chapters count the dots.
-   const share=plan.mode==='live'?plan.share:0, words=share<=0?'none are sick':share<.5?`1 in ${Math.round(1/share)} is sick`:`${Math.round(share*10)} in 10 are sick`;
-   if(all)pill(ctx,plan.mode==='live'?words:`${right} of ${all} ${right===1?'is':'are'} sick`,left-rr,bottom,{size:size+1,weight:700,color:right||share>0?red:muted});}}
-}
-
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
 // time, from 22 chances; but a match can be between any two people, and 23 people make 253 pairs. As people arrive
 // one at a time, each newcomer must miss every birthday already in the room, so the chance of a shared birthday
@@ -1825,20 +1749,20 @@ function drawRate(ctx,w,h,spec,st){
 // (Physics.birthdayShared); after playback the viewer sets how many people are in the room.
 const BDAY={mode:''};
 function bdayPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
  const last=lines.length?at(lines.length-1):3;
- if(st.since===undefined)return {mode:'thumb',n:23,arrived:23,pairs:253,you:0,t:0};
- if(st.live){const n=Math.max(1,Math.round(1+59*clamp(st.mass)));return {mode:'live',n,arrived:n,pairs:n*(n-1)/2,you:0,t:st.t||0};}
+ if(st.since===undefined)return {mode:'thumb',n:23,arrived:23,you:0,t:0};
+ if(st.live){const n=Math.max(1,Math.round(1+59*clamp(st.mass)));return {mode:'live',n,arrived:n,you:0,t:st.t||0};}
  // 1: 23 people; with the first sentence the 22 chances that someone shares your birthday, one line each.
- if(st.stage===0)return {mode:'you',n:23,arrived:23,pairs:0,you:clamp((t-at(0)-1.2)/2)*22,t};
+ if(st.stage===0)return {mode:'you',n:23,arrived:23,you:clamp((t-at(0)-1.2)/2)*22,t};
  // 2: every pair is a chance: all 253 lines, then with the second sentence the count, and with the third the chance
  // that any two match.
- if(st.stage===1){const count=smooth((t-at(1)-.2)/.5);return {mode:'pairs',n:23,arrived:23,pairs:22+clamp((t-at(0)-1)/3.5)*231,you:22,count,odds:lines.length>2?smooth((t-at(2)-.2)/.5):count,t};}
+ if(st.stage===1){const count=smooth((t-at(1)-.2)/.5);return {mode:'pairs',n:23,arrived:23,pairs:22+clamp((t-at(0)-1)/3.5)*(Physics.birthdayPairs(23)-22),you:22,count,odds:lines.length>2?smooth((t-at(2)-.2)/.5):count,t};}
  // 3: people arrive one at a time through both sentences, each with lines to everyone already there, while the
  // chance of a shared birthday grows.
- if(st.stage===2){const a=1+clamp((t-at(0)-1)/Math.max(3,last+1.5-at(0)-1))*22;return {mode:'arrive',n:23,arrived:a,pairs:null,you:0,bar:1,t};}
+ if(st.stage===2){const a=1+clamp((t-at(0)-1)/Math.max(3,last+1.5-at(0)-1))*22;return {mode:'arrive',n:23,arrived:a,you:0,bar:1,t};}
  // 4: 27 more arrive, to 50 people and 1,225 pairs.
- const n=23+clamp((t-at(0)-.8)/3.2)*27;return {mode:'more',n,arrived:n,pairs:null,you:0,bar:1,t};
+ const n=23+clamp((t-at(0)-.8)/3.2)*27;return {mode:'more',n,arrived:n,you:0,bar:1,t};
 }
 function drawBirthdays(ctx,w,h,spec,st){
  const plan=bdayPlan(st), small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, gold=ACCENT.gold, ink='rgba(20,23,28,.8)', muted='rgba(20,23,28,.55)', size=small?10:12;
@@ -1864,10 +1788,10 @@ function drawBirthdays(ctx,w,h,spec,st){
  for(let k=0;k<whole;k++){const [x,y]=pos(k), here=plan.mode==='arrive'?clamp(arrived-k):plan.mode==='more'?clamp(arrived-k):1;
   ctx.beginPath();ctx.arc(x,y,(small?3.6:5)*(k===0&&plan.mode==='you'?1.35:1),0,TAU);
   ctx.fillStyle=k===0&&youShown&&here>=1?accent:here>=1?'rgba(20,23,28,.72)':`rgba(20,23,28,${.16+.56*here})`;ctx.fill();}
- const people=Math.min(whole,Math.ceil(arrived-1e-9)), pairs=people*(people-1)/2;
+ const people=Math.min(whole,Math.ceil(arrived-1e-9)), pairs=Physics.birthdayPairs(people);
  if(st.labels){
   if(plan.mode==='you'||plan.mode==='pairs'){const [x,y]=pos(0);text(ctx,'you',x,y-(small?12:15),{align:'center',size,weight:700,color:accent});}
-  const centre=plan.mode==='you'?(plan.you>21.5?'22 pairs with you':''):plan.mode==='pairs'?(plan.count>.5?'253 pairs':''):`${pairs.toLocaleString('en-US')} pair${pairs===1?'':'s'}`;
+  const centre=plan.mode==='you'?(plan.you>21.5?'22 pairs with you':''):plan.mode==='pairs'?(plan.count>.5?`${Physics.birthdayPairs(23)} pairs`:''):`${pairs.toLocaleString('en-US')} pair${pairs===1?'':'s'}`;
   if(centre)pill(ctx,centre,cx,cy,{align:'center',size:size+1,weight:700,color:plan.mode==='you'?accent:ink});}
  // Two chances: that someone shares your own birthday, while the chapters are about you, and that any two people
  // match, which fades in with the pair count in chapter 2 and stays on its own afterwards. Each bar has a mark at one
@@ -1888,20 +1812,20 @@ function drawBirthdays(ctx,w,h,spec,st){
 }
 
 // Why the sky is blue and sunsets are red. With no air, as on the Moon, the daytime sky is black. Light is a wave that
-// shakes the electrons in each air molecule, and shaken electrons send light out in every direction; blue, a quicker
-// wave than red, shakes them faster and is scattered about six times as much. So blue reaches you from all over the
+// shakes the electrons in each air molecule, and shaken electrons send light out in every direction; blue, a shorter
+// wave than red, shakes them more often and is scattered about six times as much. So blue reaches you from all over the
 // sky, while at sunset the light crosses so much air that most of its blue is scattered away before it arrives.
 // Rayleigh scattering by clean air at sea level (Physics.skyThrough); after playback the viewer sets the Sun's height.
 const SKY={mode:''};
 // Fixed scattered positions, so the air, the sparks and the lines to the eye are the same at every frame.
 const SKY_DOTS=(()=>{let x=5;const r=()=>{x=(x*1103515245+12345)%2147483648;return x/2147483648;};return Array.from({length:150},()=>[r(),r(),r()]);})();
 function skyPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
  if(st.since===undefined)return {mode:'thumb',air:1,t:2};
  if(st.live)return {mode:'live',sun:clamp(st.mass)*90,t:st.t||0};
  // 1: no air, as on the Moon: a black sky. With the second sentence the air arrives and the sky turns blue.
  if(st.stage===0)return {mode:'air',air:smooth((t-at(1)-.3)/1.5),t};
- // 2: one molecule, magnified, in red light and in blue light; the blue one sends out far more, labelled with the
+ // 2: one molecule in red light and in blue light; the blue one sends out far more, labelled with the
  // sentence that says so (the last one).
  if(st.stage===1)return {mode:'shake',more:smooth((t-at(Math.max(1,lines.length-1))-.6)/.5),t};
  // 3: sunlight crosses the sky and the air sends blue off in all directions; with the second sentence, lines show
@@ -1967,10 +1891,10 @@ function drawSky(ctx,w,h,spec,st){
  const blue=ACCENT.blue, red='#dc2626';
  SKY.mode=plan.mode;
  if(plan.mode==='shake'){
-  // One molecule, magnified, twice: a red wave and a blue wave pass at the same speed; the blue one is shorter and
-  // quicker, so it shakes the electrons faster, and the rings of light they send out are about six times as bright.
+  // One molecule, twice: a red wave and a blue wave pass at the same speed; the blue one is shorter, so it shakes the
+  // electrons more often, and the rings of light they send out are about six times as bright.
   const x0=w*.08, x1=w*.92, mx=w*(small?.5:.42), speed=small?60:90, lanes=[[red,'red light',small?h*.28:h*.3,small?70:120,1],[blue,'blue light',small?h*.66:h*.66,(small?70:120)*450/700,Physics.skyScatter(450)]];
-  // A pale sky behind the magnified molecule, so this chapter sits in the same world as the others.
+  // A pale sky behind the molecule, so this chapter sits in the same world as the others.
   const pale=ctx.createLinearGradient(0,h*.03,0,h*.97);pale.addColorStop(0,'#eaf2fd');pale.addColorStop(1,'#f6f9fe');
   ctx.beginPath();ctx.roundRect(w*.03,h*.03,w*.94,h*.94,16);ctx.fillStyle=pale;ctx.fill();
   for(const [color,name,y,len,bright] of lanes){
@@ -1991,7 +1915,7 @@ function drawSky(ctx,w,h,spec,st){
    ctx.beginPath();ctx.arc(mx,y-shift,cr,0,TAU);ctx.fillStyle=cloud;ctx.fill();
    ctx.beginPath();ctx.arc(mx,y,small?2.6:3.4,0,TAU);ctx.fillStyle='rgba(20,23,28,.8)';ctx.fill();
    if(st.labels)text(ctx,name,x0,y-h*.13,{size,weight:700,color});}
-  if(st.labels){text(ctx,'air molecules, magnified',w/2,h*.07,{align:'center',size,weight:700,color:muted});
+  if(st.labels){text(ctx,'air molecules',w/2,h*.07,{align:'center',size,weight:700,color:muted});
    if(plan.more>.5)pill(ctx,'sends out about 6× more',mx+(small?30:70),lanes[1][2]-h*.12,{size:size+1,weight:700,color:blue});}
   return;
  }
@@ -2086,116 +2010,6 @@ function drawSky(ctx,w,h,spec,st){
   if(plan.mode==='air')text(ctx,air<.5?'no air, like the Moon':'with air',wx+16,wy+(small?16:20),{size,weight:700,color:'rgba(248,250,252,.92)'});}
 }
 
-// Why we have seasons. Many people think summer comes when Earth is closest to the Sun, but the orbit is almost a
-// circle and Earth is closest in early January, in the northern winter. Earth's axis is tilted and points the same way
-// all year, so in June the north leans toward the Sun: there the noon Sun is high, its light lands on a smaller patch
-// of ground, and more of each day is lit; half a year later the south leans in and the seasons swap. Exact for the
-// tilt, the distances and the noon Sun at 40 degrees north (Physics.seasonNoon, seasonRatio); after playback the
-// viewer sets the tilt.
-const SEASON={mode:''};
-function seasonPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
- if(st.since===undefined)return {mode:'thumb',lean:1,t:0};
- if(st.live)return {mode:'live',tilt:clamp(st.mass)*40,area:1,t:st.t||0};
- // 1: the orbit many people picture, then with the second sentence the real one: almost a circle, closest in January.
- if(st.stage===0)return {mode:'orbit',real:smooth((t-at(1)-.3)/1.2),t};
- // 2: the orbit tips from the view from above into the view from the side, with Earth in June and December, its
- // tilted axis pointing the same way; with the second sentence, how much of the circle at 40 degrees north is lit.
- if(st.stage===1)return {mode:'tilt',tip:smooth(t/1.4),lean:smooth((t-at(1)-.3)/.8),t};
- // 3: the same beam of sunlight at June noon and at December noon, 40 degrees north; with the second sentence, the
- // December patch is about twice as wide.
- if(st.stage===2)return {mode:'beam',tilt:Physics.seasonTilt,area:smooth((t-at(1)-.4)/.6),t};
- // 4: June and December again, with summer and winter named in each half: June's at once, December's as the first
- // sentence turns to the south leaning in.
- return {mode:'swap',lean:1,june:smooth((t-.2)/.5),dec:smooth((t-at(0)-2.5)/.6),t};
-}
-function drawSeasons(ctx,w,h,spec,st){
- const plan=seasonPlan(st), small=w<520, ink='rgba(20,23,28,.8)', muted='rgba(20,23,28,.55)', size=small?10:12, T=plan.t, sunC='#f6b73c';
- SEASON.mode=plan.mode;
- const sun=(x,y,r)=>{const g=ctx.createRadialGradient(x,y,0,x,y,r*2.6);g.addColorStop(0,'rgba(246,183,60,.55)');g.addColorStop(1,'rgba(246,183,60,0)');ctx.fillStyle=g;ctx.fillRect(x-r*3,y-r*3,r*6,r*6);
-  ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle=sunC;ctx.fill();};
- const globe=(x,y,r)=>{ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle='#4a8fd4';ctx.fill();};
- if(plan.mode==='orbit'){
-  // Seen from above. The pictured orbit is a long oval with the Sun near one end; the real orbit is so nearly a circle
-  // that the Sun sits only 2.5 million km from its centre.
-  const cx=w*.5, cy=h*.47, a=Math.min(w*(small?.4:.3),h*.34), real=plan.real;
-  const orbit=(e,alpha,dash)=>{const b=a*Math.sqrt(1-e*e), f=a*e;ctx.save();ctx.globalAlpha=alpha;if(dash)ctx.setLineDash([5,6]);
-   ctx.beginPath();ctx.ellipse(cx-f,cy,a,b,0,0,TAU);ctx.strokeStyle='rgba(20,23,28,.4)';ctx.lineWidth=1.4;ctx.stroke();ctx.restore();return f;};
-  const fake=.62, ef=fake+(Physics.seasonFar/Physics.seasonNear-1)/(Physics.seasonFar/Physics.seasonNear+1)*0;
-  const e=(1-real)*fake+real*((Physics.seasonFar-Physics.seasonNear)/(Physics.seasonFar+Physics.seasonNear));
-  orbit(fake,1-real,true);orbit(e,real,false);
-  const f=a*e, near=[cx-f+a,cy], far=[cx-f-a,cy];
-  sun(cx,cy,small?12:16);
-  for(const [x,y] of [near,far])globe(x,y,small?6:8);
-  if(st.labels){
-   if(real<.5){pill(ctx,'closer: summer?',near[0],near[1]+(small?18:22),{align:'center',size,weight:700,color:ink});
-    pill(ctx,'farther: winter?',far[0],far[1]+(small?18:22),{align:'center',size,weight:700,color:ink});}
-   else{pill(ctx,'January · 147 million km',near[0],near[1]+(small?18:22),{align:small?'right':'center',size,weight:700,color:ink});
-    pill(ctx,'July · 152 million km',far[0],far[1]+(small?34:22),{align:small?'left':'center',size,weight:700,color:ink});}}
-  return;
- }
- if(plan.mode==='beam'||plan.mode==='live'){
-  // The same beam of sunlight, five rays wide, at noon in June and in December at 40 degrees north: the lower the Sun,
-  // the wider the patch of ground it lands on.
-  const tilt=plan.tilt, panels=[['June noon',Physics.seasonNoon(40,tilt)],['December noon',Physics.seasonNoon(40,-tilt)]], Wb=small?40:64;
-  panels.forEach(([name,elev],i)=>{
-   // d: the direction the light travels, down from the Sun toward the ground.
-   const px=small?w*.5:w*(i?.72:.28), gy=small?h*(i?.9:.45):h*.74, a=elev*Math.PI/180, d=[Math.cos(a),Math.sin(a)];
-   const patch=Wb/Math.sin(a), half=small?w*.42:w*.2, len=Math.min(small?h*.26:h*.5,(half-14)/Math.max(.2,Math.cos(a))), across=[-Math.sin(a),Math.cos(a)];
-   trace(ctx,[[px-half,gy],[px+half,gy]]);ctx.strokeStyle='rgba(20,23,28,.45)';ctx.lineWidth=1.5;ctx.stroke();
-   ctx.fillStyle='rgba(246,183,60,.45)';ctx.fillRect(px-patch/2,gy-4,patch,8);
-   const S=[px-d[0]*len,gy-d[1]*len];
-   for(let k=0;k<5;k++){const off=(k/4-.5)*Wb, start=[S[0]+across[0]*off,S[1]+across[1]*off], reach=(gy-start[1])/d[1];
-    trace(ctx,[start,[start[0]+d[0]*reach,gy]]);ctx.strokeStyle='rgba(222,150,20,.8)';ctx.lineWidth=1.6;ctx.stroke();}
-   sun(S[0]-d[0]*(small?10:14),S[1]-d[1]*(small?10:14),small?8:11);
-   if(st.labels){text(ctx,name,px,gy+(small?14:20),{align:'center',size,weight:700,color:ink});
-    if(i===1&&(plan.area||0)>.5&&plan.mode!=='live')pill(ctx,'twice the ground',px,gy+(small?30:40),{align:'center',size,weight:700,color:'#b26b00'});}});
-  if(st.labels&&plan.mode!=='live')text(ctx,'same light, 40° north',w/2,small?h*.06:h*.08,{align:'center',size,weight:700,color:muted});
-  return;
- }
- // June and December, seen from the side. The axis tilts 23.4 degrees the same way at both, so the north leans toward
- // the Sun in June and away in December. Light falls on the half facing the Sun; the line across each Earth is the
- // circle at 40 degrees north, seen edge on, yellow where it is in daylight.
- // At the start of chapter 2 the circle seen from above tips over at the same width, then the whole view grows
- // evenly to this side view, so it is plainly the same orbit and never looks stretched.
- const tip=plan.tip??1, tilt=clamp(tip/.5), grow=clamp((tip-.5)/.5), top=Math.min(w*(small?.4:.3),h*.34), RX=small?w*.36:w*.33, RY=h*.08;
- const zoom=1+(RX/top-1)*grow, cx=w*.5, cy=(small?h*.47+(h*.42-h*.47)*tip:h*.47+(h*.46-h*.47)*tip);
- const rx=top*zoom, ry=(top+(top*RY/RX-top)*tilt)*zoom, R=(small?6:8)+((small?Math.min(w*.13,h*.08):h*.12)-(small?6:8))*grow, tl=Physics.seasonTilt*Math.PI/180;
- ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,TAU);ctx.strokeStyle=`rgba(20,23,28,${.4-.22*tip})`;ctx.lineWidth=1.2;ctx.stroke();
- sun(cx,cy,small?14:20);
- const axis=[Math.sin(tl),-Math.cos(tl)], across=[Math.cos(tl),Math.sin(tl)];
- const earths=[[cx-rx,'June',1],[cx+rx,'December',-1]];
- for(const [ex,name,toward] of earths){
-  globe(ex,cy,R);
-  ctx.save();ctx.globalAlpha=clamp((tip-.5)/.5);
-  // Night: the half facing away from the Sun.
-  ctx.save();ctx.beginPath();ctx.arc(ex,cy,R,0,TAU);ctx.clip();ctx.fillStyle='rgba(12,18,32,.55)';ctx.fillRect(toward>0?ex-R:ex,cy-R,R,2*R);ctx.restore();
-  ctx.beginPath();ctx.arc(ex,cy,R,0,TAU);ctx.strokeStyle='rgba(20,23,28,.35)';ctx.lineWidth=1;ctx.stroke();
-  trace(ctx,[[ex-axis[0]*R*1.35,cy-axis[1]*R*1.35],[ex+axis[0]*R*1.35,cy+axis[1]*R*1.35]]);ctx.strokeStyle='rgba(20,23,28,.75)';ctx.lineWidth=1.6;ctx.stroke();
-  ctx.restore();
-  // The circle at 40 degrees north, edge on: yellow on the daylight side of the line between day and night.
-  if((plan.lean||0)>0){const lat=40*Math.PI/180, c0=[ex+axis[0]*R*Math.sin(lat),cy+axis[1]*R*Math.sin(lat)], half=R*Math.cos(lat);
-   const p1=[c0[0]-across[0]*half,c0[1]-across[1]*half], p2=[c0[0]+across[0]*half,c0[1]+across[1]*half];
-   const cut=(ex-p1[0])/(p2[0]-p1[0]), m=[p1[0]+(p2[0]-p1[0])*cut,p1[1]+(p2[1]-p1[1])*cut], day=toward>0?[m,p2]:[p1,m], dark=toward>0?[p1,m]:[m,p2];
-   ctx.save();ctx.globalAlpha=plan.lean;ctx.lineCap='round';
-   trace(ctx,dark);ctx.strokeStyle='rgba(200,205,215,.9)';ctx.lineWidth=3;ctx.stroke();
-   trace(ctx,day);ctx.strokeStyle='#fcd34d';ctx.lineWidth=3.5;ctx.stroke();
-   // Noon at 40 degrees north: the end of the circle facing the Sun, where chapter 3's ground stands, marked by a
-   // short post standing out from the surface.
-   const noon=toward>0?p2:p1, out=[(noon[0]-ex)/R,(noon[1]-cy)/R];
-   trace(ctx,[noon,[noon[0]+out[0]*(small?7:10),noon[1]+out[1]*(small?7:10)]]);ctx.strokeStyle='rgba(20,23,28,.8)';ctx.lineWidth=2;ctx.stroke();
-   if(st.labels&&plan.mode==='tilt')text(ctx,'noon',noon[0]+out[0]*(small?12:16),noon[1]+out[1]*(small?12:16)-(small?6:8),{align:toward>0?'left':'right',size:size-1,weight:700,color:ink});
-   ctx.restore();}
-  if(st.labels&&tip>.8){text(ctx,name,ex,cy+R+(small?16:24),{align:'center',size,weight:700,color:ink});
-   if(plan.mode==='tilt'&&toward>0)text(ctx,'north',ex+axis[0]*R*1.35+(small?8:10),cy+axis[1]*R*1.35-(small?4:6),{size:size-1,weight:700,color:muted});}}
- if(st.labels&&plan.mode==='tilt'&&tip>.8){if(plan.lean<.5)text(ctx,'orbit seen from the side',cx,cy+ry+(small?14:18),{align:'center',size:size-1,weight:600,color:muted});
-  if(plan.lean>.5)text(ctx,'circle at 40° north',earths[0][0]+R+(small?6:10),cy-R*.62,{size:size-1,weight:700,color:'#b26b00'});}
- if(st.labels&&(plan.mode==='swap'||plan.mode==='thumb')){const show=[[plan.june??1,earths[0][0],'summer','winter'],[plan.dec??1,earths[1][0],'winter','summer']];
-  for(const [a,ex,north,south] of show){if(a<=.5)continue;
-   pill(ctx,`north: ${north}`,ex,cy-R*1.35-(small?12:16),{align:'center',size,weight:700,color:north==='summer'?'#b26b00':'#2563eb'});
-   pill(ctx,`south: ${south}`,ex,cy+R+(small?32:44),{align:'center',size,weight:700,color:south==='summer'?'#b26b00':'#2563eb'});}}
-}
-
 // Attention, told as the story behind chatbots. A chatbot guesses the next word; the clue it needs ("France") is five
 // words back; an old one-at-a-time memory lets it fade, while attention looks straight back at every earlier word and
 // gives the biggest share to the one that answers what the guess needs ("which language?"). Practice sentences show
@@ -2205,7 +2019,7 @@ function drawSeasons(ctx,w,h,spec,st){
 // (Physics.lookGuess).
 const ATTN={mode:'',strength:1};
 function lookPlan(st){
- const c=timeline?.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
  // Thumbnails, and the stage before playback starts, show the whole sentence with its lines.
  if(st.since===undefined||(st.stage===0&&!st.playing&&!st.live&&(st.since??0)<.05))return {mode:'attend',typed:9,blank:1,arcs:1,strength:1,guess:1,clue:1};
  if(st.live)return {mode:'live',typed:9,arcs:1,strength:clamp(st.mass),guess:1,clue:1};
@@ -2724,11 +2538,11 @@ function labHit(x,y){
 const ENGINES={
  'light-bending':{draw:drawLight,a:['Mass','how much mass sits nearby'],b:['Passing distance','how close the light passes','×'],
   fa:a=>a.toFixed(2),fb:b=>b.toFixed(2)+'×',
-  measure:['Real bend of the nearest ray',(a,b)=>(Physics.deflection(a,b)*180/Math.PI).toFixed(2)+'°'],scale:'',disclosure:'The mesh measures distance as the time light needs to cross it, timed far away; light’s straightest line across it is the drawn path. Its dip and the bending are drawn for six times the model mass; the readout is the model value for the nearest ray, in the model’s own units. The dip is not a slope, and the star is an illustration.',demoEnd:s=>Math.min(2.5,s.distance+1),
+  measure:['Real bend of the nearest ray',(a,b)=>(Physics.deflection(a,b)*180/Math.PI).toFixed(2)+'°'],scale:'',disclosure:'The mesh measures distance as the time light needs to cross it, timed far away; light’s straightest line across it is the drawn path. The readout is the model value for the nearest ray, in the model’s own units. The dip is not a slope.',demoEnd:s=>Math.min(2.5,s.distance+1),
   try:'Slide Mass to zero, then back up. Now move the beam farther away. When does it bend most?',aria:'Light passing a massive object, compared with a straight path without the mass.'},
  'gravity-clocks':{draw:drawClocks,a:['Mass','how much mass sits nearby'],b:['Lower radius','gap stays 2 units',' units'],
   fa:a=>a.toFixed(2),fb:b=>b.toFixed(2)+' units',
-  measure:['Lower clock runs slower by',(a,b)=>((1-Physics.clockRatio(a,b))*100).toFixed(2)+'%'],scale:'',disclosure:'The difference between the clock hands is drawn twelve times larger; the slowdown readout is the model value in arbitrary units, not an Earth figure. The planet and distances are illustrations.',demoEnd:()=>2.5,
+  measure:['Lower clock runs slower by',(a,b)=>((1-Physics.clockRatio(a,b))*100).toFixed(2)+'%'],scale:'',disclosure:'The slowdown readout is the model value in arbitrary units, not an Earth figure.',demoEnd:()=>2.5,
   try:'Slide Mass to zero. Do the clocks agree? Bring it back, then move the Lower radius outward.',aria:'Two stationary clocks at different heights above a mass. The lower clock counts less time.'},
  'spacetime':{draw:drawSpacetime,a:['Speed','how fast the traveller flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
@@ -2736,7 +2550,7 @@ const ENGINES={
   try:'Set Speed to zero: do the twins agree? Push it up. Then make the trip longer: does the percentage change?',aria:'A spacetime diagram: a home twin stays put while a traveller goes out and back. The traveller collects fewer ticks.'},
  'interference':{draw:drawInterference,a:['Second source','strength of the second wave'],b:['Source spacing','in wavelengths',''],
   fa:a=>a<.005?'off':Math.round(a*100)+'%',fb:b=>Physics.separation(b).toFixed(1)+' λ',
-  measure:['Stripe contrast',a=>(Physics.visibility(a)*100).toFixed(0)+'%'],scale:'Seen from above',disclosure:'Wave sizes are illustrative; the stripe contrast is computed exactly for two point sources.',demoEnd:()=>2.5,
+  measure:['Stripe contrast',a=>(Physics.visibility(a)*100).toFixed(0)+'%'],scale:'Seen from above',disclosure:'The stripe contrast is computed exactly for two point sources.',demoEnd:()=>2.5,
   try:'Turn the second source off: what happens to the stripes? Bring it back, then spread the sources apart.',aria:'Two circular wave sources overlapping, making bright and dark stripes on a screen.'},
  'two-slit-particles':{draw:drawParticles,a:['Second slit','how open the second slit is'],b:['Slit spacing','relative distance between the slits',''],
   fa:a=>a<.005?'closed':Math.round(a*100)+'% open',fb:b=>b.toFixed(2)+'×',
@@ -2745,8 +2559,8 @@ const ENGINES={
  'standing-waves':{draw:drawRope,demo:false,plucks:true,
   a:['How hard you pluck','how far you pull the string'],b:['Where you press','toward the middle, a shorter string rings',''],
   fa:a=>Math.round(a*100)+'%',fb:b=>{const L=guitarLen(b);return L>.996?'open string':Math.round(L*100)+'% rings';},
-  measure:[()=>GUITAR.active?'Note':'Rope swings',a=>GUITAR.active?(a>.001?Math.round(220/GUITAR.len):0)+' swings a second':ROPE.key==='pulse'||ROPE.size<.05?'':ROPE.size.toFixed(1)+'× as far as your hand'],tryAny:true,scale:'',demoEnd:()=>2.5,
-  disclosure:'The rope is simulated: the wave equation with a little friction, which is why an in-step swing stops growing at about 6 times the hand. Everything is slowed down, the single shake 8 times more; on phones the swing is drawn taller. The rope makes no sound: at a few swings a second it is far too slow to hear. The guitar string is drawn 220 times slower and bigger than it really moves; its sound is a synthesized plucked string at the real pitch, 220 Hz open and 440 Hz pressed at the middle.',
+  measure:[()=>GUITAR.active?'Note':'Rope swings',a=>GUITAR.active?(a>.001?Math.round(220/GUITAR.len):0)+' swings a second':ROPE.key==='pulse'||ROPE.size<.05?'':ROPE.size.toFixed(1)+'× as far as your hand'],tryAny:true,scale:'',
+  disclosure:'The rope is simulated: the wave equation with a little friction, which is why an in-step swing stops growing at about 6 times the hand. Everything is slowed down, the single shake 8 times more. The rope makes no sound: at a few swings a second it is far too slow to hear. The guitar string is slowed down 220 times; its sound is a synthesized plucked string at the real pitch, 220 Hz open and 440 Hz pressed at the middle.',
   try:'Move “Where you press” toward the middle: each move plucks the string, and the shorter it rings, the higher the note.',aria:'A hand shakes one end of a rope tied to a wall. At one, two or three shakes a second the rope swings big in one, two or three loops; at other speeds it only jiggles. Then a guitar string is plucked, open and pressed at the middle.'},
  'tunneling':{draw:drawTunnel,a:['Barrier height','compared with the particle’s energy'],b:['Barrier width','how thick the barrier is',''],
   fa:a=>a<.005?'none':(2*a).toFixed(1)+'× energy',fb:b=>(.6*b/(2*Math.PI)).toFixed(2)+' wavelengths',
@@ -2756,14 +2570,14 @@ const ENGINES={
   fa:a=>{const n=Physics.blendRange(blendSk(a)).length;return n===1?'one wave':n+' waves';},fb:b=>'',
   // The modelled effect for the render checks: the blend's width (zero for one wave).
   effect:a=>blendSk(a),
-  measure:[()=>BLEND.sound?'Pitches mixed in':'Spread of speeds',()=>BLEND.sound?String(BLEND.count):BLEND.sk===null?String(BLEND.count)+' waves':BLEND.sk<=.01?'none: one exact speed':(BLEND.sk/.25).toFixed(1)+'×'],scale:'',demoEnd:()=>1.4,
+  measure:[()=>BLEND.sound?'Pitches mixed in':'Spread of speeds',()=>BLEND.sound?String(BLEND.count):BLEND.sk===null?String(BLEND.count)+' waves':BLEND.sk<=.01?'none: one exact speed':(BLEND.sk/.25).toFixed(1)+'×'],scale:'',
   disclosure:'Exact sums of waves. The particle is free and in one dimension, drawn at one instant in units where ħ = 1; speed is shown as wave length, since a particle’s momentum is set by its wave length. Real beeps and clicks are messier mixtures, but the trade-off is the same: a burst short in time is a wide blend of pitches. The blend is a bell curve, the shape that makes the trade-off as small as it can be.',
   try:'Slide “Blend of speeds” down to one wave: it spreads everywhere, with one exact speed. Widen the blend and the burst gets narrower.',aria:'Waves of slightly different lengths, each in its own row, are added together. Two make a pattern that swells and fades; many make one short burst. For a particle, a narrower burst needs a wider blend of speeds.'},
  'quantum-well':{draw:drawWell,demo:false,tryAny:true,a:['Energy','slide it to try other energies'],b:['Trap width','a wider trap holds more allowed energies',''],
   fa:a=>{const lv=Physics.trapLevels(TRAP.L||2), n=lv.findIndex(e=>Math.abs(e-trapE(a))<.35);return n<0?'in between':`allowed energy ${n+1}`;},fb:b=>Physics.trapLevels(trapL(b)).length+' allowed',
   // The modelled effect for the render checks: how far the chosen energy sits above the trap's floor.
   effect:a=>trapE(a)+Physics.trapDepth,
-  measure:[()=>({live:'This energy',atom:'Colours given off',all:'Allowed energies',sweep:'Allowed energies found'})[TRAP.mode]||'',()=>TRAP.mode==='live'?(TRAP.fits?'allowed':'not allowed'):TRAP.mode==='atom'?String(TRAP.colours):TRAP.mode==='inside'||TRAP.mode==='walls'||TRAP.mode==='corner'?'':String(TRAP.found)],scale:'',demoEnd:()=>2,
+  measure:[()=>({live:'This energy',atom:'Colours given off',all:'Allowed energies',sweep:'Allowed energies found'})[TRAP.mode]||'',()=>TRAP.mode==='live'?(TRAP.fits?'allowed':'not allowed'):TRAP.mode==='atom'?String(TRAP.colours):TRAP.mode==='inside'||TRAP.mode==='walls'||TRAP.mode==='corner'?'':String(TRAP.found)],scale:'',
   disclosure:'Exact one-dimensional quantum model of a particle in a square pit, in units where ħ = 1 and 2m = 1. Each wave is drawn at one instant: an allowed wave keeps its shape over time, and a wave that grows without end is not a possible state at all. The energy control clicks onto an allowed energy when it comes close. A real atom traps its electrons with a pull of a different shape, and the colours are illustrative.',
   try:'Slide “Energy” until the wave fades into both walls; it does so only at the marked energies. Then widen the trap: more energies fit, and they sit lower.',aria:'A particle’s wave in a pit. At most energies the wave grows without end in one wall, which is impossible; only at a few energies does it fade into both walls. Those are the allowed energies, and drops between them give off light of certain colours.'},
  'falling-time':{draw:drawFall,a:['Gravity','how strong gravity is'],b:['Time in the air','between leaving and meeting again',''],
@@ -2772,51 +2586,51 @@ const ENGINES={
   try:'Turn gravity off: which path keeps the most time? Turn it on and give the ball longer in the air.',aria:'Clocks held at the ground and thrown upward; the path a thrown ball takes is the one that keeps the most time.'},
  'diffraction':{draw:drawGap,a:['Gap','narrower to the right; 0 removes the barrier'],b:['Wavelength','length of one wave',''],
   fa:a=>a<.005?'no barrier':Physics.gap(a,1).width.toFixed(1)+' units',fb:b=>Physics.gap(1,b).lambda.toFixed(2)+' units',
-  measure:['Spreads by',(a,b)=>Physics.spreadAngle(a,b).toFixed(0)+'°'],scale:'Seen from above',disclosure:'Sizes are illustrative; the spreading angle is the exact single-gap value.',demoEnd:()=>2.5,
+  measure:['Spreads by',(a,b)=>Physics.spreadAngle(a,b).toFixed(0)+'°'],scale:'Seen from above',disclosure:'The spreading angle is the exact single-gap value.',demoEnd:()=>2.5,
   try:'Remove the barrier: does the wave spread? Narrow the gap, then lengthen the waves.',aria:'A wave passes through a gap and spreads out, with bright and dark bands on a screen.'},
  'twin-trip':{draw:drawTwinTrip,a:['Speed','how fast the rocket flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
   measure:['Traveller comes home younger by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',demoEnd:()=>2.5,
   disclosure:'Ages and speeds are exact special relativity; the rocket turns around instantly.',
   try:'Set Speed to zero: do the twins still agree? Speed up, then make the trip longer and compare the two bars.',aria:'Twins: one stays on Earth while the other flies to a star and back. Two bars show how much each twin has aged.'},
- 'light-clock':{draw:(ctx,w,h,spec,st)=>drawLightClocks(ctx,w,h,spec,st,{vplan:Physics.speed(st.stage===timeline?.chapters?.length-1?1:spec.mass)}),
+ 'light-clock':{draw:(ctx,w,h,spec,st)=>drawLightClocks(ctx,w,h,spec,st,{vplan:Physics.speed(st.stage===(st.chapters?.length??0)-1?1:spec.mass)}),
   demo:(p,spec)=>({mass:spec.mass+(1-spec.mass)*smooth(p/.12),distance:spec.distance}),a:['Speed','how fast the rocket flies'],b:['Unused','',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>'',
-  measure:['Rocket clock ticks slower by',a=>(Physics.agingGap(a)*100).toFixed(0)+'%'],scale:'Seen from Earth',demoEnd:s=>s.distance,
+  measure:['Rocket clock ticks slower by',a=>(Physics.agingGap(a)*100).toFixed(0)+'%'],scale:'Seen from Earth',
   disclosure:'Exact special relativity: light moves at the same speed for every observer. The clocks are slowed down for viewing; the rocket clock ticks normally for its crew.',
   try:'Slide the speed down to zero: the clocks agree. Push it toward light speed: the slanted path grows and the rocket clock nearly stops.',aria:'Two light clocks: one on Earth with light going straight up and down, one on a moving rocket whose light must slant to hit the moving mirrors, so it ticks less often.'},
  'spacetime-paths':{draw:drawPaths,drag:dragPaths,demo:false,a:['Speed','how fast the traveller flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
-  measure:['Traveller’s clock counts less by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',demoEnd:()=>2.5,
+  measure:['Traveller’s clock counts less by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',
   disclosure:'Exact special relativity in years and light-years; the turnaround is instant. The light clocks are slowed down for viewing. Distances on the page are not spacetime lengths: tilted paths look longer than they hold.',
   try:'Drag the turnaround sideways: a faster trip leaves less time on the traveller’s clock. Drag it back to the home path: the twins agree again.',aria:'A spacetime diagram: the home twin’s straight path and the traveller’s bent path between the same goodbye and reunion, with one dot per year of each twin’s own time.'},
  'river':{draw:drawRiver,demo:false,tryAny:true,a:['Black hole mass','sets the size of the horizon'],b:['Light starts at','how far from the centre the light is sent',''],
   fa:a=>a<.005?'none':Math.round(clamp(a)*100)+'%',fb:b=>{const re=.6+(b-1);return re.toFixed(2)+' units out';},
   // The modelled effect for the render checks: how fast space flows in where the light starts, in light speeds.
   effect:(a,b)=>Physics.riverInflow(clamp(a),.6+(b-1)),
-  measure:['Where the light starts, space flows in at',(a,b)=>RIVER.live?Math.round(Physics.riverInflow(clamp(a),.6+(b-1))*100)+'% of light speed':''],scale:'',demoEnd:()=>1,
+  measure:['Where the light starts, space flows in at',(a,b)=>RIVER.live?Math.round(Physics.riverInflow(clamp(a),.6+(b-1))*100)+'% of light speed':''],scale:'',
   disclosure:'A picture with exact numbers: for a non-rotating black hole, Einstein’s equations can be written as if space flowed inward at the speed a dropped object reaches (the river, or Painlevé–Gullstrand, picture), and light always moves at light speed through the space around it. Space is not a substance and nothing is really carried; the flowing dots only show the inflow speed. Distances are measured in units of the horizon at full mass, and motion is slowed down. The fish and the waterfall are an analogy that follows the same rule; a real river’s current depends on its shape.',
   try:'Move “Light starts at” inside the horizon: can the light get out? Then make the black hole smaller and try again.',aria:'A fish swims upstream in a river that speeds up toward a waterfall: far away it gets away, at one point it holds still, and past it it is swept over. Then space flows into a black hole the same way, and light, always moving at light speed through it, escapes from outside the horizon, stands still on it and is carried in from inside.'},
  'fall-views':{draw:drawViews,demo:false,tryAny:true,measure:null,a:['Gravity','how strong gravity is'],b:['Time in the air','between the toss and the catch',''],
-  fa:a=>a<.005?'none':Math.round(a*100)+'% of Earth’s',fb:b=>Physics.views(1,b).T.toFixed(1)+' units',scale:'',demoEnd:()=>1.6,
+  fa:a=>a<.005?'none':Math.round(a*100)+'% of Earth’s',fb:b=>Physics.views(1,b).T.toFixed(1)+' units',scale:'',
   // The modelled effect for the render checks: how fast, seen from the ball, the ground speeds up (the push on you).
   effect:(a,b)=>Physics.views(clamp(a),b).g,
   disclosure:'Air resistance is ignored, and heights and times are in made-up units. The view from the ball is exact for a short toss. The first chapter, with no gravity, uses its own height scale so the whole path fits.',
   try:'Turn gravity down to none: from the ball, the ground drifts away in a straight line, and nothing pushes you. Turn it up: the ground curves back to the ball, pushed harder.',aria:'A ball tossed up and caught, drawn on a map of height and time, first as seen from the ground and then as seen from the ball, where the ball stays still and the ground moves.'},
  'tides':{draw:drawTides,demo:false,tryAny:true,measure:null,a:['Earth’s mass','how strongly it pulls'],b:['Unused','',''],
-  fa:a=>a<.005?'none':Math.round(a*100)+'% of real',fb:b=>'',scale:'',demoEnd:()=>1,
+  fa:a=>a<.005?'none':Math.round(a*100)+'% of real',fb:b=>'',scale:'',
   // The modelled effect for the render checks: how much the small falling ring has stretched by the end of its fall.
   effect:a=>Physics.tideStretch(clamp(a)),
   disclosure:'The ball is an analogy: a curved surface in space. Curved spacetime also makes straight paths come together or spread apart, but it involves time and cannot be drawn exactly. The balls follow Newton’s law of gravity exactly, which is accurate for weak gravity like the Earth’s. In three dimensions, a small falling ring stretches one way and squeezes in the other two, so at first the space it encloses stays the same.',
   try:'Set Earth’s mass to none: the small ring stays round. Give the Earth back its mass and the ring stretches again.',aria:'Two walkers heading north on a globe come together; a ring of falling balls around the Earth shrinks; a small falling ring stretches into an egg shape.'},
  'lift':{draw:drawLift,demo:false,tryAny:true,measure:null,a:['Lift speeds up','falling freely at the left, steady in the middle'],b:['Unused','',''],
-  fa:liftSpeedUp,fb:b=>'',scale:'',demoEnd:()=>1.25,
+  fa:liftSpeedUp,fb:b=>'',scale:'',
   // The modelled effect for the render checks: the scale's reading, in units of your weight.
   effect:a=>Physics.lift().reading(liftAccel(a)),
   disclosure:'Newtonian physics, exact for a lift on Earth: a scale reads the floor’s push, which is your weight times (g + a)/g, where g is gravity’s pull and a is how fast the lift speeds up upward. The ride’s speeds and the 70 kg person are made up for the example; air resistance is ignored, and real lifts have safety brakes. The dial’s needle eases to each reading like a real scale’s, and the fall is shown in slow motion.',
   try:'Slide to the left end: the lift falls freely and the scale reads 0 kg. Slide right of the middle: the lift speeds up upward and you weigh more.',aria:'A person stands on a bathroom scale in a lift. The dial reads their weight when parked, more or less while the lift speeds up or slows down, and zero when the cable snaps.'},
  'moon-tides':{draw:drawMoonTides,demo:false,tryAny:true,measure:null,a:['Moon’s mass','how heavy the Moon is'],b:['Unused','',''],
-  fa:a=>a<.005?'no Moon':Math.round(clamp(a)*100)+'% of real',fb:b=>'',scale:'',demoEnd:()=>1.25,
+  fa:a=>a<.005?'no Moon':Math.round(clamp(a)*100)+'% of real',fb:b=>'',scale:'',
   // The modelled effect for the render checks: how much harder the Moon pulls the near side than the Earth's centre.
   effect:a=>Physics.moonTides(60.3,clamp(a)).tide(1,0)[0],
   disclosure:'The arrows come from Newton’s law of gravity at the real distance between the Earth and the Moon. Real tides are also shaped by coastlines and the depth of the oceans, and the Sun raises tides about half as big as the Moon’s.',
@@ -2833,23 +2647,15 @@ const ENGINES={
   fa:a=>nightAge(Physics.nightYears(clamp(a))),fb:b=>'',
   // The modelled effect for the render checks: the share of the sky covered by stars whose light has arrived.
   effect:a=>Physics.nightCover(Physics.nightYears(clamp(a))),
-  measure:['Sky covered by stars',a=>NIGHT.mode==='live'?nightShare(Physics.nightCover(Physics.nightYears(clamp(a)))):''],scale:'',demoEnd:()=>1,
+  measure:['Sky covered by stars',a=>NIGHT.mode==='live'?nightShare(Physics.nightCover(Physics.nightYears(clamp(a)))):''],scale:'',
   disclosure:'Stars are treated as Sun-like and spread evenly: about 10²² of them in today’s observable universe, a rough count (estimates run from 10²² to 10²⁴). A sight line then travels about 2 × 10²⁴ light-years, on average, before it meets a star. Within the 13.8 billion light-years that light has crossed since the beginning, stars cover about 1 part in 180 trillion of the sky. The slider imagines an unchanging universe whose stars have shone for the chosen time. The picture is a slice through space: a ring twice as far holds twice as many stars, where a full shell holds four times as many. The expansion of the universe, which stretches and dims distant light further, is left out of the numbers.',
   try:'Set the age to 13.8 billion years: stars cover about 1 part in 180 trillion of the sky. How old would an unchanging universe have to be before the whole night sky lit up?',
   aria:'You stand on a hill under a dark, starry sky. If stars filled endless, unchanging space, every shell of stars around you would add the same light and every line of sight would end on a star, so the whole sky would blaze like the Sun. But the universe began about 13.8 billion years ago, so only light from a bubble around you has had time to arrive; light from farther stars is still on its way, and the night stays dark.'},
- 'base-rate':{draw:drawRate,demo:false,tryAny:true,a:['How common','how many people have the disease'],b:['Unused','',''],
-  fa:a=>{const p=Physics.ratePrevalence(a);return p<=0?'nobody':`1 in ${Math.round(1/p).toLocaleString('en-US')}`;},fb:b=>'',
-  // The modelled effect for the render checks: the share of positive results that are right.
-  effect:a=>Physics.rateTest(Physics.ratePrevalence(a)).share,
-  measure:['Positives who are sick',a=>RATE.mode==='live'?(v=>v<.1?(v*100).toFixed(1)+'%':Math.round(v*100)+'%')(Physics.rateTest(Physics.ratePrevalence(a)).share):''],scale:'',demoEnd:()=>1,
-  disclosure:'Assumes the people tested are picked at random, without symptoms, and that the test finds 99 in 100 sick people and clears 99 in 100 healthy ones; people tested because of symptoms start with higher odds. Dots are the average numbers in a group of 1,000, rounded to whole people; real tests differ.',
-  try:'Move “How common” past 1 in 100: once the disease is more common than the test’s false alarms, most positive results are right.',
-  aria:'A grid of 1,000 people, one of them sick. The test flags the sick person and about 10 healthy people, so of the 11 positive results only 1 is right. If the disease were as common as the test’s false alarms, 1 in 100, the right results would match the false alarms.'},
  'birthdays':{draw:drawBirthdays,demo:false,tryAny:true,a:['People','how many people are in the room'],b:['Unused','',''],
   fa:a=>{const n=Math.max(1,Math.round(1+59*clamp(a)));return `${n} ${n===1?'person':'people'}`;},fb:b=>'',
   // The modelled effect for the render checks: the chance of a shared birthday for the chosen number of people.
   effect:a=>Physics.birthdayShared(Math.max(1,Math.round(1+59*clamp(a)))),
-  measure:['Chance two share a birthday',a=>BDAY.mode==='live'?(v=>v<.995?Math.round(v*100)+'%':(v*100).toFixed(1)+'%')(Physics.birthdayShared(Math.max(1,Math.round(1+59*clamp(a))))):''],scale:'',demoEnd:()=>1,
+  measure:['Chance two share a birthday',a=>BDAY.mode==='live'?(v=>v<.995?Math.round(v*100)+'%':(v*100).toFixed(1)+'%')(Physics.birthdayShared(Math.max(1,Math.round(1+59*clamp(a))))):''],scale:'',
   disclosure:'Exact for 365 equally likely birthdays, ignoring 29 February and twins. Real birthdays are slightly uneven, which makes a match a little more likely.',
   try:'Set “People” to 40: there are 780 pairs, and a shared birthday is 89% likely.',
   aria:'People sit around a circle with a line between every pair. With 23 people there are 253 pairs, and the chance that two share a birthday passes one half; with 50 people it is 97%.'},
@@ -2857,23 +2663,15 @@ const ENGINES={
   fa:a=>a<.006?'on the horizon':`${Math.round(clamp(a)*90)}° up`,fb:b=>'',
   // The modelled effect for the render checks: the share of the Sun's blue light that reaches you directly.
   effect:a=>a<=0?0:Physics.skyThrough(450,clamp(a)*90),
-  measure:['Sunlight’s blue that gets through',a=>SKY.mode==='live'?(v=>v<.01?(v*100).toFixed(2)+'%':Math.round(v*100)+'%')(a<=0?0:Physics.skyThrough(450,clamp(a)*90)):''],scale:'',demoEnd:()=>1,
+  measure:['Sunlight’s blue that gets through',a=>SKY.mode==='live'?(v=>v<.01?(v*100).toFixed(2)+'%':Math.round(v*100)+'%')(a<=0?0:Physics.skyThrough(450,clamp(a)*90)):''],scale:'',
   disclosure:'Scattering by the molecules of clean air at sea level; it grows as the inverse fourth power of the wavelength, with blue taken as 450 nm and red as 700 nm. Sunlight shakes the electrons across its path, so they send light out in all directions, most strongly forward and back. Dust and haze add to real sunsets.',
   try:'Lower the Sun to the horizon: almost none of its blue gets through, and the light that reaches you turns red.',
   aria:'On the Moon, with no air, the daytime sky is black. On Earth, sunlight shakes tiny charged specks in the air, which send light off in every direction, blue about six times as much as red. That bounced blue reaches you from all over the sky: it is the blue sky. At sunset the light crosses far more air and loses almost all its blue the same way, so what is left looks red and orange.'},
- 'seasons':{draw:drawSeasons,demo:false,tryAny:true,a:['Tilt','how far Earth’s axis leans'],b:['Unused','',''],
-  fa:a=>`${Math.round(clamp(a)*40)}°`,fb:b=>'',
-  // The modelled effect for the render checks: how much more sunlight a June day gets than a December day, 40° north.
-  effect:a=>Physics.seasonRatio(40,clamp(a)*40)-1,
-  measure:['June’s sunlight, against December’s',a=>SEASON.mode==='live'?(v=>v<1.05?'the same':v.toFixed(1)+'×')(Physics.seasonRatio(40,clamp(a)*40)):''],scale:'',demoEnd:()=>1,
-  disclosure:'Exact for a tilt of 23.4° and for 40° north. The day’s sunlight is counted at the top of the air, on level ground, and leaves out the changing distance, which trims June’s lead at 40° north from 3.3 to 3.1 times. The edge-on line shows which part of the circle is lit; real daylight there is about 15 hours in June and 9 in December. The orbit’s shape is to scale; Earth and the Sun are not.',
-  try:'Set the tilt to 0°: June and December get the same sunlight, apart from the small change in distance.',
-  aria:'Earth’s orbit is almost a circle, and Earth is closest to the Sun in January. Its axis tilts the same way all year, so in June the north leans toward the Sun: the noon Sun is high, its light lands on a smaller patch of ground and the days are long. In December the south leans in, and the seasons swap.'},
  'attention':{draw:drawAttention,demo:false,tryAny:true,a:['Attention','off: one word at a time · on: look straight back'],b:['Unused','',''],
   fa:a=>a<.02?'off':Math.round(a*100)+'%',fb:b=>'',
   measure:['Chance of “French”',a=>ATTN.mode==='live'?Math.round(Physics.lookGuess(ATTN.strength)[0][1]*100)+'%':''],
   // The modelled effect for the render checks: how much likelier "French" gets with attention on.
-  effect:a=>Physics.lookGuess(a)[0][1]-Physics.lookGuess(0)[0][1],scale:'',demoEnd:()=>1,
+  effect:a=>Physics.lookGuess(a)[0][1]-Physics.lookGuess(0)[0][1],scale:'',
   disclosure:'The shares are exact attention, the softmax of scaled dot products from “Attention Is All You Need” (2017), but on one hand-made sentence with four numbers per word; real models learn theirs, split words into pieces and run many attention heads in each of dozens of layers. The guesses come from a toy rule, not a real model. The older one-at-a-time models (recurrent networks) kept more than this fading memory suggests, but long text was hard for them and they could not be trained on all words at once. Attention itself is older than 2017; the paper’s step was to build the whole model from it. The first GPT appeared in 2018.',
   try:'Turn “Attention” down: the lines thin out and the guess grows unsure. Turn it back up.',aria:'A chatbot guesses the next word of “I grew up in France, so I speak fluent”. A fading memory loses the clue “France”; attention draws lines straight back to every earlier word, thickest to “France”, and the guess “French” becomes clear. Every word looks back at once, and the step stacked in layers is the Transformer.'}
 };
@@ -2885,13 +2683,13 @@ window.CouncilLab={draw:drawLab,hit:labHit,view:()=>labXf};
 
 const $=id=>document.getElementById(id);
 const canvas=$('universe');
+let timeline=null;
 if(!canvas)return;
 const ctx=canvas.getContext('2d');
 let spec=null, time=0, mass=.7, distance=1.25, stage=2, mode='live', last=0, shown=0, started=false, ended=false, captionKey='';
 const listeners=new Set(), emit=type=>listeners.forEach(fn=>fn(type));
 // Subtitle pacing: comfortable reading speed, a minimum time on screen, and a pause between sentences.
 const READING={cps:14,minimum:2.8,pause:.9,lead:.8,tail:.8};
-let timeline=null;
 function buildTimeline(){
  let t=0;
  const chapters=spec.beats.map(beat=>{
@@ -2945,7 +2743,8 @@ function paint(){
  const since=started&&timeline?Math.max(0,time-timeline.chapters[stage].start):time;
  const live=started&&mode==='live';
  LABELS=[];
- draw(ctx,w,h,spec,{t:time,since,stage,mass:shown,distance,labels:spec.show_labels,live,playing:mode==='playing'});
+ // Engines time each chapter from the chapters passed here; previews pass none and fall back to their own frame.
+ draw(ctx,w,h,spec,{t:time,since,stage,mass:shown,distance,labels:spec.show_labels,live,playing:mode==='playing',chapters:timeline.chapters});
  lastLabels=LABELS;LABELS=null;
  voice();
  const value=target();
@@ -2957,7 +2756,7 @@ function paint(){
 // A sentence ends at . ! or ? followed by a space or the end, so decimals such as 4.8 stay whole.
 function sentences(body){return body.match(/(?:[^.!?]|[.!?](?=[^\s.!?"”’)]))+[.!?]*["”’)]*(?:\s+|$)/g)?.map(s=>s.trim()).filter(Boolean)||[body];}
 function captions(){
- let chapter, line, reveal=1, hint='';
+ let chapter, line, hint='';
  if(!started&&spec.opening){chapter=`Before you watch · ${fmt(timeline.total)}`;line=spec.opening;hint='Press play to find out.';}
  else if(!started){chapter=`${spec.beats.length} chapters · ${fmt(timeline.total)}`;line='Press play to watch the explanation.';}
  else if(ended&&mode!=='playing'){const c=spec.controls||'both', e=engineOf(spec);chapter='The idea';line=spec.takeaway||'';
@@ -2977,7 +2776,7 @@ function captions(){
 function transport(){
  const progress=started?clamp(time/timeline.total):0, scrub=$('scrub');
  scrub.style.setProperty('--p',progress);scrub.setAttribute('aria-valuenow',String(Math.round(progress*100)));
- document.querySelectorAll('#ticks [data-beat]').forEach((tick,i)=>tick.classList.toggle('passed',started&&time>=timeline.chapters[i].start));
+ document.querySelectorAll('#ticks [data-beat]').forEach((tick,i)=>tick.classList.toggle('passed',started&&time>=timeline.chapters[i+1].start));
  $('clock-time').textContent=`${fmt(started?Math.min(time,timeline.total):0)} / ${fmt(timeline.total)}`;
  const play=$('play'), playing=mode==='playing';
  play.classList.toggle('is-playing',playing);play.setAttribute('aria-label',playing?'Pause':ended?'Replay':'Play');
@@ -3033,7 +2832,7 @@ function pause(){if(mode==='playing'){mode='paused';paint();}}
 function toggle(){mode==='playing'?pause():play();}
 // Seeking shows exactly what playback shows at that moment, including the last chapter's control demo.
 let demoed=false;
-function seek(t,beat=2){
+function seek(t,beat=chapterAt(t)){
  mode='paused';started=true;ended=false;time=t;
  const last=timeline.chapters.length-1, c=timeline.chapters[last];
  if(beat===last&&engineOf(spec).demo!==false)demo(clamp((t-c.start)/(c.end-c.start)));else if(demoed)restore();
@@ -3102,10 +2901,13 @@ function scrubTo(clientX){
 }
 $('scrub').addEventListener('pointerdown',e=>{if(!spec||e.target.closest('[data-beat]'))return;$('scrub').setPointerCapture(e.pointerId);scrubTo(e.clientX);});
 $('scrub').addEventListener('pointermove',e=>{if(e.buttons&&$('scrub').hasPointerCapture(e.pointerId))scrubTo(e.clientX);});
-$('scrub').addEventListener('keydown',e=>{if(!spec)return;const step=e.key==='ArrowRight'?5:e.key==='ArrowLeft'?-5:0;if(!step)return;e.preventDefault();const box=$('scrub').getBoundingClientRect();scrubTo(box.left+clamp((time+step)/timeline.total)*box.width);});
+$('scrub').addEventListener('keydown',e=>{if(!spec)return;const step=e.key==='ArrowRight'?5:e.key==='ArrowLeft'?-5:0;if(!step)return;e.preventDefault();e.stopPropagation();const box=$('scrub').getBoundingClientRect();scrubTo(box.left+12+clamp((time+step)/timeline.total)*(box.width-24));});
 for(const id of ['mass','distance'])$(id).addEventListener('input',e=>input(id,Number(e.target.value)));
+// Page-wide keys belong to the player only while a scene is loaded and the middle of its stage is on screen, and
+// never to a field or button.
 document.addEventListener('keydown',e=>{
- if(e.target.closest('input,textarea,select,button,a,summary')||e.metaKey||e.ctrlKey||e.altKey)return;
+ if(!spec||e.target.closest?.('input,textarea,select,button,a,summary,[contenteditable]')||e.metaKey||e.ctrlKey||e.altKey)return;
+ const box=canvas.getBoundingClientRect(), middle=(box.top+box.bottom)/2;if(!box.height||middle<0||middle>innerHeight)return;
  if(e.key===' '){e.preventDefault();toggle();}
  else if(e.key==='ArrowRight'&&started){chapter(stage+1);}
  else if(e.key==='ArrowLeft'&&started){chapter(stage-1);}

@@ -2,8 +2,7 @@
 import os
 import plistlib
 import sys
-from pathlib import Path
-from .pipeline import ROOT
+from . import ROOT
 
 LABEL='org.the-council.daily'
 

@@ -3,8 +3,8 @@ import re
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 import mimetypes
+from . import ROOT
 
-ROOT = Path(__file__).resolve().parents[1]
 ORIGIN = 'http://council.local'
 
 

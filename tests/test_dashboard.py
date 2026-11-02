@@ -20,6 +20,22 @@ class DashboardTests(unittest.TestCase):
             dashboard.update(state,force=True)
             self.assertEqual(publisher.call_count,2)
 
+    def test_check_in_keeps_the_snapshot_and_sixty_attempts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'.council-state').mkdir()
+            ledger=[{'day':f'2026-09-{n%30+1:02d}','question':f'Q{n}','status':'failed','error':'private'} for n in range(70)]
+            (root/'.council-state'/'history.json').write_text(json.dumps(ledger))
+            publisher=Mock();dashboard=Dashboard(root,publisher)
+            dashboard.checked('No question is ready to investigate; nothing started.')
+            publisher.assert_not_called()
+            public=json.loads((root/'web'/'dashboard.json').read_text())
+            self.assertEqual((public['status'],public['checked']['outcome']),('idle','No question is ready to investigate; nothing started.'))
+            self.assertEqual([a['question'] for a in public['attempts']],[f'Q{n}' for n in range(10,70)])
+            self.assertNotIn('private',json.dumps(public))
+            # Later snapshots keep the last check-in until the next one.
+            dashboard.update({'status':'running','question':'Q'},force=True)
+            self.assertEqual(json.loads((root/'web'/'dashboard.json').read_text())['checked'],public['checked'])
+
     def test_failed_push_does_not_abort_investigation(self):
         with tempfile.TemporaryDirectory() as tmp:
             dashboard=Dashboard(Path(tmp),Mock(side_effect=RuntimeError('offline')))

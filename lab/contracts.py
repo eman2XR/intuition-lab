@@ -86,9 +86,10 @@ def validate_scene(scene):
 MODEL_NOTES = '''Renderer is fixed: a 2D weak-field light-deflection diagram, not full spacetime.
 Coordinates use an arbitrary length unit, m=GM/c^2=0.025*mass, impact parameter b=distance.
 y(x)=b-2*m/b*(sqrt(x*x+b*b)+x), -7<=x<=7, to first order in m/b.
-Asymptotic deflection 4*m/b radians; m/b <=0.025. Vertical DEVIATION is magnified 6x
-for visibility; the site states this in the investigation details, not on the stage. No black hole, horizon, orbit, or numerical
-Einstein solver. A central sphere is a schematic compact mass (radius not to scale).
+Asymptotic deflection 4*m/b radians; m/b <=0.025. The paths are drawn for six times the model mass so
+the bend can be seen; the readout gives the model value for the nearest ray. No black hole, horizon, orbit, or numerical
+Einstein solver. A central sphere stands for the compact mass. ray_count (1 to 5) sets how many light paths pass the mass,
+each 0.4 farther out than the one before. In the last chapter the passing distance moves to its scene value plus 1, at most 2.5.
 The background is a tilted mesh of the optical geometry: distance on it is light travel time
 timed by a distant clock (weak-field index n = 1 + 2m/r), embedded as a surface whose straightest
 lines are the drawn light paths; its dip is drawn for six times the model mass. Near the mass
@@ -103,7 +104,8 @@ The animation cannot independently verify general relativity. Numeric checks ver
 only the implemented approximation. Keep claims appropriately scoped.'''
 
 
-# Character limits for the design brief; the designer's prompt states them.
+# Character limits for the design brief, about 20 characters above what the designer's prompt (pipeline.DESIGNER)
+# asks for, so a brief that runs slightly long is not thrown away.
 DESIGN_LIMITS = {'idea': 320, 'start': 320, 'belief': 320, 'reason': 500, 'try': 320, 'missing': 500}
 DESIGN_CHAPTER_LIMIT = 400
 

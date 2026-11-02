@@ -16,7 +16,7 @@ The older persona-debate experiment lives in `council.py`. If you're a coding ag
 
 ## Run locally
 
-Requires Python 3.10+, Node.js for the optional physics checks, and Chromium through Playwright.
+Requires Python 3.10 or later (the worker uses 3.13), Node.js 18 or later for the physics checks and the notification sender, a Playwright browser for captures (Chromium, falling back to Chrome or WebKit), and a signed-in GitHub CLI (`gh`) for the daily run's inbox.
 
 ```sh
 python3 -m venv .venv
@@ -26,11 +26,11 @@ python3 -m playwright install chromium
 python3 -m http.server 8765 --directory web
 ```
 
-Open **http://127.0.0.1:8765** to browse the site locally. The site is static: investigations are made by the commands below and published as files.
+Open **http://127.0.0.1:8765** to browse the site locally. The site is static: guides are made by the commands below and published as files. The service worker only installs on the deployed site, so local edits show on a normal reload.
 
 ## Choose Codex or Claude Code
 
-The default runner is **Codex**. Both CLIs use their existing authentication and model configuration; Intuition Lab does not extract credentials or require a separate OpenAI API key for these runners. Their normal subscription, organization, or API billing and usage limits still apply.
+The default runner is **Codex**. Both CLIs use their existing authentication and model configuration; Intuition Lab does not extract credentials or require a separate OpenAI API key for these runners. Their normal subscription, organisation, or API billing and usage limits still apply.
 
 Install and sign into your chosen CLI first. Managed Claude Code wrappers keep their existing authentication. Run an image-and-JSON compatibility check (one live model request):
 
@@ -48,18 +48,18 @@ python3 -m lab run --provider claude --rounds 3
 
 Use `--model` only to override your CLI's configured model. You can also set `COUNCIL_PROVIDER`, `COUNCIL_CODEX_MODEL`, or `COUNCIL_CLAUDE_MODEL`. Choose a model that supports images and structured output; research additionally requires the CLI's web tools.
 
-The adapters use `codex exec` with native image attachments and an output schema, or `claude -p` with native image content blocks and `--json-schema`. Wrapper banners are ignored when parsing JSON events. Each role gets a fresh session; continuity comes from the saved research, scene and reviewer feedback. Workers return data; the coordinator writes scene files. Claude exposes only web tools during research and no built-in tools for the other roles. Codex uses its read-only sandbox and disables nested agents. Existing managed policies remain in effect.
+The adapters use `codex exec` with native image attachments and an output schema, or `claude -p` with native image content blocks and `--json-schema`. Wrapper banners are ignored when parsing JSON events. Each role gets a fresh session; continuity comes from the saved research, design brief, scene and reviewer feedback. Workers return data; the coordinator writes scene files. Claude exposes only web tools during research and no built-in tools for the other roles. Codex uses its read-only sandbox and disables nested agents. Existing managed policies remain in effect.
 
-Managed Claude installations may require an organization network or VPN. If the check reports that its gateway is unreachable, establish that connection and run `claude diagnose`, then retry. A timeout or gateway failure is not treated as a successful review. The adapter does not change authentication, VPN configuration, or organization policy.
+Managed Claude installations may require an organisation network or VPN. If the check reports that its gateway is unreachable, establish that connection and run `claude diagnose`, then retry. A timeout or gateway failure is not treated as a successful review. The adapter does not change authentication, VPN configuration, or organisation policy.
 
 ### Work limits
 
 Both CLI runners have the same bounds:
 
-- At most **two concurrent workers**. Physics and visual reviews run independently in parallel.
+- At most **four concurrent workers**, so the four reviewers run in parallel.
 - Default **three revision rounds**, configurable from 1–4.
-- At most `2 + 3 × rounds` CLI requests per investigation (11 by default).
-- Default **300 seconds per CLI request**, configurable with `--timeout`.
+- At most `3 + 5 × rounds` model calls per investigation (researcher, scientist and designer, then a writer and four reviewers per round), plus one for the coordinator's source finder while that fallback is on (the default) and one for the planner in daily runs: 19 for `lab run` and 20 for `lab daily` at three rounds (`calls_needed` in `lab/pipeline.py`).
+- Default **300 seconds per CLI request** (web research gets twice that), configurable with `--timeout`.
 - Default **30-minute deadline for model work**, configurable with `--minutes`. The renderer can finish its current capture before the next deadline check; this is not a hard wall-clock limit on the entire application.
 - On macOS/Linux, a timed-out worker's entire process group is stopped. If one parallel reviewer fails, the others are cancelled. On Windows, process termination covers the direct CLI process only.
 - Drafts and completed reviews survive failures; failed or unreviewed work never replaces the latest accepted artifact.
@@ -83,7 +83,7 @@ The fixture intentionally fails the first visual review (missing comparison and 
 
 ## What the loop does
 
-0. The coordinator (the Python program that runs everything) takes the next ready question; when the owner has sent questions, feedback or guidance notes, a planner chooses among the ready questions instead.
+0. The coordinator (the Python program that runs everything) takes the owner's pick from the site if there is one, otherwise the next ready question; when the owner has sent questions, feedback or guidance notes, a planner chooses among the ready questions instead.
 1. Researcher searches for sources and saves source notes. If it fails, a source finder lists candidate pages and the coordinator fetches them.
 2. Scientist turns the evidence into a scoped claim, assumptions, prediction, falsifier, limitations, misconceptions and transfer questions.
 3. Designer writes the design brief before any narration: the one idea, the everyday starting point, the belief it confronts, how the picture shows the reason, what each chapter shows and when it changes, at most one short label per chapter, and what to try afterwards.
@@ -98,20 +98,18 @@ When nothing can be investigated (every ready engine already has a guide), the s
 
 Runs are saved in `web/runs/<id>/record.json` with scenes, frames, source notes, review findings, timestamps and provider-reported usage. Only runs that pass every gate can be exported to `web/published/`.
 
-## Boundaries of this milestone
+## Boundaries
 
-- Two supported visual primitives: weak-field light bending and stationary gravitational clock comparison. The planner proposes questions within these models, not arbitrary scientific topics or animation code. It receives recent history to avoid paraphrased repeats; exact repeats are rejected deterministically. Semantic novelty still depends on the planner.
-- The director changes scene **data**, not executable code or the physics implementation.
-- First-order model: `m = GM/c² = 0.025 × mass`, impact parameter `b = distance`, and `y(x) = b − 2m/b × (sqrt(x²+b²)+x)`. The asymptotic bending angle is `4m/b`. Controls ensure `m/b ≤ 0.025`.
-- Vertical deviation is magnified 6× and labeled. The grid is a coordinate reference; the object's radius and marker speed are illustrative. No black holes or strong-field claims.
+- Models return data (research records, design briefs, scenes and reviews) checked against fixed schemas and limits, never executable code. Each topic has a hand-built visual engine in `web/scene.js` drawing from an exact model in `web/physics.js`, whose checks run in CI and in every render.
+- The planner only chooses among curriculum questions whose engine is marked ready (`READY` in `lab/topics.py`); it may rephrase a question but not change its engine. Exact repeats are rejected deterministically; paraphrased repeats depend on the planner.
 - Screen samples support visual review, but do not replace continuous video or temporal-quality review.
 - Source URLs are checked against retrieved notes; source reliability and entailment still depend on model review and human inspection.
 - Codex, Claude Code, the direct OpenAI API, and the offline fixture share `generate(role, prompt, schema, images, research)`. The coordinator is independent of the model provider.
-- HyperFrames video export, voiceover, broader scene generation and notifications are follow-on work. The current artifact is an interactive webpage with a deterministic `CouncilScene.seek(time, beat)` capture interface.
+- There is no video export or voiceover: each guide is an interactive web page with a deterministic `CouncilScene.seek(time, chapter)` capture interface.
 
 ## Daily investigations
 
-Deployment note: the first live clock guide passed review. On the original Desktop checkout, unattended launchd execution is currently blocked by macOS folder privacy; see the [handoff](docs/HANDOFF.md) for the required worker-location/permission step. The public dashboard reports this pause. Manual runs work.
+Scheduled runs come from a separate worker checkout, `~/Projects/the-council-worker`, because launchd cannot run a project kept on the Desktop or in Documents (macOS privacy protection). Manual runs work from any checkout.
 
 Run one daily cycle using existing Claude Code authentication:
 
@@ -119,15 +117,19 @@ Run one daily cycle using existing Claude Code authentication:
 python3 -m lab daily --provider claude --count 1 --rounds 3 --publish
 ```
 
-Use `--provider codex` for Codex. Omit `--publish` to export accepted guides locally without committing or pushing. `--count 2` permits up to two attempts per local calendar day, not two guaranteed publications. The daily run plans without a model call unless the owner left questions or feedback: it takes the next curriculum item whose model is marked ready in `lab/topics.py` and not already used by a published guide or draft; when none qualifies it starts nothing and uses no slot. Each investigation then uses at most `3 + 4 × rounds` research/director/reviewer calls (16 with the planner at three rounds), with the same 30-minute model-work deadline and three concurrent reviewers. Failed planning, crashes, and rejected investigations consume a daily slot to prevent retry loops.
+Use `--provider codex` for Codex. Without `--publish` an accepted guide is exported locally but not committed or pushed, and the owner's GitHub requests, notifications and the daily project review are skipped. `--count 2` permits up to two attempts per local calendar day, not two guaranteed publications.
 
-The coordinator uses an OS file lock and persistent `.council-state/history.json` to prevent overlapping daily jobs and duplicate attempts on repeated triggers. It retains draft records in `web/runs/`. Only live runs that pass both reviews and all render checks enter `web/published/`; fixtures are never published as research. The public record includes sources, assumptions, checks, and visual revision history. Passing automated review is not proof of scientific correctness.
+An owner pick from the site goes first. Otherwise the run takes the next curriculum item whose model is marked ready in `lab/topics.py` and not already used by a published guide or draft (one picture per guide), without a model call; the planner is called only when the owner left questions, feedback or guidance notes. A question is done once a guide answers it or an attempt with its model reached review. An attempt that stopped early (an error, a time limit, an interrupted run) is retried, the most recent first, and a question rests after three early stops. When nothing qualifies, the run starts nothing and uses no slot. Failed planning, crashes and rejected investigations consume a daily slot to prevent retry loops.
 
-Publication commits only `web/published/` and `web/dashboard.json` and pushes `main` using the existing Git credentials. It refuses to commit when unrelated changes are staged. A failed push leaves the export on disk and is retried on the next cycle. A remote conflict is not force-pushed or automatically merged: resolve it locally, then rerun the daily command. Keep this checkout on `main` and sync it before making changes elsewhere.
+The coordinator uses an OS file lock and persistent `.council-state/history.json` to prevent overlapping daily jobs and duplicate attempts on repeated triggers. It retains draft records in `web/runs/`. Only live runs that pass all four reviews and every render check enter `web/published/`; fixtures are never published as research. The public record includes sources, assumptions, checks, and every revision with its reviews. Passing automated review is not proof of scientific correctness.
+
+Export checks everything before writing and moves the finished guide into `web/published/` in one step. Publication commits only the guides this checkout exported, `web/published/index.json`, `web/dashboard.json` and `web/proposals.json`; it refuses when unrelated changes are staged or the index lists guides that are not committed, and pushes `main` with the existing Git credentials. If GitHub moved on during the run, it replays its own publication commits on top once and pushes again; a conflict leaves the publication pending for the next cycle. Nothing is force-pushed. Keep this checkout on `main`.
+
+To publish an accepted run recorded in another checkout (for example a batch snapshot), use `python3 -m lab export --run-dir <run folder> --publish`; it applies the same gates.
 
 ### Schedule on macOS
 
-Generate a launch-agent configuration for 9 AM local time:
+Generate a launch-agent configuration for 9 AM local time, in the worker checkout:
 
 ```sh
 python3 -m lab schedule --provider claude --hour 9 --count 1
@@ -141,9 +143,13 @@ cp .council-state/org.the-council.daily.plist "$HOME/Library/LaunchAgents/"
 launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/org.the-council.daily.plist"
 ```
 
-If macOS reports “Operation not permitted” for a project on Desktop/Documents, the launch agent is blocked by privacy protection. Run the schedule from a separate checkout outside those folders (for example `~/Projects/the-council-worker`) and generate the plist from there. Git hooks configured via a global `core.hooksPath` inside a protected folder also break background pushes. Do not claim the schedule works until a `launchctl kickstart` smoke test exits successfully.
+If macOS reports “Operation not permitted”, the checkout is in a protected folder: generate the plist from a checkout outside Desktop and Documents. Git hooks configured via a global `core.hooksPath` inside a protected folder also break background pushes. Do not claim the schedule works until a `launchctl kickstart` smoke test exits successfully.
 
-The generated file uses absolute paths to this checkout and Python interpreter, plus your current PATH. Regenerate it if either moves. The Mac must be on and you must be logged in; managed Claude also needs its VPN connection. `caffeinate` prevents idle sleep during a run, but does not power on the Mac or defeat a closed laptop lid. A missed calendar trigger can run on wake; the daily ledger prevents duplicate work. There is no always-on cloud research worker.
+The generated file uses absolute paths to this checkout and Python interpreter, plus your current PATH; regenerate it if either moves. The Mac must be on and you must be logged in; managed Claude also needs its VPN connection. `caffeinate` prevents idle sleep during a run, but does not power on the Mac or defeat a closed laptop lid. A missed calendar trigger can run on wake; the daily ledger prevents duplicate work. There is no always-on cloud research worker.
+
+Before a publishing run, `scripts/run_daily.py` waits up to 20 minutes for GitHub to answer, since the network or VPN may not be up just after the Mac wakes; if it never answers, nothing starts and the day's attempt is unused. It then fast-forwards the checkout to GitHub's `main` (or replays its own unpushed publication on top), never touching local edits. Each line of `daily.log` starts with the local time.
+
+To pause new investigations and the project review without unloading the schedule, create `.council-state/paused` in the worker (`touch .council-state/paused`) and delete it to resume. A paused cycle uses no slot and still records its check-in on the dashboard.
 
 Check or stop the schedule:
 
@@ -155,17 +161,15 @@ launchctl bootout "gui/$(id -u)/org.the-council.daily"
 
 This scheduler and file lock target macOS/Linux; the generated launch agent is macOS-specific. Logs and history are local and ignored by Git.
 
-The clock model compares supported stationary observers at radii `r` and `r+2` outside a nonrotating spherical mass: `lower/upper = sqrt((1-2m/r)/(1-2m/(r+2)))`, with `m=.025×mass`. The relative clock-hand speed difference is magnified 12×; the percentage readout is unmagnified. Spatial positions are schematic. This is not a GPS, orbit, or black-hole simulation. See [NIST's optical-clock measurements](https://www.nist.gov/publications/relativity-and-optical-clocks).
-
 ## Publish the website
 
-The repository's `.github/workflows/pages.yml` deploys the static demo to GitHub Pages on pushes to `main`, or when manually dispatched. In GitHub, open **Settings → Pages → Build and deployment → Source**, and select **GitHub Actions** before the first deployment.
+The repository's `.github/workflows/pages.yml` deploys the static site to GitHub Pages on pushes to `main`, or when manually dispatched. In GitHub, open **Settings → Pages → Build and deployment → Source**, and select **GitHub Actions** before the first deployment.
 
-The workflow runs the offline unit tests and physics checks, then uploads an explicit list of public website assets. It includes the accepted `web/published/` archive and excludes local runs, source notes, provider usage metadata, credentials, and runtime files. The hosted edition disables the agent-run button; agents still run on your own machine. The expected project URL after a successful deployment is https://eman2XR.github.io/the-council/.
+The workflow runs the offline unit tests, checks that the site's scripts parse and that every model's physics checks pass, then uploads an explicit list of public files; it fails if a tracked file under `web/` (other than `web/runs/`) would be left out. The upload includes the accepted `web/published/` archive and excludes local runs, source notes, provider usage metadata, credentials, and runtime files. Asset links carry the commit (`?v=<sha>`) so browsers never mix files from different deploys. The site is at https://eman2xr.github.io/intuition-lab/; agents run only on your own machine.
 
-The dashboard shows the current question, phase, revision, recent activity, daily attempts, and configured schedule. With `--publish`, safe status snapshots are pushed at most once every two minutes at phase boundaries (plus start/completion); Pages deployment adds latency. The browser refreshes status once a minute and flags stale activity. This is not a streaming heartbeat, and GitHub cannot determine whether the Mac is currently awake. Raw model output, internal errors, and usage metadata are not part of status snapshots.
+The status strip shows the current question, phase, revision, recent activity and the configured schedule from `web/dashboard.json`. With `--publish`, safe status snapshots are pushed at most once every two minutes at phase boundaries (plus start and completion), and every daily cycle records a one-line check-in (`checked`), even when it starts nothing. Pages deployment adds latency. The browser refreshes status once a minute and flags stale activity. This is not a streaming heartbeat, and GitHub cannot determine whether the Mac is currently awake. Raw model output and usage metadata are not part of status snapshots.
 
-The public homepage opens the newest accepted guide; archive links retain older guides. If no guide has passed review, it displays the labeled offline example. GitHub Actions only tests and deploys files; model work stays on your machine.
+The home page features the newest published guide and lists every other one, newest first; if none has passed review, it shows the labelled offline example. GitHub Actions only tests and deploys files; model work stays on your machine.
 
 ## Install on iPhone
 
@@ -176,17 +180,19 @@ python3 -m lab push add '<code>'
 python3 -m lab push test
 ```
 
-After that, the daily run sends a notification whenever a reviewed guide is published. There is no server: the worker's `.council-state` holds the key pair (`vapid.json`, created with `python3 -m lab push keys`; its public key is `web/push.json`) and the subscriptions, and `scripts/push.mjs` sends standard Web Push with Node's built-in crypto.
+After that, the daily run notifies you when a reviewed guide is published, as soon as the site serves it (it checks for up to ten minutes), and sends “Today’s run stopped early” when an attempt stops before review. Drafts and days with nothing to do send nothing. There is no server: the worker's `.council-state` holds the key pair (`vapid.json`, created with `python3 -m lab push keys`; its public key is `web/push.json`) and the subscriptions, and `scripts/push.mjs` sends standard Web Push with Node's built-in crypto.
 
 ## Verify
 
 ```sh
 python3 -m unittest discover -s tests -v
-node -e "const p=require('./web/physics.js'); console.log(p.checks()); if(p.checks().some(c=>!c.pass))process.exit(1)"
-python3 -m lab run --provider fixture
+node -e "const c=require('./web/physics.js').allChecks(); const bad=c.filter(x=>!x.pass); console.log(c.length+' checks'); if(bad.length){console.log(bad);process.exit(1)}"
+node scripts/push.mjs selftest
+python3 -m lab.sitecheck
+python3 -m lab run --provider fixture --topic gravity-clocks --rounds 2
 ```
 
-Physics checks exercise the same JavaScript functions used by the canvas. Pipeline tests cover feedback-driven revision, draft retention, scientific vetoes, invalid scenes and provider failures. Adapter tests cover actual subprocess timeout/cancellation, image transport, structured-output parsing, concurrent budgets, and wrapper banners. Live checks are separate from these automated tests.
+Physics checks exercise the same JavaScript functions used by the canvas, for every model, as CI does. The push self-test reproduces the RFC 8291 example. `lab.sitecheck` opens the home page and every published guide in a headless browser. The fixture run renders a guide through the whole pipeline without model calls; run it after any change to `web/index.html`, because `lab/render.py` writes into the page. Pipeline tests cover feedback-driven revision, draft retention, scientific vetoes, invalid scenes and provider failures. Adapter tests cover actual subprocess timeout/cancellation, image transport, structured-output parsing, concurrent budgets, and wrapper banners. Live checks are separate from these automated tests.
 
 ## Sources and API references
 

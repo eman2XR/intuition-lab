@@ -5,8 +5,8 @@ import shutil
 import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
+from . import ROOT
 
-ROOT = Path(__file__).resolve().parents[1]
 STATE = ROOT / '.council-state'
 SCRIPT = ROOT / 'scripts' / 'push.mjs'
 
@@ -37,8 +37,11 @@ def add(subscription_json, state_dir=STATE):
     subs = json.loads(path.read_text()) if path.exists() else []
     added = all(s.get('endpoint') != entry['endpoint'] for s in subs)
     subs = [s for s in subs if s.get('endpoint') != entry['endpoint']] + [entry]
-    path.write_text(json.dumps(subs, indent=1) + '\n')
-    path.chmod(0o600)
+    # Owner-only from creation; an older file is narrowed before it is written.
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    os.fchmod(descriptor, 0o600)
+    with os.fdopen(descriptor, 'w') as handle:
+        handle.write(json.dumps(subs, indent=1) + '\n')
     return added
 
 

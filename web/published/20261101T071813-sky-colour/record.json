@@ -4,7 +4,7 @@
  "question": "Why is the sky blue, but the sunset red?",
  "topic": "sky-colour",
  "created": "2026-11-01T07:18:13+00:00",
- "updated": "2026-11-01T07:55:32Z",
+ "updated": "2026-11-02T01:58:05Z",
  "research": {
   "claim": "Air molecules scatter short-wavelength light far more than long: the scattering grows as the inverse fourth power of the wavelength, so blue light at 450 nm is scattered about 5.9 times as much as red light at 700 nm. Blue scattered out of the sunlight reaches the eye from every direction, so the whole sky looks blue. Near the horizon, sunlight crosses about 38 times as much air as from overhead, so almost all of its blue is scattered out of the direct beam while about a quarter of its red gets through, and the setting Sun looks red and orange.",
   "explanation": "1. Light is an electromagnetic wave. Its electric field shakes the electrons in each air molecule, and a shaken electron sends light out in all directions.\n2. Air molecules are far smaller than the wavelength of light. For such small scatterers the scattered light grows as the inverse fourth power of the wavelength (Rayleigh scattering), so (700/450)⁴ ≈ 5.9.\n3. Overhead, clean air at sea level scatters about a fifth of sunlight’s blue out of the beam and about 4% of its red. The scattered light, rich in blue, arrives from all over the sky.\n4. The path through the air grows as the Sun sinks. For a spherical atmosphere and an observer at sea level, the path at the horizon is about 38 times the path overhead (the air mass). Along it, the beam keeps about 0.02% of its blue but about 24% of its red.",
@@ -89,7 +89,7 @@
    "pass": true
   },
   {
-   "name": "Blue light is a wave about one and a half times as quick as red",
+   "name": "Blue light shakes about one and a half times as often as red, and scattering grows as the fourth power of that",
    "pass": true
   },
   {

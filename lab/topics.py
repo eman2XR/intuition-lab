@@ -1,35 +1,39 @@
 """Supported visual models constrain what the daily planner may promise."""
 from .contracts import MODEL_NOTES
 
-CLOCK_NOTES = '''CLOCK MODEL. Two stationary clocks outside a spherical, nonrotating mass.
-Use Schwarzschild static-clock comparison: m=GM/c^2=.025*mass, lower radius r=distance,
-upper radius R=r+2 (arbitrary units). Rate ratio lower/upper=sqrt((1-2m/r)/(1-2m/R)).
-Mass 0..1, r 1..2.5. These are supported stationary observers, not freely falling clocks.
-Each clock ticks normally locally; the ratio compares proper times over the same Schwarzschild
-coordinate-time interval. Do not conflate this with a distant camera's raw view or Doppler effects.
-The animated deficit is magnified 12 times (disclosed in the investigation details): displayed lower rate=1-12*(1-ratio).
-The percentage readout is physical and UNMAGNIFIED. The sketch is not to spatial scale.
-Three beats: 1 zero mass/equal rates; 2 add mass/two clocks; 3 adjust mass and lower radius.
-Increasing mass increases the deficit; moving the pair outward with fixed separation reduces it.
-No black holes, Earth-specific numbers, satellite velocities, or full GPS simulation.
-Fields named mass/distance control mass/lower radius. The UI label is "Lower radius" with the hint "gap stays 2 units"; refer to it as "Lower radius". Prefer distance=1 initially so the comparison at 2.5 is clear. ray_count and line_width unused.
-Explain gravitational time dilation intuitively without saying a clock is malfunctioning.
-The lag is determined by the gravitational potential difference, not by the gradient of gravity (tidal forces). For a small fixed gap, the lag scales with local gravitational acceleration times the gap. Never say the lag is independent of gravity strength. No new-discovery claims; checks validate implementation only.'''
-
 COMMON = '''
 Shared player behaviour: a scene has three or four chapters. Chapter 1 automatically sets the first control (field
 "mass") to zero; later chapters use the scene values. In the last chapter, unless this model says otherwise, playback
 demonstrates the controls: during its first half the first control dips to about half and returns; during its second half
 the second control (field "distance") moves to 2.5. Write the last chapter's sentences to describe those changes in that
 order. The viewer reads one subtitle sentence at a time below the stage; screenshots show exactly what playback shows.
-ray_count is unused. The stage carries no scale or magnification disclaimers: drawings are illustrations, and each model's
-caveats are shown once in the investigation details. Never say that a picture is not to scale, enlarged or magnified,
-on the stage or in any text: drawings are obviously illustrations. Do not ask for such labels or sentences.
+ray_count is unused unless this model says otherwise. The stage carries no scale or magnification disclaimers: drawings
+are illustrations, and each model's caveats are shown once in the investigation details. Never say that a picture is not
+to scale, enlarged or magnified, on the stage or in any text: drawings are obviously illustrations. Do not ask for such
+labels or sentences.
 Field controls chooses which sliders the viewer gets: none, first, second or both. Offer a slider only when moving
 it builds intuition beyond what playback already shows; otherwise choose none.
 The stage shows only a few short labels (each five words or fewer, at most about a dozen words at once, checked
 automatically); the subtitles carry every explanation. Never write a sentence that relies on a label the model notes do
 not list, and never ask for extra labels.'''
+
+# Every model's notes end with the shared notes.
+LIGHT_NOTES = MODEL_NOTES+COMMON
+
+CLOCK_NOTES = '''CLOCK MODEL. Two stationary clocks outside a spherical, nonrotating mass.
+Use Schwarzschild static-clock comparison: m=GM/c^2=.025*mass, lower radius r=distance,
+upper radius R=r+2 (arbitrary units). Rate ratio lower/upper=sqrt((1-2m/r)/(1-2m/R)).
+Mass 0..1, r 1..2.5. These are supported stationary observers, not freely falling clocks.
+Each clock ticks normally locally; the ratio compares proper times over the same Schwarzschild
+coordinate-time interval. Do not conflate this with a distant camera's raw view or Doppler effects.
+The hands show the rate difference twelve times larger so it can be seen: displayed lower rate=1-12*(1-ratio).
+The percentage readout gives the model value.
+Three beats: 1 zero mass/equal rates; 2 add mass/two clocks; 3 adjust mass and lower radius.
+Increasing mass increases the deficit; moving the pair outward with fixed separation reduces it.
+No black holes, Earth-specific numbers, satellite velocities, or full GPS simulation.
+Fields named mass/distance control mass/lower radius. The UI label is "Lower radius" with the hint "gap stays 2 units"; refer to it as "Lower radius". Prefer distance=1 initially so the comparison at 2.5 is clear. ray_count and line_width unused.
+Explain gravitational time dilation intuitively without saying a clock is malfunctioning.
+The lag is determined by the gravitational potential difference, not by the gradient of gravity (tidal forces). For a small fixed gap, the lag scales with local gravitational acceleration times the gap. Never say the lag is independent of gravity strength. No new-discovery claims; checks validate implementation only.'''+COMMON
 
 SPACETIME_NOTES = '''SPACETIME DIAGRAM. Special relativity in flat spacetime, units of years and light-years (light speed 1).
 Time runs up the page, space runs right; light moves at 45 degrees, and a shaded light cone from the departure event marks
@@ -313,7 +317,7 @@ READY = {'light-bending', 'gravity-clocks', 'spacetime-paths', 'light-clock', 'i
 # form before the narration says so).
 
 TOPICS = {
-    'light-bending': {'label':'Light bending', 'question':'Why does gravity bend light?', 'notes':MODEL_NOTES},
+    'light-bending': {'label':'Light bending', 'question':'Why does gravity bend light?', 'notes':LIGHT_NOTES},
     'gravity-clocks': {'label':'Gravity and clocks', 'question':'Why do clocks at different heights tick at different rates?', 'notes':CLOCK_NOTES},
     'twin-trip': {'label':'Twin trip', 'question':'Why is the travelling twin younger?', 'notes':TWIN_NOTES},
     'light-clock': {'label':'Light clock', 'question':'Why does a moving clock tick slowly?', 'notes':LIGHT_CLOCK_NOTES},

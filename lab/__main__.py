@@ -2,13 +2,13 @@ import argparse
 import json
 import os
 import math
-from .pipeline import run, ROOT
+from functools import partial
+from . import ROOT
+from .pipeline import run, calls_needed
 from .providers import OpenAIProvider
 from .fixtures import FixtureProvider
 from .cli_providers import CLIProvider
 from .contracts import obj, STR
-
-
 from .topics import TOPICS
 
 def main():
@@ -33,13 +33,14 @@ def main():
         parser.error('--rounds must be 1–4')
     if not math.isfinite(args.timeout) or not math.isfinite(args.minutes) or args.timeout<=0 or args.minutes<=0:
         parser.error('--timeout and --minutes must be positive')
+    budget=calls_needed(args.rounds,planner=args.command=='daily')
     def provider():
         if args.provider=='fixture':
             return FixtureProvider()
         if args.provider=='openai':
-            return OpenAIProvider(args.model or os.environ.get('OPENAI_MODEL'),max_calls=(4 if args.command=='daily' else 3)+4*args.rounds)
+            return OpenAIProvider(args.model or os.environ.get('OPENAI_MODEL'),max_calls=budget)
         return CLIProvider(args.provider,args.model or os.environ.get(f'COUNCIL_{args.provider.upper()}_MODEL'),
-                           max_calls=(4 if args.command=='daily' else 3)+4*args.rounds,timeout=args.timeout,minutes=args.minutes)
+                           max_calls=budget,timeout=args.timeout,minutes=args.minutes)
     if args.command=='push':
         # Owner-only notifications; keys and subscriptions stay in this checkout's ignored .council-state folder.
         from . import push
@@ -65,14 +66,15 @@ def main():
         from .daily import export_run, publish
         if not args.run_dir:
             parser.error('export needs --run-dir')
-        print(export_run(args.run_dir))
+        target=export_run(args.run_dir)
+        print(target)
         if args.publish:
-            publish()
+            publish(ROOT,[target.name])
         return
     if args.command=='daily':
-        from .daily import daily
+        from .daily import daily, paused
         daily(provider,args.count,args.rounds,args.publish,blueprints=args.publish)
-        if args.publish:
+        if args.publish and not paused():
             # The scheduled worker also reviews the project once a day; proposals wait for owner approval.
             from .improve import daily_review
             from .daily import publish
@@ -80,7 +82,7 @@ def main():
                 try:
                     publish()
                 except Exception as error:
-                    print(f'Proposal publication pending ({type(error).__name__}).',flush=True)
+                    print(f'Proposal publication pending ({type(error).__name__}: {str(error)[:160]}).',flush=True)
         return
     if args.command=='check':
         if args.provider not in ('codex','claude'):
@@ -103,11 +105,13 @@ def main():
             parser.exit(2, f'Setup needed: {error}\nSee README.md → Run locally.\n')
         from .dashboard import Dashboard
         from .daily import export_accepted, publish
-        dashboard=Dashboard(ROOT,publish if args.publish else None)
+        exported=[]
+        dashboard=Dashboard(ROOT,partial(publish,runs=exported) if args.publish else None)
         callback=dashboard.update if args.provider!='fixture' else None
         state=run(adapter,args.rounds,on_update=callback,topic=args.topic,question=args.question)
         if args.publish and state['status']=='reviewed':
             export_accepted(state)
+            exported.append(state['id'])
         if callback:
             dashboard.update(state,force=True)
         print(f'Record: web/runs/{state["id"]}/record.json')

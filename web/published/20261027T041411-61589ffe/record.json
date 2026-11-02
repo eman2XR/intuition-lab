@@ -4,7 +4,7 @@
   "question": "Why do clocks at different heights tick at different rates?",
   "topic": "gravity-clocks",
   "created": "2026-10-27T04:14:11.455135+00:00",
-  "updated": "2026-10-28T07:05:01Z",
+  "updated": "2026-11-02T01:58:05Z",
   "research": {
     "claim": "Two clocks held at rest at different heights outside a mass tick at different rates when you compare them. The lower clock, which sits deeper in the gravitational potential, builds up less proper time than the upper clock over the same Schwarzschild coordinate-time interval. Neither clock is malfunctioning: each one ticks normally where it is, and the difference only appears when the two are compared. This is standard general relativity (gravitational time dilation), not a new discovery. In the model, adding mass increases the lower clock's lag. Moving the pair outward while keeping the 2-unit gap fixed reduces it.",
     "explanation": "Picture: two clocks sit on supports outside a round, non-spinning mass. One is at the lower radius r and the other is 2 units higher, at R = r + 2. Each clock is a perfectly good clock. Someone standing next to either one would see it tick normally, and every kind of clock (pendulum, quartz, atomic) would behave the same way there. The difference only shows up when the two clocks are compared over the same coordinate-time interval. The lower clock has then recorded slightly less time.\n\nWhy: in general relativity, the rate of time for a clock held at rest depends on where it sits in the gravitational potential. A clock deeper in the potential (closer to the mass) runs slow compared with one higher up. The equivalence principle gives one way to see this. Holding a clock at rest in a gravitational field is like being in a steadily accelerating rocket. In that rocket, light sent from the bottom arrives at the top shifted to a lower frequency. The setup never changes over time, so this shift can't come from signals piling up along the way. It has to mean the two clocks' rates really differ.\n\nModel formula: m = GM/c^2 = 0.025 x mass (arbitrary units). Rate ratio (lower/upper) = sqrt((1 - 2m/r) / (1 - 2m/R)), with R = r + 2.\n- Mass = 0: m = 0, so the ratio is exactly 1 and the two clocks agree.\n- More mass makes the potential difference between the clocks larger, so the lower clock lags more.\n- Moving the pair outward (larger Lower radius, same 2-unit gap) puts both clocks where the potential changes more gently, so the lag shrinks.\n\nWhat sets the size of the lag: the difference in gravitational potential between the two clocks. It is not set by the change of gravity across the gap (tidal effects). For a small fixed gap, that potential difference is about (local gravitational acceleration) x (gap), so the lag does grow with local gravity strength. The model's 2-unit gap is not small next to r, so the exact formula above is used rather than this approximation.\n\nVisual conventions: the animation magnifies the deficit 12 times (displayed lower rate = 1 - 12 x (1 - ratio)), so the difference is easy to see. The percentage readout is the real, unmagnified value. The sketch is not drawn to spatial scale. This is not what a distant camera would see directly, and it includes no Doppler (motion) effects.\n\nThree beats:\n1. Mass = 0: the clocks tick at equal rates.\n2. Add mass: the lower clock falls behind the upper one.\n3. Adjust Mass and Lower radius: more mass increases the lag, and a larger Lower radius reduces it. Start with Lower radius = 1 so the change when it reaches 2.5 is clear.\n\nRetrieval status: the notes say no sources could be retrieved. Every URL attempt was refused by the network proxy. The listed references are therefore unconfirmed pointers, not verified evidence.\n\nCorrection to the retrieved notes: misleading metaphor #5 in the notes calls \"depends on the strength of g\" misleading. Taken alone, that is too strong, and it should not be used as written. The accurate statement is that the lag depends on the potential difference. For a small gap that difference is about g x gap, so the lag does depend on gravity strength. The notes' point about Earth's centre concerns a clock's absolute rate compared with far away, not the lag between two nearby clocks.",
@@ -109,7 +109,7 @@
       "pass": true
     },
     {
-      "name": "Magnified clock motion stays positive",
+      "name": "Clock hand motion stays positive",
       "pass": true
     },
     {
@@ -191,7 +191,7 @@
           "pass": true
         },
         {
-          "name": "Magnified clock motion stays positive",
+          "name": "Clock hand motion stays positive",
           "pass": true
         },
         {
@@ -325,7 +325,7 @@
           "pass": true
         },
         {
-          "name": "Magnified clock motion stays positive",
+          "name": "Clock hand motion stays positive",
           "pass": true
         },
         {

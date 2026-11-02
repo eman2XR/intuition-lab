@@ -15,9 +15,8 @@ import tempfile
 import threading
 import time
 from pathlib import Path
+from . import ROOT
 from .contracts import validate
-
-ROOT = Path(__file__).resolve().parents[1]
 
 
 class WorkerLimitError(RuntimeError):
@@ -40,7 +39,7 @@ class CLIProvider:
         self._lock = threading.Lock()
         self._processes = set()
         self._cancelled = False
-        self._slots = threading.BoundedSemaphore(3)  # the three reviewers run together
+        self._slots = threading.BoundedSemaphore(4)  # the four reviewers run together
 
     def remaining(self):
         with self._lock:

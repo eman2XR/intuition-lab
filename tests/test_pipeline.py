@@ -7,20 +7,15 @@ from unittest.mock import patch
 from lab.contracts import validate_scene
 from lab.fixtures import FixtureProvider, SCENE
 from lab.pipeline import run, approved
+import helpers
 
 
 class LoopTests(unittest.TestCase):
     def execute(self, provider, rounds=3, checks=None):
         with tempfile.TemporaryDirectory() as tmp:
-            root=Path(tmp)
-            def capture(scene,directory,**kwargs):
-                directory.mkdir(parents=True)
-                frame=directory/'test.png';frame.write_bytes(b'fixture')
-                return [frame], checks if checks is not None else [{'name':'test','pass':True}]
-            with patch('lab.pipeline.ROOT',root),patch('lab.pipeline.capture',capture):
-                state=run(provider,rounds)
-                self.assertTrue((root/'web'/'runs'/state['id']/'record.json').exists())
-                return state
+            state=helpers.execute(provider,rounds,Path(tmp),checks)
+            self.assertTrue((Path(tmp)/'web'/'runs'/state['id']/'record.json').exists())
+            return state
 
     def test_feedback_causes_revision_and_fixture_is_never_live(self):
         state=self.execute(FixtureProvider())
@@ -38,12 +33,7 @@ class LoopTests(unittest.TestCase):
                 return super().generate(role,prompt,schema,**kw)
         provider=Recorder()
         with tempfile.TemporaryDirectory() as tmp:
-            root=Path(tmp)
-            def capture(scene,directory,**kwargs):
-                directory.mkdir(parents=True);frame=directory/'test.png';frame.write_bytes(b'fixture')
-                return [frame],[{'name':'test','pass':True}]
-            with patch('lab.pipeline.ROOT',root),patch('lab.pipeline.capture',capture):
-                state=run(provider,1,guidance=['Use an everyday example.','  '])
+            state=helpers.execute(provider,1,Path(tmp),guidance=['Use an everyday example.','  '])
         self.assertEqual(state['guidance'],['Use an everyday example.'])
         self.assertTrue(any(e['message'].startswith('Owner guidance: 1 note') for e in state['events']))
         for role in ('designer','writer','learner','visual_reviewer','physics_reviewer'):
@@ -138,5 +128,38 @@ class LoopTests(unittest.TestCase):
         with self.assertRaises(ValueError):validate_scene(scene)
         scene=copy.deepcopy(SCENE);del scene['why']
         with self.assertRaises(ValueError):validate_scene(scene)
+
+class BudgetTests(unittest.TestCase):
+    def test_reviews_that_never_pass_end_as_a_draft_within_the_daily_budget(self):
+        # The worst case under the budget __main__ gives a daily attempt: the planner is asked, the researcher fails
+        # over to the coordinator's source finder, and all four reviewers reject every revision.
+        from lab.__main__ import main
+        class Budgeted(FixtureProvider):
+            def __init__(self,name,model,max_calls,**limits):
+                super().__init__();self.max_calls=max_calls
+            def generate(self,role,prompt,schema=None,**kw):
+                if self.calls>=self.max_calls:raise RuntimeError('Agent call budget exhausted; investigation remains a draft.')
+                if role=='researcher':
+                    self.calls+=1;raise RuntimeError('claude worker exceeded its 600s time limit')
+                if role=='source_finder':
+                    self.calls+=1;return {'urls':[{'url':'https://example.edu/page','why':'w'}]}
+                if role in ('physics_reviewer','visual_reviewer','learner','blind_viewer'):
+                    self.calls+=1;return {'pass':False,'score':5,'summary':'Not yet.','changes':['Clarify.'],'blocking_issues':['Unclear.']}
+                return super().generate(role,prompt,schema,**kw)
+        results=[]
+        def attempt(factory,count,rounds,*args,**kwargs):
+            provider=factory()
+            provider.generate('planner','Choose.',{'properties':{'topic':{'enum':['gravity-clocks']}}})
+            with tempfile.TemporaryDirectory() as tmp,patch('lab.sources.fetch',return_value=('Clocks','word '*200)):
+                results.append((provider,helpers.execute(provider,rounds,Path(tmp),topic='gravity-clocks')))
+        for rounds in (1,3,4):
+            with patch('sys.argv',['lab','daily','--provider','claude','--rounds',str(rounds)]),\
+                 patch('lab.__main__.CLIProvider',Budgeted),patch('lab.daily.daily',side_effect=attempt):
+                main()
+            provider,state=results[-1]
+            self.assertEqual((state['status'],len(state['revisions'])),('needs_review',rounds),state.get('error'))
+            self.assertEqual(state['provenance']['retrieved_by'],'coordinator')
+            self.assertEqual(provider.calls,provider.max_calls)
+
 
 if __name__=='__main__': unittest.main()

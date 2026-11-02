@@ -19,12 +19,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Check coordinator and providers without live model calls
         run: python -m unittest discover -s tests -v
+      - name: Check the site's scripts parse
+        run: for f in web/app.js web/scene.js web/physics.js web/sw.js; do node --check "$f"; done
       - name: Check physics
         run: node -e "const c=require('./web/physics.js').allChecks(); const bad=c.filter(x=>!x.pass); console.log(c.length+' checks'); if(bad.length){console.log(bad);process.exit(1)}"
       - name: Stage public demo only
@@ -35,13 +37,16 @@ jobs:
           cp web/manifest.webmanifest web/sw.js web/push.json _site/
           cp -R web/example-frames web/icons _site/
           if [ -f web/dashboard.json ]; then cp web/dashboard.json _site/; fi
-          if [ -f web/featured.json ]; then cp web/featured.json _site/; fi
           if [ -f web/proposals.json ]; then cp web/proposals.json _site/; fi
           if [ -d web/published ]; then cp -R web/published _site/; fi
           if [ -d web/drafts ]; then cp -R web/drafts _site/; fi
           # Version asset links per commit so browsers never mix cached files from different deploys.
           sed -i "s/?v=dev/?v=${GITHUB_SHA::7}/g" _site/index.html
           touch _site/.nojekyll
+      - name: Check every tracked site file is staged
+        run: |
+          missing=$(git ls-files web | grep -v '^web/runs/' | sed 's#^web/##' | while IFS= read -r f; do [ -f "_site/$f" ] || echo "$f"; done)
+          if [ -n "$missing" ]; then echo "Tracked under web/ but not copied into _site:"; echo "$missing"; exit 1; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

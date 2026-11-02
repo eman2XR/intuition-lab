@@ -2,7 +2,7 @@
 import argparse
 import tempfile
 from pathlib import Path
-from .pipeline import ROOT
+from . import ROOT
 from .render import ORIGIN, launch, route_files
 
 

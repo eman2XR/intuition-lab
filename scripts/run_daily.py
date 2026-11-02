@@ -9,13 +9,38 @@ A run fired just after the Mac wakes can find the network (or the VPN) not yet u
 stalls until the time limit. So a publishing run first waits for GitHub to answer, for up to 20 minutes; if it never
 does, nothing starts and the day's attempt is not used."""
 import os
+from datetime import datetime
 from pathlib import Path
 import runpy
 import subprocess
 import sys
 import time
 
+ROOT=Path(__file__).resolve().parents[1]
+# Nothing from the lab package loads before the update: a broken commit there must not stop the next fix arriving.
+# These match lab.ROOT and lab.PUBLICATION (a test keeps them in step).
 PUBLICATION=('web/published/','web/dashboard.json','web/proposals.json')
+sys.path.insert(0,str(ROOT))
+
+
+class Stamped:
+    """Starts every line of the daily log with the local time, so the log shows when each step happened."""
+    def __init__(self,stream,clock=lambda: datetime.now().astimezone()):
+        self.stream,self.clock,self.fresh=stream,clock,True
+
+    def write(self,text):
+        for line in text.splitlines(keepends=True):
+            if self.fresh:
+                self.stream.write(self.clock().isoformat(timespec='seconds')+' ')
+            self.stream.write(line)
+            self.fresh=line.endswith('\n')
+        return len(text)
+
+    def flush(self):
+        self.stream.flush()
+
+    def __getattr__(self,name):
+        return getattr(self.stream,name)
 
 
 def update(root):
@@ -60,7 +85,13 @@ def online(root,minutes=20,every=30,clock=time.monotonic,sleep=time.sleep):
 
 
 if __name__=='__main__':
-    root=Path(__file__).resolve().parents[1]
+    # launchd may start Python without a UTF-8 locale; the log keeps every character either way.
+    for stream in (sys.stdout,sys.stderr):
+        if hasattr(stream,'reconfigure'):
+            stream.reconfigure(encoding='utf-8',errors='backslashreplace',line_buffering=True)
+    if sys.stdout:
+        sys.stdout=Stamped(sys.stdout)
+    root=ROOT
     os.chdir(root)
     if '--publish' in sys.argv:
         waited=online(root)
@@ -70,6 +101,5 @@ if __name__=='__main__':
         if waited:
             print(f'Network ready after {waited} s.',flush=True)
         print(f'Worker checkout: {update(root)}.',flush=True)
-    sys.path.insert(0,str(root))
     sys.argv=['lab','daily',*sys.argv[1:]]
     runpy.run_module('lab',run_name='__main__')

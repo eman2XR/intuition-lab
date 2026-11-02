@@ -7,9 +7,9 @@ Nothing here changes code: approved proposals wait for a supervised coding sessi
 import json
 import re
 from datetime import datetime, timezone
-from pathlib import Path
+from . import ROOT
 from .contracts import obj, validate, STR, STRINGS
-from .pipeline import ROOT, write_json
+from .pipeline import write_json
 from .topics import TOPICS
 from . import inbox
 
@@ -19,12 +19,14 @@ GOAL = ('Intuition Lab is an autonomous visual physics research lab with humans 
         'Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback '
         'and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.')
 
-SITE = ('Static GitHub Pages site. Top: lab status strip. Hero: today\'s investigation with a canvas stage, poster play '
-        'button, reading-paced subtitles, chapter progress bar and two sliders, plus ask/feedback links that open '
-        'GitHub issues. Then past investigations as cards with live previews, the path (four chapters of '
-        'investigations tied to visual engines), and a collapsed "How the lab checked this" section. Visual '
-        'engines are hand-written canvas renderers; models only return scene data within fixed fields. Every draft '
-        'is rendered in a headless browser and must pass a physics review and a visual review.')
+SITE = ('Static GitHub Pages site that installs as a phone app with notifications for new guides. Top: a slim lab '
+        'status strip that expands to show the current steps and a box for owner guidance notes. Home: one featured '
+        'guide, then every other reviewed guide in a single grid, newest first. A guide: title and a one-line why, a '
+        'canvas stage with a poster play button, reading-paced subtitles, a scrubbable bar with chapter ticks, sliders '
+        'offered after playback, ask and feedback links that open GitHub issues, related guides, and a collapsed "How '
+        'the lab checked this" section. Visual engines are hand-written canvas renderers; models only return scene data '
+        'within fixed fields. Every draft is rendered in a headless browser and must pass physics, visual, beginner and '
+        'blind-picture reviews.')
 
 AREAS = ['website', 'visuals', 'engines', 'pipeline', 'research', 'curriculum']
 PROPOSAL = obj({'title': STR, 'area': {'type': 'string', 'enum': AREAS}, 'problem': STR, 'proposal': STR,
@@ -114,5 +116,5 @@ def daily_review(factory, root=ROOT, requests=None):
         return document
     except Exception as error:
         write_json(ledger, {'day': today.isoformat(), 'status': 'failed', 'error': type(error).__name__})
-        print(f'Project review stopped ({type(error).__name__}); investigations are unaffected.', flush=True)
+        print(f'Project review stopped ({type(error).__name__}: {str(error)[:160]}); investigations are unaffected.', flush=True)
         return None

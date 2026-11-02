@@ -59,7 +59,7 @@ class FixtureProvider:
                     'reason': 'Fixture reason: the reference path shows the difference.', 'try': 'Fixture try.',
                     'chapters': [{'show': f'Fixture chapter {n}.', 'changes': 'Fixture change.', 'label': ''} for n in (1, 2, 3)],
                     'fits_engine': True, 'missing': ''}
-        if role in ('writer', 'director'):
+        if role == 'writer':
             match = next((s for key, s in ENGINE_SCENES.items() if key in prompt), None)
             scene = deepcopy(match or (CLOCK_SCENE if 'CLOCK MODEL' in prompt else SCENE))
             if 'Previous scene' not in prompt:

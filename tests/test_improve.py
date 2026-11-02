@@ -3,8 +3,10 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 from lab.fixtures import FixtureProvider
 from lab.improve import daily_review, review
+from helpers import READY, curriculum
 
 
 class ImproveTests(unittest.TestCase):
@@ -33,6 +35,14 @@ class ImproveTests(unittest.TestCase):
             self.assertIsNone(daily_review(broken,root,requests=[]))
             self.assertEqual(json.loads((root/'.council-state'/'improve.json').read_text())['status'],'failed')
 
+    def test_a_paused_worker_skips_the_project_review(self):
+        from lab.__main__ import main
+        for paused,reviews in ((True,0),(False,1)):
+            with patch('sys.argv',['lab','daily','--provider','fixture','--publish']),patch('lab.daily.daily'),\
+                 patch('lab.daily.paused',return_value=paused),patch('lab.improve.daily_review',return_value=None) as review:
+                main()
+            self.assertEqual(review.call_count,reviews)
+
     def test_review_keeps_the_designers_blueprints(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/'web').mkdir()
@@ -42,6 +52,7 @@ class ImproveTests(unittest.TestCase):
             self.assertIn('P-20261027-9',[p['id'] for p in doc['proposals']])
 
 
+@patch('lab.daily.READY',READY)
 class BlueprintTests(unittest.TestCase):
     def test_designer_sketches_one_waiting_question_a_day_as_a_proposal(self):
         from lab.daily import blueprint
@@ -67,8 +78,7 @@ class BlueprintTests(unittest.TestCase):
         items=[{'id':'2.2','question':'Can two events be simultaneous for one person but not another?','model':None}]
         for asked in (False,True):
             with tempfile.TemporaryDirectory() as tmp:
-                root=Path(tmp);(root/'web').mkdir()
-                (root/'web'/'curriculum.json').write_text(json.dumps({'chapters':[{'items':items}]}))
+                root=Path(tmp);curriculum(root,items)
                 provider=FixtureProvider();provider.calls=0
                 daily(lambda:provider,root=root,requests=[],blueprints=asked)
                 self.assertEqual(provider.calls,1 if asked else 0)

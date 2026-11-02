@@ -3,7 +3,7 @@ import argparse
 import json
 import tempfile
 from pathlib import Path
-from .pipeline import ROOT
+from . import ROOT
 from .render import ORIGIN, launch, route_files
 
 
@@ -31,7 +31,7 @@ def main():
                 page.goto(ORIGIN + '/web/', wait_until='networkidle'); page.wait_for_timeout(600)
                 shot('home', True); overflow('home')
                 page.click('#lab summary'); page.wait_for_timeout(200); shot('home-status'); page.click('#lab summary')
-                page.locator('#chapters').screenshot(path=str(out / f'{size}-chapters.png'))
+                page.locator('#home').screenshot(path=str(out / f'{size}-guides.png'))
                 page.goto(ORIGIN + '/web/', wait_until='networkidle'); page.wait_for_timeout(300)
                 if page.locator('#proposals-open').is_visible():
                     page.click('#proposals-open'); page.wait_for_timeout(300); shot('proposals'); page.keyboard.press('Escape')

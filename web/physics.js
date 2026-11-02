@@ -50,7 +50,6 @@
     // slowest in-step shaking is one shake a second (drawn slowed down). Friction gamma sets how big an in-step swing
     // grows (about 6 times the hand) and how fast it builds (a few seconds).
     ropeModel: {c: 2, gamma: .33, N: 100, A: .024},
-    ropeRate: b => .5 + (b - 1) * 2,
     ropeStart() {
       const N = this.ropeModel.N;
       return {t: 0, y: new Float64Array(N + 1), old: new Float64Array(N + 1), nw: new Float64Array(N + 1)};
@@ -153,15 +152,6 @@
       };
       return {E,V,w,r,t,T:C.abs2(t),R:C.abs2(r),psi};
     },
-    packet(a, b) {
-      // Gaussian mix of momenta around k0; the momentum spread is set by the first control.
-      const k0=2+2*(b-1), sk=1.1*a, L=48, dk=2*Math.PI/L, comps=[];
-      const J=a<1e-6?0:Math.min(40,Math.ceil(4*sk/dk));
-      for(let j=-J;j<=J;j++){const kj=k0+j*dk, w=J?Math.exp(-((kj-k0)**2)/(4*sk*sk)):1;if(w>1e-4)comps.push([kj,w]);}
-      const norm=Math.sqrt(comps.reduce((s,[,w])=>s+w*w,0));
-      const psi=(x,t)=>{let re=0,im=0;for(const [kj,w] of comps){const ph=kj*x-kj*kj*t;re+=w*Math.cos(ph);im+=w*Math.sin(ph);}return [re/norm,im/norm];};
-      return {k0,sk,L,comps,psi};
-    },
     // A blend of waves k = kc + j*delta with amplitudes from a bell curve of width sk (all equal when sk = 0), every
     // wave at its crest at x = 0. Waves 2*pi/delta apart in x line up again, so delta keeps one burst in view.
     blendDelta: Math.PI / 16, blendCentre: 2.6,
@@ -178,6 +168,11 @@
       let s = 0, s1 = 0, s2 = 0; const n = 4000;
       for (let i = 0; i < n; i++) { const x = -X + 2 * X * i / n, v = B.env(x) ** 2; s += v; s1 += v * x; s2 += v * x * x; }
       const m = s1 / s; return Math.sqrt(s2 / s - m * m);
+    },
+    // The spread of wave numbers (speeds) in a blend's recipe, each wave weighted by its share of the intensity.
+    blendSpeedSpread(sk) {
+      const js = this.blendRange(sk), w = js.map(j => this.blendAmp(j, sk) ** 2), all = w.reduce((s, x) => s + x, 0);
+      return Math.sqrt(js.reduce((s, j, i) => s + w[i] * (j * this.blendDelta) ** 2, 0) / all);
     },
     blendChecks() {
       const D = this.blendDelta, two = this.blendWaves([[-1, 1], [1, 1]]);
@@ -266,7 +261,8 @@
       return Object.entries({
         'Every shell of stars adds the same light, near or far': [1, 1e3, 1e9, 1e20].every(r => rel(this.nightShellLight(r, 1), this.nightShellLight(10, 1))),
         'Every shell covers the same share of the sky': [1, 1e6, 1e15].every(r => rel(this.nightShellCover(r, 1), this.nightShellCover(10, 1))),
-        'A shell twice as far holds four times the stars, each a quarter as bright': rel(this.nightShellStars(2e9, 1) / this.nightShellStars(1e9, 1), 4) && rel((1 / (2e9) ** 2) / (1 / (1e9) ** 2), .25),
+        'A shell twice as far holds four times the stars, each a quarter as bright': (() => { const each = r => this.nightShellLight(r, 1) / this.nightShellStars(r, 1);
+          return rel(this.nightShellStars(2e9, 1) / this.nightShellStars(1e9, 1), 4) && rel(each(2e9) / each(1e9), .25); })(),
         'Shells add up: the covered share is the sum of thin shells while it is small': rel(this.nightCover(1e12), 1e12 * this.nightShellCover(5e11, 1), 1e-6),
         'With stars forever and unchanging, every sight line ends on a star: the sky is as bright as a star’s surface': this.nightCover(Infinity) === 1 && this.nightCover(100 * L) === 1,
         'A sight line typically travels about 2 × 10^24 light-years before meeting a star': L > 1e24 && L < 1e25,
@@ -358,6 +354,9 @@
       const h=t=>v0*t-g*t*t/2, v=t=>v0-g*t;
       return {g,T,v0,h,v};
     },
+    // Two walkers start on the equator of a ball of radius 1, a longitude apart (radians), and each walks due north,
+    // straight ahead on the ball: their distance apart along the surface once they reach latitude lat.
+    walkersGap(lat, apart = .7) { return 2 * Math.asin(Math.cos(lat) * Math.sin(apart / 2)); },
     // Free fall from rest toward a planet of radius 1 (Newtonian, exact for weak gravity); stops at the surface.
     tides(a) {
       const GM=a;
@@ -429,7 +428,6 @@
       }).map(([name,pass])=>({name,pass}));
     },
     reflected(a,b){return this.barrier(a,b).R;},
-    momentumSpread(a){return 1.1*a;},
     levelCount(a,b){return this.well(a,b).levels.length;},
     tunnelChecks() {
       const near=(x,y,e=1e-9)=>Math.abs(x-y)<e, cases=[[.8,1],[.8,2.5],[.3,1.6],[1,1.4]];
@@ -444,19 +442,12 @@
         'Transmission matches the textbook formula':near(b.T,analytic,1e-9),
       }).map(([name,pass])=>({name,pass}));
     },
+    // The wave-packet guide draws blends of waves (blendWaves); its readout gives the blend's width as the spread of speeds.
     packetChecks() {
-      const spread=(a,t=0)=>{const p=this.packet(a,1.5);let s=0,s1=0,s2=0;const n=3000;
-        for(let i=0;i<n;i++){const x=-p.L/2+p.L*i/n, v=this.cx.abs2(p.psi(x,t));s+=v;s1+=v*x;s2+=v*x*x;}const m=s1/s;return Math.sqrt(s2/s-m*m);};
-      const sx=spread(.6), sk=this.momentumSpread(.6);
-      return Object.entries({
-        'A single momentum is one pure wave':this.packet(0,1.5).comps.length===1,
-        'Narrower momentum mix gives a wider packet':spread(.3)>spread(.9),
-        'Position spread times momentum spread is the minimum, one half':Math.abs(sx*sk-.5)<.02,
-        'A packet spreads out as it moves':spread(.6,.4)>spread(.6,0),
-        'Momentum spread readout is zero for one wave':this.momentumSpread(0)===0,
-        ...Object.fromEntries(this.blendChecks().map(c => [c.name, c.pass])),
-        'Total probability is the same for any mix':[.3,.9].every(a=>{const q=this.packet(a,1.5);let s=0;const n=4000;for(let i=0;i<n;i++)s+=this.cx.abs2(q.psi(-q.L/2+q.L*i/n,0))*q.L/n;return Math.abs(s/q.L-1)<1e-6;}),
-      }).map(([name,pass])=>({name,pass}));
+      return [...Object.entries({
+        'A single momentum is one pure wave': this.blendRange(0).length === 1 && [0, 3.7, 11.2].every(x => Math.abs(this.blendWaves([[0, this.blendAmp(0, 0)]]).sum(x) - Math.cos(this.blendCentre * x)) < 1e-12),
+        'The spread of speeds shown matches the mix of waves, and is zero for one wave': this.blendSpeedSpread(0) === 0 && [.12, .25, .5].every(sk => Math.abs(this.blendSpeedSpread(sk) / sk - 1) < .015),
+      }).map(([name, pass]) => ({name, pass})), ...this.blendChecks()];
     },
     wellChecks() {
       const w=this.well(1,2.5), E=w.levels.map(l=>l.E), deep=this.well(1,2.5);
@@ -486,44 +477,25 @@
         'A wider trap holds more allowed energies, lower down': this.trapLevels(3).length > E.length && this.trapLevels(3)[0] < E[0] && this.trapLevels(1).length < E.length,
       }).map(([name, pass]) => ({name, pass}));
     },
-    // A test for a rare disease. Of n people a share p is sick; the test catches a sick person with probability sens
-    // and wrongly flags a healthy one with probability 1 - spec. Expected numbers of people.
-    rateTest(p, n = 1000, sens = .99, spec = .99) {
-      const sick = n * p, healthy = n - sick, caught = sick * sens, alarms = healthy * (1 - spec);
-      return {sick, healthy, caught, alarms, share: caught + alarms > 0 ? caught / (caught + alarms) : 0};
-    },
-    // The slider runs from nobody (0) through 1 in 10,000 to 1 in 10 (1), evenly in powers of ten.
-    ratePrevalence(a) { return a <= 0 ? 0 : Math.pow(10, -4 + 3 * Math.min(1, a)); },
-    rateChecks() {
-      const near = (x, y, e = 1e-9) => Math.abs(x - y) < e, r = p => this.rateTest(p);
-      const rare = r(.001), retest = this.rateTest(rare.share);
-      return Object.entries({
-        'With 1 in 1,000 sick, about 1 person tests positive rightly and about 10 wrongly': near(rare.caught, .99) && near(rare.alarms, 9.99),
-        'So only about 1 positive in 11 is sick (9%)': Math.abs(rare.share - 1 / 11) < .002,
-        'With 1 in 100 sick, a positive is right exactly half the time': near(r(.01).share, .5),
-        'With 1 in 10 sick, a positive is right about 92% of the time': Math.abs(r(.1).share - .9167) < 1e-3,
-        'The rarer the disease, the less a positive means': [.1, .01, .001, .0001].every((p, i, a) => i === 0 || r(p).share < r(a[i - 1]).share),
-        'A second, independent positive raises the chance to about 91%': Math.abs(retest.share - .9075) < 1e-3,
-        'The slider spans nobody, 1 in 10,000, 1 in 1,000 and 1 in 10': this.ratePrevalence(0) === 0 && near(this.ratePrevalence(1e-12), 1e-4, 1e-9) && near(this.ratePrevalence(1 / 3), .001) && near(this.ratePrevalence(1), .1),
-        'With nobody sick, no positive is right': r(0).share === 0,
-      }).map(([name, pass]) => ({name, pass}));
-    },
     // Shared birthdays, with 365 equally likely birthdays. The chance that at least two of n people share one: each
     // newcomer must miss every birthday already in the room. And the chance that one of n - 1 others shares yours.
     birthdayShared(n) { let none = 1; for (let k = 0; k < n; k++) none *= (365 - k) / 365; return n > 365 ? 1 : 1 - none; },
     birthdayMine(n) { return n <= 1 ? 0 : 1 - Math.pow(364 / 365, n - 1); },
+    birthdayPairs(n) { return n * (n - 1) / 2; },
     birthdayChecks() {
       const near = (x, y, e) => Math.abs(x - y) < e, P = n => this.birthdayShared(n);
+      // Each newcomer pairs with everyone already in the room, as people arrive one at a time.
+      const arriving = n => Array.from({length: n}, (_, k) => this.birthdayPairs(k + 1) - this.birthdayPairs(k)).every((added, k) => added === k);
       return Object.entries({
         'Someone among 22 others shares your birthday about 6% of the time': near(this.birthdayMine(23), .0586, 5e-4),
-        '23 people make 253 pairs': 23 * 22 / 2 === 253,
+        '23 people make 253 pairs': this.birthdayPairs(23) === 253 && arriving(23),
         'With 23 people a shared birthday is just more likely than not (50.7%)': near(P(23), .5073, 5e-4),
         'With 22 people it is still less likely than not, so 23 is the smallest such group': P(22) < .5 && P(23) > .5,
         'With 30 people it is about 71%, and with 50 about 97%': near(P(30), .7063, 5e-4) && near(P(50), .9704, 5e-4),
-        '50 people make 1,225 pairs': 50 * 49 / 2 === 1225,
+        '50 people make 1,225 pairs': this.birthdayPairs(50) === 1225 && arriving(50),
         'The chance only grows as people arrive': Array.from({length: 60}, (_, n) => n + 1).every(n => P(n + 1) > P(n)),
         'One person alone shares a birthday with nobody': P(1) === 0,
-        'Treating the 253 pairs as separate one-in-365 bets gives almost the same answer': near(1 - Math.pow(364 / 365, 253), P(23), .01),
+        'Treating the 253 pairs as separate one-in-365 bets gives almost the same answer': near(1 - Math.pow(364 / 365, this.birthdayPairs(23)), P(23), .01),
       }).map(([name, pass]) => ({name, pass}));
     },
     // Sky colour: air molecules, far smaller than light's waves, scatter light as the inverse fourth power of its
@@ -537,7 +509,8 @@
       const near = (a, b, e) => Math.abs(a - b) < e;
       return Object.entries({
         'Blue light (450 nm) is scattered about six times as much as red (700 nm)': near(this.skyScatter(450), 5.86, .01),
-        'Blue light is a wave about one and a half times as quick as red': near(700 / 450, 1.56, .01),
+        'Blue light shakes about one and a half times as often as red, and scattering grows as the fourth power of that': (() => {
+          const f = 700 / 450; return near(f, 1.56, .01) && near(this.skyScatter(450) / this.skyScatter(700), f ** 4, 1e-9) && near(this.skyDepth(450) / this.skyDepth(700), f ** 4, .2); })(),
         'With the Sun overhead, sunlight crosses one air mass': near(this.skyAirMass(90), 1, .002),
         'With the Sun on the horizon it crosses about 38 times as much air': near(this.skyAirMass(0), 38, 1),
         'Overhead, about four fifths of the blue gets through': near(this.skyThrough(450, 90), .8, .02),
@@ -546,47 +519,25 @@
         'Blue is always dimmed more than red': [90, 30, 5, 0].every(e => this.skyThrough(450, e) < this.skyThrough(700, e)),
       }).map(([name, pass]) => ({name, pass}));
     },
-    // Seasons. Earth's axis is tilted by 23.44 degrees; on a day when the Sun stands over latitude decl, the noon Sun's
-    // height at latitude lat is 90 - |lat - decl| degrees, and the day's sunlight on level ground (top of the air,
-    // relative) follows from the Sun's height through the day. The distance to the Sun runs from 147.1 million km in
-    // early January to 152.1 million km in early July.
-    seasonTilt: 23.44, seasonNear: 147.1, seasonFar: 152.1,
-    seasonNoon(lat, decl) { return 90 - Math.abs(lat - decl); },
-    seasonDay(lat, decl) {
-      const r = Math.PI / 180, p = lat * r, d = decl * r, c = Math.max(-1, Math.min(1, -Math.tan(p) * Math.tan(d))), h0 = Math.acos(c);
-      return (h0 * Math.sin(p) * Math.sin(d) + Math.cos(p) * Math.cos(d) * Math.sin(h0)) / Math.PI;
-    },
-    seasonRatio(lat, tilt = this.seasonTilt) { return this.seasonDay(lat, tilt) / this.seasonDay(lat, -tilt); },
-    seasonChecks() {
-      const near = (a, b, e) => Math.abs(a - b) < e, T = this.seasonTilt, r = Math.PI / 180;
-      return Object.entries({
-        'Earth is closest to the Sun in January and farthest in July, about 3% apart': this.seasonNear < this.seasonFar && near(this.seasonFar / this.seasonNear, 1.034, .001),
-        'The changing distance alters the sunlight by only about 7%': near((this.seasonFar / this.seasonNear) ** 2, 1.069, .002),
-        'At 40 degrees north the noon Sun is about 73 degrees high in June and 27 in December': near(this.seasonNoon(40, T), 73.4, .1) && near(this.seasonNoon(40, -T), 26.6, .1),
-        'The same beam covers about twice as much ground at December noon': near(Math.sin(this.seasonNoon(40, T) * r) / Math.sin(this.seasonNoon(40, -T) * r), 2.14, .01),
-        'At 40 degrees north a June day gets about three times the sunlight of a December day': near(this.seasonRatio(40), 3.3, .05),
-        'With no tilt, June and December get the same sunlight': near(this.seasonRatio(40, 0), 1, 1e-12),
-        'The seasons are opposite in the south': this.seasonRatio(-40) < 1 && near(this.seasonRatio(-40), 1 / this.seasonRatio(40), 1e-9),
-        'A bigger tilt makes the seasons stronger': this.seasonRatio(40, 35) > this.seasonRatio(40, 23.44),
-      }).map(([name, pass]) => ({name, pass}));
-    },
     // Which checks belong to each visual model; light bending uses checks().
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'base-rate':this.rateChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'seasons':this.seasonChecks,'night-sky':this.nightChecks};
+        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },
     // Every model's checks, run in CI.
     allChecks() { return [...this.checks(), ...Object.keys(this.checkSets()).flatMap(kind => this.checksFor(kind))]; },
     spacetimeChecks() {
-      const near=(a,b)=>Math.abs(a-b)<1e-12, g=this.gamma(this.speed(1));
+      const near=(a,b)=>Math.abs(a-b)<1e-12;
+      // The traveller's own time for the round trip: the spacetime length of each straight leg, out and back.
+      const own=(a,b)=>{const v=this.speed(a),T=this.turnaround(b);return 2*this.properTime(T,v*T);};
       return Object.entries({
         'Zero speed gives equal ages':near(this.agingGap(0),0),
         'Faster trips widen the age gap':this.agingGap(1)>this.agingGap(.5),
         'Time-dilation factor at 0.6 light speed is 1.25':near(this.gamma(.6),1.25),
         'Traveller worldline stays inside the light cone':this.speed(1)<1,
-        'Round-trip traveller time is home time divided by the factor':near(2*this.turnaround(2.5)/g,2*this.turnaround(2.5)*(1-this.agingGap(1))),
-        'Trip length does not change the percentage gap':near(1-1/this.gamma(this.speed(.7)),this.agingGap(.7)),
+        'Round-trip traveller time is home time divided by the factor':[.3,.7,1].every(a=>near(own(a,2.5),2*this.turnaround(2.5)/this.gamma(this.speed(a)))),
+        'Trip length does not change the percentage gap':[1,1.6,2.5].every(b=>near(1-own(.7,b)/(2*this.turnaround(b)),this.agingGap(.7))),
       }).map(([name,pass])=>({name,pass}));
     },
     lightClockChecks() {
@@ -645,9 +596,8 @@
       const P=this.tides(1), d=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]), t=1.2;
       const side=[P.fall(-.1,3,t),P.fall(.1,3,t)], stack=[P.fall(0,3,t),P.fall(0,3.2,t)], e=1e-3, s=.2;
       const sq=P.fall(e,3,s)[0]-e, st=(P.fall(0,3+e,s)[1]-P.fall(0,3,s)[1])-e;
-      const gap=lat=>2*Math.asin(Math.cos(lat)*Math.sin(.35));
       return Object.entries({
-        'Walkers heading north from the equator close their gap to zero at the pole':gap(Math.PI/2)<1e-12&&gap(1)<gap(.5),
+        'Walkers heading north from the equator close their gap to zero at the pole':this.walkersGap(Math.PI/2)<1e-12&&this.walkersGap(1)<this.walkersGap(.5)&&Math.abs(this.walkersGap(0)-.7)<1e-12,
         'Balls released side by side drift together':d(...side)<.2,
         'Balls released one above the other drift apart':d(...stack)>.2,
         'Stretching starts at twice the squeezing':Math.abs(st/sq+2)<.05,
@@ -659,16 +609,19 @@
     liftChecks() {
       const L=this.lift(), near=(x,y,e=1e-9)=>Math.abs(x-y)<e;
       const net=L.ride.reduce((s,[d,a])=>s+d*a,0);
-      // In free fall you and a released apple speed up together, so the gap between you stays the same.
-      const gap=t=>(1.2-.5*L.g*t*t)-(0-.5*L.g*t*t);
+      // How a released apple speeds up relative to you (downward negative): only its weight pulls it, while the scale
+      // also pushes you. While the lift holds you it drops to the floor; falling freely, it stays where it is.
+      const apart=a=>-L.g-L.g*(L.reading(a)-1);
+      // The lift's speed during the ride, from its accelerations.
+      const speed=t=>{let v=0;for(let q=.005;q<t;q+=.01)v+=L.accelAt(q)*.01;return v;};
       return Object.entries({
         'Parked, the scale reads your weight':near(L.reading(0),1),
         'Speeding up upward, it reads more':L.reading(2.5)>1,
         'Slowing on the way up, it reads less':L.reading(-2.5)<1,
         'With the cable snapped, it reads zero':L.reading(-L.g)===0,
-        'A released apple keeps its place beside you':near(gap(0),gap(2.5)),
+        'A released apple keeps its place beside you':near(apart(-L.g),0)&&[1,0,-1].every(a=>apart(a)<0),
         'The ride starts and ends at rest':near(net,0),
-        'Steady at any speed, the scale reads your weight; falling freely, zero':near(L.reading(0),1)&&L.reading(-L.g)===0,
+        'Steady at any speed, the scale reads your weight; falling freely, zero':speed(6)>3.9&&near(L.reading(L.accelAt(6)),1)&&near(L.reading(L.accelAt(.5)),1)&&L.reading(-L.g)===0,
       }).map(([name,pass])=>({name,pass}));
     },
     moonChecks() {
@@ -704,6 +657,9 @@
     },
     waveChecks() {
       const near=(a,b)=>Math.abs(a-b)<1e-12;
+      // The first dark stripe's distance from the middle of a screen 30 wavelengths away, from the brightness it shows.
+      const firstDark=b=>{const d=this.separation(b), I=x=>this.brightness(1,2*Math.PI*(Math.hypot(x+d/2,30)-Math.hypot(x-d/2,30)));
+        let x=0;while(x<30&&I(x+1e-3)<I(x))x+=1e-3;return x;};
       return Object.entries({
         'One source gives no stripes':near(this.visibility(0),0),
         'Equal sources give full-contrast stripes':near(this.visibility(1),1),
@@ -711,7 +667,7 @@
         'Half-wavelength path difference cancels equal waves':near(this.intensity(1,Math.PI),0),
         'Unequal sources leave dark stripes partly lit':this.intensity(.5,Math.PI)>0,
         'Two equal sources make bright stripes four times one source':near(this.brightness(1,0),4*this.brightness(0,0)),
-        'Wider separation packs stripes closer':this.separation(2.5)>this.separation(1),
+        'Wider separation packs stripes closer':firstDark(2.5)<firstDark(1),
       }).map(([name,pass])=>({name,pass}));
     },
     ropeChecks() {
@@ -747,7 +703,7 @@
         'More mass increases the clock difference':q(1,1)<q(.5,1),
         'Moving both clocks outward reduces the difference':q(1,2.5)>q(1,1),
         'Ratio matches analytic Schwarzschild value':near(q(1,1),Math.sqrt(57/59)),
-        'Magnified clock motion stays positive':1-12*(1-q(1,1))>0,
+        'Clock hand motion stays positive':1-12*(1-q(1,1))>0,
       }).map(([name,pass])=>({name,pass}));
     },
     checks() {
@@ -758,7 +714,8 @@
         'Doubling passing distance halves deflection': near(this.deflection(.5,2),this.deflection(.5,1)/2),
         'Far-field slope agrees with 4m/b': Math.abs(this.slope(1e6,.7,1.25)+this.deflection(.7,1.25))<1e-9,
         'Bending points toward the mass': this.deviation(3,.7,1.25)<0,
-        'Controls remain in the weak-field regime': this.m(1)/1 <= .025,
+        'Controls remain in the weak-field regime': (()=>{const mu=this.m(1),b=1,X=7.5,p=this.lightPath(mu,b,-X,X,2000),a=p.at(-1),c=p.at(-2),bend=-Math.atan2(a[1]-c[1],a[0]-c[0]);
+          return Math.abs(bend/(4*mu/b*X/Math.hypot(X,b))-1)<.04;})(),
         'Flat mesh when there is no mass': this.meshHeight(0,3)===0 && this.lightPath(0,1).every(p=>p[1]===1),
         'Mesh distances equal light travel time': [.5,1,3,7].every(R=>{const mu=.15,d=1e-5,dz=this.meshHeight(mu,R+d)-this.meshHeight(mu,R);
           return Math.abs(Math.hypot(d,dz)-(1+2*mu/R)*d)<1e-8;}),

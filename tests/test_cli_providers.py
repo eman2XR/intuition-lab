@@ -99,9 +99,9 @@ class CLIAdapterTests(unittest.TestCase):
         self.assertLess(time.monotonic()-start,3)
         self.assertEqual(len(provider._processes),0)
 
-    def test_only_three_workers_execute_at_once(self):
+    def test_only_four_workers_execute_at_once(self):
         with tempfile.TemporaryDirectory() as tmp, patch('lab.cli_providers.ROOT',Path(tmp)):
-            provider=self.adapter('claude',max_calls=5)
+            provider=self.adapter('claude',max_calls=6)
             active=peak=0
             lock=threading.Lock()
             def execute(*args):
@@ -112,10 +112,10 @@ class CLIAdapterTests(unittest.TestCase):
                 with lock:active-=1
                 return json.dumps({'type':'result','subtype':'success','result':'notes'})
             with patch.object(provider,'_execute',side_effect=execute):
-                with ThreadPoolExecutor(max_workers=5) as pool:
-                    results=list(pool.map(lambda _:provider.generate('scientist','test'),range(5)))
-            self.assertEqual(results,['notes']*5)
-            self.assertEqual(peak,3)
+                with ThreadPoolExecutor(max_workers=6) as pool:
+                    results=list(pool.map(lambda _:provider.generate('scientist','test'),range(6)))
+            self.assertEqual(results,['notes']*6)
+            self.assertEqual(peak,4)
 
     def test_cancel_stops_active_worker(self):
         provider=self.adapter(timeout=30)

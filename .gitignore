@@ -16,3 +16,5 @@ web/latest.json
 .council-runtime/
 .council-state/
 _site/
+*.tmp
+.claude/

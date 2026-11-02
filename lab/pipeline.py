@@ -3,15 +3,13 @@ import json
 import re
 import time
 import uuid
-from pathlib import Path
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from . import ROOT, sources
 from .contracts import RESEARCH_SCHEMA, SCENE_SCHEMA, REVIEW_SCHEMA, DESIGN_SCHEMA, validate, validate_scene, validate_design
-from .render import capture, ROOT
+from .render import capture
 from .topics import TOPICS
 
-
-from . import sources
 
 def write_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -24,14 +22,16 @@ def approved(review):
     return review['pass'] is True and 7 <= review['score'] <= 10 and not review['blocking_issues']
 
 
-UNRETRIEVED = re.compile(r'not retrieved|could(?:n.t| not) (?:open|retrieve|fetch|get)|refused|failed|403|blocked', re.I)
+UNRETRIEVED = re.compile(r'\b(?:not retrieved|could(?:n.t| not) (?:open|retrieve|fetch|get)|refused|failed|403|blocked)\b', re.I)
+URL = re.compile(r'https?://[^\s)\]>`\'"|]+')
 
 
 def keep_retrieved(research, notes):
-    """Drop cited sources that the researcher's notes mark as not retrieved; note the removal honestly."""
-    flagged = {url for line in notes.splitlines() if UNRETRIEVED.search(line)
-               for url in re.findall(r'https?://[^\s)\]>`\'"|]+', line)}
-    kept = [s for s in research['sources'] if not any(s['url'].rstrip('.,;') == u.rstrip('.,;') or s['url'].startswith(u.rstrip('.,;')) for u in flagged)]
+    """Drop cited sources that the researcher's notes mark as not retrieved; note the removal honestly. Words inside
+    URLs (arxiv.org/abs/2403.01234) never count, and only the exact flagged address is dropped, not its whole site."""
+    flagged = {url.rstrip('.,;') for line in notes.splitlines() if UNRETRIEVED.search(URL.sub(' ', line))
+               for url in URL.findall(line)}
+    kept = [s for s in research['sources'] if s['url'].rstrip('.,;') not in flagged]
     removed = len(research['sources']) - len(kept)
     if removed:
         research = {**research, 'sources': kept,
@@ -85,6 +85,13 @@ BLIND = ('You see only these pictures, in order, with no words and no sound: a l
     'out with no visible reason, a change you cannot see. The narration explains the idea, so do not fail the pictures '
     'for leaving that to the words. Pass unless a picture is cluttered or misleading, or a chapter\'s main change cannot '
     'be seen. Score 0..10 for how clearly the pictures alone show what changes.')
+
+
+def calls_needed(rounds, planner=False):
+    """The model-call budget of one investigation, counted from run() below: researcher, scientist and designer, then a
+    writer and four reviewers per revision, plus the coordinator's source finder when that fallback is on and the
+    daily planner when owner requests need one."""
+    return 3 + 5 * rounds + (1 if sources.enabled() else 0) + (1 if planner else 0)
 
 
 def run(provider, rounds=3, on_update=None, topic="light-bending", question=None, guidance=()):
