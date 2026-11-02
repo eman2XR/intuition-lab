@@ -1,12 +1,21 @@
 {
-  "status": "planning",
-  "question": "Choosing the next question",
-  "topic": null,
-  "id": null,
+  "status": "running",
+  "question": "Why can nothing travel faster than light?",
+  "topic": "speed-limit",
+  "id": "20261102T170016-a02e7bd6",
   "revision": 0,
   "guidance": 0,
-  "updated": "2026-11-02T17:00:07.715422+00:00",
-  "events": [],
+  "updated": "2026-11-02T17:03:33.175464+00:00",
+  "events": [
+    {
+      "at": "2026-11-02T17:00:16.436274+00:00",
+      "message": "Researcher is gathering sources and constraints."
+    },
+    {
+      "at": "2026-11-02T17:03:33.167653+00:00",
+      "message": "Sources retrieved. Scientist is preparing the research record."
+    }
+  ],
   "schedule": {
     "enabled": true,
     "hour": 9,
@@ -72,7 +81,10 @@
     },
     {
       "day": "2026-11-02",
-      "status": "planning"
+      "question": "Why can nothing travel faster than light?",
+      "topic": "speed-limit",
+      "status": "running",
+      "run_id": "20261102T170016-a02e7bd6"
     }
   ]
 }
