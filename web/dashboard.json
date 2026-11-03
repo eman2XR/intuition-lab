@@ -1,45 +1,12 @@
 {
-  "status": "reviewed",
-  "question": "Why can nothing travel faster than light?",
-  "topic": "speed-limit",
-  "id": "20261102T170016-a02e7bd6",
-  "revision": 1,
+  "status": "planning",
+  "question": "Choosing the next question",
+  "topic": null,
+  "id": null,
+  "revision": 0,
   "guidance": 0,
-  "updated": "2026-11-02T17:10:08.768877+00:00",
-  "events": [
-    {
-      "at": "2026-11-02T17:08:02.743554+00:00",
-      "message": "Revision 1: rendering desktop and mobile frames."
-    },
-    {
-      "at": "2026-11-02T17:08:19.690201+00:00",
-      "message": "Revision 1: reviewers are inspecting the rendered frames."
-    },
-    {
-      "at": "2026-11-02T17:09:04.317914+00:00",
-      "message": "Revision 1: blind_review saved."
-    },
-    {
-      "at": "2026-11-02T17:09:36.921401+00:00",
-      "message": "Revision 1: learner_review saved."
-    },
-    {
-      "at": "2026-11-02T17:09:39.553650+00:00",
-      "message": "Revision 1: physics_review saved."
-    },
-    {
-      "at": "2026-11-02T17:10:04.386979+00:00",
-      "message": "Revision 1: visual_review saved."
-    },
-    {
-      "at": "2026-11-02T17:10:04.398620+00:00",
-      "message": "Revision 1: review gates passed."
-    },
-    {
-      "at": "2026-11-02T17:10:04.406906+00:00",
-      "message": "Investigation reviewed. Artifact is ready for human inspection; no new-discovery claim."
-    }
-  ],
+  "updated": "2026-11-03T17:00:13.349635+00:00",
+  "events": [],
   "schedule": {
     "enabled": true,
     "hour": 9,
@@ -48,6 +15,7 @@
     "provider": "claude",
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
+  "checked": null,
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
     {
@@ -109,6 +77,10 @@
       "topic": "speed-limit",
       "status": "reviewed",
       "run_id": "20261102T170016-a02e7bd6"
+    },
+    {
+      "day": "2026-11-03",
+      "status": "planning"
     }
   ]
 }
