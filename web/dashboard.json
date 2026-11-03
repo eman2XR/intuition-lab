@@ -3,9 +3,9 @@
   "question": "Why does a moving clock tick slowly?",
   "topic": "light-clock",
   "id": "20261103T170022-151700a6",
-  "revision": 0,
+  "revision": 1,
   "guidance": 0,
-  "updated": "2026-11-03T17:05:42.763760+00:00",
+  "updated": "2026-11-03T17:07:43.476329+00:00",
   "events": [
     {
       "at": "2026-11-03T17:00:22.666407+00:00",
@@ -22,6 +22,18 @@
     {
       "at": "2026-11-03T17:05:42.757119+00:00",
       "message": "Design brief ready. Writer is writing the chapters and narration."
+    },
+    {
+      "at": "2026-11-03T17:06:34.929571+00:00",
+      "message": "Revision 1: rendering desktop and mobile frames."
+    },
+    {
+      "at": "2026-11-03T17:06:55.471017+00:00",
+      "message": "Revision 1: reviewers are inspecting the rendered frames."
+    },
+    {
+      "at": "2026-11-03T17:07:43.469349+00:00",
+      "message": "Revision 1: blind_review saved."
     }
   ],
   "schedule": {
