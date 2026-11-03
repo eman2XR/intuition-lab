@@ -3,30 +3,10 @@
   "question": "Why does a moving clock tick slowly?",
   "topic": "light-clock",
   "id": "20261103T170022-151700a6",
-  "revision": 1,
+  "revision": 2,
   "guidance": 0,
-  "updated": "2026-11-03T17:07:43.476329+00:00",
+  "updated": "2026-11-03T17:09:54.556707+00:00",
   "events": [
-    {
-      "at": "2026-11-03T17:00:22.666407+00:00",
-      "message": "Researcher is gathering sources and constraints."
-    },
-    {
-      "at": "2026-11-03T17:03:21.165505+00:00",
-      "message": "Sources retrieved. Scientist is preparing the research record."
-    },
-    {
-      "at": "2026-11-03T17:05:06.126017+00:00",
-      "message": "Research recorded. Designer is planning how the picture will show the idea."
-    },
-    {
-      "at": "2026-11-03T17:05:42.757119+00:00",
-      "message": "Design brief ready. Writer is writing the chapters and narration."
-    },
-    {
-      "at": "2026-11-03T17:06:34.929571+00:00",
-      "message": "Revision 1: rendering desktop and mobile frames."
-    },
     {
       "at": "2026-11-03T17:06:55.471017+00:00",
       "message": "Revision 1: reviewers are inspecting the rendered frames."
@@ -34,6 +14,30 @@
     {
       "at": "2026-11-03T17:07:43.469349+00:00",
       "message": "Revision 1: blind_review saved."
+    },
+    {
+      "at": "2026-11-03T17:07:51.754329+00:00",
+      "message": "Revision 1: physics_review saved."
+    },
+    {
+      "at": "2026-11-03T17:08:06.373615+00:00",
+      "message": "Revision 1: learner_review saved."
+    },
+    {
+      "at": "2026-11-03T17:08:34.164463+00:00",
+      "message": "Revision 1: visual_review saved."
+    },
+    {
+      "at": "2026-11-03T17:08:34.177204+00:00",
+      "message": "Revision 1: changes requested; feedback saved."
+    },
+    {
+      "at": "2026-11-03T17:09:40.234051+00:00",
+      "message": "Revision 2: rendering desktop and mobile frames."
+    },
+    {
+      "at": "2026-11-03T17:09:54.553103+00:00",
+      "message": "Revision 2: reviewers are inspecting the rendered frames."
     }
   ],
   "schedule": {
