@@ -5,20 +5,8 @@
   "id": "20261103T170022-151700a6",
   "revision": 3,
   "guidance": 0,
-  "updated": "2026-11-03T17:17:53.874136+00:00",
+  "updated": "2026-11-03T17:20:11.309725+00:00",
   "events": [
-    {
-      "at": "2026-11-03T17:10:48.592647+00:00",
-      "message": "Revision 2: blind_review saved."
-    },
-    {
-      "at": "2026-11-03T17:11:06.817486+00:00",
-      "message": "Revision 2: physics_review saved."
-    },
-    {
-      "at": "2026-11-03T17:11:14.714204+00:00",
-      "message": "Revision 2: visual_review saved."
-    },
     {
       "at": "2026-11-03T17:11:46.946993+00:00",
       "message": "Revision 2: learner_review saved."
@@ -38,6 +26,18 @@
     {
       "at": "2026-11-03T17:17:53.861590+00:00",
       "message": "Revision 3: blind_review saved."
+    },
+    {
+      "at": "2026-11-03T17:18:14.290769+00:00",
+      "message": "Revision 3: visual_review saved."
+    },
+    {
+      "at": "2026-11-03T17:18:43.290984+00:00",
+      "message": "Revision 3: physics_review saved."
+    },
+    {
+      "at": "2026-11-03T17:20:11.302930+00:00",
+      "message": "Revision 3: learner_review saved."
     }
   ],
   "schedule": {
