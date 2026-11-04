@@ -1,7 +1,20 @@
 {
-  "updated": "2026-11-03T17:29:58.879343+00:00",
+  "updated": "2026-11-04T18:20:55.900255+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261104-3",
+      "status": "open",
+      "created": "2026-11-04T18:20:55.900231+00:00",
+      "title": "Mobile length caps on why and beat titles",
+      "area": "pipeline",
+      "problem": "Copy overflows the mobile layout: light-clock's why is 33 words against the roughly 25-word target, and twin-trip's chapter title is too long for one mobile line. Both returned as review findings that a cheap automated check would have caught first.",
+      "proposal": "Add a validation check that the one-line why is at most about 25 words and each beat title fits one line at the mobile breakpoint, measured by rendered width against the known title style with a conservative character fallback. Emit a warning with the current length and the limit. Apply the caps only to why and titles, not to subtitle bodies, because other findings require adding words (for example defining 'light-year') and bodies must stay free to do that.",
+      "benefit": "Near-zero-cost fix for two recurring findings; frees reviewer attention for substance.",
+      "effort": "small",
+      "risk": "A rigid character cap can force awkward truncation, so measure against the actual mobile title style where possible and treat the cap as a reviewer-overridable warning, not a hard block.",
+      "evidence": []
+    },
     {
       "id": "P-20261027-3",
       "status": "declined",
