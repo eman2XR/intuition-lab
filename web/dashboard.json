@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-03T17:20:33.677232+00:00",
-    "outcome": "Investigated \u201cWhy does a moving clock tick slowly?\u201d: did not pass review, so it stays a draft."
+    "at": "2026-11-04T18:13:01.066384+00:00",
+    "outcome": "No question is ready to investigate; nothing started."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
