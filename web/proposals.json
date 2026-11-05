@@ -1,7 +1,22 @@
 {
-  "updated": "2026-11-04T18:20:55.900255+00:00",
+  "updated": "2026-11-05T17:01:36.002235+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261105-9",
+      "kind": "blueprint",
+      "curriculum": "2.2",
+      "status": "open",
+      "created": "2026-11-05T17:01:36.001621+00:00",
+      "title": "A picture for \u201cCan two events be simultaneous for one person but not another?\u201d",
+      "area": "engines",
+      "problem": "No visual engine can show this question yet, so the daily run cannot investigate it.",
+      "proposal": "\"At the same time\" is not a fact everyone shares. Whether two events count as simultaneous depends on how you are moving. There is no single universal \"now\" stamped on the universe. Chapter 1: Side view of a train car. A lamp dot sits dead center; the rear (left) and front (right) walls are equidistant, each carrying a small stopped clock. The rider stands beside the lamp. Chapter 2: Same car in the rider's frame. Two light pulses leave the lamp as equal expanding arcs heading to each wall. Chapter 3: The same flash, but now the whole car glides rightward past a still platform observer below. ",
+      "benefit": "The daily run could then investigate \u201cCan two events be simultaneous for one person but not another?\u201d.",
+      "effort": "medium",
+      "risk": "Needs hand-built drawing code, model checks and a beginner test before it is marked ready.",
+      "evidence": []
+    },
     {
       "id": "P-20261104-3",
       "status": "open",
