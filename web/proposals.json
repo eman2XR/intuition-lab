@@ -1,7 +1,20 @@
 {
-  "updated": "2026-11-06T17:11:24.994056+00:00",
+  "updated": "2026-11-06T17:14:35.950418+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261106-2",
+      "status": "open",
+      "created": "2026-11-06T17:14:35.950237+00:00",
+      "title": "Require every percentage readout to name what it is a percentage of",
+      "area": "pipeline",
+      "problem": "Ambiguous comparative percentages recur across topics. twin-trip's 'Traveller comes home younger by 56.4%' reads as '56.4% younger in total age'; attention's \"'animal' falls to about 30%\" was corrected to 'about a third' for accuracy; light-clock's frozen counters imply a 0.33 ratio that disagrees with the authoritative 0.436 labels. Readers cannot tell the referent of a bare percentage.",
+      "proposal": "Add a validation rule that any scene-data readout or body sentence containing a percent value must also carry an explicit referent phrase (e.g. 'of the home twin's aged time', 'of the attention total'). Implement as a check that a percent token is accompanied by a nearby 'of ...' or an allowed referent pattern, and surface the offending string for rewrite. Pair it with a one-paragraph phrasing rule in the brief/curriculum guidance so authors write 'ages 56.4% less during the trip' rather than 'younger by 56.4%'.",
+      "benefit": "Removes a whole class of misreadable numbers before render, directly addressing three separate reviewed/needs_review guides with one rule.",
+      "effort": "small",
+      "risk": "Pattern matching on 'of' may be noisy and could nag correctly-phrased lines; keep it a warning the reviewer clears, and tune patterns against the known good examples.",
+      "evidence": []
+    },
     {
       "id": "P-20261106-9",
       "kind": "blueprint",
