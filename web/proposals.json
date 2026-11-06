@@ -1,7 +1,22 @@
 {
-  "updated": "2026-11-05T17:12:15.880322+00:00",
+  "updated": "2026-11-06T17:11:24.994056+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261106-9",
+      "kind": "blueprint",
+      "curriculum": "2.5",
+      "status": "open",
+      "created": "2026-11-06T17:11:24.993117+00:00",
+      "title": "A picture for \u201cIf gravity slows time, why do things fall?\u201d",
+      "area": "engines",
+      "problem": "No visual engine can show this question yet, so the daily run cannot investigate it.",
+      "proposal": "Things fall because standing still means racing through time, and when clocks tick slower lower down, the straightest path through time quietly tips downward. Falling is that tilt: you keep going straight, but \"straight\" now leans toward the slow clocks. Chapter 1: A person stands still on the ground. A clock floats at their head and another at their feet; both tick. A faint readout compares the two rates. Chapter 2: The scene flips to a spacetime map: vertical axis is time, horizontal axis is space. The still person becomes a single arrow pointing almost straight up. Chapter 3: The time axis ",
+      "benefit": "The daily run could then investigate \u201cIf gravity slows time, why do things fall?\u201d.",
+      "effort": "medium",
+      "risk": "Needs hand-built drawing code, model checks and a beginner test before it is marked ready.",
+      "evidence": []
+    },
     {
       "id": "P-20261105-9",
       "kind": "blueprint",
