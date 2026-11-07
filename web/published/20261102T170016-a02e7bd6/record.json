@@ -4,7 +4,7 @@
   "question": "Why can nothing travel faster than light?",
   "topic": "speed-limit",
   "created": "2026-11-02T17:00:16.436227+00:00",
-  "updated": "2026-11-07T22:39:09Z",
+  "updated": "2026-11-07T23:35:48Z",
   "research": {
     "claim": "Nothing with mass can be pushed up to light speed, however hard or long it is pushed. The reason is a measured fact: every observer, moving or not, measures light at the same speed. Light from a moving lamp is no faster, and a moving lab measures light at the same speed in every direction. If light's speed is the same for everyone, speeds cannot simply add. They combine by the rule v = (u + w)/(1 + uw/c\u00b2). Under that rule, equal pushes (each the same as the crew feel it) give ground speeds of 50%, 80%, 93%, 98%, 99.2%, 99.7% and so on, always below light speed. Put another way, a flash that leaves the rocket always pulls away from the crew at full light speed, so they never gain on it. Things with no mass, such as light, always move at light speed. Why signals cannot go faster than light is a separate argument from cause and effect, and it is not covered here.",
     "explanation": "Start with what is measured. Light from a fast-moving source is not faster than light from a source at rest. A lab riding on the moving Earth measures light at the same speed in every direction. Both statements come from the model notes. The everyday rule for adding speeds says the opposite: a ball thrown forward from a moving train goes train speed plus throw speed. So the everyday rule must be slightly wrong, and the error only becomes noticeable near light speed.\n\nDefine a push as the crew feel it. Just before a push, the rocket drops a marker. After the push, the rocket moves away from that marker at half light speed. The crew feel every push exactly the same.\n\nChapter 1 (everyday expectation). Seen from the ground, the first push takes the rocket from rest to half light speed. Everyday adding then predicts that a second push reaches light speed and a third goes past it.\n\nChapter 2 (ground view, the measured fact). The rocket coasts at half light speed past a lamp post. The rocket's lamp and the post's lamp flash at the same moment. Both flashes travel side by side at light speed, and the rocket falls behind them. The rocket's speed adds nothing to its light.\n\nChapter 3 (rocket view, the reason). In the crew's view the rocket stays still and the ground streams backward. A flash from the crew's lamp pulls away at full light speed. After another push, that same flash, which is already ahead, still pulls away at exactly full light speed. Since this happens after every push, the crew never close any distance on light and can never catch it. Both views are correct. From the ground, the flash pulls ahead of the rocket at only half light speed (light speed minus rocket speed). The crew measure full light speed. The two measurements differ because moving clocks and rulers differ (see the light-clock guide).\n\nChapter 4 (the consequence on the ground's chart). If speeds simply added, the crew would gain on light, which contradicts chapter 3. The rule that keeps light at light speed for everyone is also the rule that combines the rocket's speeds. Half plus half gives (0.5 + 0.5)/(1 + 0.5 \u00d7 0.5) = 1/1.25 = 80%, not 100%. Each further identical push adds less ground speed than the one before: 93%, 98%, 99.2%, 99.7%. For n equal pushes the exact result is tanh(0.549 n), which is 99.997% after ten pushes and never 100%.\n\nAt everyday speeds, the correction term uw/c\u00b2 is tiny. For two speeds of 30 m/s it is about 10\u207b\u00b9\u2074, so ordinary adding works.\n\nEnergy can be mentioned as a consequence, not as the reason. Seen from the ground, each push adds more kinetic energy per kilogram than the last, with no upper limit. The amount per kilogram grows as (\u03b3 \u2212 1)c\u00b2, where \u03b3 = 1/\u221a(1 \u2212 v\u00b2/c\u00b2). This is stated per kilogram because a rocket that burns fuel loses mass. On board, every push still feels the same.\n\nHonesty points:\n- Nothing on board gets heavier.\n- The crew feel no resistance and no limit.\n- Light speed is not a wall to break through.\n- The crew do not see the ground's \"half light speed\" gap. They measure full light speed.",
@@ -118,8 +118,8 @@
     "why": "A ball thrown forward from a moving train gets the train's speed added on. Light never does, and that one measured fact sets the universe's speed limit.",
     "beats": [
       {
-        "title": "Everyday adding says two pushes reach light speed",
-        "body": "One push takes the rocket from rest to half light speed, and the crew feel every push the same. Everyday adding says a second push reaches light speed and a third goes past it."
+        "title": "Speeds should just add up",
+        "body": "A rocket in space fires its engine and reaches half the speed of light; each push feels the same to the crew. Surely speeds just add up, so two pushes reach light speed and a third flies past?"
       },
       {
         "title": "Light from a moving lamp is no faster",
@@ -240,7 +240,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "agent",
-    "intro_note": "The final chapter's picture was rebuilt by hand in a coding session at the owner's request: its abstract line chart was replaced with a rocket racing along a track towards a glowing light-speed wall, where equal pushes give ever-smaller leaps that never reach it."
+    "intro_note": "The final chapter's picture was rebuilt by hand in a coding session at the owner's request: its abstract line chart was replaced with a rocket racing along a track towards a glowing light-speed wall, where equal pushes give ever-smaller leaps that never reach it. Chapter 1 was reworded to set the scene and drop a coined phrase (\u201ceveryday adding\u201d), and the picture now sits on a starry night sky."
   },
   "revisions": [
     {
@@ -251,8 +251,8 @@
         "why": "A ball thrown forward from a moving train gets the train's speed added on. Light never does, and that one measured fact sets the universe's speed limit.",
         "beats": [
           {
-            "title": "Everyday adding says two pushes reach light speed",
-            "body": "One push takes the rocket from rest to half light speed, and the crew feel every push the same. Everyday adding says a second push reaches light speed and a third goes past it."
+            "title": "Speeds should just add up",
+            "body": "A rocket in space fires its engine and reaches half the speed of light; each push feels the same to the crew. Surely speeds just add up, so two pushes reach light speed and a third flies past?"
           },
           {
             "title": "Light from a moving lamp is no faster",

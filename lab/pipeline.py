@@ -41,11 +41,11 @@ def keep_retrieved(research, notes):
 
 # The quality bar every guide is judged on; the designer and the writer work to it and the reviewers check it.
 STANDARD = ('Quality bar: explain WHY, not only what happens. Start from something the viewer can see, feel or measure. '
-    'Name the everyday belief a beginner holds and confront it. Define every term in plain words the first time it appears. '
+    'Name the everyday belief a beginner holds and confront it. Define every term in plain words the first time it appears, and never use a coined or abstract phrase (a made-up label such as "everyday adding") as if the viewer already knows it: say it in plain words, or name it and explain it in the same breath. '
     'Every sentence must match what is on screen while it plays; the model notes say what each chapter shows. '
     'Change one thing at a time. Answer the likely objections listed in the research. Keep it short: two or three '
     'sentences per chapter, each under 110 characters, and let the first chapter make its point in one or two short '
-    'sentences. Never refer to other guides. Keep the picture calm: the stage shows only a few short labels (names of '
+    'sentences. Never refer to other guides. The first chapter must set the scene before any claim: in plain words say what the viewer is looking at and what is happening (who, what, where), so a newcomer with no prior context can follow it cold; never open on a bare assertion. Keep the picture calm: the stage shows only a few short labels (names of '
     'five words or fewer, never sentences), the subtitles carry every explanation, and only what the current sentence is '
     'about moves or changes. Answer the question behind the topic for a newcomer: why it matters in the world, not only '
     'how it works; for a famous discovery or paper, show what it changed and connect it to something the viewer uses. '
@@ -59,10 +59,10 @@ LEARNER = ('You are a curious adult with school-level science who has never stud
     'say in one plain sentence why this idea matters and what it changed, using only the guide; if you cannot, fail it. '
     'Then answer each '
     'transfer question from the guide alone, writing "not covered" when it does not answer it; put the answers in the '
-    'summary. Then, as the copy editor, list in changes: undefined words, sentences hard to follow on one read, objections '
+    'summary. Then, as the copy editor, list in changes: a first chapter that makes a claim before it sets the scene (what is on screen, who and what we are watching) so it cannot be followed cold, any coined or abstract phrase used as if already known, undefined words, sentences hard to follow on one read, objections '
     'left unanswered, any subtitle that does not match its frame, anything singled out without a reason, a why line '
     'over about 25 words, and text that could be shorter; quote the field, the '
-    'current text and a replacement no longer than the original. Pass only if a beginner could answer all but at most one '
+    'current text and a replacement no longer than the original. Pass only if the first chapter sets its scene before any claim and stands alone, no coined phrase is used undefined, a beginner could answer all but at most one '
     'question correctly from the guide, nothing on screen contradicts its subtitle, and no confusion blocks the main idea. '
     'Score 0..10 for how well a beginner would understand why.')
 

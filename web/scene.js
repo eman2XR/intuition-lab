@@ -1405,38 +1405,52 @@ function limitPlan(st){
  let n=1,burn=false;for(const p of pushes){n+=clamp((t-p)/.6);if(t>=p&&t<p+.6)burn=true;}
  return {mode:'climb',n,burn,t};
 }
+// A deep space background with calm, static, deterministic stars, shared by every speed-limit chapter. It reuses the
+// night-sky star array and palette so the lab's two space scenes match.
+function spaceBg(ctx,w,h){
+ const g=ctx.createLinearGradient(0,0,0,h);
+ g.addColorStop(0,'rgb(6,9,24)');g.addColorStop(.6,'rgb(9,13,34)');g.addColorStop(1,'rgb(13,18,44)');
+ ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ for(const [u,v,s,warm] of NIGHT_STARS){const x=u*w, y=v*h, rr=.4+1.3*s**5, col=nightMix([200,214,255],[255,224,190],warm), a=+(.22+.55*s).toFixed(3);
+  if(s>.972){const halo=ctx.createRadialGradient(x,y,0,x,y,rr*6);halo.addColorStop(0,nightRgb(col,.3));halo.addColorStop(1,nightRgb(col,0));ctx.fillStyle=halo;ctx.fillRect(x-rr*6,y-rr*6,rr*12,rr*12);}
+  ctx.beginPath();ctx.arc(x,y,rr,0,TAU);ctx.fillStyle=nightRgb(col,a);ctx.fill();}
+}
 function drawLimit(ctx,w,h,spec,st){
- const plan=limitPlan(st), small=w<520, light='#d97706', accent=ACCENT[spec.accent]||ACCENT.blue, muted='rgba(20,23,28,.55)';
+ const plan=limitPlan(st), small=w<520, light='#f59e0b', accent='#8ec2ff', ink='rgba(232,237,255,.95)', muted='rgba(200,210,245,.7)';
  LIMIT.mode=plan.mode;
  const T=plan.t, size=small?10:12;
+ // The rocket flies in space: a deep night sky with calm, static stars behind every chapter.
+ spaceBg(ctx,w,h);
  // The track runs from rest on the left to a glowing light-speed wall on the right; a position along it is the speed
  // seen from the ground, as a fraction of light speed. Chapters 2 and 3 reuse it as the ground strip.
  const x0=w*(small?.08:.12), x1=w*(small?.92:.88), lane=x1-x0, lampX=x0+lane*.2, win={top:h*.12,base:h*.88};
  const r=small?17:26, ry=h*.38, gy=h*.78, head=h*.6, lampY=ry-r*.45;
  const c=limitLight(st.chapters).speed*lane;
- const glow=(x,y,rr,a=1)=>{const g=ctx.createRadialGradient(x,y,0,x,y,rr*3);g.addColorStop(0,rgba(light,.5*a));g.addColorStop(1,rgba(light,0));ctx.fillStyle=g;ctx.fillRect(x-rr*3,y-rr*3,rr*6,rr*6);
+ // A label on a dark chip so light text stays legible over the stars; counted toward the label budget via text().
+ const tag=(value,x,y,{align='left',color=ink,weight=600,sz=size}={})=>{ctx.font=`${weight} ${sz}px ${FONT}`;const wd=ctx.measureText(value).width, left=align==='right'?x-wd:align==='center'?x-wd/2:x;
+  ctx.fillStyle='rgba(6,10,26,.62)';ctx.beginPath();ctx.roundRect?ctx.roundRect(left-6,y-sz*.82,wd+12,sz*1.64,sz*.82):ctx.rect(left-6,y-sz*.82,wd+12,sz*1.64);ctx.fill();
+  text(ctx,value,x,y,{align,size:sz,weight,color});};
+ const glow=(x,y,rr,a=1)=>{const g=ctx.createRadialGradient(x,y,0,x,y,rr*3);g.addColorStop(0,rgba(light,.6*a));g.addColorStop(1,rgba(light,0));ctx.fillStyle=g;ctx.fillRect(x-rr*3,y-rr*3,rr*6,rr*6);
   ctx.beginPath();ctx.arc(x,y,rr,0,TAU);ctx.fillStyle=rgba(light,a);ctx.fill();};
- const frame=(a,name)=>{ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.roundRect(x0-14,win.top,lane+28,win.base-win.top,10);ctx.fill();
-  ctx.strokeStyle='rgba(20,23,28,.1)';ctx.lineWidth=1;ctx.stroke();
-  trace(ctx,[[x0,ry+r*.9],[x1,ry+r*.9]]);ctx.strokeStyle='rgba(20,23,28,.08)';ctx.stroke();
-  trace(ctx,[[x0,gy],[x1,gy]]);ctx.strokeStyle='rgba(20,23,28,.32)';ctx.lineWidth=1.4;ctx.stroke();
-  if(st.labels){text(ctx,'ground',x1,gy+(small?11:13),{align:'right',size:size-1,weight:600,color:muted});
-   if(name)text(ctx,name,x0,win.top+(small?11:14),{size:size-1,weight:700,color:muted,spacing:'.5px'});}
+ const frame=(a,name)=>{ctx.save();ctx.globalAlpha=a;
+  trace(ctx,[[x0,gy],[x1,gy]]);ctx.strokeStyle='rgba(200,210,245,.32)';ctx.lineWidth=1.4;ctx.stroke();
+  if(st.labels){tag('ground',x1,gy+(small?13:15),{align:'right',color:muted,sz:size-1});
+   if(name)tag(name,x0,win.top+(small?12:15),{color:muted,weight:700,sz:size-1});}
   ctx.restore();};
  const rocket=(x,a,burn,flash)=>{ctx.save();ctx.globalAlpha=a;drawRocket(ctx,x,ry,r,1,burn,T);
   ctx.beginPath();ctx.arc(x,lampY,5,0,TAU);ctx.fillStyle='#fde68a';ctx.fill();ctx.strokeStyle='rgba(120,80,0,.6)';ctx.lineWidth=1;ctx.stroke();
   if(flash>0)glow(x,lampY,6+5*flash,flash);ctx.restore();};
- // The glowing light-speed wall: a tall orange bar at a point on the track, with its glow.
- const wall=wx=>{ctx.save();const top=win.top+(small?8:12), bot=gy, g=ctx.createLinearGradient(wx-9,0,wx+9,0);
-  g.addColorStop(0,rgba(light,0));g.addColorStop(.5,rgba(light,.5));g.addColorStop(1,rgba(light,0));
-  ctx.fillStyle=g;ctx.fillRect(wx-9,top,18,bot-top);ctx.fillStyle=light;ctx.fillRect(wx-2,top,4,bot-top);
-  if(st.labels)pill(ctx,'light speed',wx-(small?8:10),top+(small?9:12),{align:'right',size,weight:700,color:light});ctx.restore();};
+ // The glowing light-speed wall: a tall bright-amber bar at a point on the track, with its glow.
+ const wall=wx=>{ctx.save();const top=win.top+(small?8:12), bot=gy, g=ctx.createLinearGradient(wx-11,0,wx+11,0);
+  g.addColorStop(0,rgba(light,0));g.addColorStop(.5,rgba(light,.6));g.addColorStop(1,rgba(light,0));
+  ctx.fillStyle=g;ctx.fillRect(wx-11,top,22,bot-top);ctx.fillStyle='#fcd34d';ctx.fillRect(wx-2,top,4,bot-top);
+  if(st.labels)tag('light speed',wx-(small?8:10),top+(small?9:12),{align:'right',color:light,weight:700});ctx.restore();};
  if(plan.mode==='lamp'){
   // As the rocket passes the lamp post, its own lamp and the post's lamp flash together; both flashes travel at light
   // speed, side by side, and the rocket falls behind.
   frame(plan.dim,'');
   const since=T-plan.flash, burst=since>=0?clamp(1-since/.35):0;
-  ctx.save();ctx.globalAlpha=plan.dim;ctx.fillStyle='rgba(20,23,28,.5)';ctx.fillRect(lampX-2,head,4,gy-head);
+  ctx.save();ctx.globalAlpha=plan.dim;ctx.fillStyle='rgba(205,214,248,.5)';ctx.fillRect(lampX-2,head,4,gy-head);
   ctx.beginPath();ctx.arc(lampX,head,5.5,0,TAU);ctx.fillStyle='#fde68a';ctx.fill();ctx.strokeStyle='rgba(120,80,0,.6)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
   if(burst>0)glow(lampX,head,6+5*burst,burst);
   const rx=lampX+.5*c*since;
@@ -1451,7 +1465,7 @@ function drawLimit(ctx,w,h,spec,st){
    ctx.setLineDash([3,4]);trace(ctx,[[px,lampY+7],[px,head-7]]);ctx.strokeStyle=rgba(light,.6);ctx.lineWidth=1.2;ctx.stroke();ctx.setLineDash([]);
    // The label rides beside the flashes, and switches to their left side where the stage ends.
    ctx.font=`600 ${size}px ${FONT}`;const right=px+16+ctx.measureText('same speed').width<x1;
-   if(st.labels)pill(ctx,'same speed',right?px+10:px-10,(ry+r*.9+head)/2,{align:right?'left':'right',size,weight:600,color:light});ctx.restore();}
+   if(st.labels)tag('same speed',right?px+10:px-10,(ry+r*.9+head)/2,{align:right?'left':'right',color:light});ctx.restore();}
  }
  if(plan.mode==='crew'){
   // Seen from the rocket: the crew stay put while the ground streams backward at the rocket's speed. Their lamp flashes
@@ -1460,13 +1474,13 @@ function drawLimit(ctx,w,h,spec,st){
   frame(1,'seen from the rocket');
   const rx=x0+lane*.16, ramp=.6, g0=.5*c, g1=Physics.limitSpeed(2)*c, go=T-plan.push;
   const back=g0*T+(go<=0?0:go<ramp?(g1-g0)*go*go/(2*ramp):(g1-g0)*(ramp/2+go-ramp)), gap=lane/7;
-  for(let k=0;k<7;k++){const px=x0+((k*gap-back)%lane+lane)%lane;ctx.fillStyle='rgba(20,23,28,.38)';ctx.fillRect(px-1.5,gy-16,3,16);}
+  for(let k=0;k<7;k++){const px=x0+((k*gap-back)%lane+lane)%lane;ctx.fillStyle='rgba(200,210,245,.4)';ctx.fillRect(px-1.5,gy-16,3,16);}
   const since=T-plan.first, burst=since>=0?clamp(1-since/.35):0;
   if(since>.05){const px=Math.min(x1,rx+c*since), fade=clamp((x1+4-px)/40);
    ctx.save();ctx.globalAlpha=fade;const g=ctx.createLinearGradient(rx,0,px,0);g.addColorStop(0,rgba(light,0));g.addColorStop(1,rgba(light,.45));
    trace(ctx,[[rx,lampY],[px,lampY]]);ctx.strokeStyle=g;ctx.lineWidth=3;ctx.stroke();glow(px,lampY,6);
    if(st.labels&&px>rx+50){ctx.font=`600 ${size}px ${FONT}`;const half=ctx.measureText('full light speed').width/2+6;
-    pill(ctx,'full light speed',clamp(px,x0+half,x1-half),lampY-(small?14:17),{align:'center',size,weight:600,color:light});}
+    tag('full light speed',clamp(px,x0+half,x1-half),lampY-(small?14:17),{align:'center',color:light});}
    ctx.restore();}
   rocket(rx,1,go>0&&go<ramp,burst);
  }
@@ -1479,26 +1493,26 @@ function drawLimit(ctx,w,h,spec,st){
   const v=plan.mode==='add'?.5*clamp(plan.n):plan.mode==='thumb'?.62:Physics.limitSpeed(Math.max(0,plan.n||0));
   frame(1,'');
   // The rail the rocket rides, from rest to the wall.
-  const railY=ry+r*.7;trace(ctx,[[x0,railY],[wallX,railY]]);ctx.strokeStyle='rgba(20,23,28,.18)';ctx.lineWidth=2;ctx.stroke();
+  const railY=ry+r*.7;trace(ctx,[[x0,railY],[wallX,railY]]);ctx.strokeStyle='rgba(200,210,245,.24)';ctx.lineWidth=2;ctx.stroke();
   wall(wallX);
   if(plan.mode==='add'&&plan.everyday>0){
-   // Everyday adding: equal leaps of half light speed each, reaching the wall on the second and sailing past it on the third.
+   // Just adding up: equal leaps of half light speed each, reaching the wall on the second and sailing past it on the third.
    const e=clamp(plan.everyday), vLead=.5+e;
-   ctx.save();ctx.globalAlpha=.6;ctx.setLineDash([6,6]);trace(ctx,[[x0,ry],[noseX(vLead),ry]]);ctx.strokeStyle='rgba(20,23,28,.4)';ctx.lineWidth=1.6;ctx.stroke();ctx.setLineDash([]);
-   for(const vk of [.5,1,1.5])if(vLead+1e-6>=vk){const gx=noseX(vk);ctx.beginPath();ctx.arc(gx,ry,5.5,0,TAU);ctx.fillStyle='rgba(255,255,255,.95)';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.5)';ctx.lineWidth=1.6;ctx.stroke();}
+   ctx.save();ctx.globalAlpha=.7;ctx.setLineDash([6,6]);trace(ctx,[[x0,ry],[noseX(vLead),ry]]);ctx.strokeStyle='rgba(185,196,235,.55)';ctx.lineWidth=1.6;ctx.stroke();ctx.setLineDash([]);
+   for(const vk of [.5,1,1.5])if(vLead+1e-6>=vk){const gx=noseX(vk);ctx.beginPath();ctx.arc(gx,ry,5.5,0,TAU);ctx.fillStyle='rgba(10,14,32,.9)';ctx.fill();ctx.strokeStyle='rgba(205,214,248,.7)';ctx.lineWidth=1.6;ctx.stroke();}
    drawRocket(ctx,noseX(vLead)-r*.85,ry,r*.85,1,e>0&&e<1,plan.t);
-   if(st.labels)text(ctx,'everyday adding',x0,ry-r-(small?10:14),{size,weight:600,color:'rgba(20,23,28,.6)'});ctx.restore();}
+   if(st.labels)tag('just adding up',x0,ry-r-(small?10:14),{color:muted});ctx.restore();}
   const rx=clamp(noseX(v)-r,x0,wallX-r-3);
   drawRocket(ctx,rx,ry,r,1,plan.burn,plan.t);
   if(plan.mode==='climb'){
    // The near-wall speeds are shown spread out, so name it a closer look at the wall.
-   if(st.labels)text(ctx,'closer look',wallX-(small?8:10),win.top+(small?26:32),{align:'right',size:size-1,weight:600,color:muted});
+   if(st.labels)tag('closer look',wallX-(small?8:10),win.top+(small?28:34),{align:'right',color:muted,sz:size-1});
    // One flame glyph per push, all the same size: equal effort, while the leaps toward the wall shrink.
    const pushes=clamp(Math.ceil(plan.n-1e-6),1,6), fy=h*.63, step=small?22:30, gw=small?8:11, gx0=x0+gw+(small?4:8);
-   for(let k=0;k<pushes;k++){const fx=gx0+k*step, fl=ctx.createLinearGradient(fx-gw,0,fx+gw,0);fl.addColorStop(0,'rgba(255,170,60,.95)');fl.addColorStop(1,'rgba(255,120,30,.2)');
+   for(let k=0;k<pushes;k++){const fx=gx0+k*step, fl=ctx.createLinearGradient(fx-gw,0,fx+gw,0);fl.addColorStop(0,'rgba(255,186,84,.98)');fl.addColorStop(1,'rgba(255,130,40,.25)');
     ctx.beginPath();ctx.moveTo(fx+gw,fy);ctx.quadraticCurveTo(fx-gw*.3,fy-gw*.8,fx-gw,fy);ctx.quadraticCurveTo(fx-gw*.3,fy+gw*.8,fx+gw,fy);ctx.closePath();ctx.fillStyle=fl;ctx.fill();}
-   if(st.labels)text(ctx,'equal pushes',gx0-gw,fy-(small?15:19),{size,weight:600,color:muted});}
-  if(st.labels&&v>.02)pill(ctx,limitPct(v),clamp(rx,x0+26,x1-26),ry+r+(small?13:16),{align:'center',size:size+1,weight:700,color:accent});
+   if(st.labels)tag('equal pushes',gx0-gw,fy-(small?16:20),{color:muted});}
+  if(st.labels&&v>.02)tag(limitPct(v),clamp(rx,x0+26,x1-26),ry+r+(small?15:18),{align:'center',color:accent,weight:700,sz:size+1});
  }
 }
 
