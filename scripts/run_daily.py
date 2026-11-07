@@ -19,7 +19,7 @@ import time
 ROOT=Path(__file__).resolve().parents[1]
 # Nothing from the lab package loads before the update: a broken commit there must not stop the next fix arriving.
 # These match lab.ROOT and lab.PUBLICATION (a test keeps them in step).
-PUBLICATION=('web/published/','web/dashboard.json','web/proposals.json')
+PUBLICATION=('web/published/','web/briefs/','web/dashboard.json','web/proposals.json')
 sys.path.insert(0,str(ROOT))
 
 

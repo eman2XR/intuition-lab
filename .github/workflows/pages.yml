@@ -45,7 +45,7 @@ jobs:
           touch _site/.nojekyll
       - name: Check every tracked site file is staged
         run: |
-          missing=$(git ls-files web | grep -v '^web/runs/' | sed 's#^web/##' | while IFS= read -r f; do [ -f "_site/$f" ] || echo "$f"; done)
+          missing=$(git ls-files web | grep -v -e '^web/runs/' -e '^web/briefs/' | sed 's#^web/##' | while IFS= read -r f; do [ -f "_site/$f" ] || echo "$f"; done)
           if [ -n "$missing" ]; then echo "Tracked under web/ but not copied into _site:"; echo "$missing"; exit 1; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4

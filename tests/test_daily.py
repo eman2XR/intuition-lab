@@ -10,7 +10,7 @@ from contextlib import redirect_stdout
 from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
-from lab.daily import EARLY_STOPS, daily, daily_lock, export_accepted, publish, site_live
+from lab.daily import EARLY_STOPS, daily, daily_lock, export_accepted, publish, research_brief, site_live
 from lab.fixtures import FixtureProvider
 from lab.schedule import write_schedule
 from helpers import READY, READY_ITEMS, accepted, curriculum, on_day
@@ -307,6 +307,20 @@ class WorkerSyncTests(unittest.TestCase):
             self.assertEqual(git(worker,'status','--porcelain','--untracked-files=no'),'')
             self.assertEqual(git(origin,'log','-1','--format=%s','main'),'same file on GitHub')
 
+    def test_publish_commits_and_pushes_a_brief_and_nothing_unrelated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            git,origin,worker,push_from_me=checkouts(tmp)
+            (worker/'web'/'briefs').mkdir(parents=True)
+            (worker/'web'/'briefs'/'2.2.json').write_text(json.dumps({'id':'2.2'}))
+            (worker/'web'/'proposals.json').write_text(json.dumps({'proposals':[]}))
+            # An unrelated edit in the worker is never staged by publish.
+            (worker/'notes.txt').write_text('private')
+            publish(worker)
+            shipped=git(origin,'ls-tree','-r','--name-only','main').splitlines()
+            self.assertIn('web/briefs/2.2.json',shipped)
+            self.assertNotIn('notes.txt',shipped)
+            self.assertEqual(git(worker,'rev-parse','HEAD'),git(origin,'rev-parse','main'))
+
     def test_entry_point_fast_forwards_before_the_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             git,origin,worker,push_from_me=checkouts(tmp)
@@ -396,12 +410,103 @@ class DailyCycleTests(unittest.TestCase):
             self.assertEqual(json.loads((root/'.council-state'/'history.json').read_text())[-2]['status'],'interrupted')
 
 
+@patch('lab.daily.READY',READY)
+class ResearchBriefTests(unittest.TestCase):
+    # 1.1 is ready today (patched READY); 2.2 and 2.3 have no ready engine, so they are what an idle morning researches.
+    ITEMS=[{'id':'1.1','question':'Why do clocks at different heights tick at different rates?','model':'gravity-clocks'},
+           {'id':'2.2','question':'Can two events be simultaneous for one person but not another?','model':'spacetime'},
+           {'id':'2.3','question':'Why is the travelling twin younger?','model':'twin-trip'}]
+
+    def harness(self,items,guides=(),ledger=()):
+        from lab.daily import attempted, normalize
+        same=lambda e,q: normalize(e.get('question') or e.get('title') or '')==normalize(q)
+        explored=lambda q,model=None: any(same(g,q) for g in guides) or attempted(list(ledger),q,model,same)
+        model_of=lambda q: next((i['model'] for i in items if normalize(i['question'])==normalize(q)),None)
+        return explored,model_of
+
+    def test_idle_morning_researches_the_next_waiting_item_into_a_brief(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'web').mkdir()
+            provider=FixtureProvider();provider.calls=0
+            explored,model_of=self.harness(self.ITEMS)
+            brief=research_brief(lambda:provider,self.ITEMS,root,'2026-11-07',explored,model_of)
+            # The next waiting item in teaching order, with its researcher, scientist and designer calls.
+            self.assertEqual((brief['id'],brief['model']),('2.2','spacetime'))
+            self.assertEqual(provider.calls,3)
+            saved=json.loads((root/'web'/'briefs'/'2.2.json').read_text())
+            self.assertEqual(saved['curriculum'],'2.2')
+            self.assertIn('sources',saved['research']);self.assertIn('chapters',saved['design'])
+            self.assertEqual((saved['sources_retrieved'],saved['retrieved_by']),(False,'agent'))
+            proposal=json.loads((root/'web'/'proposals.json').read_text())['proposals'][0]
+            self.assertEqual((proposal['kind'],proposal['curriculum']),('blueprint','2.2'))
+            self.assertIn('web/briefs/2.2.json',proposal['proposal'])
+
+    def test_owner_question_without_a_ready_engine_comes_first(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'web').mkdir()
+            provider=FixtureProvider();provider.calls=0
+            explored,model_of=self.harness(self.ITEMS)
+            requests=[{'number':7,'kind':'question','title':'Why is the travelling twin younger?','curriculum':'2.3'}]
+            brief=research_brief(lambda:provider,self.ITEMS,root,'2026-11-07',explored,model_of,requests)
+            self.assertEqual((brief['id'],brief['curriculum'],brief['model']),('2.3','2.3','twin-trip'))
+
+    def test_once_a_day_and_never_re_researches_a_briefed_or_published_question(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'web').mkdir()
+            provider=FixtureProvider();provider.calls=0
+            explored,model_of=self.harness(self.ITEMS)
+            self.assertEqual(research_brief(lambda:provider,self.ITEMS,root,'2026-11-07',explored,model_of)['id'],'2.2')
+            provider.calls=0
+            # Once a day: a second brief the same day is refused without any model call.
+            self.assertIsNone(research_brief(lambda:provider,self.ITEMS,root,'2026-11-07',explored,model_of))
+            self.assertEqual(provider.calls,0)
+            # A question with a brief is skipped: the next day takes the next waiting item.
+            self.assertEqual(research_brief(lambda:provider,self.ITEMS,root,'2026-11-08',explored,model_of)['id'],'2.3')
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'web').mkdir()
+            provider=FixtureProvider();provider.calls=0
+            guides=[{'question':self.ITEMS[1]['question'],'topic':'spacetime'},
+                    {'question':self.ITEMS[2]['question'],'topic':'twin-trip'}]
+            explored,model_of=self.harness(self.ITEMS,guides=guides)
+            # A published guide's question is never researched; with nothing left, no brief and no call.
+            self.assertIsNone(research_brief(lambda:provider,self.ITEMS,root,'2026-11-09',explored,model_of))
+            self.assertEqual(provider.calls,0)
+            self.assertFalse((root/'web'/'briefs').exists())
+
+    def test_a_provider_failure_leaves_no_brief_and_the_cycle_falls_back_to_a_sketch(self):
+        class FailsAtScientist:
+            name='fixture';usage=[]
+            def __init__(self):self.calls=0;self.inner=FixtureProvider()
+            def generate(self,role,prompt,schema=None,images=(),research=False):
+                self.calls+=1
+                if role=='scientist':raise ValueError('scientist failed')
+                return self.inner.generate(role,prompt,schema,images,research)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'web').mkdir()
+            explored,model_of=self.harness(self.ITEMS)
+            self.assertIsNone(research_brief(lambda:FailsAtScientist(),self.ITEMS,root,'2026-11-07',explored,model_of))
+            self.assertFalse((root/'web'/'briefs'/'2.2.json').exists())
+            self.assertFalse((root/'web'/'proposals.json').exists())
+        # Wired into the idle daily cycle, a research failure still yields a design-only sketch for the owner.
+        waiting=[i for i in self.ITEMS if i['model']!='gravity-clocks']
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);curriculum(root,waiting);provider=FailsAtScientist()
+            daily(lambda:provider,root=root,requests=[],blueprints=True)
+            self.assertFalse((root/'web'/'briefs').exists())
+            proposals=json.loads((root/'web'/'proposals.json').read_text())['proposals']
+            self.assertEqual(proposals[0]['kind'],'blueprint')
+            self.assertNotIn('web/briefs',proposals[0]['proposal'])
+
+
 class EntryPointTests(unittest.TestCase):
     def test_the_entry_point_needs_nothing_from_the_package_before_updating(self):
         import ast, lab
         module=entry_point()
         self.assertEqual(module.PUBLICATION,lab.PUBLICATION)
         self.assertEqual(module.ROOT,lab.ROOT)
+        # Briefs are coordinator outputs, so both publication tuples must list them.
+        self.assertIn('web/briefs/',lab.PUBLICATION)
+        self.assertIn('web/briefs/',module.PUBLICATION)
         tree=ast.parse((Path(__file__).resolve().parents[1]/'scripts'/'run_daily.py').read_text())
         imported=[n for n in ast.walk(tree) if isinstance(n,(ast.Import,ast.ImportFrom))]
         names=[(n.module or '') if isinstance(n,ast.ImportFrom) else a.name for n in imported for a in (n.names if isinstance(n,ast.Import) else [n])]

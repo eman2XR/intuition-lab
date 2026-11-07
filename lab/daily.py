@@ -12,9 +12,9 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from functools import partial
 from pathlib import Path
-from . import ROOT, PUBLICATION
-from .contracts import obj, validate, validate_design, DESIGN_SCHEMA
-from .pipeline import run, write_json, approved, keep_retrieved, DESIGNER
+from . import ROOT, PUBLICATION, sources
+from .contracts import obj, validate, validate_design, DESIGN_SCHEMA, RESEARCH_SCHEMA
+from .pipeline import run, write_json, approved, keep_retrieved, DESIGNER, STANDARD
 from .topics import TOPICS, READY
 from .dashboard import Dashboard
 from . import inbox
@@ -181,12 +181,13 @@ def git_failure(error):
 
 
 def publish(root=ROOT, runs=()):
-    """Commit only the generated public archive, never other local edits: the status and proposals files and, for
-    the guides this checkout exported (runs), their folders and the index, so other guides in the checkout never ship."""
+    """Commit only the generated public archive, never other local edits: the status and proposals files, the internal
+    build briefs, and, for the guides this checkout exported (runs), their folders and the index, so other guides in
+    the checkout never ship."""
     def git(*args,check=True):
         return subprocess.run(['git',*args],cwd=root,text=True,capture_output=True,check=check,timeout=120).stdout.strip()
     runs=[r for r in runs if isinstance(r,str) and RUN_ID.fullmatch(r)]
-    paths=[p for p in ('web/dashboard.json','web/proposals.json',*(['web/published/index.json'] if runs else []),
+    paths=[p for p in ('web/dashboard.json','web/proposals.json','web/briefs',*(['web/published/index.json'] if runs else []),
                        *(f'web/published/{r}' for r in runs)) if (root/p).exists()]
     if not paths:
         return
@@ -330,6 +331,89 @@ def blueprint(factory, items, root, day):
     return proposal
 
 
+def brief_slug(question):
+    """A stable, filesystem-safe name for a brief about a question with no curriculum id."""
+    return re.sub(r'-+','-',re.sub(r'[^a-z0-9]+','-',question.casefold())).strip('-')[:60] or 'question'
+
+
+def research_brief(factory, items, root, day, explored, model_of, requests=()):
+    """An idle publishing morning researches the next waiting question into a ready-to-build brief, rather than only
+    sketching a design: the same researcher, scientist and designer steps as a full run, about three model calls, for
+    one question. An owner "Ask a question" issue with no ready engine comes first, otherwise the next waiting
+    curriculum item in teaching order. At most one brief a day; a question with a brief or a published guide is never
+    researched again. Writes web/briefs/<id>.json and refreshes the owner's blueprint proposal. Returns the brief or
+    None; a provider or validation error is caught and leaves no partial brief."""
+    proposals_path=root/'web'/'proposals.json'
+    document=json.loads(proposals_path.read_text()) if proposals_path.exists() else {'proposals':[]}
+    stamp=day.replace('-','')
+    if any(p.get('kind')=='blueprint' and p['id'].startswith(f'P-{stamp}-') for p in document['proposals']):
+        return None
+    briefs=root/'web'/'briefs'
+    # Owner questions with no ready engine first, then the next waiting curriculum item in teaching order; a question
+    # that already has a brief is skipped.
+    candidates=[]
+    for request in requests:
+        if request.get('kind')!='question':
+            continue
+        item=next((i for i in items if i.get('id')==request.get('curriculum')),None)
+        question=(item['question'] if item else request.get('title') or '').strip()
+        model=item.get('model') if item else model_of(question)
+        if question and model not in READY and not explored(question,model):
+            candidates.append((item['id'] if item else brief_slug(question),item.get('id') if item else None,question,model))
+    for item in items:
+        if item.get('model') not in READY and not explored(item['question'],item.get('model')):
+            candidates.append((item['id'],item['id'],item['question'],item.get('model')))
+    pick=next(((brief_id,curriculum,question,model) for brief_id,curriculum,question,model in candidates
+               if not (briefs/f'{brief_id}.json').exists()),None)
+    if pick is None:
+        return None
+    brief_id,curriculum,question,model=pick
+    print(f'Idle morning: researching the next question into a build brief: {brief_id}.',flush=True)
+    try:
+        provider=factory()
+        model_notes=(TOPICS.get(model) or {}).get('notes','') if model else ''
+        retrieved_by='agent'
+        try:
+            notes=provider.generate('researcher', question+' Search primary or university sources for this question. Include URLs, physical or mathematical assumptions, tests, and common misleading visual metaphors. Use web search, do not invent citations.', research=True)
+        except RuntimeError as error:
+            # The same coordinator source fallback the full run uses: candidate pages the coordinator can fetch.
+            if not sources.enabled():
+                raise
+            notes,_=sources.retrieve(provider,question)
+            retrieved_by='coordinator'
+        research=provider.generate('scientist', question+'\nProduce a precise, beginner-friendly research record from these retrieved notes. Only cite URLs in the notes. No new-discovery claims. In misconceptions, list the everyday beliefs and "wait, but..." objections a beginner would bring. In questions, write 3 to 5 transfer questions with short answers that a good guide must let a beginner answer, at least one aimed at a misconception.\n'+model_notes+'\n'+notes, RESEARCH_SCHEMA)
+        validate(research,RESEARCH_SCHEMA)
+        research=keep_retrieved(research,notes)
+        if not research['sources'] or any(not s['url'].startswith(('https://','http://')) for s in research['sources']):
+            raise ValueError('Research must include valid HTTP source URLs.')
+        if provider.name!='fixture' and any(s['url'] not in notes for s in research['sources']):
+            raise ValueError('Research must cite sources present in retrieved notes.')
+        # The designer plans the picture a new engine would need, so the brief says what to build.
+        design=validate_design(provider.generate('designer', question+'\n'+(model_notes+'\n' if model_notes else '')
+            +'Research:\n'+json.dumps(research)+'\n'+STANDARD+'\nNo visual engine exists for this question yet. '+DESIGNER
+            +' Describe the picture a new engine would need: set fits_engine to false and say in missing what to build, '
+            'as simply as the idea allows.',DESIGN_SCHEMA))
+    except Exception as error:
+        print(f'Build brief skipped ({type(error).__name__}: {str(error)[:160]}); nothing else is affected.',flush=True)
+        return None
+    brief={'id':brief_id,'curriculum':curriculum,'question':question,'model':model,
+           'created':datetime.now(timezone.utc).isoformat(),'research':research,'design':design,
+           'sources_retrieved':provider.name!='fixture','retrieved_by':retrieved_by}
+    write_json(briefs/f'{brief_id}.json',brief)
+    chapters=' '.join(f"Chapter {n}: {c['show']}" for n,c in enumerate(design['chapters'],1))
+    proposal={'id':f'P-{stamp}-9','kind':'blueprint','curriculum':curriculum,'status':'open',
+              'created':datetime.now(timezone.utc).isoformat(),'title':f"A picture for “{question}”"[:90],
+              'area':'engines','problem':'No visual engine can show this question yet, so the daily run cannot investigate it.',
+              'proposal':f"{design['idea']} {chapters} To build: {design['missing']} A full research-backed build brief is ready at web/briefs/{brief_id}.json."[:600],
+              'benefit':f"The daily run could then investigate “{question}”."[:300],'effort':'medium',
+              'risk':'Needs hand-built drawing code, model checks and a beginner test before it is marked ready.','evidence':[]}
+    document['proposals']=[proposal]+[p for p in document['proposals'] if p.get('id')!=proposal['id']][:15]
+    document['updated']=datetime.now(timezone.utc).isoformat()
+    write_json(proposals_path,document)
+    print(f'Build brief ready for {brief_id}; it waits in the proposals.',flush=True)
+    return brief
+
+
 def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blueprints=False):
     if count not in (1,2):
         raise ValueError('Daily limit must be one or two investigations.')
@@ -383,11 +467,12 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
             ready=retry_order(plannable(items,guides,explored),ledger,same)
             request,item=inbox.choice(requests,[i for i in items if i.get('model') in READY],TOPICS,lambda q: explored(q,model_of(q)))
             if not item and not ready:
-                # Nothing meets the quality bar right now; no slot is used and nothing is started. When publishing, the
-                # designer instead sketches the picture the next waiting question needs, once a day, for the owner.
+                # Nothing meets the quality bar right now; no slot is used and nothing is started. When publishing, an
+                # idle morning researches the next waiting question into a ready-to-build brief, once a day, and falls
+                # back to a design-only sketch for the owner when there is nothing to research or the research fails.
                 print('No curriculum item is ready to investigate (every ready model is in use); nothing started.',flush=True)
                 checked.append('No question is ready to investigate; nothing started.')
-                if blueprints:
+                if blueprints and not research_brief(factory,items,root,day,explored,model_of,requests):
                     blueprint(factory,[i for i in items if not explored(i['question'])],root,day)
                 break
             attempt={'day':day,'status':'planning','started':datetime.now().astimezone().isoformat()}

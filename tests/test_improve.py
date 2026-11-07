@@ -73,7 +73,7 @@ class BlueprintTests(unittest.TestCase):
             saved=json.loads((root/'web'/'proposals.json').read_text())['proposals']
             self.assertEqual([p['curriculum'] for p in saved],['4.1','2.2'])
 
-    def test_nothing_ready_sketches_a_blueprint_only_when_asked(self):
+    def test_nothing_ready_researches_a_brief_only_when_asked(self):
         from lab.daily import daily
         items=[{'id':'2.2','question':'Can two events be simultaneous for one person but not another?','model':None}]
         for asked in (False,True):
@@ -81,7 +81,9 @@ class BlueprintTests(unittest.TestCase):
                 root=Path(tmp);curriculum(root,items)
                 provider=FixtureProvider();provider.calls=0
                 daily(lambda:provider,root=root,requests=[],blueprints=asked)
-                self.assertEqual(provider.calls,1 if asked else 0)
+                # Idle morning: researcher, scientist and designer produce a build brief and a proposal when asked.
+                self.assertEqual(provider.calls,3 if asked else 0)
                 self.assertEqual((root/'web'/'proposals.json').exists(),asked)
+                self.assertEqual((root/'web'/'briefs'/'2.2.json').exists(),asked)
 
 if __name__=='__main__':unittest.main()
