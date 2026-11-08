@@ -270,7 +270,7 @@ async function refreshDashboard(){
   $('lab').dataset.state=active?'active':schedule?.enabled?'idle':'paused';
   labActive=active;labQuestion=state.question&&state.question!=='Choosing the next question'?state.question:'';
   const outcome={reviewed:'Last investigation passed review',needs_review:'Last attempt stayed a draft',failed:'Last attempt stopped early',interrupted:'Last attempt was interrupted'};
-  put('now-title',active?(state.status==='planning'?'Choosing today’s question':'Investigating now'):entries[0]?`Latest published: ${entries[0].title}`:outcome[state.status]||'Resting');
+  put('now-title',active?(state.status==='planning'?'Choosing today’s question':''):entries[0]?`Latest published: ${entries[0].title}`:outcome[state.status]||'');
   put('dashboard-question',active&&state.question&&state.question!=='Choosing the next question'?state.question:'');
   const step=stepOf(state);labStatus=state;drawLabStill();
   $('steps').hidden=!active;
@@ -373,6 +373,12 @@ function tryState(label){
 // Guidance notes: the owner's GitHub issues labelled council:guidance wait for the next run, which follows them where
 // they fit the quality bar, replies on each and closes it. Notes pinned on this page stay in this browser until sent.
 const NOTE_TAIL='\n\nA guidance note from the lab on the home page.';
+// One note to the lab, routed to the label the 9 AM run reads: a question, an idea for what to work on, or feedback.
+function tellURL(kind,text){
+ if(kind==='guidance')return issueURL('council:guidance',`Guidance: ${text}`.slice(0,120),text+NOTE_TAIL);
+ if(kind==='feedback')return issueURL('council:feedback',`Feedback: ${text}`.slice(0,120),`${text}\n\nSent from the Intuition Lab home page.`);
+ return issueURL('council:question',`Question: ${text}`.slice(0,120),`${text}\n\nAsked from the Intuition Lab home page. The next 9 AM run reads it.`);
+}
 let guideIssues=[];
 const localNotes=()=>{try{return JSON.parse(localStorage.getItem('council-notes')||'[]');}catch{return [];}};
 const saveNotes=list=>{try{localStorage.setItem('council-notes',JSON.stringify(list.slice(-6)));}catch{}};
@@ -387,8 +393,7 @@ function renderNotes(){
  list.replaceChildren(...noteList().map(n=>{
   const item=el('li',{},el('span',{className:'note-text',textContent:n.text}));
   if(n.url)item.append(el('a',{className:'state',href:n.url,target:'_blank',rel:'noopener noreferrer',textContent:n.status==='applied'?'Used · read the reply':'Waiting for the 9 AM run'}));
-  else{item.append(el('a',{className:'state pill pick',target:'_blank',rel:'noopener noreferrer',textContent:'Send to the 9 AM run',
-    href:issueURL('council:guidance',`Guidance: ${n.text}`.slice(0,120),n.text+NOTE_TAIL)}));
+  else{item.append(el('a',{className:'state',target:'_blank',rel:'noopener noreferrer',textContent:'Waiting for the 9 AM run',href:tellURL('guidance',n.text)}));
    const drop=el('button',{type:'button',className:'note-drop',textContent:'×',title:'Remove this note'});drop.setAttribute('aria-label','Remove this note');
    drop.onclick=()=>{saveNotes(localNotes().filter(x=>x.id!==n.id));renderNotes();};item.append(drop);}
   return item;}));
@@ -465,22 +470,26 @@ function startLab(){
   if(hit.kind==='person'){labEvents.poke={who:hit.who,at:performance.now()/1000};showTip(hit,true);}
   else if(hit.kind==='machine')showTip({...hit,who:'machine'},true);
   else if(hit.kind==='frame'){const guide=[...entries].sort((x,y)=>new Date(x.created)-new Date(y.created))[hit.index];if(guide)location.href='?guide='+encodeURIComponent(guide.id);}
-  else if(hit.kind==='notes'){$('lab').open=true;$('guide-text').focus();}
-  else if(hit.kind==='board')$('lab').open=true;});
+  else if(hit.kind==='notes'){$('guide-text').focus({preventScroll:true});$('lab').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});}
+  else if(hit.kind==='board')$('lab').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});});
  // With reduced motion the picture is one still frame, painted again when its state changes; a sample run steps on
  // once a second.
  requestAnimationFrame(reduceMotion?paintLab:tick);
  if(reduceMotion)setInterval(()=>{if(labPreview?.state==='run')drawLabStill();},1000);
  addEventListener('resize',()=>paintLab(performance.now()));
+ const syncSend=()=>{$('guide-send').disabled=!$('guide-text').value.trim();};
  $('guide-form').onsubmit=e=>{e.preventDefault();const text=$('guide-text').value.trim();if(!text)return;
-  saveNotes([...localNotes(),{id:Date.now(),text:text.slice(0,400),at:Date.now()}]);$('guide-text').value='';renderNotes();
-  labEvents.note=performance.now()/1000;drawLabStill();labCanvas.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});};
- $('guide-open').onclick=e=>{e.preventDefault();$('lab').open=true;$('guide-text').focus();};
+  const kind=$('tell-type').value;
+  window.open(tellURL(kind,text),'_blank','noopener');
+  if(kind==='guidance'){saveNotes([...localNotes(),{id:Date.now(),text:text.slice(0,400),at:Date.now()}]);renderNotes();
+   labEvents.note=performance.now()/1000;drawLabStill();labCanvas.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});}
+  $('guide-text').value='';syncSend();};
+ $('guide-text').addEventListener('input',syncSend);syncSend();
  $('lab-states').replaceChildren(...LAB_STATES.map(([label])=>{const b=el('button',{type:'button',className:'chip',textContent:label});b.onclick=()=>tryState(label);return b;}));
  markStates();
  // ?lab=review (or any state's name) opens the page in that state.
  const asked=norm(params.get('lab')), wanted=asked&&LAB_STATES.find(([l])=>norm(l)===asked);
- if(wanted){$('lab').open=true;tryState(wanted[0]);}
+ if(wanted){const p=$('lab-preview');if(p)p.open=true;tryState(wanted[0]);}
  loadNotes();
 }
 
@@ -504,20 +513,20 @@ function requestFor(item){
 // Drafts sit with the investigations: in the slot whose model they use, else in the chapter of their topic.
 const DRAFTS_NOTE='Made by hand, outside the daily run. The lab’s reviewers have not checked them, so they are not published.';
 function draftFor(item,used){const d=drafts.find(x=>!used.has(x.id)&&x.kind===item.model);if(d)used.add(d.id);return d;}
-// Every other reviewed investigation in one grid, newest first; then the drafts on a shelf of their own, newest
-// first; then the questions that can be picked for tomorrow's run.
+// The investigations open for tomorrow's run, as the daily run sees them: one picture per guide, so a question whose
+// picture a guide or draft already uses is dropped; ready ones in retry order, and a count of those still waiting for
+// a picture. Shared by the Next panel.
+function openItems(){
+ if(!curriculum)return {ready:[],later:0};
+ const used=new Set(), pictured=i=>entries.some(e=>e.topic===i.model), open=curriculum.chapters.flatMap(c=>c.items).filter(i=>!doneItem(i)&&!pictured(i)&&!draftFor(i,used));
+ return {ready:retryOrder(open.filter(i=>i.ready&&!triedItem(i))),later:open.filter(i=>!i.ready).length};
+}
+// Every other reviewed investigation in one grid, newest first, then the drafts on a shelf of their own.
 function gallery(lead){
  const grid=el('div',{className:'thumbs'},...entries.filter(e=>e!==lead).sort(newestFirst).map(cardFor));
  const shelf=drafts.length?[el('section',{className:'drafts-shelf'},el('h3',{className:'chapter-title'},'Drafts',el('span',{textContent:`${drafts.length} to review`})),
   el('p',{className:'drafts-note',textContent:DRAFTS_NOTE}),el('div',{className:'thumbs'},...[...drafts].sort(newestFirst).map(cardFor)))]:[];
- if(!curriculum)return [grid,...shelf];
- // As in the daily run: one picture per guide, so a question whose picture a guide or draft already uses is not open.
- const used=new Set(), pictured=i=>entries.some(e=>e.topic===i.model), open=curriculum.chapters.flatMap(c=>c.items).filter(i=>!doneItem(i)&&!pictured(i)&&!draftFor(i,used));
- const ready=retryOrder(open.filter(i=>i.ready&&!triedItem(i))), later=open.filter(i=>!i.ready).length;
- if(!ready.length&&!later)return [grid,...shelf];
- return [grid,...shelf,el('section',{className:'up-next'},el('h3',{className:'chapter-title',textContent:'Up next'}),
-  ...(ready.length?[el('ul',{className:'items'},...ready.map(i=>el('li',{},el('span',{className:'q',textContent:i.question}),requestFor(i))))]:[]),
-  ...(later?[el('p',{className:'up-later',textContent:`${later} more question${later>1?'s are':' is'} planned, waiting for a picture that explains ${later>1?'them':'it'} well.`})]:[]))];
+ return [grid,...shelf];
 }
 // Like the daily run, a question tried before with the same model, or answered by a draft, is not offered again.
 // Never-tried items first in teaching order, then retries, the most recent early stop first (retry_order in lab/daily.py).
@@ -528,16 +537,22 @@ function triedItem(i){const tries=attempts.filter(a=>norm(a.question)===norm(i.q
  return tries.length>early||early>=3||drafts.some(d=>norm(d.question||d.title)===norm(i.question));}
 function renderPath(){
  if(!curriculum)return;
- // Like the daily run: ready items whose model has no guide or draft yet, skipping questions a guide or draft answers
- // or that were tried with the same model.
- const used=new Set([...entries.map(e=>e.topic),...drafts.map(d=>d.kind)]);
- const all=curriculum.chapters.flatMap(c=>c.items), open=all.filter(i=>i.model&&i.ready&&!used.has(i.model)&&!doneItem(i)&&!triedItem(i)&&!picks.has(i.id));
- const next=retryOrder(open)[0];
+ const {ready,later}=openItems(), all=curriculum.chapters.flatMap(c=>c.items);
+ const pick=[...picks.keys()].map(id=>all.find(i=>i.id===id)).find(i=>i&&i.model&&!doneItem(i));
+ const next=pick||ready[0];
+ labNext=next?.question||'';
  if(schedule?.enabled){
-  const pick=[...picks.keys()].map(id=>all.find(i=>i.id===id)).find(i=>i&&i.model&&!doneItem(i));
-  const upcoming=pick||next;labNext=upcoming?.question||'';
-  put('next-pick',labActive?labQuestion:upcoming?`${pick?'Your pick':'Next'}: ${upcoming.question}`:'');
- }else put('next-pick',labActive?labQuestion:'');
+  put('next-pick',labActive?labQuestion:next?`${pick?'Your pick':'Next'}: ${next.question}`:(later?'Planning the next picture':'Nothing queued right now'));
+ }else put('next-pick',labActive?labQuestion:schedule?.state==='paused'?'New investigations are paused':schedule?.state==='blocked'?'Daily runs need setup':'Investigations are started by hand');
+ // One-tap pick for the next item; the rest of the queue sits behind a disclosure.
+ $('next-pick-action')?.replaceChildren(...(!labActive&&schedule?.enabled&&next?[requestFor(next)]:[]));
+ const rest=ready.filter(i=>i!==next), count=rest.length+later, more=$('next-more');
+ if(more){
+  $('next-list').replaceChildren(...rest.map(i=>el('li',{},el('span',{className:'q',textContent:i.question}),requestFor(i))),
+   ...(later?[el('li',{className:'up-later-li'},el('span',{className:'q up-later',textContent:`${later} more question${later>1?'s':''} waiting for a picture that explains ${later>1?'them':'it'} well.`}))]:[]));
+  put('next-count',count?`${count} more waiting`:'');
+  more.hidden=labActive||!count;
+ }
  if(labPreview)labPreview.shown='';
 }
 async function loadPath(){

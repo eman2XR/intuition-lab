@@ -26,27 +26,44 @@
  <a class="home-link" href="./"><span aria-hidden="true">←</span> Intuition Lab</a>
  <div class="lab-caption">
  <p class="lab-intro"><svg class="spark" viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 1Q10 10 19 10Q10 10 10 19Q10 10 1 10Q10 10 10 1Z" fill="currentColor"/></svg>A team of AI agents making short, intuitive guides that explain why things work.</p>
- <details id="lab" class="lab-strip">
-  <summary><span class="pulse" aria-hidden="true"></span><strong id="dashboard-status">Checking status…</strong><span id="next-pick" class="strip-next"></span><span id="next-title" class="strip-when"></span><span id="guide-open" class="strip-guide">Leave a note</span></summary>
-  <div class="lab-detail">
-   <p id="now-title" class="panel-title"></p>
-   <p id="dashboard-question" class="muted"></p>
+ <section id="lab" class="lab-panel" aria-label="The lab: progress now, the next investigation, and sending a command">
+  <div class="lab-now">
+   <p class="label small">Now</p>
+   <p class="now-line"><span class="pulse" aria-hidden="true"></span><strong id="dashboard-status">Checking status…</strong><span id="next-title" class="now-when"></span></p>
+   <p id="now-title" class="now-sub"></p>
+   <p id="dashboard-question" class="now-q"></p>
    <ol id="steps" class="steps" hidden></ol>
    <p id="dashboard-phase" class="fine"></p>
    <p id="dashboard-freshness" class="fine warn"></p>
-   <p id="dashboard-schedule" class="fine"></p>
-   <div class="lab-try"><p class="label small">Try the lab’s states</p><div id="lab-states" class="lab-states"></div>
-    <p class="fine">Simulated in your browser; nothing is sent.</p></div>
-   <form id="guide-form" class="lab-guide">
-    <label for="guide-text" class="label small">Guide the lab</label>
-    <textarea id="guide-text" rows="2" maxlength="400" placeholder="What should the lab work on next, or do differently?"></textarea>
-    <div class="guide-actions"><button type="submit" class="pill">Pin it to the lab</button></div>
-    <ul id="guide-notes" class="guide-notes"></ul>
-    <p class="fine">A pinned note stays in this browser. Sending it opens a public GitHub issue; the 9 AM run follows notes from the owner’s account where they fit its quality bar, and replies on each.</p>
-   </form>
-   <div id="bench" hidden><p class="label small">Drafts that didn’t pass review</p><ul id="bench-list"></ul></div>
   </div>
- </details>
+  <div class="lab-next">
+   <p class="label small">Next</p>
+   <p class="next-line"><span id="next-pick" class="next-q"></span><span id="next-pick-action" class="next-act"></span></p>
+   <details id="next-more" class="next-more" hidden><summary><span id="next-count"></span></summary><ul id="next-list" class="items"></ul></details>
+   <p id="dashboard-schedule" class="fine"></p>
+  </div>
+  <form id="guide-form" class="lab-tell">
+   <label for="guide-text" class="label small">Tell the lab</label>
+   <textarea id="guide-text" rows="2" maxlength="400" placeholder="Ask a question, suggest what to work on, or give feedback"></textarea>
+   <div class="tell-row">
+    <label class="tell-as"><span class="tell-as-label">Send as</span>
+     <select id="tell-type">
+      <option value="question">Question</option>
+      <option value="guidance">Idea</option>
+      <option value="feedback">Feedback</option>
+     </select></label>
+    <button type="submit" id="guide-send" class="pill send">Send</button>
+   </div>
+   <p class="fine">Opens a public GitHub issue. The next 9 AM run reads it and replies.</p>
+   <ul id="guide-notes" class="guide-notes"></ul>
+  </form>
+  <details id="lab-preview" class="lab-preview">
+   <summary>Preview the lab’s states</summary>
+   <div class="lab-try"><div id="lab-states" class="lab-states"></div>
+    <p class="fine">Simulated in your browser; nothing is sent.</p></div>
+  </details>
+  <div id="bench" hidden><p class="label small">Drafts that didn’t pass review</p><ul id="bench-list"></ul></div>
+ </section>
  </div>
  <section id="home" class="home" aria-labelledby="past-title">
   <div id="featured" class="featured"></div>

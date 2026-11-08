@@ -63,39 +63,73 @@ body[data-view=article] .lab-wrap{display:none}
 .lab-latest{margin:0 0 12px;font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--brown)}
 .featured .card-media{transition:box-shadow .6s}
 .featured.fresh .card-media{box-shadow:0 0 0 3px rgba(234,88,12,.5),0 0 26px rgba(234,88,12,.35)}
-.lab-strip{margin:0;max-width:860px;font-size:12px;border-radius:10px}
-.lab-strip summary{list-style:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 12px;padding:4px 0;cursor:pointer;color:var(--muted)}
-.lab-strip[open]{max-width:none;width:100%;text-align:left;background:var(--paper)}
-.lab-strip[open] summary{padding:8px 14px}
-.lab-strip summary::-webkit-details-marker{display:none}
-.lab-strip summary strong{color:var(--ink);font-weight:600}
-.strip-next{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:72ch}
-.strip-when{color:var(--faint);white-space:nowrap}
-.lab-strip summary::after{content:"+";color:var(--faint)}
-.lab-strip[open] summary::after{content:"–"}
-/* Guiding the lab: a short note box, the notes waiting for the next run, and a simulated sample run. */
-.strip-guide{font-size:13px;color:var(--brown);text-decoration:underline;text-decoration-color:rgba(160,82,45,.35);text-underline-offset:3px}
-.lab-guide{max-width:560px;margin:18px auto 4px;text-align:left}
-.lab-try{max-width:640px;margin:16px auto 0}
-.lab-states{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0 6px}
-.lab-states .chip{font-size:12px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted)}
-.lab-states .chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
-.lab-guide textarea{display:block;width:100%;box-sizing:border-box;margin:6px 0 8px;padding:9px 11px;font:15px/1.45 var(--sans);color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;resize:vertical}
-.lab-guide textarea:focus{outline:2px solid var(--orange-ink);outline-offset:-1px}
-.guide-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+/* The lab panel: progress now, the next investigation and sending a command. Always on under the lab picture; two
+   columns on wide screens, stacked on phones. */
+.lab-panel{width:100%;text-align:left;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;background:var(--paper);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
+.lab-panel>div,.lab-panel>form,.lab-panel>details{padding:16px 18px}
+.lab-now{border-bottom:1px solid var(--line)}
+.lab-next{border-bottom:1px solid var(--line);border-left:1px solid var(--line)}
+.lab-tell{grid-column:1/-1}
+.lab-preview{grid-column:1/-1;border-top:1px solid var(--line)}
+#bench{grid-column:1/-1;border-top:1px solid var(--line)}
+.lab-panel .label.small{margin:0 0 8px}
+.lab-panel .fine:empty{display:none}
+/* Now: status in one glance. */
+.now-line{display:flex;align-items:center;gap:8px;font-size:15px}
+.now-line strong{color:var(--ink);font-weight:600}
+.now-when{color:var(--faint);font-size:13px}
+.now-when:not(:empty)::before{content:"·";margin-right:6px;color:var(--faint)}
+.now-sub{margin-top:6px;font-size:14px;color:var(--muted)}
+.now-sub:empty{display:none}
+.now-q{margin-top:4px;font:500 16px/1.4 var(--serif);color:var(--ink)}
+.now-q:empty{display:none}
+.lab-now .steps{margin:12px 0 4px}
+.lab-now .fine{margin-top:8px}
+/* Next: the investigation the planner would pick, with a one-tap pick and the rest behind a disclosure. */
+.next-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.next-q{font:500 16px/1.4 var(--serif);color:var(--ink)}
+.next-q:empty{display:none}
+.next-act:empty{display:none}
+.next-more{margin:10px 0 0;padding:0!important}
+.next-more>summary{list-style:none;cursor:pointer;font:600 13px var(--sans);color:var(--orange-ink);padding:4px 0}
+.next-more>summary::-webkit-details-marker{display:none}
+.next-more>summary::after{content:"+";margin-left:8px;color:var(--faint)}
+.next-more[open]>summary::after{content:"–"}
+.next-more .items{margin:6px 0 0}
+.lab-next .fine{margin-top:12px}
+.up-later{color:var(--faint);font-size:13px}
+.up-later-li{grid-template-columns:1fr!important;color:var(--faint)}
+/* Tell the lab: one note, a type and a single Send. */
+.lab-tell textarea{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:10px 12px;font:15px/1.45 var(--sans);color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;resize:vertical;min-height:2.6em}
+.lab-tell textarea:focus{outline:2px solid var(--orange-ink);outline-offset:-1px}
+.tell-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.tell-as{display:inline-flex;align-items:center;gap:8px;font:600 12px var(--sans);color:var(--faint)}
+.tell-as select{font:500 14px var(--sans);color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-height:36px}
+.tell-as select:focus-visible{outline:2px solid var(--orange-ink);outline-offset:2px}
+.pill.send{background:var(--orange-ink);color:#fff;border-color:var(--orange-ink);min-height:36px;padding:8px 20px}
+.pill.send:hover:not(:disabled){background:#92400e;border-color:#92400e}
+.pill.send:disabled{background:#f1ede6;color:var(--faint);border-color:var(--line)}
+.lab-tell .fine{margin-top:10px}
+/* The notes you have sent, kept in this browser until the run replies. */
 .guide-notes{list-style:none;margin:12px 0 0;padding:0}
 .guide-notes li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
 .guide-notes .note-text{flex:1;color:var(--ink)}
+.guide-notes .state{color:var(--orange-ink)}
 .note-drop{min-width:24px;min-height:24px;color:var(--faint);font-size:16px;line-height:1}
-.lab-guide .fine{margin-top:10px}
-.pulse{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
-.lab-strip[data-state=idle] .pulse{background:#22a05a}
-.lab-strip[data-state=active] .pulse{background:var(--warm);animation:pulse 1.6s ease-out infinite}
+/* Preview the lab's states: kept available but secondary. */
+.lab-preview>summary{list-style:none;cursor:pointer;font:600 13px var(--sans);color:var(--orange-ink);padding:2px 0}
+.lab-preview>summary::-webkit-details-marker{display:none}
+.lab-preview>summary::after{content:"+";margin-left:8px;color:var(--faint)}
+.lab-preview[open]>summary::after{content:"–"}
+.lab-try{margin:0}
+.lab-states{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}
+.lab-states .chip{font-size:12px;padding:6px 11px;min-height:28px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+.lab-states .chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+/* Status dot */
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.lab-panel[data-state=idle] .pulse{background:#22a05a}
+.lab-panel[data-state=active] .pulse{background:var(--warm);animation:pulse 1.6s ease-out infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(234,88,12,.5)}100%{box-shadow:0 0 0 9px rgba(234,88,12,0)}}
-.lab-detail{padding:4px 22px 18px;text-align:center}
-.lab-detail .panel-title{font:700 17px/1.3 var(--serif);margin:4px 0}
-.lab-detail .muted{font-size:13px}
-.lab-detail .fine{margin-top:6px}
 .steps{list-style:none;display:flex;padding:0;margin:14px auto 4px;max-width:620px}
 .steps li{flex:1;font-size:11px;color:var(--faint);position:relative;padding-top:18px;text-align:center}
 .steps li::before{content:"";position:absolute;top:3px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--track);z-index:1}
@@ -103,7 +137,6 @@ body[data-view=article] .lab-wrap{display:none}
 .steps li:first-child::after{display:none}
 .steps li.done{color:var(--muted)}.steps li.done::before{background:var(--ink)}
 .steps li.active{color:var(--ink);font-weight:600}.steps li.active::before{background:var(--warm);animation:pulse 1.6s ease-out infinite}
-#bench{margin-top:12px}
 #bench ul{margin:6px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
 
 /* Article head */
@@ -301,11 +334,10 @@ footer{max-width:1240px;margin:90px auto 0;padding:28px 32px 44px;display:flex;j
 }
 @media (max-width:560px){
  .top{padding:14px 18px}
- .strip-next{display:none}
+ .lab-panel{grid-template-columns:1fr}
+ .lab-next{border-left:0}
  .lab-caption{margin-top:14px}
  .lab-intro{font-size:16px}
- .lab-strip summary::before{content:"";flex-basis:100%;order:1;height:0}
- .lab-strip summary .strip-guide{order:2}
  .mark{width:28px;height:28px}
  .wordmark{font-size:20px}
  main{padding:0 18px}
@@ -369,7 +401,6 @@ body[data-draft=yes] .draft-note:not(:empty){display:block;max-width:760px;margi
 
 /* Home: every investigation in one grid under the featured one, then the questions open for tomorrow; request
    buttons only while the daily run is on. */
-.up-next{margin-top:56px}
 .drafts-shelf{margin-top:56px}
 .drafts-shelf .chapter-title{margin-bottom:8px}
 .drafts-note{margin:0 0 24px;font-size:14px;color:var(--muted);max-width:60ch}
