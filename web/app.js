@@ -517,9 +517,9 @@ function draftFor(item,used){const d=drafts.find(x=>!used.has(x.id)&&x.kind===it
 // picture a guide or draft already uses is dropped; ready ones in retry order, and a count of those still waiting for
 // a picture. Shared by the Next panel.
 function openItems(){
- if(!curriculum)return {ready:[],later:0};
+ if(!curriculum)return {ready:[],later:[]};
  const used=new Set(), pictured=i=>entries.some(e=>e.topic===i.model), open=curriculum.chapters.flatMap(c=>c.items).filter(i=>!doneItem(i)&&!pictured(i)&&!draftFor(i,used));
- return {ready:retryOrder(open.filter(i=>i.ready&&!triedItem(i))),later:open.filter(i=>!i.ready).length};
+ return {ready:retryOrder(open.filter(i=>i.ready&&!triedItem(i))),later:open.filter(i=>!i.ready)};
 }
 // Every other reviewed investigation in one grid, newest first, then the drafts on a shelf of their own.
 function gallery(lead){
@@ -540,16 +540,18 @@ function renderPath(){
  const {ready,later}=openItems(), all=curriculum.chapters.flatMap(c=>c.items);
  const pick=[...picks.keys()].map(id=>all.find(i=>i.id===id)).find(i=>i&&i.model&&!doneItem(i));
  const next=pick||ready[0];
- labNext=next?.question||'';
+ // When nothing has a ready picture yet, name the next question that is waiting for one, so the section is never a bare placeholder.
+ const coming=!next&&later.length?later[0]:null;
+ labNext=next?.question||coming?.question||'';
  if(schedule?.enabled){
-  put('next-pick',labActive?labQuestion:next?`${pick?'Your pick':'Next'}: ${next.question}`:(later?'Planning the next picture':'Nothing queued right now'));
+  put('next-pick',labActive?labQuestion:next?`${pick?'Your pick':'Next'}: ${next.question}`:coming?`Coming up: ${coming.question}`:'Nothing queued right now');
  }else put('next-pick',labActive?labQuestion:schedule?.state==='paused'?'New investigations are paused':schedule?.state==='blocked'?'Daily runs need setup':'Investigations are started by hand');
- // One-tap pick for the next item; the rest of the queue sits behind a disclosure.
+ // One-tap pick for a ready item; a waiting question has no picture to run yet, so it is named without a pick button. The rest of the queue sits behind a disclosure.
  $('next-pick-action')?.replaceChildren(...(!labActive&&schedule?.enabled&&next?[requestFor(next)]:[]));
- const rest=ready.filter(i=>i!==next), count=rest.length+later, more=$('next-more');
+ const restReady=ready.filter(i=>i!==next), restLater=later.filter(i=>i!==coming), count=restReady.length+restLater.length, more=$('next-more');
  if(more){
-  $('next-list').replaceChildren(...rest.map(i=>el('li',{},el('span',{className:'q',textContent:i.question}),requestFor(i))),
-   ...(later?[el('li',{className:'up-later-li'},el('span',{className:'q up-later',textContent:`${later} more question${later>1?'s':''} waiting for a picture that explains ${later>1?'them':'it'} well.`}))]:[]));
+  $('next-list').replaceChildren(...restReady.map(i=>el('li',{},el('span',{className:'q',textContent:i.question}),requestFor(i))),
+   ...restLater.map(i=>el('li',{className:'up-later-li'},el('span',{className:'q up-later',textContent:i.question}))));
   put('next-count',count?`${count} more waiting`:'');
   more.hidden=labActive||!count;
  }
