@@ -470,8 +470,8 @@ function startLab(){
   if(hit.kind==='person'){labEvents.poke={who:hit.who,at:performance.now()/1000};showTip(hit,true);}
   else if(hit.kind==='machine')showTip({...hit,who:'machine'},true);
   else if(hit.kind==='frame'){const guide=[...entries].sort((x,y)=>new Date(x.created)-new Date(y.created))[hit.index];if(guide)location.href='?guide='+encodeURIComponent(guide.id);}
-  else if(hit.kind==='notes'){$('guide-text').focus({preventScroll:true});$('lab').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});}
-  else if(hit.kind==='board')$('lab').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});});
+  else if(hit.kind==='notes'){$('lab').open=true;$('guide-text').focus({preventScroll:true});$('lab').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});}
+  else if(hit.kind==='board'){$('lab').open=true;$('lab').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});}});
  // With reduced motion the picture is one still frame, painted again when its state changes; a sample run steps on
  // once a second.
  requestAnimationFrame(reduceMotion?paintLab:tick);
@@ -485,7 +485,7 @@ function startLab(){
    labEvents.note=performance.now()/1000;drawLabStill();labCanvas.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'nearest'});}
   $('guide-text').value='';syncSend();};
  $('guide-text').addEventListener('input',syncSend);syncSend();
- $('lab-states').replaceChildren(...LAB_STATES.map(([label])=>{const b=el('button',{type:'button',className:'chip',textContent:label});b.onclick=()=>tryState(label);return b;}));
+ $('lab-states')?.replaceChildren(...LAB_STATES.map(([label])=>{const b=el('button',{type:'button',className:'chip',textContent:label});b.onclick=()=>tryState(label);return b;}));
  markStates();
  // ?lab=review (or any state's name) opens the page in that state.
  const asked=norm(params.get('lab')), wanted=asked&&LAB_STATES.find(([l])=>norm(l)===asked);

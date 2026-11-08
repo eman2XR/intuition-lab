@@ -65,12 +65,18 @@ body[data-view=article] .lab-wrap{display:none}
 .featured.fresh .card-media{box-shadow:0 0 0 3px rgba(234,88,12,.5),0 0 26px rgba(234,88,12,.35)}
 /* The lab panel: progress now, the next investigation and sending a command. Always on under the lab picture; two
    columns on wide screens, stacked on phones. */
-.lab-panel{width:100%;text-align:left;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;background:var(--paper);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
-.lab-panel>div,.lab-panel>form,.lab-panel>details{padding:16px 18px}
+.lab-panel{width:100%;text-align:left;margin:4px 0 0;border:1px solid var(--line);border-radius:14px;background:var(--paper);overflow:hidden}
+.lab-summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:12px 16px;font-size:15px}
+.lab-summary::-webkit-details-marker{display:none}
+.lab-summary strong{color:var(--ink);font-weight:600}
+.lab-summary::after{content:"+";margin-left:auto;color:var(--faint);font-size:16px}
+.lab-panel[open] .lab-summary{border-bottom:1px solid var(--line)}
+.lab-panel[open] .lab-summary::after{content:"–"}
+.lab-body{display:grid;grid-template-columns:1fr 1fr}
+.lab-body>div,.lab-body>form{padding:16px 18px}
 .lab-now{border-bottom:1px solid var(--line)}
 .lab-next{border-bottom:1px solid var(--line);border-left:1px solid var(--line)}
 .lab-tell{grid-column:1/-1}
-.lab-preview{grid-column:1/-1;border-top:1px solid var(--line)}
 #bench{grid-column:1/-1;border-top:1px solid var(--line)}
 .lab-panel .label.small{margin:0 0 8px}
 .lab-panel .fine:empty{display:none}
@@ -117,7 +123,7 @@ body[data-view=article] .lab-wrap{display:none}
 .guide-notes .state{color:var(--orange-ink)}
 .note-drop{min-width:24px;min-height:24px;color:var(--faint);font-size:16px;line-height:1}
 /* Preview the lab's states: kept available but secondary. */
-.lab-preview>summary{list-style:none;cursor:pointer;font:600 13px var(--sans);color:var(--orange-ink);padding:2px 0}
+.lab-preview>summary{list-style:none;cursor:pointer;font:600 13px var(--sans);color:var(--orange-ink);padding:2px 0;display:none}
 .lab-preview>summary::-webkit-details-marker{display:none}
 .lab-preview>summary::after{content:"+";margin-left:8px;color:var(--faint)}
 .lab-preview[open]>summary::after{content:"–"}
@@ -334,7 +340,7 @@ footer{max-width:1240px;margin:90px auto 0;padding:28px 32px 44px;display:flex;j
 }
 @media (max-width:560px){
  .top{padding:14px 18px}
- .lab-panel{grid-template-columns:1fr}
+ .lab-body{grid-template-columns:1fr}
  .lab-next{border-left:0}
  .lab-caption{margin-top:14px}
  .lab-intro{font-size:16px}

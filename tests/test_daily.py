@@ -268,7 +268,9 @@ class WorkerSyncTests(unittest.TestCase):
     def test_waits_for_the_network_and_gives_up_without_starting(self):
         with tempfile.TemporaryDirectory() as tmp:
             git,origin,worker,push_from_me=checkouts(tmp)
-            self.assertEqual(entry_point().online(worker,minutes=1),0)
+            # It answers on the first check without sleeping; the exact seconds depend on how fast git runs here.
+            waited=entry_point().online(worker,minutes=1)
+            self.assertIsNotNone(waited);self.assertLess(waited,60)
             missing=Path(tmp)/'not-a-checkout';missing.mkdir()
             now=[0];waits=[]
             def sleep(seconds):waits.append(seconds);now[0]+=seconds
