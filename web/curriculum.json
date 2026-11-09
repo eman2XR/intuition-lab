@@ -1,142 +1,142 @@
 {
- "title": "The path",
- "horizon": "Further out: quantum fields, where particles are ripples in fields that fill space. It builds on every chapter above.",
- "chapters": [
-  {
-   "number": 1,
-   "title": "Gravity and time",
-   "engine": "clocks and light paths",
-   "items": [
+  "title": "The path",
+  "horizon": "Further out: quantum fields, where particles are ripples in fields that fill space. It builds on every chapter above.",
+  "chapters": [
     {
-     "id": "1.1",
-     "question": "Why do clocks at different heights tick at different rates?",
-     "model": "gravity-clocks",
-     "ready": true
+      "number": 1,
+      "title": "Gravity and time",
+      "engine": "clocks and light paths",
+      "items": [
+        {
+          "id": "1.1",
+          "question": "Why do clocks at different heights tick at different rates?",
+          "model": "gravity-clocks",
+          "ready": true
+        },
+        {
+          "id": "1.2",
+          "question": "Why does gravity bend light?",
+          "model": "light-bending",
+          "ready": true
+        }
+      ]
     },
     {
-     "id": "1.2",
-     "question": "Why does gravity bend light?",
-     "model": "light-bending",
-     "ready": true
+      "number": 2,
+      "title": "Space and time",
+      "engine": "spacetime diagram with gravity",
+      "items": [
+        {
+          "id": "2.1",
+          "question": "Why does a moving clock tick slowly?",
+          "model": "light-clock",
+          "ready": true
+        },
+        {
+          "id": "2.2",
+          "question": "Can two events be simultaneous for one person but not another?",
+          "model": "simultaneity"
+        },
+        {
+          "id": "2.3",
+          "question": "Why is the travelling twin younger?",
+          "model": "spacetime-paths",
+          "ready": true
+        },
+        {
+          "id": "2.4",
+          "question": "Why can nothing travel faster than light?",
+          "model": "speed-limit",
+          "ready": true
+        },
+        {
+          "id": "2.5",
+          "question": "If gravity slows time, why do things fall?",
+          "model": "falling-time"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Waves",
+      "engine": "single-gap wave",
+      "items": [
+        {
+          "id": "3.1",
+          "question": "What happens when two waves meet?",
+          "model": "interference",
+          "ready": true
+        },
+        {
+          "id": "3.2",
+          "question": "Why does a guitar string only play certain notes?",
+          "model": "standing-waves"
+        },
+        {
+          "id": "3.3",
+          "question": "How do two slits turn waves into stripes?",
+          "model": "interference",
+          "ready": true
+        },
+        {
+          "id": "3.4",
+          "question": "Why do waves spread out after passing a narrow gap?",
+          "model": "diffraction",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Quanta",
+      "engine": "quantum wave",
+      "items": [
+        {
+          "id": "4.1",
+          "question": "Why do particles fired one at a time still make stripes?",
+          "model": "two-slit-particles"
+        },
+        {
+          "id": "4.2",
+          "question": "Why can a trapped particle only have certain energies?",
+          "model": "quantum-well"
+        },
+        {
+          "id": "4.3",
+          "question": "Why can't you pin down both where a particle is and how it moves?",
+          "model": "wave-packet"
+        },
+        {
+          "id": "4.4",
+          "question": "How can a particle pass through a wall it cannot climb over?",
+          "model": "tunneling"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "How AI reads",
+      "engine": "word attention",
+      "items": [
+        {
+          "id": "5.1",
+          "question": "How did \u201cAttention Is All You Need\u201d lead to ChatGPT?",
+          "model": "attention"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "The universe",
+      "engine": "night sky and starlight",
+      "items": [
+        {
+          "id": "6.1",
+          "question": "Why is the night sky dark?",
+          "model": "night-sky",
+          "ready": true
+        }
+      ]
     }
-   ]
-  },
-  {
-   "number": 2,
-   "title": "Space and time",
-   "engine": "spacetime diagram with gravity",
-   "items": [
-    {
-     "id": "2.1",
-     "question": "Why does a moving clock tick slowly?",
-     "model": "light-clock",
-     "ready": true
-    },
-    {
-     "id": "2.2",
-     "question": "Can two events be simultaneous for one person but not another?",
-     "model": "spacetime"
-    },
-    {
-     "id": "2.3",
-     "question": "Why is the travelling twin younger?",
-     "model": "spacetime-paths",
-     "ready": true
-    },
-    {
-     "id": "2.4",
-     "question": "Why can nothing travel faster than light?",
-     "model": "speed-limit",
-     "ready": true
-    },
-    {
-     "id": "2.5",
-     "question": "If gravity slows time, why do things fall?",
-     "model": "falling-time"
-    }
-   ]
-  },
-  {
-   "number": 3,
-   "title": "Waves",
-   "engine": "single-gap wave",
-   "items": [
-    {
-     "id": "3.1",
-     "question": "What happens when two waves meet?",
-     "model": "interference",
-     "ready": true
-    },
-    {
-     "id": "3.2",
-     "question": "Why does a guitar string only play certain notes?",
-     "model": "standing-waves"
-    },
-    {
-     "id": "3.3",
-     "question": "How do two slits turn waves into stripes?",
-     "model": "interference",
-     "ready": true
-    },
-    {
-     "id": "3.4",
-     "question": "Why do waves spread out after passing a narrow gap?",
-     "model": "diffraction",
-     "ready": true
-    }
-   ]
-  },
-  {
-   "number": 4,
-   "title": "Quanta",
-   "engine": "quantum wave",
-   "items": [
-    {
-     "id": "4.1",
-     "question": "Why do particles fired one at a time still make stripes?",
-     "model": "two-slit-particles"
-    },
-    {
-     "id": "4.2",
-     "question": "Why can a trapped particle only have certain energies?",
-     "model": "quantum-well"
-    },
-    {
-     "id": "4.3",
-     "question": "Why can't you pin down both where a particle is and how it moves?",
-     "model": "wave-packet"
-    },
-    {
-     "id": "4.4",
-     "question": "How can a particle pass through a wall it cannot climb over?",
-     "model": "tunneling"
-    }
-   ]
-  },
-  {
-   "number": 5,
-   "title": "How AI reads",
-   "engine": "word attention",
-   "items": [
-    {
-     "id": "5.1",
-     "question": "How did “Attention Is All You Need” lead to ChatGPT?",
-     "model": "attention"
-    }
-   ]
-  },
-  {
-   "number": 6,
-   "title": "The universe",
-   "engine": "night sky and starlight",
-   "items": [
-    {
-     "id": "6.1",
-     "question": "Why is the night sky dark?",
-     "model": "night-sky",
-     "ready": true
-    }
-   ]
-  }
- ]
+  ]
 }
