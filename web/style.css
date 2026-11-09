@@ -412,6 +412,12 @@ body[data-draft=yes] .draft-note:not(:empty){display:block;max-width:760px;margi
 .drafts-shelf{margin-top:56px}
 .drafts-shelf .chapter-title{margin-bottom:8px}
 .drafts-note{margin:0 0 24px;font-size:14px;color:var(--muted);max-width:60ch}
+.archived-shelf{margin-top:56px;border-top:1px solid var(--line);padding-top:28px}
+.archived-shelf>summary{list-style:none;cursor:pointer;display:inline-block;margin-bottom:8px}
+.archived-shelf>summary::-webkit-details-marker{display:none}
+.archived-shelf>summary .chapter-title{display:inline-flex;margin:0}
+.archived-shelf>summary:hover .chapter-title{color:var(--brown)}
+.archived-shelf[open]>summary{margin-bottom:16px}
 .up-later{margin:12px 4px 0;font-size:13px;color:var(--faint)}
 /* Phones: the grid becomes a list, a small picture beside each title. */
 @media (max-width:600px){.gallery .thumbs{grid-template-columns:1fr;gap:18px}

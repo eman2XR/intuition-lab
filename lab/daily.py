@@ -16,7 +16,7 @@ from . import ROOT, PUBLICATION, sources
 from .contracts import obj, validate, validate_design, DESIGN_SCHEMA, RESEARCH_SCHEMA
 from .pipeline import run, write_json, approved, keep_retrieved, DESIGNER, STANDARD
 from .build_engine import build_engine
-from .revise import revise_feedback
+from .revise import revise_feedback, GUIDE_RE
 from .topics import TOPICS, READY
 from .dashboard import Dashboard
 from . import inbox
@@ -187,11 +187,19 @@ def publish(root=ROOT, runs=()):
     build briefs, and, for the guides this checkout exported (runs), their folders and the index, so other guides in
     the checkout never ship. Agent-built engine code never passes through here: it lives only on its review branch
     (see lab/build_engine.py), so this only ever pushes the public archive and the status and proposals files to main."""
-    def git(*args,check=True):
-        return subprocess.run(['git',*args],cwd=root,text=True,capture_output=True,check=check,timeout=120).stdout.strip()
     runs=[r for r in runs if isinstance(r,str) and RUN_ID.fullmatch(r)]
     paths=[p for p in ('web/dashboard.json','web/proposals.json','web/briefs',*(['web/published/index.json'] if runs else []),
                        *(f'web/published/{r}' for r in runs)) if (root/p).exists()]
+    _commit_and_push(root,paths)
+
+
+def _commit_and_push(root, paths, message=None):
+    """Commit the given publication paths and push main, with the guards and the single rebase-replay the daily run
+    relies on: the branch must be main, the index may not list an uncommitted guide, and only the given paths may be
+    staged, so no unrelated local edit ever ships. A message of None is derived from what changed."""
+    def git(*args,check=True):
+        return subprocess.run(['git',*args],cwd=root,text=True,capture_output=True,check=check,timeout=120).stdout.strip()
+    paths=[p for p in paths if (root/p).exists()]
     if not paths:
         return
     if git('branch','--show-current')!='main':
@@ -199,7 +207,8 @@ def publish(root=ROOT, runs=()):
     if 'web/published/index.json' in paths:
         listed={entry['id'] for entry in json.loads((root/'web'/'published'/'index.json').read_text())}
         committed={p.split('/')[2] for p in git('ls-tree','-r','--name-only','HEAD','--','web/published').splitlines() if p.count('/')>=3}
-        if listed-committed-set(runs):
+        new={p.split('/')[2] for p in paths if p.startswith('web/published/') and p.count('/')>=2 and p!='web/published/index.json'}
+        if listed-committed-new:
             raise RuntimeError('The index lists guides that are not committed; leave publication pending.')
     staged=git('diff','--cached','--name-only').splitlines()
     if any(not any(s==p or s.startswith(p+'/') for p in paths) for s in staged):
@@ -207,9 +216,10 @@ def publish(root=ROOT, runs=()):
     git('add','--',*paths)
     changed=git('diff','--cached','--name-only').splitlines()
     if changed:
-        guides=sorted({c.split('/')[2] for c in changed if c.startswith('web/published/') and c.count('/')>=3})
-        message=(f'Publish reviewed investigation {", ".join(guides)}' if guides else
-                 'Update Council proposals' if 'web/proposals.json' in changed else 'Update Council investigation dashboard')
+        if message is None:
+            guides=sorted({c.split('/')[2] for c in changed if c.startswith('web/published/') and c.count('/')>=3})
+            message=(f'Publish reviewed investigation {", ".join(guides)}' if guides else
+                     'Update Council proposals' if 'web/proposals.json' in changed else 'Update Council investigation dashboard')
         git('commit','-m',message,'--',*paths)
     # A failed push is retried next cycle even when there is nothing new to commit. When GitHub moved on during the
     # run, the run's own publication commits are replayed on top of it once and pushed again.
@@ -229,6 +239,56 @@ def publish(root=ROOT, runs=()):
             git('push','origin','main')
         except subprocess.SubprocessError as error:
             raise RuntimeError(f'{git_failure(error)}; leave publication pending.') from None
+
+
+def set_archived(root, guide_id, archived=True):
+    """Hide a published guide from the home page (archive) or list it again (restore) by flipping its archived flag in
+    the published index, then commit and push only that index. The guide folder stays in place, so it is never deleted
+    and keeps working by direct link. Idempotent: writing a flag it already has still flushes an earlier unpushed
+    change. Raises ValueError if no published guide has that id; RuntimeError if publication is left pending."""
+    index_path=root/'web'/'published'/'index.json'
+    index=json.loads(index_path.read_text()) if index_path.exists() else []
+    entry=next((e for e in index if e.get('id')==guide_id),None)
+    if entry is None:
+        raise ValueError(f'No published investigation has id {guide_id!r}.')
+    if archived:
+        entry['archived']=True
+    else:
+        entry.pop('archived',None)
+    write_json(index_path,index)
+    _commit_and_push(root,['web/published/index.json'],
+                     f'Archive investigation {guide_id}' if archived else f'Restore investigation {guide_id} from the archive')
+    return bool(archived)
+
+
+def apply_archive(requests, root, day):
+    """Apply the owner's archive and restore requests that name a published guide, replying on each issue. A request
+    with no id or an unknown id is answered and closed; a transient publication failure leaves the issue open so the
+    next cycle retries. Returns the lines describing what changed, for the dashboard check-in."""
+    notes=[]
+    for request in [r for r in requests if r['kind'] in ('archive','unarchive')]:
+        want=request['kind']=='archive'
+        match=GUIDE_RE.search(request.get('body') or '')
+        guide_id=match.group(1) if match else None
+        if not guide_id:
+            inbox.comment(request['number'],'Intuition Lab found no guide id in this request, so nothing changed. Add a line like "guide: <id>".')
+            inbox.close(request['number'])
+            continue
+        try:
+            set_archived(root,guide_id,want)
+        except ValueError as error:
+            inbox.comment(request['number'],f'Intuition Lab could not change this guide: {error}')
+            inbox.close(request['number'])
+            continue
+        except RuntimeError as error:
+            inbox.comment(request['number'],f'Intuition Lab recorded the change but publication is pending ({error}); it will retry next cycle.')
+            continue
+        inbox.comment(request['number'],
+            f'Intuition Lab {"archived" if want else "restored"} the guide "{guide_id}" on {day}; it is now '
+            +('hidden from the home page, in the Archived section.' if want else 'listed on the home page again.'))
+        inbox.close(request['number'])
+        notes.append(f'{"Archived" if want else "Restored"} the guide {guide_id}.')
+    return notes
 
 
 def site_live(run_id, minutes=10, every=20, opener=urllib.request.urlopen, sleep=time.sleep, clock=time.monotonic):
@@ -435,11 +495,18 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
                 print(f'Publication pending ({type(error).__name__}: {str(error)[:160]}); retry the daily command.',flush=True)
                 return False
 
+        # Owner requests (archive/restore and planning) are read once up front; manual runs plan without them.
+        if requests is None:
+            requests=inbox.fetch() if push else []
+        # Archive and restore are curation, not investigation, so they are applied first, even on a paused or used-up
+        # day, then dropped so they are never read as questions.
+        visibility=apply_archive(requests,root,day) if push else []
+        requests=[r for r in requests if r['kind'] not in ('archive','unarchive')]
         # Every cycle checks in on the dashboard, so the site can tell a resting Mac from one that did not run.
         if paused(root):
             # No slot is used and nothing is started.
             print('Investigations are paused (.council-state/paused); nothing started.',flush=True)
-            dashboard.checked('Paused by the owner; nothing started.')
+            dashboard.checked(' '.join(visibility+['Paused by the owner; nothing started.']))
             published()
             return []
         ledger_path=folder/'history.json'
@@ -449,16 +516,13 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
             if item['status'] in ('planning','running'):
                 item['status']='interrupted'
         write_json(ledger_path,ledger)
-        # Owner requests are read only by the publishing worker; manual runs plan without them.
-        if requests is None:
-            requests=inbox.fetch() if push else []
         items=inbox.curriculum(root)
         used=sum(item['day']==day for item in ledger)
         same=lambda entry,q: normalize(entry.get('question') or entry.get('title') or '')==normalize(q)
         model_of=lambda q: next((i['model'] for i in items if normalize(i['question'])==normalize(q)),None)
         # Replies on the owner's issues wait for the push, so they only say published once GitHub has the guide.
         replies=[]
-        checked=['Today’s investigation already ran; nothing new started.'] if used>=count else []
+        checked=list(visibility)+(['Today’s investigation already ran; nothing new started.'] if used>=count else [])
         for _ in range(max(0,count-used)):
             archive=root/'web'/'published'/'index.json'
             published_guides=json.loads(archive.read_text()) if archive.exists() else []

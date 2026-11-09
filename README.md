@@ -127,6 +127,8 @@ Export checks everything before writing and moves the finished guide into `web/p
 
 To publish an accepted run recorded in another checkout (for example a batch snapshot), use `python3 -m lab export --run-dir <run folder> --publish`; it applies the same gates.
 
+To set a published guide aside without deleting it, use `python3 -m lab archive <guide-id>` (and `python3 -m lab unarchive <guide-id>` to bring it back). The guide folder stays in place and keeps working by its link; only the home page changes, moving the guide into a collapsed "Archived" section. The command commits and pushes just `web/published/index.json`, so keep this checkout on `main`. The same thing can be requested from the site: each guide's behind-the-scenes footer has an "Archive this guide" / "Restore this guide" link that opens a `council:archive` / `council:unarchive` issue, which the next morning's run applies before it plans.
+
 ### Schedule on macOS
 
 Generate a launch-agent configuration for 9 AM local time, in the worker checkout:

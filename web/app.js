@@ -58,7 +58,8 @@ function show(data){
  $('run-banner').dataset.status=fixture?'example':data.status||'';
  if(data.provenance?.sources_retrieved===false){put('run-banner','Reviewed · sources not retrieved');$('run-banner').dataset.status='unverified';}
  if(draft){put('run-banner','Not reviewed by the lab');$('run-banner').dataset.status='draft';}
- put('draft-note',draft&&scene?CouncilDraw.disclosure(scene):'');
+ const archived=entries.some(e=>e.id===data.id&&e.archived);
+ put('draft-note',draft&&scene?CouncilDraw.disclosure(scene):archived?'Archived — kept here and open by its link, but not shown on the home page.':'');
  renderBehind(data);renderCards();updateTalk();renderPath();
 }
 
@@ -139,9 +140,9 @@ function thumbCard(entry,record){
 function cardFor(entry){return thumbCard(entry,records.get(keyOf(entry)));}
 let cardsKey='';
 function renderCards(){
- const lead=VIEW==='home'?[...entries].sort(newestFirst)[0]:null;
+ const lead=VIEW==='home'?[...entries].filter(e=>!e.archived).sort(newestFirst)[0]:null;
  // Rebuilt only when what the cards show has changed, so the minute's status refresh keeps keyboard focus.
- const key=JSON.stringify([current?.id,entries.map(e=>e.id),drafts.map(d=>d.id),[...watched],records.has(lead?.id),!!example,
+ const key=JSON.stringify([current?.id,entries.map(e=>e.id+(e.archived?'~':'')),drafts.map(d=>d.id),[...watched],records.has(lead?.id),!!example,
   VIEW==='home'&&[!!curriculum,[...picks.keys()],attempts.map(a=>[a.question,a.status,a.topic]),document.body.dataset.paused]]);
  if(key===cardsKey)return;cardsKey=key;
  thumbs.forEach(c=>visible.unobserve(c));thumbs.clear();
@@ -149,13 +150,14 @@ function renderCards(){
   // The newest published investigation leads; every other one follows in a single grid.
   const leadCard=lead?card(lead,records.get(lead.id)):example?card({id:'example',title:example.scene.title.replace(/\n/g,' ')},example):null;
   $('featured').replaceChildren(...(leadCard?[el('p',{className:'lab-latest',textContent:'Latest from the lab'}),leadCard]:[]));
-  put('past-count',entries.length?`${entries.length} investigation${entries.length>1?'s':''}`:'');
+  const shown=entries.filter(e=>!e.archived).length;
+  put('past-count',shown?`${shown} investigation${shown>1?'s':''}`:'');
   $('gallery').replaceChildren(...gallery(lead));
  }else{
   // Related first: investigations from the same chapter of the curriculum, else from the same topic, then the rest.
   const here=entries.find(e=>e.id===current?.id)||current, chapterOf=e=>String(e?.curriculum||'').split('.')[0];
   const near=e=>here?(chapterOf(here)&&chapterOf(e)===chapterOf(here)?2:0)+(topicOf(e)===topicOf(here)?1:0):0;
-  const others=[...entries,...drafts].filter(e=>e.id!==current?.id).sort((a,b)=>near(b)-near(a)).slice(0,4);
+  const others=[...entries,...drafts].filter(e=>e.id!==current?.id&&!e.archived).sort((a,b)=>near(b)-near(a)).slice(0,4);
   $('more-list').replaceChildren(...others.map(cardFor));
   $('more').hidden=!others.length;
  }
@@ -278,7 +280,8 @@ async function refreshDashboard(){
   $('lab').dataset.state=active?'active':schedule?.enabled?'idle':'paused';
   labActive=active;labQuestion=state.question&&state.question!=='Choosing the next question'?state.question:'';
   const outcome={reviewed:'Last investigation passed review',needs_review:'Last attempt stayed a draft',failed:'Last attempt stopped early',interrupted:'Last attempt was interrupted'};
-  put('now-title',active?(state.status==='planning'?'Choosing today’s question':''):entries[0]?`Latest published: ${entries[0].title}`:outcome[state.status]||'');
+  const latest=[...entries].filter(e=>!e.archived).sort(newestFirst)[0];
+  put('now-title',active?(state.status==='planning'?'Choosing today’s question':''):latest?`Latest published: ${latest.title}`:outcome[state.status]||'');
   put('dashboard-question',active&&state.question&&state.question!=='Choosing the next question'?state.question:'');
   const step=stepOf(state);labStatus=state;drawLabStill();
   $('steps').hidden=!active;
@@ -507,6 +510,15 @@ function updateTalk(){
  const guide=current?.id&&current.provider!=='fixture'?current.id:'example', title=current?.scene?.title?.replace(/\n/g,' ')||'';
  $('ask').href=issueURL('council:question','Question: ',`guide: ${guide}\n\nWhat I'm wondering (one question works best):\n\n`);
  $('feedback').href=issueURL('council:feedback',`Feedback: ${title}`.slice(0,120),`guide: ${guide}\n\nWhat worked:\n\nWhat was confusing:\n\n`);
+ // Owner-only curation: archive this guide (hide it from the home page) or restore it, applied by the next morning's run.
+ const tools=$('owner-tools'), link=$('archive-link'), real=current?.id&&current.provider!=='fixture'&&current.provider!=='draft', archived=entries.some(e=>e.id===current?.id&&e.archived);
+ if(tools){
+  tools.hidden=!real;
+  if(real)link.textContent=archived?'Restore this guide':'Archive this guide',
+   link.href=issueURL(archived?'council:unarchive':'council:archive',
+    `${archived?'Restore':'Archive'}: ${title}`.slice(0,120),
+    `guide: ${guide}\n\n${archived?'Show this guide on the home page again.':'Hide this guide from the home page. It stays here and open by its link.'}`);
+ }
 }
 function doneItem(item){return entries.find(e=>e.curriculum===item.id||norm(e.question)===norm(item.question));}
 // Requests only make sense while the daily run is on; while paused, unexplored items just say so.
@@ -531,10 +543,16 @@ function openItems(){
 }
 // Every other reviewed investigation in one grid, newest first, then the drafts on a shelf of their own.
 function gallery(lead){
- const grid=el('div',{className:'thumbs'},...entries.filter(e=>e!==lead).sort(newestFirst).map(cardFor));
+ const grid=el('div',{className:'thumbs'},...entries.filter(e=>e!==lead&&!e.archived).sort(newestFirst).map(cardFor));
  const shelf=drafts.length?[el('section',{className:'drafts-shelf'},el('h3',{className:'chapter-title'},'Drafts',el('span',{textContent:`${drafts.length} to review`})),
   el('p',{className:'drafts-note',textContent:DRAFTS_NOTE}),el('div',{className:'thumbs'},...[...drafts].sort(newestFirst).map(cardFor)))]:[];
- return [grid,...shelf];
+ // Archived investigations are kept and still open by direct link, but sit in a closed section off the main grid.
+ const gone=entries.filter(e=>e.archived).sort(newestFirst);
+ const archived=gone.length?[el('details',{className:'archived-shelf'},
+  el('summary',{},el('span',{className:'chapter-title'},'Archived',el('span',{textContent:`${gone.length}`}))),
+  el('p',{className:'drafts-note',textContent:'Set aside from the main list. Still here, and still open by their link.'}),
+  el('div',{className:'thumbs'},...gone.map(cardFor)))]:[];
+ return [grid,...shelf,...archived];
 }
 // Like the daily run, a question tried before with the same model, or answered by a draft, is not offered again.
 // Never-tried items first in teaching order, then retries, the most recent early stop first (retry_order in lab/daily.py).

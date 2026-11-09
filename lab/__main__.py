@@ -13,8 +13,8 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine'])
-    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test. For approve-engine: the candidate branch name.")
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive'])
+    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
     parser.add_argument('--model',help='Optional CLI model override; required for the direct OpenAI API.')
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--topic',choices=list(TOPICS),default='light-bending')
     parser.add_argument('--question',help='Optional question for a single run; defaults to the topic question.')
     args=parser.parse_args()
-    if args.push_args and args.command not in ('push','approve-engine'):
+    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive'):
         parser.error('unexpected arguments: '+' '.join(args.push_args))
     if not 1<=args.rounds<=4:
         parser.error('--rounds must be 1–4')
@@ -72,6 +72,22 @@ def main():
             print(f'Merged candidate into main at {approve_engine(ROOT,args.push_args[0])}.')
         except ValueError as error:
             parser.exit(2,f'Cannot approve this engine: {error}\n')
+        return
+    if args.command in ('archive','unarchive'):
+        # Hide a published guide from the home page, or list it again. The guide folder stays in place; only the index
+        # flag changes. This commits and pushes just the index, so the owner runs it from a checkout on main.
+        from .daily import set_archived
+        if len(args.push_args)!=1:
+            parser.error(f'{args.command} needs exactly one published guide id, e.g. {args.command} 20261102T170016-a02e7bd6')
+        want=args.command=='archive'
+        try:
+            set_archived(ROOT,args.push_args[0],want)
+        except ValueError as error:
+            parser.exit(2,f'Cannot {args.command} this guide: {error}\n')
+        except RuntimeError as error:
+            parser.exit(1,f'Recorded the change locally, but publication is pending: {error}\nPush main yourself when ready.\n')
+        print(f'{"Archived" if want else "Restored"} {args.push_args[0]}. The site now '
+              +('hides it in the Archived section.' if want else 'lists it on the home page again.'))
         return
     if args.command=='export':
         from .daily import export_run, publish

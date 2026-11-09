@@ -513,3 +513,56 @@ class EntryPointTests(unittest.TestCase):
         imported=[n for n in ast.walk(tree) if isinstance(n,(ast.Import,ast.ImportFrom))]
         names=[(n.module or '') if isinstance(n,ast.ImportFrom) else a.name for n in imported for a in (n.names if isinstance(n,ast.Import) else [n])]
         self.assertFalse([n for n in names if n=='lab' or n.startswith('lab.')])
+
+
+class ArchiveTests(unittest.TestCase):
+    def test_set_archived_flips_only_the_index_and_can_restore(self):
+        from lab.daily import set_archived
+        with tempfile.TemporaryDirectory() as tmp:
+            git,origin,worker,push_from_me=checkouts(tmp)
+            (worker/'web'/'published'/'run-1').mkdir(parents=True);(worker/'web'/'published'/'run-1'/'record.json').write_text('{}')
+            (worker/'web'/'published'/'index.json').write_text(json.dumps([{'id':'run-1','title':'A'}]))
+            git(worker,'add','.');git(worker,'commit','-qm','Publish reviewed investigation run-1');git(worker,'push','-q','origin','main')
+            self.assertTrue(set_archived(worker,'run-1',True))
+            self.assertTrue(json.loads((worker/'web'/'published'/'index.json').read_text())[0]['archived'])
+            self.assertEqual(git(origin,'log','-1','--format=%s','main'),'Archive investigation run-1')
+            self.assertEqual(git(worker,'rev-parse','HEAD'),git(origin,'rev-parse','main'))
+            # Restore removes the flag and ships only the index.
+            self.assertFalse(set_archived(worker,'run-1',False))
+            self.assertNotIn('archived',json.loads((worker/'web'/'published'/'index.json').read_text())[0])
+            self.assertEqual(git(origin,'log','-1','--format=%s','main'),'Restore investigation run-1 from the archive')
+            shipped=git(origin,'ls-tree','-r','--name-only','main').splitlines()
+            self.assertIn('web/published/run-1/record.json',shipped)
+
+    def test_set_archived_rejects_an_unknown_guide_and_commits_nothing(self):
+        from lab.daily import set_archived
+        with tempfile.TemporaryDirectory() as tmp:
+            git,origin,worker,push_from_me=checkouts(tmp)
+            (worker/'web'/'published').mkdir(parents=True);(worker/'web'/'published'/'index.json').write_text(json.dumps([{'id':'run-1'}]))
+            git(worker,'add','.');git(worker,'commit','-qm','seed');git(worker,'push','-q','origin','main')
+            before=git(worker,'rev-parse','HEAD')
+            with self.assertRaises(ValueError):set_archived(worker,"missing",True)
+            self.assertEqual(git(worker,'rev-parse','HEAD'),before)
+            self.assertEqual(git(worker,'status','--porcelain'),'')
+
+    def test_apply_archive_applies_known_requests_and_closes_each_issue(self):
+        from unittest.mock import call
+        from lab.daily import apply_archive
+        reqs=[{'number':1,'kind':'archive','body':'guide: run-1\n\nhide it'},
+              {'number':2,'kind':'unarchive','body':'guide: run-1'},
+              {'number':3,'kind':'archive','body':'no id in this one'},
+              {'number':4,'kind':'question','body':'guide: run-1'}]
+        with patch('lab.daily.set_archived') as setter,patch('lab.daily.inbox.comment') as comment,patch('lab.daily.inbox.close') as close:
+            notes=apply_archive(reqs,Path('/root'),'2026-11-08')
+        self.assertEqual(setter.call_args_list,[call(Path('/root'),'run-1',True),call(Path('/root'),'run-1',False)])
+        self.assertEqual([c.args[0] for c in close.call_args_list],[1,2,3])
+        self.assertEqual(notes,['Archived the guide run-1.','Restored the guide run-1.'])
+        self.assertIn('no guide id',comment.call_args_list[-1].args[1].lower())
+
+    def test_apply_archive_leaves_a_pending_request_open(self):
+        from lab.daily import apply_archive
+        with patch('lab.daily.set_archived',side_effect=RuntimeError('offline')),\
+             patch('lab.daily.inbox.comment') as comment,patch('lab.daily.inbox.close') as close:
+            notes=apply_archive([{'number':9,'kind':'archive','body':'guide: run-1'}],Path('/root'),'2026-11-08')
+        close.assert_not_called();self.assertEqual(notes,[])
+        self.assertIn('pending',comment.call_args.args[1])
