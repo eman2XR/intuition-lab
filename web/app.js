@@ -2,6 +2,8 @@ const $=id=>document.getElementById(id);
 const put=(id,text)=>{const node=$(id);if(node)node.textContent=text??'';};
 const el=(tag,props={},...children)=>{const node=Object.assign(document.createElement(tag),props);node.append(...children);return node;};
 const TOPICS={'gravity-clocks':'Gravity and time','light-bending':'Gravity and light','spacetime':'Space and time','twin-trip':'Space and time','interference':'Waves','standing-waves':'Waves','two-slit-particles':'Quanta','tunneling':'Quanta','wave-packet':'Quanta','quantum-well':'Quanta','falling-time':'Gravity and time','diffraction':'Waves','spacetime-paths':'Space and time','light-clock':'Space and time','river':'Black holes','fall-views':'Gravity and time','tides':'Curved spacetime','lift':'Gravity and time','moon-tides':'Gravity and time','attention':'How AI reads','speed-limit':'Space and time','birthdays':'Chance and evidence','sky-colour':'Light and colour','night-sky':'The universe'};
+/* AGENT-ENGINES: app-topics. Home-page category labels for engines the daily run builds from a research brief are
+   spliced in below this line (lab/build_engine.py) as TOPICS['<kind>']='<category>'; statements. */
 // The accuracy reviewer checks physics for physics guides and the mathematics for the others.
 const REVIEWED={'attention':'accuracy','birthdays':'maths'};
 const STATUS={planning:'Choosing a question',running:'Investigating now',reviewed:'Passed review',needs_review:'Draft, not published',failed:'Attempt stopped',interrupted:'Run interrupted',idle:'Resting'};

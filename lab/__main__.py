@@ -13,8 +13,8 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export','push'])
-    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test")
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine'])
+    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test. For approve-engine: the candidate branch name.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
     parser.add_argument('--model',help='Optional CLI model override; required for the direct OpenAI API.')
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--topic',choices=list(TOPICS),default='light-bending')
     parser.add_argument('--question',help='Optional question for a single run; defaults to the topic question.')
     args=parser.parse_args()
-    if args.push_args and args.command!='push':
+    if args.push_args and args.command not in ('push','approve-engine'):
         parser.error('unexpected arguments: '+' '.join(args.push_args))
     if not 1<=args.rounds<=4:
         parser.error('--rounds must be 1–4')
@@ -61,6 +61,17 @@ def main():
     if args.command=='schedule':
         from .schedule import write_schedule
         print(write_schedule(args.hour,args.count,args.provider))
+        return
+    if args.command=='approve-engine':
+        # A reviewer's explicit, local step: re-run the build gates on a candidate branch and fast-forward main into
+        # it. Nothing here is automated by the daily run, and it never pushes; push main yourself to go live.
+        from .build_engine import approve_engine
+        if len(args.push_args)!=1:
+            parser.error('approve-engine needs exactly one candidate branch name, e.g. approve-engine engine-candidate/2026-11-08-demo-bars')
+        try:
+            print(f'Merged candidate into main at {approve_engine(ROOT,args.push_args[0])}.')
+        except ValueError as error:
+            parser.exit(2,f'Cannot approve this engine: {error}\n')
         return
     if args.command=='export':
         from .daily import export_run, publish

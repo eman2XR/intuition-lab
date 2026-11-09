@@ -2541,7 +2541,11 @@ function labHit(x,y){
  return null;
 }
 
+/* AGENT-ENGINES: scene. Draw functions and helpers for engines the daily run builds from a research brief are
+   spliced in above this line (lab/build_engine.py); they are top-level declarations in this closure. */
+
 const ENGINES={
+ /* AGENT-ENGINES: map. Map entries for agent-built engines are spliced in above this line. */
  'light-bending':{draw:drawLight,a:['Mass','how much mass sits nearby'],b:['Passing distance','how close the light passes','×'],
   fa:a=>a.toFixed(2),fb:b=>b.toFixed(2)+'×',
   measure:['Real bend of the nearest ray',(a,b)=>(Physics.deflection(a,b)*180/Math.PI).toFixed(2)+'°'],scale:'',disclosure:'The mesh measures distance as the time light needs to cross it, timed far away; light’s straightest line across it is the drawn path. The readout is the model value for the nearest ray, in the model’s own units. The dip is not a slope.',demoEnd:s=>Math.min(2.5,s.distance+1),

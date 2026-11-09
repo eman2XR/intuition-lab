@@ -15,6 +15,7 @@ from pathlib import Path
 from . import ROOT, PUBLICATION, sources
 from .contracts import obj, validate, validate_design, DESIGN_SCHEMA, RESEARCH_SCHEMA
 from .pipeline import run, write_json, approved, keep_retrieved, DESIGNER, STANDARD
+from .build_engine import build_engine
 from .topics import TOPICS, READY
 from .dashboard import Dashboard
 from . import inbox
@@ -183,7 +184,8 @@ def git_failure(error):
 def publish(root=ROOT, runs=()):
     """Commit only the generated public archive, never other local edits: the status and proposals files, the internal
     build briefs, and, for the guides this checkout exported (runs), their folders and the index, so other guides in
-    the checkout never ship."""
+    the checkout never ship. Agent-built engine code never passes through here: it lives only on its review branch
+    (see lab/build_engine.py), so this only ever pushes the public archive and the status and proposals files to main."""
     def git(*args,check=True):
         return subprocess.run(['git',*args],cwd=root,text=True,capture_output=True,check=check,timeout=120).stdout.strip()
     runs=[r for r in runs if isinstance(r,str) and RUN_ID.fullmatch(r)]
@@ -468,12 +470,20 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
             request,item=inbox.choice(requests,[i for i in items if i.get('model') in READY],TOPICS,lambda q: explored(q,model_of(q)))
             if not item and not ready:
                 # Nothing meets the quality bar right now; no slot is used and nothing is started. When publishing, an
-                # idle morning researches the next waiting question into a ready-to-build brief, once a day, and falls
-                # back to a design-only sketch for the owner when there is nothing to research or the research fails.
+                # idle morning builds the engine the next waiting question needs, gates it in a locked-down sandbox, and
+                # offers it as a review candidate on a branch (its code never reaches main); if it cannot run or fully
+                # rolls back, it researches the question into a ready-to-build brief, and otherwise sketches a design.
                 print('No curriculum item is ready to investigate (every ready model is in use); nothing started.',flush=True)
                 checked.append('No question is ready to investigate; nothing started.')
-                if blueprints and not research_brief(factory,items,root,day,explored,model_of,requests):
-                    blueprint(factory,[i for i in items if not explored(i['question'])],root,day)
+                if blueprints:
+                    built=build_engine(factory,items,root,day,explored,READY,requests,rounds,push,
+                                       record=dashboard.update)
+                    if built:
+                        checked[-1]=(f'Built a picture engine for “{built["question"]}” on review branch '
+                                     f'{built["branch"]}; a new picture is ready to review '
+                                     f'({built["review_status"].replace("_"," ")}). Nothing is live until you merge it.')
+                    elif not research_brief(factory,items,root,day,explored,model_of,requests):
+                        blueprint(factory,[i for i in items if not explored(i['question'])],root,day)
                 break
             attempt={'day':day,'status':'planning','started':datetime.now().astimezone().isoformat()}
             ledger.append(attempt)

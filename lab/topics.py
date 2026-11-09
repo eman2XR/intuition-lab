@@ -335,3 +335,8 @@ TOPICS = {
     'night-sky': {'label':'Dark night sky', 'question':'Why is the night sky dark?', 'notes':NIGHT_NOTES},
     'attention': {'label':'Attention in language AI', 'question':'What does the “attention” in “Attention Is All You Need” do when an AI reads a sentence?', 'notes':ATTENTION_NOTES},
 }
+
+# AGENT-ENGINES: entries. Engines the daily run builds from a research brief (gated; the owner reviews the draft) are
+# appended below this line by lab/build_engine.py, each as a <KIND>_NOTES string, a TOPICS[...] entry ending with
+# COMMON, and a READY.add(...) call. They are kept out of the hand-authored block above so the splice is unambiguous.
+
