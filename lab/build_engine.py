@@ -45,6 +45,8 @@ IDENT = re.compile(r'^[A-Za-z_$][\w$]*$')
 BANNED = re.compile(r'\b(?:require|import|eval|Function|Math\.random|Date\.now|performance\.now'
                     r'|localStorage|sessionStorage|while\s*\(\s*true\s*\))\b|\bnew\s+Date\b|</script')
 CANDIDATE_PREFIX = 'engine-candidate/'
+# Feedback revisions of a published guide land on their own review branch; approve_engine merges both kinds.
+REVISION_PREFIX = 'feedback-revision/'
 
 
 # The generated engine, as a bounded structured object rather than free text.
@@ -473,12 +475,31 @@ def provisional_scene(question, kind):
     }
 
 
-def gates(root, kind, engine, research):
-    """Every gate the engine must pass. Returns (ok, reason). The caller rolls back on a False."""
+def gates(root, kind, engine, research, scene=None):
+    """Every gate the engine must pass. Returns (ok, reason). The caller rolls back on a False. When `scene` is given
+    (a feedback revision has a real revised scene), the sandbox probe and render checks run on it; otherwise a
+    placeholder scene is used."""
+    ok, reason = _static_gates(root, kind)
+    if not ok:
+        return ok, reason
+    ok, reason, _frames, _checks = _render_gates(root, kind, scene or provisional_scene('', kind), research)
+    return ok, reason
+
+
+def _static_gates(root, kind):
+    """node --check on the three scripts, then allChecks with no failures and at least three non-vacuous checks for
+    this kind. Returns (ok, reason). Shared by the engine builder, the feedback-revision builder and approve_engine."""
     for rel in ('web/scene.js', 'web/physics.js', 'web/app.js'):
         result = _node(root, '--check', rel)
         if result.returncode:
             return False, f'node --check {rel} failed: {result.stderr.strip().splitlines()[-1:] or ""}'
+    # A clobbered engine (a revision or build that defines a SIBLING engine's draw) leaves a duplicate top-level
+    # function declaration, which node accepts (last wins) but which no per-kind check or render would catch. Reject it
+    # on the installed/branch state, so both the build gate and approve's re-gate see it.
+    names = re.findall(r'function\s+([A-Za-z_$][\w$]*)', (root / 'web' / 'scene.js').read_text(encoding='utf-8'))
+    dupes = sorted({name for name in names if names.count(name) > 1})
+    if dupes:
+        return False, f'scene.js has duplicate function declaration(s), a sign of a clobbered engine: {dupes[:3]}'
     script = ("const P=require('./web/physics.js');const all=P.allChecks();"
               "const k=P.checksFor(%s);"
               "process.stdout.write(JSON.stringify({allBad:all.filter(c=>!c.pass).length,n:k.length,"
@@ -493,34 +514,45 @@ def gates(root, kind, engine, research):
     if data['allBad']:
         return False, f'{data["allBad"]} numerical check(s) fail across the site.'
     if data['n'] < 3:
-        return False, f'The new engine has only {data["n"]} check(s); at least three are required.'
+        return False, f'The engine has only {data["n"]} check(s); at least three are required.'
     if data['bad']:
-        return False, f'The new engine has failing checks: {data["bad"][:3]}.'
-    # The real gate: render the placeholder scene in a locked-down sandbox. Any network, timer, worker, socket, beacon
-    # or cookie the engine reaches for throws and is recorded; any page error or non-local request fails the build.
+        return False, f'The engine has failing checks: {data["bad"][:3]}.'
+    return True, 'static gates passed'
+
+
+def _render_gates(root, kind, scene, research, frames_dir=None):
+    """The locked-down sandbox probe then the usual render checks on `scene`. Returns (ok, reason, frames, checks);
+    frames and checks are None on a probe failure. When frames_dir is given the render frames are written there and
+    returned for the caller (a feedback revision keeps them); otherwise a throwaway directory is used."""
+    # The real gate: render the scene in a locked-down sandbox. Any network, timer, worker, socket, beacon or cookie
+    # the engine reaches for throws and is recorded; any page error or non-local request fails the build.
     try:
-        probe = gate_probe(provisional_scene('', kind), root, kind)
+        probe = gate_probe(scene, root, kind)
     except Exception as error:
-        return False, f'sandbox render failed: {type(error).__name__}: {str(error)[:140]}'
+        return False, f'sandbox render failed: {type(error).__name__}: {str(error)[:140]}', None, None
     if probe['fired']:
-        return False, f'the engine used blocked APIs in the sandbox: {sorted(set(probe["fired"]))[:4]}.'
+        return False, f'the engine used blocked APIs in the sandbox: {sorted(set(probe["fired"]))[:4]}.', None, None
     if probe['network']:
-        return False, f'the engine attempted network in the sandbox: {probe["network"][:2]}.'
+        return False, f'the engine attempted network in the sandbox: {probe["network"][:2]}.', None, None
     if probe['pageerrors']:
-        return False, f'the engine raised errors in the sandbox: {probe["pageerrors"][:2]}.'
+        return False, f'the engine raised errors in the sandbox: {probe["pageerrors"][:2]}.', None, None
     if probe['error']:
-        return False, f'the engine raised while rendering in the sandbox: {str(probe["error"])[:140]}.'
+        return False, f'the engine raised while rendering in the sandbox: {str(probe["error"])[:140]}.', None, None
     # The usual render checks (labels, pace, determinism, zero effect, mobile fit, no JS errors) must still pass; this
     # render uses timers and rAF normally, like the live player, serving the engine from this checkout.
     try:
-        with tempfile.TemporaryDirectory(prefix='engine-gate-') as temp:
-            _, checks = capture(provisional_scene('', kind), Path(temp), research=research, provider='fixture', root=root)
+        if frames_dir is None:
+            with tempfile.TemporaryDirectory(prefix='engine-gate-') as temp:
+                _, checks = capture(scene, Path(temp), research=research, provider='fixture', root=root)
+            frames = None
+        else:
+            frames, checks = capture(scene, frames_dir, research=research, provider='fixture', root=root)
     except Exception as error:
-        return False, f'render failed: {type(error).__name__}: {str(error)[:140]}'
+        return False, f'render failed: {type(error).__name__}: {str(error)[:140]}', None, None
     failing = [c['name'] for c in checks if not c['pass']]
     if failing:
-        return False, f'render checks failed: {failing[:3]}.'
-    return True, 'all gates passed'
+        return False, f'render checks failed: {failing[:3]}.', frames, checks
+    return True, 'render gates passed', frames, checks
 
 
 def _research_and_design(provider, question, kind, root):
@@ -615,6 +647,18 @@ def buildable(items, root):
     return [i for i in items if i['model'] not in existing]
 
 
+def scene_function_names(text):
+    """Every top-level `function NAME` declared in some scene code. Over-approximate (it also sees nested declarations),
+    which only makes a collision check stricter, never looser."""
+    return set(re.findall(r'function\s+([A-Za-z_$][\w$]*)', text))
+
+
+def physics_method_names(text):
+    """Every `NAME(` method defined at a line start in some physics code; shared by the build and revision collision
+    checks so a generated model never silently redefines an existing Physics method."""
+    return set(re.findall(r'(?:^|\n)\s*([A-Za-z_$][\w$]*)\s*\(', text))
+
+
 def collision(root, engine, kind):
     """A reason the generated code cannot be spliced in safely (a name it would redefine), or None. Reliable,
     definition-level name matching; a false positive only costs a fallback, never a clobbered existing engine."""
@@ -622,13 +666,10 @@ def collision(root, engine, kind):
         return f'an engine named {kind} already exists'
     scene = (root / 'web' / 'scene.js').read_text(encoding='utf-8')
     physics = (root / 'web' / 'physics.js').read_text(encoding='utf-8')
-    scene_fns = set(re.findall(r'function\s+([A-Za-z_$][\w$]*)', scene))
-    new_fns = set(re.findall(r'function\s+([A-Za-z_$][\w$]*)', engine['scene']))
-    clash = new_fns & scene_fns
+    clash = scene_function_names(engine['scene']) & scene_function_names(scene)
     if clash:
         return f'the drawing redefines existing function(s): {sorted(clash)[:3]}'
-    methods = lambda text: set(re.findall(r'(?:^|\n)\s*([A-Za-z_$][\w$]*)\s*\(', text))
-    clash = methods(engine['physics']) & methods(physics)
+    clash = physics_method_names(engine['physics']) & physics_method_names(physics)
     if clash:
         return f'the model redefines existing Physics method(s): {sorted(clash)[:3]}'
     return None
@@ -840,39 +881,81 @@ def _prune_drafts_dir(root):
         pass
 
 
+def _revision_guides(root, branch):
+    """The published guides a feedback-revision branch changed (by their record.json), newest change order aside.
+    Reliable path-level matching against main, so approve re-gates exactly the guides the branch touched."""
+    out = _git(root, 'diff', '--name-only', f'main...{branch}', '--', 'web/published').stdout.splitlines()
+    ids = []
+    for line in out:
+        parts = line.split('/')
+        if len(parts) >= 4 and parts[:2] == ['web', 'published'] and parts[3] == 'record.json' and parts[2] not in ids:
+            ids.append(parts[2])
+    return ids
+
+
+def _regate_revision(work, guides, research):
+    """Re-run the full gates for every guide a feedback revision changed, using each guide's revised scene from the
+    branch's record. Returns (ok, reason)."""
+    if not guides:
+        return False, 'the revision branch changed no published guide'
+    for guide_id in guides:
+        record_path = work / 'web' / 'published' / guide_id / 'record.json'
+        if not record_path.exists():
+            return False, f'the revised record for {guide_id} is missing'
+        record = json.loads(record_path.read_text())
+        scene = record.get('scene') or {}
+        kind = scene.get('kind') or record.get('topic')
+        if not kind:
+            return False, f'the revised record for {guide_id} names no engine kind'
+        ok, reason = _static_gates(work, kind)
+        if not ok:
+            return False, reason
+        ok, reason, _frames, _checks = _render_gates(work, kind, scene, research)
+        if not ok:
+            return False, reason
+    return True, 'revision gates passed'
+
+
 def approve_engine(root, branch, research=None):
-    """A reviewer's local, explicit step: fast-forward-merge a named engine-candidate branch into main, after
-    RE-RUNNING the same gates on the branch's code. Never auto-called; the daily run only ever creates candidate
-    branches. Refuses unless the checkout is on a clean main and the branch is a strict fast-forward of it, so a
-    reviewer's uncommitted work is never clobbered and no merge commit is made. Returns the merged commit; raises
+    """A reviewer's local, explicit step: fast-forward-merge a named engine-candidate OR feedback-revision branch into
+    main, after RE-RUNNING the same gates on the branch's code. Never auto-called; the daily run only ever creates
+    candidate branches. Refuses unless the checkout is on a clean main and the branch is a strict fast-forward of it, so
+    a reviewer's uncommitted work is never clobbered and no merge commit is made. Returns the merged commit; raises
     ValueError on anything it refuses, so a reviewer sees why."""
-    if not branch.startswith(CANDIDATE_PREFIX) or '..' in branch or any(c.isspace() for c in branch):
-        raise ValueError(f'Not an engine candidate branch: {branch}')
+    if not branch.startswith((CANDIDATE_PREFIX, REVISION_PREFIX)) or '..' in branch or any(c.isspace() for c in branch):
+        raise ValueError(f'Not an engine-candidate or feedback-revision branch: {branch}')
+    revision = branch.startswith(REVISION_PREFIX)
     if _git(root, 'rev-parse', '--abbrev-ref', 'HEAD').stdout.strip() != 'main':
-        raise ValueError('Approving an engine requires being on main.')
+        raise ValueError('Approving a candidate requires being on main.')
     if _git(root, 'status', '--porcelain', '--untracked-files=no').stdout.strip():
-        raise ValueError('The checkout has local edits; commit or stash them before approving an engine.')
+        raise ValueError('The checkout has local edits; commit or stash them before approving.')
     if _git(root, 'rev-parse', '--verify', '--quiet', branch, check=False).returncode:
         if _git(root, 'fetch', 'origin', branch, check=False).returncode:
             raise ValueError(f'Candidate branch not found locally or on origin: {branch}')
         _git(root, 'branch', '-f', branch, 'FETCH_HEAD')
     if _git(root, 'merge-base', '--is-ancestor', 'main', branch, check=False).returncode:
         raise ValueError(f'{branch} is not a fast-forward of main; rebuild or rebase it before approving.')
-    # Re-run the gates on the branch's engine, in a throwaway worktree, so main is never dirtied by the check.
-    kind = branch[len(CANDIDATE_PREFIX):][11:] or branch[len(CANDIDATE_PREFIX):]
+    guides = _revision_guides(root, branch) if revision else []
+    # Re-run the gates on the branch's code, in a throwaway worktree, so main is never dirtied by the check.
     with tempfile.TemporaryDirectory(prefix='engine-approve-') as temp:
         work = Path(temp) / 'tree'
         _git(root, 'worktree', 'add', '--detach', str(work), branch)
         try:
-            ok, reason = gates(work, kind, {'scene': '', 'physics': ''}, research)
+            if revision:
+                ok, reason = _regate_revision(work, guides, research)
+            else:
+                kind = branch[len(CANDIDATE_PREFIX):][11:] or branch[len(CANDIDATE_PREFIX):]
+                ok, reason = gates(work, kind, {'scene': '', 'physics': ''}, research)
             if not ok:
                 raise ValueError(f'The candidate failed its gates on re-check: {reason}')
         finally:
             _git(root, 'worktree', 'remove', '--force', str(work), check=False)
-    # Green gates are not enough: print the generated engine code so the human reads it before the merge.
-    diff = _git(root, '--no-pager', 'diff', f'main...{branch}', '--', *ENGINE_FILES).stdout
-    print(f'--- engine candidate {branch}: review this generated code before it goes live ---', flush=True)
-    print(diff or '(no diff on the engine files)', flush=True)
+    # Green gates are not enough: print the generated engine (and the revised guide record) so the human reads it
+    # before the merge.
+    diff_files = list(ENGINE_FILES) + [f'web/published/{g}/record.json' for g in guides]
+    diff = _git(root, '--no-pager', 'diff', f'main...{branch}', '--', *diff_files).stdout
+    print(f'--- candidate {branch}: review this generated code before it goes live ---', flush=True)
+    print(diff or '(no diff on the engine or guide files)', flush=True)
     print('--- end of candidate diff ---', flush=True)
     _git(root, 'merge', '--ff-only', branch)
     merged = _git(root, 'rev-parse', 'HEAD').stdout.strip()

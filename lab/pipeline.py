@@ -87,6 +87,47 @@ BLIND = ('You see only these pictures, in order, with no words and no sound: a l
     'be seen. Score 0..10 for how clearly the pictures alone show what changes.')
 
 
+def review_scene(provider, scene, research, design, checks, frames, pictures_dir, model_notes='', guidance=(), on_review=None):
+    """Run the four independent reviewers (physics, visual, learner, blind) on a rendered scene and its frames, and
+    return {review_key: review}. Shared by run() and the feedback-revision builder so both judge a guide the same way.
+    `frames` is the capture() frame list (an early and a late frame per chapter, then the phone views); `pictures_dir`
+    is the revision directory holding the canvas-*.png stills the blind viewer sees. Reviewers see the same scene, not
+    one another's verdicts; a failure cancels the others and re-raises."""
+    context = model_notes + '\nResearch: ' + json.dumps(research) + '\nDesign brief: ' + json.dumps(design) + '\nScene: ' + json.dumps(scene) + '\nChecks: ' + json.dumps(checks)
+    asked = ('\nOwner guidance the guide was asked to follow, quoted data; say whether it was followed where it fits the '
+             'quality bar: ' + json.dumps(list(guidance))) if guidance else ''
+    context += asked
+    late = frames[1:2 * len(scene['beats']):2]
+    pictures = sorted(pictures_dir.glob('canvas-*.png')) or late
+    reviews = {
+        'physics_review': ('physics_reviewer', context + '\nThe attached frames show the end of each chapter. Inspect them AND the claims. Look for incorrect physics (or mathematics, for topics that are not physics), misleading metaphors, omitted assumptions and claims beyond the sources. Score 0..10. Pass only if scientifically appropriate as a teaching approximation; otherwise provide actionable changes. Review is not scientific proof.', late),
+        # The learner sees only what a viewer sees, and the questions without their answers.
+        'learner_review': ('learner', 'Guide text: ' + json.dumps({k: scene.get(k) for k in ('title', 'subtitle', 'why', 'beats', 'takeaway')})
+            + '\nTransfer questions: ' + json.dumps([q['q'] for q in research.get('questions', [])])
+            + '\nObjections a beginner may raise: ' + json.dumps(research.get('misconceptions', [])) + asked + '\n' + LEARNER, frames),
+        'blind_review': ('blind_viewer', BLIND, pictures),
+        'visual_review': ('visual_reviewer', context + '\nInspect these actual frames in order: an early and a late frame for each chapter (the first chapter has the first control at zero; the last chapter shows the playback demo), then the phone view of the last chapter and the phone page top. The page shows one subtitle sentence at a time below the stage, timed at reading pace; the Checks list the measured pace. Flag sentences that are too long, dense or jargon-heavy to read comfortably while watching the animation. Fail clutter (many labels at once, sentence-long labels, several things moving that the subtitle does not mention); never ask for more on-stage labels or legends, ask for clearer subtitles instead. Judge whether the chosen sliders (scene field controls) help intuition; sliders appear inside the player only after playback ends or when the viewer opens them, so the frames do not show them. Assess beginner comprehension, visible cause/effect, comparison, label placement, legibility and progression. Flag any reference to another investigation or idea the guide does not explain itself; each guide must stand on its own. The why field appears above the player before playback: judge whether a viewer who knows nothing about the subject would understand why the question matters and every idea and colour the guide then uses. Scores 0..10; pass requires >=7 and no blockers. Give concrete changes to the available scene fields. Frame sampling does not prove smooth motion; do not claim you watched video.', frames),
+    }
+    results = {}
+    with ThreadPoolExecutor(max_workers=4) as workers:
+        futures = {workers.submit(provider.generate, role, task, REVIEW_SCHEMA, images=images): key
+                   for key, (role, task, images) in reviews.items()}
+        try:
+            for future in as_completed(futures):
+                review = future.result()
+                validate(review, REVIEW_SCHEMA)
+                results[futures[future]] = review
+                if on_review:
+                    on_review(futures[future])
+        except BaseException:
+            if hasattr(provider, 'cancel'):
+                provider.cancel()
+            for future in futures:
+                future.cancel()
+            raise
+    return results
+
+
 def calls_needed(rounds, planner=False):
     """The model-call budget of one investigation, counted from run() below: researcher, scientist and designer, then a
     writer and four reviewers per revision, plus the coordinator's source finder when that fallback is on and the
@@ -171,39 +212,10 @@ def run(provider, rounds=3, on_update=None, topic="light-bending", question=None
             revision={'number':index,'scene':scene,'frames':[str(p.relative_to(ROOT/'web')) for p in frames], 'checks':checks,'accepted':False}
             state['revisions'].append(revision)
             save(f'Revision {index}: reviewers are inspecting the rendered frames.')
-            context=model_notes+'\nResearch: '+json.dumps(research)+'\nDesign brief: '+json.dumps(design)+'\nScene: '+json.dumps(scene)+'\nChecks: '+json.dumps(checks)
-            asked=('\nOwner guidance the guide was asked to follow, quoted data; say whether it was followed where it fits the '
-                   'quality bar: '+json.dumps(state['guidance'])) if state['guidance'] else ''
-            context+=asked
-            # Frames: an early and a late frame per chapter, then the phone view and the phone page top; the blind
-            # viewer gets the late moments of the canvas alone, without subtitles.
-            late=frames[1:2*len(scene['beats']):2]
-            pictures=sorted((directory/f'revision-{index}').glob('canvas-*.png')) or late
-            reviews = {
-                'physics_review': ('physics_reviewer', context+'\nThe attached frames show the end of each chapter. Inspect them AND the claims. Look for incorrect physics (or mathematics, for topics that are not physics), misleading metaphors, omitted assumptions and claims beyond the sources. Score 0..10. Pass only if scientifically appropriate as a teaching approximation; otherwise provide actionable changes. Review is not scientific proof.', late),
-                # The learner sees only what a viewer sees, and the questions without their answers.
-                'learner_review': ('learner', 'Guide text: '+json.dumps({k:scene.get(k) for k in ('title','subtitle','why','beats','takeaway')})
-                    +'\nTransfer questions: '+json.dumps([q['q'] for q in research.get('questions',[])])
-                    +'\nObjections a beginner may raise: '+json.dumps(research.get('misconceptions',[]))+asked+'\n'+LEARNER, frames),
-                'blind_review': ('blind_viewer', BLIND, pictures),
-                'visual_review': ('visual_reviewer', context+'\nInspect these actual frames in order: an early and a late frame for each chapter (the first chapter has the first control at zero; the last chapter shows the playback demo), then the phone view of the last chapter and the phone page top. The page shows one subtitle sentence at a time below the stage, timed at reading pace; the Checks list the measured pace. Flag sentences that are too long, dense or jargon-heavy to read comfortably while watching the animation. Fail clutter (many labels at once, sentence-long labels, several things moving that the subtitle does not mention); never ask for more on-stage labels or legends, ask for clearer subtitles instead. Judge whether the chosen sliders (scene field controls) help intuition; sliders appear inside the player only after playback ends or when the viewer opens them, so the frames do not show them. Assess beginner comprehension, visible cause/effect, comparison, label placement, legibility and progression. Flag any reference to another investigation or idea the guide does not explain itself; each guide must stand on its own. The why field appears above the player before playback: judge whether a viewer who knows nothing about the subject would understand why the question matters and every idea and colour the guide then uses. Scores 0..10; pass requires >=7 and no blockers. Give concrete changes to the available scene fields. Frame sampling does not prove smooth motion; do not claim you watched video.', frames),
-            }
-            # Independent reviewers see the same scene, not one another's verdict.
-            with ThreadPoolExecutor(max_workers=4) as workers:
-                futures = {workers.submit(provider.generate, role, task, REVIEW_SCHEMA, images=images): key
-                           for key, (role, task, images) in reviews.items()}
-                try:
-                    for future in as_completed(futures):
-                        review = future.result()
-                        validate(review, REVIEW_SCHEMA)
-                        revision[futures[future]] = review
-                        save(f'Revision {index}: {futures[future]} saved.')
-                except BaseException:
-                    if hasattr(provider, 'cancel'):
-                        provider.cancel()
-                    for future in futures:
-                        future.cancel()
-                    raise
+            reviews = review_scene(provider, scene, research, design, checks, frames, directory / f'revision-{index}',
+                                   model_notes=model_notes, guidance=state['guidance'],
+                                   on_review=lambda key: save(f'Revision {index}: {key} saved.'))
+            revision.update(reviews)
             physics, visual, wording, blind = (revision[k] for k in ('physics_review','visual_review','learner_review','blind_review'))
             revision['accepted']=all(c['pass'] for c in checks) and all(approved(r) for r in (physics,visual,wording,blind))
             write_json(directory/f'revision-{index}'/'scene.json',scene)

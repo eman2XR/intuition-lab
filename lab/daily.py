@@ -16,6 +16,7 @@ from . import ROOT, PUBLICATION, sources
 from .contracts import obj, validate, validate_design, DESIGN_SCHEMA, RESEARCH_SCHEMA
 from .pipeline import run, write_json, approved, keep_retrieved, DESIGNER, STANDARD
 from .build_engine import build_engine
+from .revise import revise_feedback
 from .topics import TOPICS, READY
 from .dashboard import Dashboard
 from . import inbox
@@ -476,14 +477,27 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
                 print('No curriculum item is ready to investigate (every ready model is in use); nothing started.',flush=True)
                 checked.append('No question is ready to investigate; nothing started.')
                 if blueprints:
-                    built=build_engine(factory,items,root,day,explored,READY,requests,rounds,push,
-                                       record=dashboard.update)
-                    if built:
-                        checked[-1]=(f'Built a picture engine for “{built["question"]}” on review branch '
-                                     f'{built["branch"]}; a new picture is ready to review '
-                                     f'({built["review_status"].replace("_"," ")}). Nothing is live until you merge it.')
-                    elif not research_brief(factory,items,root,day,explored,model_of,requests):
-                        blueprint(factory,[i for i in items if not explored(i['question'])],root,day)
+                    # First, address owner feedback on a published guide as a review-branch revision; only if there is
+                    # no eligible feedback does the morning build the next waiting engine, else research a brief, else
+                    # sketch a design. One idle action a day, shared with the engine builder (see build_engine.guard_day).
+                    revised=revise_feedback(factory,root,day,requests,rounds,push,record=dashboard.update)
+                    if revised is not None:
+                        if revised.get('revised'):
+                            checked[-1]=(f'Revised the guide “{revised["guide"]}” from feedback (issue #{revised["issue"]}) '
+                                         f'on review branch {revised["branch"]}; a revision is ready to review. Nothing '
+                                         f'is live until you merge it.')
+                        else:
+                            checked[-1]=(f'Feedback on guide “{revised["guide"]}” (issue #{revised["issue"]}) needs a '
+                                         f'hand revision; left open.')
+                    else:
+                        built=build_engine(factory,items,root,day,explored,READY,requests,rounds,push,
+                                           record=dashboard.update)
+                        if built:
+                            checked[-1]=(f'Built a picture engine for “{built["question"]}” on review branch '
+                                         f'{built["branch"]}; a new picture is ready to review '
+                                         f'({built["review_status"].replace("_"," ")}). Nothing is live until you merge it.')
+                        elif not research_brief(factory,items,root,day,explored,model_of,requests):
+                            blueprint(factory,[i for i in items if not explored(i['question'])],root,day)
                 break
             attempt={'day':day,'status':'planning','started':datetime.now().astimezone().isoformat()}
             ledger.append(attempt)

