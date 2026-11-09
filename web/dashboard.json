@@ -49,7 +49,7 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-08T21:23:45.840474+00:00",
+    "at": "2026-11-09T17:27:14.882114+00:00",
     "outcome": "No question is ready to investigate; nothing started."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
