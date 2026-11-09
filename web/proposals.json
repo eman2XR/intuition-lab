@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T18:49:24.478205+00:00",
+  "updated": "2026-11-09T17:32:08.572554+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
     {
@@ -19,7 +19,7 @@
       "id": "P-20261106-9",
       "kind": "blueprint",
       "curriculum": "2.5",
-      "status": "open",
+      "status": "declined",
       "created": "2026-11-06T17:11:24.993117+00:00",
       "title": "A picture for \u201cIf gravity slows time, why do things fall?\u201d",
       "area": "engines",
