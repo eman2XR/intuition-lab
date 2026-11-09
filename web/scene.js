@@ -856,9 +856,18 @@ function drawEarth(ctx,x,y,r,{lat=20,lon=10}={}){
  const night=ctx.createLinearGradient(x-r,0,x+r,0);night.addColorStop(.55,'rgba(10,20,40,0)');night.addColorStop(1,'rgba(10,20,40,.3)');
  ctx.save();ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.clip();ctx.fillStyle=night;ctx.fillRect(x-r,y-r,2*r,2*r);ctx.restore();
 }
-function drawRocket(ctx,x,y,size,dir,thrust,t){
+function drawRocket(ctx,x,y,size,dir,thrust,t,jet){
  ctx.save();ctx.translate(x,y);ctx.scale(dir,1);
- if(thrust){const f=.7+.3*Math.sin(t*40)*Math.sin(t*23);const flame=ctx.createLinearGradient(-size*1.9,0,-size*.9,0);flame.addColorStop(0,'rgba(255,170,60,0)');flame.addColorStop(1,'rgba(255,140,40,.9)');
+ if(jet){
+  // A steady jet always burns from the nozzle; an active push flares it longer and brighter. The gentle flicker is
+  // driven by the scene time t, never a clock or randomness, so a seeked frame is identical.
+  const flick=.9+.1*Math.sin(t*9)*Math.sin(t*5.7), reach=(thrust?1.5:.8)*flick, spread=thrust?.26:.18, bright=thrust?.95:.82;
+  const flame=ctx.createLinearGradient(-size*(.9+reach),0,-size*.9,0);flame.addColorStop(0,'rgba(255,170,60,0)');flame.addColorStop(.6,`rgba(255,150,45,${(bright*.55).toFixed(3)})`);flame.addColorStop(1,`rgba(255,138,38,${bright.toFixed(3)})`);
+  ctx.beginPath();ctx.moveTo(-size*.9,-size*spread);ctx.quadraticCurveTo(-size*(.9+reach),0,-size*.9,size*spread);ctx.closePath();ctx.fillStyle=flame;ctx.fill();
+  // A hot inner core keeps the jet legible on the dark background.
+  const core=ctx.createLinearGradient(-size*(.9+reach*.55),0,-size*.9,0);core.addColorStop(0,'rgba(255,241,205,0)');core.addColorStop(1,`rgba(255,244,214,${(bright*.9).toFixed(3)})`);
+  ctx.beginPath();ctx.moveTo(-size*.9,-size*spread*.52);ctx.quadraticCurveTo(-size*(.9+reach*.55),0,-size*.9,size*spread*.52);ctx.closePath();ctx.fillStyle=core;ctx.fill();
+ }else if(thrust){const f=.7+.3*Math.sin(t*40)*Math.sin(t*23);const flame=ctx.createLinearGradient(-size*1.9,0,-size*.9,0);flame.addColorStop(0,'rgba(255,170,60,0)');flame.addColorStop(1,'rgba(255,140,40,.9)');
   ctx.beginPath();ctx.moveTo(-size*.9,-size*.22);ctx.quadraticCurveTo(-size*(1.3+.6*f),0,-size*.9,size*.22);ctx.closePath();ctx.fillStyle=flame;ctx.fill();}
  ctx.beginPath();ctx.moveTo(size,0);ctx.quadraticCurveTo(size*.55,-size*.36,-size*.9,-size*.3);ctx.lineTo(-size*.9,size*.3);ctx.quadraticCurveTo(size*.55,size*.36,size,0);ctx.closePath();
  const hull=ctx.createLinearGradient(0,-size*.35,0,size*.35);hull.addColorStop(0,'#ffffff');hull.addColorStop(1,'#cfd6e0');ctx.fillStyle=hull;ctx.fill();ctx.strokeStyle='rgba(20,23,28,.35)';ctx.lineWidth=1;ctx.stroke();
@@ -1393,7 +1402,7 @@ function limitPlan(st){
  if(st.live){const n=Math.round(clamp(st.mass)*10);return {mode:'live',n,t:st.t||0};}
  // 1: the rocket fires one push and coasts half way to the wall; with the second sentence, ghost rockets take equal
  // leaps that reach the wall on the second and sail past it on the third.
- if(st.stage===0)return {mode:'add',n:clamp((t-.5)/.6),everyday:clamp((t-at(1)-.2)/1.8),burn:t>.5&&t<1.2,t};
+ if(st.stage===0)return {mode:'add',n:smooth((t-.5)/.7),everyday:smooth((t-at(1)-.2)/1.9),burn:t>.5&&t<1.2,t};
  // 2: seen from the ground, the rocket coasts past a lamp post; both lamps flash and the flashes travel side by side.
  if(st.stage===1)return {mode:'lamp',n:1,flash:limitLight(st.chapters).flash,dim:smooth(t/.6),t};
  // 3: seen from the rocket: the ground streams back and the crew's flash leaves at light speed; with the second
@@ -1402,7 +1411,7 @@ function limitPlan(st){
  // 4: the same push again and again. The near-wall speeds are spread out (a fixed square-root scale) so the shrinking
  // leaps stay visible and the rocket only ever advances towards the wall.
  const pushes=[at(0)+1,at(0)+2.6,at(1)+.5,at(1)+1.7,at(1)+2.9];
- let n=1,burn=false;for(const p of pushes){n+=clamp((t-p)/.6);if(t>=p&&t<p+.6)burn=true;}
+ let n=1,burn=false;for(const p of pushes){n+=smooth((t-p)/.7);if(t>=p&&t<p+.7)burn=true;}
  return {mode:'climb',n,burn,t};
 }
 // A deep space background with calm, static, deterministic stars, shared by every speed-limit chapter. It reuses the
@@ -1437,7 +1446,7 @@ function drawLimit(ctx,w,h,spec,st){
   if(st.labels){tag('ground',x1,gy+(small?13:15),{align:'right',color:muted,sz:size-1});
    if(name)tag(name,x0,win.top+(small?12:15),{color:muted,weight:700,sz:size-1});}
   ctx.restore();};
- const rocket=(x,a,burn,flash)=>{ctx.save();ctx.globalAlpha=a;drawRocket(ctx,x,ry,r,1,burn,T);
+ const rocket=(x,a,burn,flash)=>{ctx.save();ctx.globalAlpha=a;drawRocket(ctx,x,ry,r,1,burn,T,true);
   ctx.beginPath();ctx.arc(x,lampY,5,0,TAU);ctx.fillStyle='#fde68a';ctx.fill();ctx.strokeStyle='rgba(120,80,0,.6)';ctx.lineWidth=1;ctx.stroke();
   if(flash>0)glow(x,lampY,6+5*flash,flash);ctx.restore();};
  // The glowing light-speed wall: a tall bright-amber bar at a point on the track, with its glow.
@@ -1500,10 +1509,10 @@ function drawLimit(ctx,w,h,spec,st){
    const e=clamp(plan.everyday), vLead=.5+e;
    ctx.save();ctx.globalAlpha=.7;ctx.setLineDash([6,6]);trace(ctx,[[x0,ry],[noseX(vLead),ry]]);ctx.strokeStyle='rgba(185,196,235,.55)';ctx.lineWidth=1.6;ctx.stroke();ctx.setLineDash([]);
    for(const vk of [.5,1,1.5])if(vLead+1e-6>=vk){const gx=noseX(vk);ctx.beginPath();ctx.arc(gx,ry,5.5,0,TAU);ctx.fillStyle='rgba(10,14,32,.9)';ctx.fill();ctx.strokeStyle='rgba(205,214,248,.7)';ctx.lineWidth=1.6;ctx.stroke();}
-   drawRocket(ctx,noseX(vLead)-r*.85,ry,r*.85,1,e>0&&e<1,plan.t);
+   drawRocket(ctx,noseX(vLead)-r*.85,ry,r*.85,1,e>0&&e<1,plan.t,true);
    if(st.labels)tag('just adding up',x0,ry-r-(small?10:14),{color:muted});ctx.restore();}
   const rx=clamp(noseX(v)-r,x0,wallX-r-3);
-  drawRocket(ctx,rx,ry,r,1,plan.burn,plan.t);
+  drawRocket(ctx,rx,ry,r,1,plan.burn,plan.t,true);
   if(plan.mode==='climb'){
    // The near-wall speeds are shown spread out, so name it a closer look at the wall.
    if(st.labels)tag('closer look',wallX-(small?8:10),win.top+(small?28:34),{align:'right',color:muted,sz:size-1});
