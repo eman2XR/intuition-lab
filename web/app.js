@@ -109,6 +109,9 @@ function preview(key,record){
  if(record?.scene)canvas.scene=record.scene;else if(key)canvas.dataset.key=key;
  thumbs.add(canvas);visible.observe(canvas);return canvas;
 }
+// A guide shows an "Updated" marker when it was revised after first publishing, within the last fortnight.
+function revisedAt(entry,record){const u=(entry&&entry.updated)||(record&&record.updated), c=entry&&new Date(entry.created), d=u&&new Date(u);
+ return d&&!isNaN(d)&&c&&!isNaN(c)&&d.toDateString()!==c.toDateString()&&Date.now()-d.getTime()<14*864e5?d:null;}
 function card(entry,record){
  const isExample=entry.id==='example', id=entry.id;
  const link=el('a',{href:isExample?'?guide=example':(entry.draft?'?draft=':'?guide=')+encodeURIComponent(id),className:'card'});
@@ -116,6 +119,7 @@ function card(entry,record){
  const media=el('div',{className:'card-media'},preview(!isExample&&keyOf(entry),record),el('span',{className:'mini-play',ariaHidden:'true'}));
  const badge=el('span',{className:'badge'});
  if(current&&(current.id===id||(isExample&&current.provider==='fixture'))){badge.textContent='Now showing';badge.dataset.kind='now';}
+ else if(!isExample&&revisedAt(entry,record)){badge.textContent='Updated';badge.dataset.kind='updated';}
  else if(!isExample&&!watched.has(id)&&Date.now()-new Date(entry.created).getTime()<36*3600*1000){badge.textContent='New';badge.dataset.kind='new';}
  else if(watched.has(id)){badge.textContent='Watched';badge.dataset.kind='seen';}
  const meta=el('p',{className:'card-meta'},el('span',{className:'card-go',textContent:'Watch the guide'}),el('span',{className:'card-date'},isExample?'Hand-written example':day(entry.created,{month:'long',day:'numeric'}),badge));
@@ -126,7 +130,9 @@ function card(entry,record){
 function thumbCard(entry,record){
  const link=el('a',{href:(entry.draft?'?draft=':'?guide=')+encodeURIComponent(entry.id),className:'thumb-card'});
  if(!entry.draft)link.dataset.guide=entry.id;
- link.append(el('div',{className:'card-media'},preview(keyOf(entry),record)),
+ const media=el('div',{className:'card-media'},preview(keyOf(entry),record));
+ if(!entry.draft&&revisedAt(entry,record))media.append(el('span',{className:'thumb-updated',textContent:'Updated'}));
+ link.append(media,
   el('span',{className:'card-cat',textContent:topicOf(record||entry)}),el('h3',{textContent:(entry.title||entry.question||'').replace(/\n/g,' ')}));
  return link;
 }

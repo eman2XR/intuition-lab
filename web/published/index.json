@@ -5,7 +5,8 @@
     "topic": "speed-limit",
     "created": "2026-11-02T17:00:16.436227+00:00",
     "curriculum": "2.4",
-    "title": "Why can nothing travel faster than light?"
+    "title": "Why can nothing travel faster than light?",
+    "updated": "2026-11-09T03:17:36Z"
   },
   {
     "id": "20261101T172324-12e71822",
@@ -13,63 +14,72 @@
     "topic": "night-sky",
     "created": "2026-11-01T17:23:24.058415+00:00",
     "curriculum": "6.1",
-    "title": "Why is the night sky dark?"
+    "title": "Why is the night sky dark?",
+    "updated": "2026-11-01T19:19:30Z"
   },
   {
     "id": "20261101T170219-falling-lift",
     "question": "How much do you weigh in a falling lift?",
     "topic": "lift",
     "created": "2026-11-01T17:02:19+00:00",
-    "title": "How much do you weigh in a falling lift?"
+    "title": "How much do you weigh in a falling lift?",
+    "updated": "2026-11-01T17:02:19Z"
   },
   {
     "id": "20261101T170218-who-is-falling",
     "question": "Who is really falling?",
     "topic": "fall-views",
     "created": "2026-11-01T17:02:18+00:00",
-    "title": "Who is really falling?"
+    "title": "Who is really falling?",
+    "updated": "2026-11-01T17:02:18Z"
   },
   {
     "id": "20261101T170217-twin-paths",
     "question": "Why the travelling twin comes home younger",
     "topic": "spacetime-paths",
     "created": "2026-11-01T17:02:17+00:00",
-    "title": "Why the travelling twin comes home younger"
+    "title": "Why the travelling twin comes home younger",
+    "updated": "2026-11-01T17:02:17Z"
   },
   {
     "id": "20261101T170216-curvature",
     "question": "What curved spacetime really means",
     "topic": "tides",
     "created": "2026-11-01T17:02:16+00:00",
-    "title": "What curved spacetime really means"
+    "title": "What curved spacetime really means",
+    "updated": "2026-11-01T17:02:16Z"
   },
   {
     "id": "20261101T170215-moon-two-tides",
     "question": "Why the Moon raises two tides, not one",
     "topic": "moon-tides",
     "created": "2026-11-01T17:02:15+00:00",
-    "title": "Why the Moon raises two tides, not one"
+    "title": "Why the Moon raises two tides, not one",
+    "updated": "2026-11-01T17:02:15Z"
   },
   {
     "id": "20261101T170214-river-black-hole",
     "question": "A black hole as a river of space",
     "topic": "river",
     "created": "2026-11-01T17:02:14+00:00",
-    "title": "Why light can\u2019t escape a black hole"
+    "title": "Why light can\u2019t escape a black hole",
+    "updated": "2026-11-01T17:02:14Z"
   },
   {
     "id": "20261101T071813-sky-colour",
     "question": "Why is the sky blue, but the sunset red?",
     "topic": "sky-colour",
     "created": "2026-11-01T07:18:13+00:00",
-    "title": "Why is the sky blue, but the sunset red?"
+    "title": "Why is the sky blue, but the sunset red?",
+    "updated": "2026-11-02T01:58:05Z"
   },
   {
     "id": "20261101T071812-shared-birthdays",
     "question": "Why do 23 people give even odds of a shared birthday?",
     "topic": "birthdays",
     "created": "2026-11-01T07:18:12+00:00",
-    "title": "Why do 23 people give even odds of a shared birthday?"
+    "title": "Why do 23 people give even odds of a shared birthday?",
+    "updated": "2026-11-01T07:18:12Z"
   },
   {
     "id": "20261029T175059-82fa6e44",
@@ -77,7 +87,8 @@
     "topic": "attention",
     "created": "2026-10-29T17:50:59.782080+00:00",
     "curriculum": "5.1",
-    "title": "How \u201cAttention Is All You Need\u201d led to ChatGPT"
+    "title": "How \u201cAttention Is All You Need\u201d led to ChatGPT",
+    "updated": "2026-11-01T18:08:37Z"
   },
   {
     "id": "20261027T163256-3e5bd32e",
@@ -85,7 +96,8 @@
     "topic": "diffraction",
     "created": "2026-10-27T16:32:56.404366+00:00",
     "curriculum": "3.4",
-    "title": "Why waves fan out after a narrow gap"
+    "title": "Why waves fan out after a narrow gap",
+    "updated": "2026-11-01T18:08:37Z"
   },
   {
     "id": "20261027T163007-b6176074",
@@ -93,7 +105,8 @@
     "topic": "wave-packet",
     "created": "2026-10-27T16:30:07.534725+00:00",
     "curriculum": "4.3",
-    "title": "Why a particle can\u2019t have an exact place and an exact speed"
+    "title": "Why a particle can\u2019t have an exact place and an exact speed",
+    "updated": "2026-11-02T01:58:05Z"
   },
   {
     "id": "20261027T162558-9d749f98",
@@ -101,7 +114,8 @@
     "topic": "quantum-well",
     "created": "2026-10-27T16:25:58.551402+00:00",
     "curriculum": "4.2",
-    "title": "Why a trapped particle can only have certain energies"
+    "title": "Why a trapped particle can only have certain energies",
+    "updated": "2026-11-01T18:08:37Z"
   },
   {
     "id": "20261027T160931-173edbbc",
@@ -109,7 +123,8 @@
     "topic": "standing-waves",
     "created": "2026-10-27T16:09:31.841062+00:00",
     "curriculum": "3.2",
-    "title": "Why a guitar string plays only certain notes"
+    "title": "Why a guitar string plays only certain notes",
+    "updated": "2026-11-01T18:08:37Z"
   },
   {
     "id": "20261027T160200-e017fbe8",
@@ -117,7 +132,8 @@
     "topic": "interference",
     "created": "2026-10-27T16:02:00.292831+00:00",
     "curriculum": "3.1",
-    "title": "When two waves meet: ripples that add, cancel and draw stripes"
+    "title": "When two waves meet: ripples that add, cancel and draw stripes",
+    "updated": "2026-11-01T18:08:37Z"
   },
   {
     "id": "20261027T154449-550db489",
@@ -125,13 +141,15 @@
     "topic": "light-bending",
     "created": "2026-10-27T15:44:49.411576+00:00",
     "curriculum": "1.2",
-    "title": "Why does gravity bend light?"
+    "title": "Why does gravity bend light?",
+    "updated": "2026-11-01T18:08:37Z"
   },
   {
     "id": "20261027T041411-61589ffe",
     "question": "Why do clocks at different heights tick at different rates?",
     "topic": "gravity-clocks",
     "created": "2026-10-27T04:14:11.455135+00:00",
-    "title": "Why clocks at different heights tick at different rates"
+    "title": "Why clocks at different heights tick at different rates",
+    "updated": "2026-11-02T01:58:05Z"
   }
 ]

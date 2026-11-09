@@ -267,6 +267,8 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .badge[data-kind=new]{background:#fdf1e6;color:#b4520f}
 .badge[data-kind=now]{background:var(--ink);color:#fff}
 .badge[data-kind=seen]{background:#f1efe9;color:var(--muted)}
+.badge[data-kind=updated]{background:#f3ece0;color:var(--brown)}
+.thumb-updated{position:absolute;top:8px;right:8px;z-index:1;font:600 10px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:999px;background:rgba(20,23,28,.72);color:#fff}
 
 /* Up next: questions open for tomorrow's run */
 .items{list-style:none;margin:18px 0 0;padding:0}
