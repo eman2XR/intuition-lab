@@ -1,7 +1,22 @@
 {
-  "updated": "2026-11-09T17:32:08.572554+00:00",
+  "updated": "2026-11-10T17:21:33.935789+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261110-9",
+      "kind": "blueprint",
+      "curriculum": "4.1",
+      "status": "open",
+      "created": "2026-11-10T17:21:33.934593+00:00",
+      "title": "A picture for \u201cWhy do particles fired one at a time still make stripes?\u201d",
+      "area": "engines",
+      "problem": "No visual engine can show this question yet, so the daily run cannot investigate it.",
+      "proposal": "Each particle lands as a single dot. Where it can land is set by a wave that goes through both slits at once. Where the two parts of the wave cancel, dots almost never land, so thousands of single dots slowly draw stripes. Chapter 1: Top view: a source on the left, a wall with two narrow slits, a detector screen on the right. A dashed outline on the screen shows what tiny pellets would do: two humps, one behind each slit. Chapter 2: The source fires one particle and a single bright dot appears at one place on the screen. A counter slowly reads 1, then 2, then 3. No wave is drawn. Chapter 3: Fi",
+      "benefit": "The daily run could then investigate \u201cWhy do particles fired one at a time still make stripes?\u201d.",
+      "effort": "medium",
+      "risk": "Needs hand-built drawing code, model checks and a beginner test before it is marked ready.",
+      "evidence": []
+    },
     {
       "id": "P-20261106-2",
       "status": "open",
