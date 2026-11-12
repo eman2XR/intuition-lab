@@ -1,7 +1,22 @@
 {
-  "updated": "2026-11-11T17:40:11.260216+00:00",
+  "updated": "2026-11-12T17:10:39.497977+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261112-9",
+      "kind": "blueprint",
+      "curriculum": "2.2",
+      "status": "open",
+      "created": "2026-11-12T17:10:39.497930+00:00",
+      "title": "A picture for \u201cCan two events be simultaneous for one person but not another?\u201d",
+      "area": "engines",
+      "problem": "No visual engine can show this question yet, so the daily run cannot investigate it.",
+      "proposal": "Two distant events that happen at the same time by your clocks can happen at different times by the clocks of someone moving past you, and this is not light delay. Both of you are right, but cause and effect never swap order. Chapter 1: Side view: a long platform with a person standing at its midpoint, and a train sliding past with a rider in its middle car. The train's ends line up with two marks on the platform. Lightning hits both ends at once. Chapter 2: Platform frame. Two circles of light spread out from the scorch marks at the same speed. Small clocks at each end of the platform read 0.",
+      "benefit": "The daily run could then investigate \u201cCan two events be simultaneous for one person but not another?\u201d.",
+      "effort": "medium",
+      "risk": "Needs hand-built drawing code, model checks and a beginner test before it is marked ready.",
+      "evidence": []
+    },
     {
       "id": "P-20261110-9",
       "kind": "blueprint",

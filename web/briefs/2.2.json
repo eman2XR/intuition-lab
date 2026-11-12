@@ -1,0 +1,137 @@
+{
+  "id": "2.2",
+  "curriculum": "2.2",
+  "question": "Can two events be simultaneous for one person but not another?",
+  "model": "simultaneity",
+  "created": "2026-11-12T17:10:39.494168+00:00",
+  "research": {
+    "claim": "Yes, for events at different places. In special relativity, two events at different places that are simultaneous in one inertial frame are generally not simultaneous in another inertial frame moving relative to it along the line joining them. Here \"simultaneous for a person\" means \"at the same time according to that person's own synchronized clocks\", not \"seen at the same moment\". All observers still agree on three things. Events at the same place and the same time are simultaneous for everyone. Events separated only at right angles to the motion stay simultaneous. Any two events where one could affect the other (timelike or lightlike pairs) keep the same order in every frame. Only pairs too far apart in space for any signal to link them (spacelike pairs) can be simultaneous, earlier or later depending on the frame.",
+    "explanation": "1. What \"simultaneous for me\" means. You can't judge distant simultaneity by what reaches your eyes at the same moment, because light from a farther event takes longer to arrive. Physics uses a better definition. Imagine a lattice of clocks at rest with you, all synchronized. The time of an event is what the clock right next to it reads. Two events are simultaneous for you if those clocks show the same reading. The standard way to synchronize two clocks (Einstein synchrony) is with light. Send a flash from clock A at time t1. It bounces off B and comes back at time t2. The bounce counts as happening at (t1 + t2)/2 on A's clock. In other words, the trip out and the trip back are assumed to take equal times.\n\n2. Why moving observers disagree. Every inertial observer measures light moving at the same speed c. The SEP entry on inertial frames puts it this way: frames in relative motion \"can agree on the velocity of light only if they disagree on simultaneity\".\n\nPicture the classic thought experiment. Lightning strikes both ends of a train as it passes a platform. The platform observer stands halfway between the two strike points. Both flashes reach them at the same moment. The distances are equal and light travels at c both ways, so the strikes were simultaneous for the platform.\n\nA rider sits in the middle of the train. They are moving toward the front strike, so they meet its light first. In the rider's own frame the train is at rest. The scorch marks are equally far away at the two ends, and light comes from both directions at c. The rider allows for travel time and still concludes that the front strike happened first. The disagreement is not caused by light delay. It remains after each observer corrects for travel time.\n\n3. The formula. The Lorentz transformation gives t' = \u03b3(t \u2212 vx/c\u00b2), where \u03b3 = 1/\u221a(1 \u2212 v\u00b2/c\u00b2). For two events this becomes \u0394t' = \u03b3(\u0394t \u2212 v\u0394x/c\u00b2). If the events are simultaneous in frame S (\u0394t = 0), the time between them in frame S' is \u0394t' = \u2212\u03b3v\u0394x/c\u00b2. This is not zero whenever the events are separated along the direction of motion. With \u0394x > 0 and v > 0, the result is negative. So the event farther ahead in the direction S' moves (the front of the train) comes first in S'.\n\nThe effect grows with both speed and distance. At everyday speeds it is tiny. At 30 m/s, with events 3,000 km apart, it is about v\u0394x/c\u00b2 \u2248 1 nanosecond.\n\n4. What everyone agrees on. The interval s\u00b2 = c\u00b2\u0394t\u00b2 \u2212 |\u0394x|\u00b2 has the same value in every inertial frame. The SEP describes Minkowski spacetime as having \"an invariant spatio-temporal interval\".\n- Spacelike pairs (s\u00b2 < 0) are too far apart for even light to connect them. Their order depends on the frame, and these are the only pairs that show the effect.\n- Timelike or lightlike pairs (s\u00b2 \u2265 0) have the same order in every frame, so cause never comes after effect.\n- Events at the same place and time are simultaneous for everyone.\n- On a spacetime diagram, each frame has its own \"now\" lines. For a frame moving at v, those lines are tilted by slope v/c compared with the rest frame's lines. There is no single universal \"now\" line. The SEP says \"there is no invariant relation of simultaneity\".\n\n5. A useful rule. Suppose a set of clocks is synchronized in its own rest frame, and those clocks move past you. In your frame the rear clock reads ahead of the front clock by vL/c\u00b2, where L is their separation in their rest frame. This is sometimes summed up as \"leading clocks lag.\"\n\n6. The honest caveat about convention. The SEP entry on the conventionality of simultaneity explains a debate (Reichenbach and Gr\u00fcnbaum). Within one frame, the choice that the outgoing and return trips take equal times (\u03b5 = \u00bd) may be partly a definition, because only the round-trip speed of light can be measured directly. Malament's theorem argues that standard synchrony is the only choice that can be defined from causal structure alone. The entry says the debate \"seems far from settled\".\n\nThis does not make the effect imaginary. Once each frame uses the standard rule, their disagreement is fixed by the Lorentz transformation. The same transformation predicts time dilation and length contraction, and those have been measured. No experiment measures relativity of simultaneity on its own. It is tested through the whole Lorentz structure. The Baez experiments page lists Michelson\u2013Morley and Kennedy\u2013Thorndike for the round-trip speed of light, and Krisher et al. 1990 for one-way speed tests. It notes that one-way tests are limited by the convention issue. It also lists time-dilation tests: Ives\u2013Stilwell 1938, Frisch\u2013Smith 1963, and the Bailey et al. 1977 stored-muon experiment.",
+    "assumptions": [
+      "Flat spacetime (special relativity only; gravity and general relativity are excluded).",
+      "Observers are inertial (not accelerating) and use ordinary non-rotating coordinates.",
+      "Principle of relativity: the laws of physics are the same in every inertial frame.",
+      "Light has the same speed c in every inertial frame. Strictly, only the round-trip speed is measured; the one-way speed rests on the synchronization convention.",
+      "Einstein synchrony (\u03b5 = \u00bd) is used within each frame. The disagreement BETWEEN frames is what this record calls physical.",
+      "No signals faster than light. The SEP notes that such signals (tachyons) would change the conventionality argument.",
+      "'Simultaneous for a person' means simultaneous according to that person's rest-frame synchronized clocks, after correcting for light travel time. It does not mean the moment light reaches their eyes."
+    ],
+    "prediction": "Take two events 1 light-second apart along a line (about 3\u00d710^8 m). Both are simultaneous in frame S (\u0394t = 0). In a frame S' moving at v = 0.6c along that line (\u03b3 = 1.25), \u0394t' = \u2212\u03b3v\u0394x/c\u00b2 = \u22121.25 \u00d7 0.6 \u00d7 1 s = \u22120.75 s. The event ahead in the direction of S''s motion happens 0.75 s earlier. Over the same distance, S' moving at \u22120.6c reverses the order, and v = 0 gives zero difference. The interval is the same in both frames. In S it is s\u00b2 = 0 \u2212 (1 light-second)\u00b2. In S', \u0394x' = \u03b3\u0394x = 1.25 light-seconds, so s\u00b2 = (0.75)\u00b2 \u2212 (1.25)\u00b2 = \u22121 (light-seconds)\u00b2. Everyday scale: 30 m/s over 3,000 km gives about 1 ns. If the same two events are instead separated only at right angles to the motion, \u0394t' = 0.",
+    "falsifier": "Relativity of simultaneity is never measured on its own, because it is partly conventional. It would be refuted by a failure of the Lorentz structure it belongs to. Any one of these would do it: the round-trip speed of light varying with the apparatus's orientation or speed (contradicting Michelson\u2013Morley and Kennedy\u2013Thorndike type results); moving clocks failing to slow by the factor \u03b3 (contradicting Ives\u2013Stilwell, Frisch\u2013Smith and the Bailey et al. stored-muon results); a one-way light-speed anisotropy that clock-transport effects cannot cancel; or a usable faster-than-light signal that picked out one preferred, frame-independent synchronization (absolute simultaneity). Within the theory, a clear sign the guide's picture is wrong would be two causally connected (timelike) events found in opposite orders in two inertial frames.",
+    "limitations": [
+      "This applies to special relativity only. In curved spacetime, and on the rotating Earth, a single global 'now' raises further problems. The GPS and Sagnac claim in the notes comes from Ashby 2003, which was not retrieved, so it is not cited here and should be checked before use.",
+      "Primary sources (Einstein 1905, Einstein's 1916/1920 popular book with the train example, and Norton's Pitt chapter) were not retrieved. The train thought experiment is described without a primary citation.",
+      "Only about the first 100k of the Baez experiments page's 124k characters were read. The experiment citations are as listed on that page and were not checked against the original papers.",
+      "Wikipedia is used only as secondary background (perpendicular-motion case, the vx/c\u00b2 term). It names no direct experiment.",
+      "No experiment isolates the relativity of simultaneity. Evidence for it comes through time dilation, light-speed tests and the overall Lorentz transformation.",
+      "Philosophers have not settled how far simultaneity within one frame is a convention (the SEP calls the debate 'far from settled'). This record treats the Einstein-synchrony disagreement between frames as the physical content.",
+      "Hafele\u2013Keating combines special-relativistic, gravitational and Sagnac effects, so it is not a clean test of this effect.",
+      "This record makes no new-discovery claim. It summarizes standard physics."
+    ],
+    "misconceptions": [
+      "Simultaneous means the light from both events reaches my eyes at the same moment. (No: travel time is corrected for. Simultaneity is defined by synchronized clocks at the events.)",
+      "It's just light delay; once both observers correct for travel time they'll agree. (No: the disagreement remains after correction, because each uses light speed c in their own frame.)",
+      "The light from the front strike is carried along by the train, so it moves at c + v. (That is the pre-relativity ballistic picture. Light moves at c in both frames.)",
+      "There is one true universal 'now' sweeping across the universe, and one of the observers has it right. (Both frames are equally valid. Each has its own tilted lines of simultaneity.)",
+      "The moving person's clocks must be broken or badly synchronized. (Both sets are properly synchronized by the same rule and still disagree.)",
+      "The person who is 'really moving' is the one who's wrong. (There is no absolute rest frame. Each observer can treat themselves as at rest.)",
+      "Wait, but if order can flip, can't someone see an effect before its cause? (No: only spacelike pairs, which cannot influence each other, change order.)",
+      "It's only an illusion or appearance, not real. (It is a real difference in how frames assign times. It follows from the same transformation that predicts measured time dilation.)",
+      "Philosophers say simultaneity is a convention, so the effect is made up. (The convention concerns the choice within one frame. Given the standard choice, the disagreement between frames is fixed.)",
+      "Two people standing in the same place will disagree about whether two firecrackers going off right next to them were at once. (Events at the same place and time are simultaneous for everyone.)",
+      "It works in any direction of motion. (Events separated only at right angles to the motion stay simultaneous.)",
+      "Speed is all that matters. (The time offset is \u03b3v\u0394x/c\u00b2, so it grows with distance as well. That is why tiny speeds over huge distances give noticeable offsets.)",
+      "Nothing moves fast enough for this to matter in real life. (At everyday speeds the offset is nanoseconds over thousands of km. Precise clock networks must handle synchronization carefully.)",
+      "If two people disagree about what is happening 'now' on a distant galaxy, one of them can see or change it. (That is a difference in coordinates only. Neither can see or influence those distant events any sooner.)",
+      "This is the same thing as time dilation. (They are related through the Lorentz transformation but distinct: time dilation concerns the rate of one clock, simultaneity concerns the readings of separated clocks.)",
+      "Spacetime diagrams can be read with an ordinary ruler. (The moving frame's axes look squeezed together. Their tick marks must be calibrated with hyperbolas.)"
+    ],
+    "questions": [
+      {
+        "q": "Two firecrackers go off at the same spot at the same instant by your clocks. Could a rocket pilot flying past say they went off at different times?",
+        "a": "No. Events at the same place and the same time have \u0394x = 0 and \u0394t = 0, so \u0394t' = \u03b3(\u0394t \u2212 v\u0394x/c\u00b2) = 0 in every frame. Disagreement only happens for events at different places."
+      },
+      {
+        "q": "Lightning strikes both ends of a platform at once for the platform observer. A train rider is moving toward the front strike. A friend says: 'The rider only thinks the front strike came first because its light arrived first. Correct for travel time and they'll agree.' Is the friend right?",
+        "a": "No. In the rider's own frame the two scorch marks are equally far away and both flashes travel at c. The front flash arrives first, so after correcting for travel time the rider still concludes the front strike happened first. The disagreement is not caused by light delay."
+      },
+      {
+        "q": "Could a fast enough spaceship find a frame in which you were born before your mother?",
+        "a": "No. Your mother's birth could influence yours (a timelike pair), and every inertial frame agrees on the order of such pairs. Only events too far apart for any signal to connect them (spacelike pairs) can swap order."
+      },
+      {
+        "q": "Two lamps flash at the same moment in the station frame. One is directly north of the other, and a train moves east. Do the train passengers say the flashes were simultaneous?",
+        "a": "Yes. The effect depends on separation along the direction of motion (the v\u0394x/c\u00b2 term). Separation purely at right angles to the motion gives zero time offset."
+      },
+      {
+        "q": "About how big is the effect for a car at 30 m/s and two events 3,000 km apart (along the road) that are simultaneous on the ground? Why does nobody notice?",
+        "a": "\u0394t' \u2248 v\u0394x/c\u00b2 = (30 \u00d7 3\u00d710^6)/(9\u00d710^16) s \u2248 10^-9 s, about one nanosecond. It is far too small to notice without precise clocks, yet it grows with distance as well as speed."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Stanford Encyclopedia of Philosophy, \"Inertial Frames\"",
+        "url": "https://plato.stanford.edu/entries/spacetime-iframes/",
+        "supports": "Retrieved, according to the research notes. Quoted: frames in relative motion 'can agree on the velocity of light only if they disagree on simultaneity'; 'there is no invariant relation of simultaneity'; Minkowski spacetime has 'an invariant spatio-temporal interval between any two points'."
+      },
+      {
+        "title": "Stanford Encyclopedia of Philosophy, \"Conventionality of Simultaneity\"",
+        "url": "https://plato.stanford.edu/entries/spacetime-convensimul/",
+        "supports": "Retrieved, according to the research notes. Einstein's light-signal synchrony, with the distant event simultaneous with time (t1+t2)/2 at A; Reichenbach and Gr\u00fcnbaum's choice of \u03b5 between 0 and 1, with \u03b5 = \u00bd standard; Malament's theorem and the replies to it; the debate 'seems far from settled'; faster-than-light signals would undermine the conventionality argument."
+      },
+      {
+        "title": "J. Baez et al., \"What is the experimental basis of Special Relativity?\" (UC Riverside)",
+        "url": "https://math.ucr.edu/home/baez/physics/Relativity/SR/experiments.html",
+        "supports": "Retrieved, about the first 100k of 124k characters read. Lists the experimental tests of the Lorentz structure: round-trip light speed (Michelson\u2013Morley, Kennedy\u2013Thorndike, Brillet & Hall, Hils & Hall); one-way light speed (Krisher et al. 1990 and others), with the warning that one-way tests 'are inherently unable to rule out a large class of theories'; time dilation (Ives & Stilwell 1938, Frisch & Smith 1963, Bailey et al. 1977, Hafele & Keating 1972)."
+      },
+      {
+        "title": "Wikipedia, \"Relativity of simultaneity\" (secondary, background only)",
+        "url": "https://en.wikipedia.org/wiki/Relativity_of_simultaneity",
+        "supports": "Retrieved, according to the research notes. Background only: the effect comes from the vx/c\u00b2 term in the Lorentz transformation and disappears when the motion is perpendicular to the line joining the events. It names no direct experiment."
+      }
+    ]
+  },
+  "design": {
+    "idea": "Two distant events that happen at the same time by your clocks can happen at different times by the clocks of someone moving past you, and this is not light delay. Both of you are right, but cause and effect never swap order.",
+    "start": "A train passes a platform and lightning hits both ends of it. You judge \"at once\" the way you would on a station: did the two flashes reach someone standing exactly halfway between them at the same moment?",
+    "belief": "\"It's just light delay. The rider sees the front flash first, but once they correct for travel time they'll agree with the platform.\" Also: \"one of them must have the true now\" and \"so could an effect come before its cause?\"",
+    "reason": "Each frame gets a row of synchronized clocks. The picture plays the same two strikes twice, first with the platform at rest, then with the train at rest. In the train's view the scorch marks are equally far from the rider and both flashes travel at the same speed, yet the front flash still arrives first. Travel time is already accounted for, so the front strike must have happened earlier. The front clock is highlighted because it is the one that reads earlier.",
+    "chapters": [
+      {
+        "show": "Side view: a long platform with a person standing at its midpoint, and a train sliding past with a rider in its middle car. The train's ends line up with two marks on the platform. Lightning hits both ends at once.",
+        "changes": "Sentence 1: the train glides in and the two bolts strike. Sentence 2: scorch marks appear at both ends of the platform and both ends of the train.",
+        "label": "Platform and train"
+      },
+      {
+        "show": "Platform frame. Two circles of light spread out from the scorch marks at the same speed. Small clocks at each end of the platform read 0.00 s at the moment of each strike.",
+        "changes": "Sentence 1: the circles of light meet at the platform person at the same moment and the person flashes. Sentence 2: the two end clocks are highlighted, both reading 0.00 s, because by this person's clocks the strikes happened at the same time.",
+        "label": "Same time here"
+      },
+      {
+        "show": "Platform frame again, now following the rider. The rider is moving toward the front strike.",
+        "changes": "Sentence 1: the front light reaches the rider first and the rider flashes. Sentence 2: the back light arrives later. The \"just light delay\" objection is stated in the subtitle only.",
+        "label": "Front flash first"
+      },
+      {
+        "show": "Train frame: the train stands still and the platform slides backward. The scorch marks on the train are equally far from the rider. Light spreads at the same speed in both directions. The train's own end clocks are shown.",
+        "changes": "Sentence 1: the front strike, then the back strike go off, and the equal distances light up. Sentence 2: the front light still arrives first. Sentence 3: the front train clock is highlighted because it reads earlier than the back clock: the front strike came first.",
+        "label": "Train at rest"
+      },
+      {
+        "show": "A readout under the train shows the gap between the two strikes by the train's clocks, at 0.6 times light speed with the strikes 1 light-second apart.",
+        "changes": "Sentence 1: the gap counts up to 0.75 s. Sentence 2: the speed drops to 30 m/s with the strikes 3,000 km apart, and the gap shrinks to about 1 ns. That is why nobody notices it on a real train.",
+        "label": "Gap: 0.75 s"
+      },
+      {
+        "show": "Same train frame. A third event appears: a lamp at the rider that the front flash's light switches on. Then a second pair of lamps appears, one north of the other, across the track.",
+        "changes": "Sentence 1: the lamp lights only after the front flash's light reaches it, and its order stays the same in both frames. Sentence 2: the north and south lamps flash and their clocks match in both frames, because the effect only appears along the direction of motion.",
+        "label": "Order kept"
+      }
+    ],
+    "try": "Drag the train's speed slider from -0.6 to +0.6 times light speed. At zero both train clocks match. Moving forward, the front strike comes first; moving backward, the back strike comes first. Bigger speed or longer train means a bigger gap.",
+    "fits_engine": false,
+    "missing": "A new engine for a train and platform in 1D with a frame switch (platform at rest, or train at rest, using the Lorentz transform), a clock at each end of each frame, light circles that spread at c from the events and a flash when they reach each observer. It also needs a time-gap readout using \u03b3v\u0394x/c\u00b2, a speed slider from -0.6c to 0.6c, a lamp switched on by the light (to show cause and effect keep their order) and an optional pair of lamps across the track."
+  },
+  "sources_retrieved": true,
+  "retrieved_by": "agent"
+}
