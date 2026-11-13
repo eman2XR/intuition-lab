@@ -1,7 +1,23 @@
 {
-  "updated": "2026-11-12T17:14:51.013742+00:00",
+  "updated": "2026-11-13T17:19:24.519375+00:00",
   "goal": "Intuition Lab is an autonomous visual physics research lab with humans in the loop. Its goal is to build intuitive understanding of physics through honest, interactive, beautiful visuals, publishing one reviewed investigation a day, and over time to work toward clearly scoped investigations of open problems in physics. Agents propose, research, render, review and revise; the owner steers through picks, questions, feedback and approvals. Scientific honesty, beginner clarity and low cost matter more than volume.",
   "proposals": [
+    {
+      "id": "P-20261113-3",
+      "status": "open",
+      "created": "2026-11-13T17:19:24.519335+00:00",
+      "title": "Slider sweep test: drag every control and re-run the checks",
+      "area": "engines",
+      "problem": "The gates test the authored playback frames, but the sliders are only offered after playback and are never tested by the gates. At the edge of a slider's range, a guide can show overlapping labels, values running off the canvas, or readouts that contradict the model, and no review would ever see it.",
+      "proposal": "Extend `lab.render.gate_probe` and `capture` with a scripted sweep. For each slider, set the minimum, maximum and three middle values, wait one frame, and capture the canvas, the label log (from the first proposal, if approved) and the readouts. For each setting, run the existing overlap, clipping and blank-frame render checks, plus the model checks at those parameter values. Report the failing slider and value. Do this without a VLM agent: the sliders are known from the scene data, so a deterministic sweep is cheaper and repeatable. One session.",
+      "benefit": "Tests the interactive part of a guide, which is where intuition gets built, at almost no cost. It also gives agent-built engines a stronger gate on their candidate branches.",
+      "effort": "small",
+      "risk": "Captures add a few seconds per guide. Some published guides may fail at extreme values; treat those as fix tasks, not regressions that block the daily run.",
+      "evidence": [
+        "https://arxiv.org/abs/2604.18394",
+        "https://arxiv.org/abs/2603.26648"
+      ]
+    },
     {
       "id": "P-20261112-9",
       "kind": "blueprint",
