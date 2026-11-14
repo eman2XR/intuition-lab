@@ -49,7 +49,10 @@ def run(*args, timeout=120):
     binary = node()
     if not binary:
         raise RuntimeError('node was not found')
-    return subprocess.run([binary, str(SCRIPT), *args], text=True, capture_output=True, timeout=timeout)
+    # Node's fetch ignores proxy settings unless asked; a sandboxed session reaches the push service only through its
+    # proxy. A scheduled run has no proxy set, so this changes nothing there.
+    env = {**os.environ, 'NODE_USE_ENV_PROXY': '1'} if os.environ.get('HTTPS_PROXY') or os.environ.get('https_proxy') else None
+    return subprocess.run([binary, str(SCRIPT), *args], text=True, capture_output=True, timeout=timeout, env=env)
 
 
 def keys(state_dir=STATE):
