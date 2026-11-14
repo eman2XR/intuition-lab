@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-14T06:15:58.045756+00:00",
-    "outcome": "No question is ready to investigate; nothing started."
+    "at": "2026-11-14T18:33:03.349400+00:00",
+    "outcome": "Published \u201cDoes \u201cat the same time\u201d depend on how you move?\u201d, built in the session loop after every check and review passed."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
