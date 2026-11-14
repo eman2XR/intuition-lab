@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-14T18:33:03.349400+00:00",
-    "outcome": "Published \u201cDoes \u201cat the same time\u201d depend on how you move?\u201d, built in the session loop after every check and review passed."
+    "at": "2026-11-14T18:53:57.029259+00:00",
+    "outcome": "Today\u2019s guide is already published (\u201cDoes \u201cat the same time\u201d depend on how you move?\u201d); the next round is tomorrow."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
