@@ -132,7 +132,8 @@ class LoopTests(unittest.TestCase):
 class BudgetTests(unittest.TestCase):
     def test_reviews_that_never_pass_end_as_a_draft_within_the_daily_budget(self):
         # The worst case under the budget __main__ gives a daily attempt: the planner is asked, the researcher fails
-        # over to the coordinator's source finder, and all four reviewers reject every revision.
+        # over to the coordinator's source finder, the designer's first brief is out of bounds and goes back once, and
+        # all four reviewers reject every revision.
         from lab.__main__ import main
         class Budgeted(FixtureProvider):
             def __init__(self,name,model,max_calls,**limits):
@@ -145,6 +146,9 @@ class BudgetTests(unittest.TestCase):
                     self.calls+=1;return {'urls':[{'url':'https://example.edu/page','why':'w'}]}
                 if role in ('physics_reviewer','visual_reviewer','learner','blind_viewer'):
                     self.calls+=1;return {'pass':False,'score':5,'summary':'Not yet.','changes':['Clarify.'],'blocking_issues':['Unclear.']}
+                if role=='designer' and not getattr(self,'rejected',False):
+                    self.rejected=True;brief=super().generate(role,prompt,schema,**kw)
+                    return {**brief,'chapters':brief['chapters'][:2]}
                 return super().generate(role,prompt,schema,**kw)
         results=[]
         def attempt(factory,count,rounds,*args,**kwargs):

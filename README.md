@@ -94,7 +94,7 @@ The fixture intentionally fails the first visual review (missing comparison and 
 
 All four reviewers must pass with scores ≥7, no blocking issues, and passing numerical/layout checks. Failure or budget exhaustion retains a draft. Passing model review is **not** proof of scientific correctness or novelty.
 
-When nothing can be investigated (every ready engine already has a guide), the scheduled run uses its once-a-day idle slot to build the picture engine the next waiting question needs, from a research brief: the researcher, scientist and designer run as usual, then the model returns the engine code as a bounded structured object (the exact, gated exception to "models return data"). The coordinator splices it into `web/scene.js`, `web/physics.js`, `web/curriculum.json`, `lab/topics.py` and `web/app.js` at fixed `AGENT-ENGINES` markers, then gates it: `node --check` on the scripts; every numerical check passing with at least three non-vacuous checks for the new model; a function-only structural rule so the drawing code cannot run anything at load (no IIFEs or bare calls); a locked-down SANDBOX render that blocks all network and makes timers, workers, sockets, beacons and cookies throw, so side-effecting code fails behaviourally rather than by pattern matching; and a full render of a placeholder scene. If any gate fails, or anything else does, every touched file is restored to its exact original bytes and the run falls back to researching the question into a build brief, then to a design-only sketch. If the gates pass, the engine runs its first investigation and the engine code and its draft are committed onto an `engine-candidate/<day>-<kind>` branch and that branch alone is pushed — **no agent-written engine code is ever pushed to `main` or the live site**. The worker's `main` working tree is restored byte-clean, and the owner is told, through a proposal and the dashboard, that a new picture is ready to review. The picture goes live only when a human merges the branch (`python3 -m lab approve-engine <branch>`, which re-runs the gates and fast-forwards `main`). See `lab/build_engine.py`.
+When nothing can be investigated (every ready engine already has a guide), the scheduled run uses its once-a-day idle slot to build the picture engine the next waiting question needs, from a research brief: the researcher, scientist and designer run as usual, then the model returns the engine code as a bounded structured object (the exact, gated exception to "models return data"). The coordinator splices it into `web/scene.js`, `web/physics.js`, `web/curriculum.json`, `lab/topics.py` and `web/app.js` at fixed `AGENT-ENGINES` markers, then gates it: `node --check` on the scripts; every numerical check passing with at least three non-vacuous checks for the new model; a function-only structural rule so the drawing code cannot run anything at load (no IIFEs or bare calls); a locked-down SANDBOX render that blocks all network and makes timers, workers, sockets, beacons and cookies throw, so side-effecting code fails behaviourally rather than by pattern matching; and a full render of a placeholder scene. If any gate fails, or anything else does, every touched file is restored to its exact original bytes and the run falls back to researching the question into a build brief, then to a design-only sketch. If the gates pass, the engine runs its first investigation. When that guide passes every render check and all four reviews, the engine and the guide are committed to `main` and published, and your devices are notified; the owner chose this so a new guide appears without waiting for approval. Because no human reads that code first, the validators also refuse any code that touches the page, the browser, the network or timers, and the site's Content-Security-Policy stops the page from loading or sending anything outside itself and the GitHub API. A guide that falls short is committed with its engine onto an `engine-candidate/<day>-<kind>` branch instead, the worker's `main` is restored byte-clean, and it goes live only when a human merges it (`python3 -m lab approve-engine <branch>`, which re-runs the gates and fast-forwards `main`). A rejected engine is sent back once with the reason, a saved build brief is reused, and after three failed builds for one question the builder moves on to the next. See `lab/build_engine.py`.
 
 Runs are saved in `web/runs/<id>/record.json` with scenes, frames, source notes, review findings, timestamps and provider-reported usage. Only runs that pass every gate can be exported to `web/published/`.
 
@@ -109,7 +109,7 @@ Runs are saved in `web/runs/<id>/record.json` with scenes, frames, source notes,
 
 ## Daily investigations
 
-Daily runs are started from this checkout, for example from a Claude Code `/loop`. A launchd schedule (below) needs a checkout outside Desktop and Documents, because macOS privacy protection blocks launchd there.
+Scheduled runs come from a separate worker checkout, `~/Projects/intuition-lab-worker`, because launchd cannot run a project kept on the Desktop or in Documents (macOS privacy protection). Manual runs work from any checkout.
 
 Run one daily cycle using existing Claude Code authentication:
 
@@ -127,11 +127,11 @@ Export checks everything before writing and moves the finished guide into `web/p
 
 To publish an accepted run recorded in another checkout (for example a batch snapshot), use `python3 -m lab export --run-dir <run folder> --publish`; it applies the same gates.
 
-To set a published guide aside without deleting it, use `python3 -m lab archive <guide-id>` (and `python3 -m lab unarchive <guide-id>` to bring it back). The guide folder stays in place and keeps working by its link; only the home page changes, moving the guide into a collapsed "Archived" section. The command commits and pushes just `web/published/index.json`, so keep this checkout on `main`. The same thing can be requested from the site: each guide's behind-the-scenes footer has an "Archive this guide" / "Restore this guide" link that opens a `council:archive` / `council:unarchive` issue, which the next morning's run applies before it plans.
+To set a published guide aside without deleting it, use `python3 -m lab archive <guide-id>` (and `python3 -m lab unarchive <guide-id>` to bring it back). The guide folder stays in place and keeps working by its link; only the home page changes, moving the guide into a collapsed "Archived" section. The command commits and pushes just `web/published/index.json`, so keep this checkout on `main`. The same thing can be done from the site: each published guide has an **Archive** (or **Restore**) button under the player. It opens a `council:archive` / `council:unarchive` issue that a GitHub Action applies within a few minutes (only the owner's own requests count); the daily run applies any it misses.
 
 ### Schedule on macOS
 
-Optional. Generate a launch-agent configuration for 9 AM local time, in a checkout outside Desktop and Documents:
+Generate a launch-agent configuration for 9 AM local time, in the worker checkout:
 
 ```sh
 python3 -m lab schedule --provider claude --hour 9 --count 1
@@ -175,7 +175,7 @@ The home page features the newest published guide and lists every other one, new
 
 ## Install on iPhone
 
-Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, and send the code it shows to the owner. The owner runs this once in this checkout:
+Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, and send the code it shows to the owner. The owner runs this once in the worker folder (`~/Projects/intuition-lab-worker`):
 
 ```sh
 python3 -m lab push add '<code>'

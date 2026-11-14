@@ -1,0 +1,45 @@
+name: Archive or restore a guide
+
+# The Archive button on a guide opens a council:archive (or council:unarchive) issue. This applies it right away:
+# it flips the guide's archived flag in web/published/index.json, pushes, republishes the site and closes the issue.
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: archive
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    # Only the owner's own requests, opened or labelled by the owner.
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      github.event.sender.login == github.repository_owner &&
+      (contains(github.event.issue.labels.*.name, 'council:archive') ||
+       contains(github.event.issue.labels.*.name, 'council:unarchive'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Apply the request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python -m lab.archive_issue "$GITHUB_EVENT_PATH"
+      # A push made with the workflow token does not start other workflows, so the site is republished explicitly.
+      - name: Republish the site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main --repo "$GITHUB_REPOSITORY"

@@ -566,3 +566,31 @@ class ArchiveTests(unittest.TestCase):
             notes=apply_archive([{'number':9,'kind':'archive','body':'guide: run-1'}],Path('/root'),'2026-11-08')
         close.assert_not_called();self.assertEqual(notes,[])
         self.assertIn('pending',comment.call_args.args[1])
+
+
+class ArchiveIssueTests(unittest.TestCase):
+    def event(self, **issue):
+        base={'number':7,'state':'open','user':{'login':'eman2XR'},'title':'Archive: X','body':'guide: run-1',
+              'labels':[{'name':'council:archive'}]}
+        return {'issue':{**base,**issue},'sender':{'login':'eman2XR'}}
+
+    def test_only_the_owners_open_archive_or_restore_request_is_read(self):
+        from lab.archive_issue import request_from_event
+        self.assertEqual(request_from_event(self.event())['kind'],'archive')
+        self.assertEqual(request_from_event(self.event(labels=[{'name':'council:unarchive'}]))['kind'],'unarchive')
+        self.assertIsNone(request_from_event(self.event(user={'login':'someone'})))
+        self.assertIsNone(request_from_event({**self.event(),'sender':{'login':'someone'}}))
+        self.assertIsNone(request_from_event(self.event(state='closed')))
+        self.assertIsNone(request_from_event(self.event(labels=[{'name':'council:question'}])))
+
+    def test_the_action_applies_a_request_once(self):
+        from lab import archive_issue
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'event.json';path.write_text(json.dumps(self.event()))
+            with patch('lab.archive_issue.still_open',return_value=True),patch('lab.archive_issue.apply_archive',return_value=['Archived the guide run-1.']) as apply:
+                archive_issue.main(path,root=Path(tmp))
+            self.assertEqual(apply.call_args.args[0][0]['number'],7)
+            # The second event for the same issue finds it closed and applies nothing.
+            with patch('lab.archive_issue.still_open',return_value=False),patch('lab.archive_issue.apply_archive') as apply:
+                archive_issue.main(path,root=Path(tmp))
+            apply.assert_not_called()

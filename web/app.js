@@ -510,14 +510,14 @@ function updateTalk(){
  const guide=current?.id&&current.provider!=='fixture'?current.id:'example', title=current?.scene?.title?.replace(/\n/g,' ')||'';
  $('ask').href=issueURL('council:question','Question: ',`guide: ${guide}\n\nWhat I'm wondering (one question works best):\n\n`);
  $('feedback').href=issueURL('council:feedback',`Feedback: ${title}`.slice(0,120),`guide: ${guide}\n\nWhat worked:\n\nWhat was confusing:\n\n`);
- // Owner-only curation: archive this guide (hide it from the home page) or restore it, applied by the next morning's run.
- const tools=$('owner-tools'), link=$('archive-link'), real=current?.id&&current.provider!=='fixture'&&current.provider!=='draft', archived=entries.some(e=>e.id===current?.id&&e.archived);
- if(tools){
-  tools.hidden=!real;
-  if(real)link.textContent=archived?'Restore this guide':'Archive this guide',
-   link.href=issueURL(archived?'council:unarchive':'council:archive',
-    `${archived?'Restore':'Archive'}: ${title}`.slice(0,120),
-    `guide: ${guide}\n\n${archived?'Show this guide on the home page again.':'Hide this guide from the home page. It stays here and open by its link.'}`);
+ // Owner-only curation: Archive hides this guide from the home page (Restore lists it again). It opens a GitHub issue
+ // that a workflow applies within a few minutes; issues from anyone else are ignored.
+ const link=$('archive'), real=current?.id&&current.provider!=='fixture'&&current.provider!=='draft'&&entries.some(e=>e.id===current.id), archived=entries.some(e=>e.id===current?.id&&e.archived);
+ link.hidden=$('archive-sep').hidden=!real;
+ if(real){
+  link.textContent=archived?'Restore':'Archive';
+  link.href=issueURL(archived?'council:unarchive':'council:archive',`${archived?'Restore':'Archive'}: ${title}`.slice(0,120),
+   `guide: ${guide}\n\n${archived?'Show this guide on the home page again.':'Hide this guide from the home page. It stays here and open by its link.'}`);
  }
 }
 function doneItem(item){return entries.find(e=>e.curriculum===item.id||norm(e.question)===norm(item.question));}

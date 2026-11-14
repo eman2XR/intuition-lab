@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
+<!-- Picture engines may be written by the agents, so the page may only load its own files and talk to the GitHub API;
+     nothing can send data elsewhere or pull in outside scripts. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' https://api.github.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="description" content="A team of AI agents making short, intuitive guides that explain why things work.">
 <title>Intuition Lab — short visual guides to why things work</title>
 <meta name="theme-color" content="#ffffff">
@@ -108,7 +111,7 @@
   </figure>
   <p id="draft-note" class="draft-note"></p>
 
-  <p class="byline"><span id="run-banner" class="tag" role="status"></span><span class="talk"><span class="sep" aria-hidden="true"></span><a id="ask" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Ask a question</a><span class="sep" aria-hidden="true"></span><a id="feedback" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Give feedback</a></span></p>
+  <p class="byline"><span id="run-banner" class="tag" role="status"></span><span class="talk"><span class="sep" aria-hidden="true"></span><a id="ask" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Ask a question</a><span class="sep" aria-hidden="true"></span><a id="feedback" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Give feedback</a></span><span id="archive-sep" class="sep" aria-hidden="true" hidden></span><a id="archive" class="archive-btn" target="_blank" rel="noopener noreferrer" hidden title="Owner only: opens a GitHub issue that hides this guide from the home page within a few minutes">Archive</a></p>
  </article>
 
 
@@ -123,7 +126,7 @@
    <h3>About the illustration</h3><p id="illustration-note"></p>
    <h3>Sources</h3><p id="sources-note" class="provenance"></p><div id="sources" class="sources"></div>
    <h3>Drafts and reviews <span id="history-label" class="muted"></span></h3><div id="history" class="history"></div>
-   <div class="behind-foot"><p id="owner-tools" class="fine" hidden>Owner: <a id="archive-link" target="_blank" rel="noopener noreferrer"></a>. Applied on the next 9 AM run.</p><details><summary>Raw record</summary><pre id="record"></pre></details></div>
+   <div class="behind-foot"><details><summary>Raw record</summary><pre id="record"></pre></details></div>
   </div>
  </details>
 

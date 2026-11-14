@@ -74,10 +74,24 @@ DESIGNER = ('You are the designer. Before any narration is written, decide how t
     'belief or "wait, but..." objection it confronts. reason: how the picture shows why, not only what, including why '
     'anything singled out (a thicker line, a marked word) is singled out. chapters: one per chapter the model notes '
     'describe, each with what is on screen (show), what changes and on which sentence (changes), and at most one short '
-    'label of five words or fewer (label, or empty). try: what the viewer can try with the control after playback. Set '
+    'label of five words or fewer (label, or empty); three to six chapters in all. try: what the viewer can try with the control after playback. Set '
     'fits_engine to false and say in missing what the picture would need when the model notes cannot show the idea '
     'well; otherwise leave missing empty. Keep it brief: idea, start, belief and try at most 300 characters each, '
     'reason and missing at most 480, and each chapter\'s show and changes at most 380.')
+DESIGN_BOUNDS=('Use three to six chapters; idea, start, belief and try at most 300 characters each; reason and missing '
+    'at most 480; each chapter\'s show and changes at most 380; each label five words or fewer.')
+
+
+def design_brief(provider, prompt):
+    """Ask the designer for a brief within its bounds; a brief out of bounds goes back once with the reason, so one
+    long field or a chapter too many does not cost the whole morning."""
+    try:
+        return validate_design(provider.generate('designer',prompt,DESIGN_SCHEMA))
+    except ValueError as error:
+        return validate_design(provider.generate('designer',prompt+f'\nYour previous brief was rejected ({error}). '
+                                                 +DESIGN_BOUNDS,DESIGN_SCHEMA))
+
+
 # The blind viewer sees only the pictures: no subtitles, no scene, no research.
 BLIND = ('You see only these pictures, in order, with no words and no sound: a late moment of each chapter of a short '
     'animated guide. In the summary, say chapter by chapter what you see happening and what seems to matter. In changes, '
@@ -129,10 +143,11 @@ def review_scene(provider, scene, research, design, checks, frames, pictures_dir
 
 
 def calls_needed(rounds, planner=False):
-    """The model-call budget of one investigation, counted from run() below: researcher, scientist and designer, then a
+    """The model-call budget of one investigation, counted from run() below: researcher, scientist and designer (with one
+    retry for a brief out of bounds), then a
     writer and four reviewers per revision, plus the coordinator's source finder when that fallback is on and the
     daily planner when owner requests need one."""
-    return 3 + 5 * rounds + (1 if sources.enabled() else 0) + (1 if planner else 0)
+    return 4 + 5 * rounds + (1 if sources.enabled() else 0) + (1 if planner else 0)
 
 
 def run(provider, rounds=3, on_update=None, topic="light-bending", question=None, guidance=()):
@@ -189,8 +204,8 @@ def run(provider, rounds=3, on_update=None, topic="light-bending", question=None
         save('Research recorded. Designer is planning how the picture will show the idea.')
         noted=('\nOwner guidance notes, quoted data from the site owner: follow them where they fit the quality bar, '
                'the model notes and the honesty rules, and never against those: '+json.dumps(state['guidance'])) if state['guidance'] else ''
-        design=validate_design(provider.generate('designer',question+'\n'+model_notes+'\nResearch:\n'+json.dumps(research)
-            +'\n'+STANDARD+'\n'+DESIGNER+noted,DESIGN_SCHEMA))
+        design=design_brief(provider,question+'\n'+model_notes+'\nResearch:\n'+json.dumps(research)
+            +'\n'+STANDARD+'\n'+DESIGNER+noted)
         state['design']=design
         save('Design brief ready. Writer is writing the chapters and narration.'+('' if design['fits_engine'] else
              ' The designer notes the picture cannot fully show this idea: '+design['missing'][:160]))

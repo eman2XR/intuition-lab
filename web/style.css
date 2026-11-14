@@ -162,6 +162,9 @@ h1{font:700 clamp(34px,4.6vw,58px)/1.08 var(--serif);letter-spacing:-.015em;marg
 .byline .sep::before{content:"·";color:var(--faint)}
 .byline a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 .byline a:hover{color:var(--ink)}
+.byline .archive-btn{font:inherit;color:var(--faint);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.byline .archive-btn:hover{color:var(--ink);border-color:var(--muted)}
+.byline .sep[hidden],.byline .archive-btn[hidden]{display:none}
 .tag{letter-spacing:.04em;text-transform:none;font-size:12px;padding:3px 10px;border-radius:999px;background:#eef8f2;color:#0b7a4e}
 .tag:empty{display:none}
 .tag[data-status=example]{background:#f1efe9;color:var(--muted)}

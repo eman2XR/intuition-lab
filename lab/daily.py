@@ -14,7 +14,7 @@ from functools import partial
 from pathlib import Path
 from . import ROOT, PUBLICATION, sources
 from .contracts import obj, validate, validate_design, DESIGN_SCHEMA, RESEARCH_SCHEMA
-from .pipeline import run, write_json, approved, keep_retrieved, DESIGNER, STANDARD
+from .pipeline import run, write_json, approved, keep_retrieved, design_brief, DESIGNER, STANDARD
 from .build_engine import build_engine
 from .revise import revise_feedback, GUIDE_RE
 from .topics import TOPICS, READY
@@ -193,7 +193,7 @@ def publish(root=ROOT, runs=()):
     _commit_and_push(root,paths)
 
 
-def _commit_and_push(root, paths, message=None):
+def _commit_and_push(root, paths, message=None, replayable=PUBLICATION):
     """Commit the given publication paths and push main, with the guards and the single rebase-replay the daily run
     relies on: the branch must be main, the index may not list an uncommitted guide, and only the given paths may be
     staged, so no unrelated local edit ever ships. A message of None is derived from what changed."""
@@ -229,7 +229,7 @@ def _commit_and_push(root, paths, message=None):
         print(f'Push refused ({git_failure(error)}); replaying the publication on top of GitHub.',flush=True)
         try:
             git('fetch','origin','main')
-            if any(not p.startswith(PUBLICATION) for p in git('diff','--name-only','origin/main...HEAD').splitlines()):
+            if any(not p.startswith(replayable) for p in git('diff','--name-only','origin/main...HEAD').splitlines()):
                 raise RuntimeError('Unpushed commits outside the publication; leave publication pending.')
             try:
                 git('rebase','origin/main')
@@ -374,9 +374,9 @@ def blueprint(factory, items, root, day):
         return None
     item=waiting[0]
     try:
-        design=validate_design(factory().generate('designer',item['question']+'\nNo visual engine exists for this question '
+        design=design_brief(factory(),item['question']+'\nNo visual engine exists for this question '
             'yet. '+DESIGNER+' Describe the picture a new engine would need: set fits_engine to false and say in missing '
-            'what to build, as simply as the idea allows.',DESIGN_SCHEMA))
+            'what to build, as simply as the idea allows.')
     except Exception as error:
         print(f'Blueprint skipped ({type(error).__name__}: {str(error)[:160]}); nothing else is affected.',flush=True)
         return None
@@ -452,10 +452,10 @@ def research_brief(factory, items, root, day, explored, model_of, requests=()):
         if provider.name!='fixture' and any(s['url'] not in notes for s in research['sources']):
             raise ValueError('Research must cite sources present in retrieved notes.')
         # The designer plans the picture a new engine would need, so the brief says what to build.
-        design=validate_design(provider.generate('designer', question+'\n'+(model_notes+'\n' if model_notes else '')
+        design=design_brief(provider, question+'\n'+(model_notes+'\n' if model_notes else '')
             +'Research:\n'+json.dumps(research)+'\n'+STANDARD+'\nNo visual engine exists for this question yet. '+DESIGNER
             +' Describe the picture a new engine would need: set fits_engine to false and say in missing what to build, '
-            'as simply as the idea allows.',DESIGN_SCHEMA))
+            'as simply as the idea allows.')
     except Exception as error:
         print(f'Build brief skipped ({type(error).__name__}: {str(error)[:160]}); nothing else is affected.',flush=True)
         return None
@@ -556,7 +556,10 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
                     else:
                         built=build_engine(factory,items,root,day,explored,READY,requests,rounds,push,
                                            record=dashboard.update)
-                        if built:
+                        if built and built.get('published'):
+                            checked[-1]=(f'Built a new picture for “{built["question"]}”; its first guide passed '
+                                         f'every review and is published.')
+                        elif built:
                             checked[-1]=(f'Built a picture engine for “{built["question"]}” on review branch '
                                          f'{built["branch"]}; a new picture is ready to review '
                                          f'({built["review_status"].replace("_"," ")}). Nothing is live until you merge it.')

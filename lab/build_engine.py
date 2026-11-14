@@ -15,14 +15,16 @@ import copy
 import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 from . import sources
 from .contracts import obj, STR, validate, RESEARCH_SCHEMA, DESIGN_SCHEMA, validate_design
-from .pipeline import run, write_json, keep_retrieved, DESIGNER, STANDARD
+from .pipeline import run, write_json, keep_retrieved, design_brief, DESIGNER, STANDARD
 from .render import capture, gate_probe
 from . import topics as topics_module
 
@@ -44,6 +46,19 @@ IDENT = re.compile(r'^[A-Za-z_$][\w$]*$')
 # that an engine reaching for them is caught behaviourally by the sandbox rather than by brittle pattern matching.
 BANNED = re.compile(r'\b(?:require|import|eval|Function|Math\.random|Date\.now|performance\.now'
                     r'|localStorage|sessionStorage|while\s*\(\s*true\s*\))\b|\bnew\s+Date\b|</script')
+# A drawing gets everything it needs as arguments (ctx, w, h, spec, st) and the helpers in scope, so it never needs the
+# page, the browser, the network or timers. Since reviewed engines go live without a human reading the code, these are
+# refused outright as well as caught behaviourally by the sandbox; scanned on the stripped code, so a word inside a
+# label never trips it, while code inside a template's ${...} still does.
+BROWSER = re.compile(r'\b(?:window|document|location|navigator|globalThis|opener|ownerDocument|defaultView|constructor'
+                     r'|__proto__|prototype|cookie|XMLHttpRequest|WebSocket|EventSource|sendBeacon|postMessage'
+                     r'|importScripts|Worker|SharedWorker|fetch|setTimeout|setInterval|requestAnimationFrame'
+                     r'|queueMicrotask|Reflect|Proxy|alert|confirm|prompt|history)\b'
+                     r'|(?<![.\w$])(?:open|self|top|parent|frames)\s*[(.\[]')
+# Property access with a string key (obj['na'+'me']) is how a denylisted name is spelled around the list.
+KEYWORDS = {'return', 'typeof', 'in', 'of', 'case', 'yield', 'void', 'delete', 'else', 'do', 'await', 'new'}
+STRING_KEY = re.compile(r'([\w$]+|[)\]])\s*\[\s*""')
+LABEL = re.compile(r"[\w ,.&'\u2019()/+-]{1,60}")
 CANDIDATE_PREFIX = 'engine-candidate/'
 # Feedback revisions of a published guide land on their own review branch; approve_engine merges both kinds.
 REVISION_PREFIX = 'feedback-revision/'
@@ -59,16 +74,26 @@ LIMITS = {'kind': 60, 'label': 60, 'category': 60, 'checksName': 60,
 
 
 def _strip_js(code):
-    """A copy of the code with comment bodies and string/template contents blanked, so a structural scan sees only the
-    code's shape. Heuristic: a `/` is only treated as a comment when it starts `//` or `/*`; a regex literal (rare in
-    drawing code) would be misread, so this is documented as a heuristic, not a parser."""
-    out, i, n = [], 0, len(code)
+    """A copy of the code with comment bodies and string/template text blanked, so a structural scan sees only the
+    code's shape. The ${...} expressions inside a template are code, so they are kept, not blanked: an IIFE or a
+    browser global hidden in a template is as visible to the scans as anywhere else. Heuristic: a `/` is only treated
+    as a comment when it starts `//` or `/*`; a regex literal (rare in drawing code) would be misread, so this is
+    documented as a heuristic, not a parser."""
+    out = []
+    _strip_into(code, 0, out, False)
+    return ''.join(out)
+
+
+def _strip_into(code, i, out, in_expression):
+    """Copy code from i into out with comments and string text blanked. Inside a template's ${...} (in_expression),
+    stop at its closing brace and return the index just past it; otherwise return the end of the code."""
+    n, depth = len(code), 0
     while i < n:
         c = code[i]
         if c == '/' and i + 1 < n and code[i + 1] == '/':
             j = code.find('\n', i)
             if j < 0:
-                break
+                return n
             i = j
             continue
         if c == '/' and i + 1 < n and code[i + 1] == '*':
@@ -76,7 +101,7 @@ def _strip_js(code):
             i = (j + 2) if j >= 0 else n
             out.append(' ')
             continue
-        if c in '"\'`':
+        if c in '"\'':
             quote, i = c, i + 1
             while i < n:
                 if code[i] == '\\':
@@ -88,9 +113,34 @@ def _strip_js(code):
                 i += 1
             out.append('""')
             continue
+        if c == '`':
+            out.append('"')
+            i += 1
+            while i < n:
+                if code[i] == '\\':
+                    i += 2
+                    continue
+                if code[i] == '`':
+                    i += 1
+                    break
+                if code.startswith('${', i):
+                    out.append('"+(')
+                    i = _strip_into(code, i + 2, out, True)
+                    out.append(')+"')
+                    continue
+                i += 1
+            out.append('"')
+            continue
+        if in_expression:
+            if c == '{':
+                depth += 1
+            elif c == '}':
+                if depth == 0:
+                    return i + 1
+                depth -= 1
         out.append(c)
         i += 1
-    return ''.join(out)
+    return n
 
 
 def _skip_balanced(s, i):
@@ -238,6 +288,67 @@ def _top_level_colon(s):
     return -1
 
 
+def browser_free(code, allow_this=False):
+    """(True, '') when the code reaches for no page, browser, network or timer API, spells no property name as a
+    string key, and (outside the physics object, whose methods call each other through `this`) never uses `this`,
+    which at the top of a script is the window. Otherwise (False, the reason)."""
+    stripped = _strip_js(code)
+    hit = BROWSER.search(stripped)
+    if hit:
+        return False, f'uses {hit.group(0).strip("(.[ ")!r}; an engine draws only with its arguments and helpers'
+    for match in STRING_KEY.finditer(stripped):
+        if match.group(1) not in KEYWORDS:
+            return False, 'reads a property by a string key (obj["name"]); use plain dot access'
+    if not allow_this and re.search(r'(?<![.\w$])this\b', stripped):
+        return False, 'uses `this`; draw with the arguments and call the model as Physics.<method>'
+    return True, ''
+
+
+def _value_ok(value):
+    """A map-entry value that does nothing at load: a name or literal, a list or object of such values, or a
+    function (its body runs only when the player calls it)."""
+    v = value.strip()
+    if not v:
+        return False
+    if re.fullmatch(r'[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*', v) or v == '""':
+        return True
+    if re.fullmatch(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', v):
+        return True
+    if re.match(r'(?:async\s+)?(?:[A-Za-z_$][\w$]*|\([^()]*\))\s*=>', v) or re.match(r'function\b\s*[\w$]*\s*\(', v):
+        # A function value; it must be the whole value (no call right after a function expression's closing brace).
+        if v.startswith('function'):
+            body = v.index('{')
+            end = _skip_balanced(v, body)
+            return v[end:].strip() == ''
+        return True
+    if v[0] in '[{' and _skip_balanced(v, 0) == len(v):
+        inner = v[1:-1]
+        parts = [part for part in _split_top_level(inner) if part.strip()]
+        if v[0] == '[':
+            return all(_value_ok(part) for part in parts)
+        for part in parts:
+            colon = _top_level_colon(part)
+            if colon < 0 or not re.fullmatch(r'\s*(?:[A-Za-z_$][\w$]*|"")\s*', part[:colon]) or not _value_ok(part[colon + 1:]):
+                return False
+        return True
+    return False
+
+
+def entry_values_only(entry):
+    """(True, '') when every member of the ENGINES map entry is `name: value` with a value that runs nothing at load
+    (see _value_ok); otherwise (False, the first offending member)."""
+    stripped = _strip_js(entry).strip().rstrip(',')
+    for member in _split_top_level(stripped):
+        if not member.strip():
+            continue
+        colon = _top_level_colon(member)
+        if colon < 0 or not re.fullmatch(r'\s*(?:[A-Za-z_$][\w$]*|"")\s*', member[:colon]):
+            return False, f'a member that is not name:value near {member.strip()[:40]!r}'
+        if not _value_ok(member[colon + 1:]):
+            return False, f'a value that may run at load near {member.strip()[:40]!r}'
+    return True, ''
+
+
 def physics_members_only(physics):
     """Structurally validate the generated `physics` field, which is spliced into the `const Physics = {...}` object.
     Require every top-level member to be a method definition (`name(params){...}`) or a plain-literal property
@@ -313,9 +424,18 @@ def validate_engine(engine):
             raise ValueError(f'Engine field {key} is empty or over its {limit}-character bound.')
     if not IDENT.match(engine['checksName']):
         raise ValueError('checksName must be a plain identifier.')
+    for field in ('label', 'category'):
+        if not LABEL.fullmatch(engine[field]):
+            raise ValueError(f'Engine field {field} must be plain words (letters, digits, spaces and simple punctuation).')
     for field in ('physics', 'scene', 'entry'):
         if BANNED.search(engine[field]):
             raise ValueError(f'Engine field {field} uses a forbidden construct (module loading, dynamic code, randomness or a clock).')
+        ok, reason = browser_free(engine[field], allow_this=field == 'physics')
+        if not ok:
+            raise ValueError(f'Engine field {field} {reason}.')
+    ok, reason = entry_values_only(engine['entry'])
+    if not ok:
+        raise ValueError(f'The entry field must hold only names, literals, lists and functions, nothing that runs at load: {reason}.')
     ok, reason = top_level_declarations_only(engine['scene'])
     if not ok:
         raise ValueError(f'The scene field must be only function/const declarations, nothing that runs at load: {reason}.')
@@ -362,6 +482,10 @@ BUILDER = (
     '- checksName: the exact name of the checks method in physics.\n'
     '- label: a short human label (a few words). category: the home-page category, e.g. "Space and time".\n'
     '- kind: a short identifier for the engine.\n'
+    'Safety rules, each checked automatically: never touch the page, the browser, the network or timers (no window, '
+    'document, location, navigator, fetch, timers or storage); never use `this` in scene or entry; never read a '
+    'property by a string key (obj["name"]); entry values are only names, literals, lists and functions, nothing '
+    'that runs at load; label and category are plain words.\n'
     'Keep the picture calm and the idea intuitive: define every term, start from something seen or measured, confront '
     'the everyday belief, and set the scene in chapter 1 before any claim.')
 
@@ -415,21 +539,21 @@ def install(engine, kind, curriculum_id, root):
 
     app_path = root / 'web' / 'app.js'
     app = app_path.read_text(encoding='utf-8')
-    category = engine['category'].replace("'", "\\'")
-    app = _splice(app, MARKERS['app'], f"\nTOPICS['{kind}']='{category}';")
+    # json.dumps gives a valid JS string literal for any text, so the category can never close the string early.
+    app = _splice(app, MARKERS['app'], f"\nTOPICS['{kind}']={json.dumps(engine['category'])};")
     app_path.write_text(app, encoding='utf-8')
 
     topics_path = root / 'lab' / 'topics.py'
     topics_src = topics_path.read_text(encoding='utf-8')
     const = re.sub(r'[^A-Z0-9]', '_', kind.upper()) + '_NOTES'
-    notes = engine['model_notes'].replace('\\', '\\\\').replace("'''", "'' '")
+    notes = engine['model_notes']
     question = topics_module.TOPICS.get(kind, {}).get('question') or ''
     item = next((i for i in _curriculum_items(root) if i.get('id') == curriculum_id), None)
     if item:
         question = item['question']
-    label = engine['label'].replace('\\', '\\\\').replace("'", "\\'")
-    block = (f"\n{const} = '''{notes}''' + COMMON\n"
-             f"TOPICS['{kind}'] = {{'label':'{label}', 'question':{json.dumps(question)}, 'notes':{const}}}\n"
+    # json.dumps gives a valid Python string literal for any text, so model notes can never end the string early.
+    block = (f"\n{const} = {json.dumps(notes)} + COMMON\n"
+             f"TOPICS['{kind}'] = {{'label':{json.dumps(engine['label'])}, 'question':{json.dumps(question)}, 'notes':{const}}}\n"
              f"READY.add('{kind}')\n")
     topics_path.write_text(topics_src + block, encoding='utf-8')
 
@@ -496,6 +620,10 @@ def _static_gates(root, kind):
     # A clobbered engine (a revision or build that defines a SIBLING engine's draw) leaves a duplicate top-level
     # function declaration, which node accepts (last wins) but which no per-kind check or render would catch. Reject it
     # on the installed/branch state, so both the build gate and approve's re-gate see it.
+    try:
+        compile((root / 'lab' / 'topics.py').read_text(encoding='utf-8'), 'lab/topics.py', 'exec')
+    except SyntaxError as error:
+        return False, f'lab/topics.py no longer compiles: {error.msg}'
     names = re.findall(r'function\s+([A-Za-z_$][\w$]*)', (root / 'web' / 'scene.js').read_text(encoding='utf-8'))
     dupes = sorted({name for name in names if names.count(name) > 1})
     if dupes:
@@ -555,8 +683,32 @@ def _render_gates(root, kind, scene, research, frames_dir=None):
     return True, 'render gates passed', frames, checks
 
 
-def _research_and_design(provider, question, kind, root):
-    """The same researcher, scientist and designer steps a full run uses, to ground the engine in sources."""
+def saved_brief(root, curriculum_id, kind):
+    """A build brief an earlier morning already researched and designed for this item and model, still within the
+    bounds the builder relies on; None when there is none or it no longer validates."""
+    if not curriculum_id:
+        return None
+    path = root / 'web' / 'briefs' / f'{curriculum_id}.json'
+    try:
+        brief = json.loads(path.read_text())
+        if brief.get('model') != kind:
+            return None
+        validate(brief['research'], RESEARCH_SCHEMA)
+        validate_design(brief['design'])
+        if not brief['research'].get('sources'):
+            return None
+        return brief
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def _research_and_design(provider, question, kind, root, curriculum_id=None):
+    """The same researcher, scientist and designer steps a full run uses, to ground the engine in sources. A saved
+    build brief for this item is reused as is, which saves three model calls and the designer's riskiest step."""
+    brief = saved_brief(root, curriculum_id, kind)
+    if brief:
+        print(f'Reusing the saved build brief for {curriculum_id}.', flush=True)
+        return brief['research'], brief['design'], brief.get('retrieved_by', 'agent')
     model_notes = (topics_module.TOPICS.get(kind) or {}).get('notes', '')
     retrieved_by = 'agent'
     try:
@@ -579,10 +731,10 @@ def _research_and_design(provider, question, kind, root):
         raise ValueError('Research must include valid HTTP source URLs.')
     if provider.name != 'fixture' and any(s['url'] not in notes for s in research['sources']):
         raise ValueError('Research must cite sources present in retrieved notes.')
-    design = validate_design(provider.generate('designer', question + '\n' + (model_notes + '\n' if model_notes else '')
+    design = design_brief(provider, question + '\n' + (model_notes + '\n' if model_notes else '')
         + 'Research:\n' + json.dumps(research) + '\n' + STANDARD + '\nNo visual engine exists for this question yet. '
         + DESIGNER + ' Describe the picture a new engine would need: set fits_engine to false and say in missing what to '
-        'build, as simply as the idea allows.', DESIGN_SCHEMA))
+        'build, as simply as the idea allows.')
     return research, design, retrieved_by
 
 
@@ -687,15 +839,31 @@ def guard_day(root, day):
     return True
 
 
+# After this many failed builds for one model, the builder moves on to the next waiting question.
+BUILD_TRIES = 3
+FAILED = ('could-not-generate', 'rolled-back', 'name-collision')
+
+
+def build_failures(root):
+    """How many builds failed so far for each model."""
+    try:
+        return json.loads((root / '.council-state' / 'engine-build.json').read_text()).get('failures', {})
+    except (OSError, ValueError):
+        return {}
+
+
 def mark_day(root, day, model, outcome):
     path = root / '.council-state' / 'engine-build.json'
     path.parent.mkdir(exist_ok=True)
-    write_json(path, {'day': day, 'model': model, 'outcome': outcome})
+    failures = build_failures(root)
+    if outcome in FAILED:
+        failures[model] = failures.get(model, 0) + 1
+    write_json(path, {'day': day, 'model': model, 'outcome': outcome, 'failures': failures})
 
 
 # Every file carried onto a candidate branch is snapshotted so the main working tree can be restored byte-for-byte:
 # the five engine files plus the drafts index, which save_draft rewrites.
-SNAPSHOT_FILES = ENGINE_FILES + ('web/drafts/index.json',)
+SNAPSHOT_FILES = ENGINE_FILES + ('web/drafts/index.json', 'web/published/index.json')
 
 
 def _git(root, *args, check=True):
@@ -787,7 +955,9 @@ def _build_engine(factory, items, root, day, explored, ready, requests, rounds, 
     # No splice targets, no build: a minimal checkout cannot build an engine.
     if any(not (root / rel).exists() for rel in ENGINE_FILES):
         return None
-    candidates = buildable(waiting_items(items, ready, explored, requests), root)
+    failures = build_failures(root)
+    candidates = [i for i in buildable(waiting_items(items, ready, explored, requests), root)
+                  if failures.get(i['model'], 0) < BUILD_TRIES]
     if not candidates:
         return None
     item = candidates[0]
@@ -796,29 +966,65 @@ def _build_engine(factory, items, root, day, explored, ready, requests, rounds, 
     print(f'Idle morning: building a picture engine for {curriculum_id} ({kind}).', flush=True)
     try:
         provider = factory()
-        research, design, retrieved_by = _research_and_design(provider, question, kind, root)
-        engine = validate_engine(provider.generate('engine', question + '\n' + json.dumps({'model': kind})
-            + '\nResearch:\n' + json.dumps(research) + '\nDesign brief:\n' + json.dumps(design) + '\n' + BUILDER,
-            ENGINE_SCHEMA))
+        # The build has its own provider; its minutes cover the research, design and up to two engine attempts.
+        deadline = getattr(provider, 'deadline', None)
+        if deadline is not None:
+            provider.deadline = max(deadline, time.monotonic() + BUILD_MINUTES * 60)
+        research, design, retrieved_by = _research_and_design(provider, question, kind, root, curriculum_id)
     except Exception as error:
         mark_day(root, day, kind, 'could-not-generate')
         print(f'Engine build could not generate ({type(error).__name__}: {str(error)[:160]}); falling back.', flush=True)
         return None
-    clash = collision(root, engine, kind)
-    if clash:
-        mark_day(root, day, kind, 'name-collision')
-        print(f'Engine build skipped before any edit: {clash}; falling back.', flush=True)
-        return None
     # From here, any exit restores every touched file byte-for-byte, drops the in-memory topic, removes any draft and
     # deletes any half-made candidate branch, so neither engine code nor a draft is ever left on main.
     snaps = snapshot(root, SNAPSHOT_FILES)
+    # An engine that is out of bounds, unsafe, clashes with another engine or fails a gate goes back once with the
+    # reason; a second failure (or a time limit) ends the build. Each failed attempt is rolled back before the next.
+    feedback = ''
+    for attempt in range(1, ENGINE_ATTEMPTS + 1):
+        last = attempt == ENGINE_ATTEMPTS
+        try:
+            engine = _generate_engine(provider, question, kind, research, design, feedback)
+        except ValueError as error:
+            if not last:
+                feedback = _retry_note(error)
+                print(f'Engine attempt {attempt} was out of bounds ({str(error)[:160]}); asking once more.', flush=True)
+                continue
+            mark_day(root, day, kind, 'could-not-generate')
+            print(f'Engine build could not generate (ValueError: {str(error)[:160]}); falling back.', flush=True)
+            return None
+        except Exception as error:
+            mark_day(root, day, kind, 'could-not-generate')
+            print(f'Engine build could not generate ({type(error).__name__}: {str(error)[:160]}); falling back.', flush=True)
+            return None
+        clash = collision(root, engine, kind)
+        if clash:
+            if not last:
+                feedback = _retry_note(clash)
+                print(f'Engine attempt {attempt} clashed with another engine ({clash[:160]}); asking once more.', flush=True)
+                continue
+            mark_day(root, day, kind, 'name-collision')
+            print(f'Engine build skipped before any edit: {clash}; falling back.', flush=True)
+            return None
+        try:
+            install(engine, kind, curriculum_id, root)
+            ok, reason = gates(root, kind, engine, research)
+        except Exception as error:
+            ok, reason = False, f'{type(error).__name__}: {error}'
+        if ok:
+            break
+        restore(root, snaps)
+        _prune_drafts_dir(root)
+        if not last:
+            feedback = _retry_note(f'gate failed: {reason}')
+            print(f'Engine attempt {attempt} failed a gate ({str(reason)[:160]}); asking once more.', flush=True)
+            continue
+        mark_day(root, day, kind, 'rolled-back')
+        print(f'Engine build rolled back (RuntimeError: gate failed: {str(reason)[:160]}); falling back.', flush=True)
+        return None
     draft_path = None
     candidate = None
     try:
-        install(engine, kind, curriculum_id, root)
-        ok, reason = gates(root, kind, engine, research)
-        if not ok:
-            raise RuntimeError(f'gate failed: {reason}')
         print(f'Engine for {kind} passed every gate; running its first investigation.', flush=True)
         # The engine is installed on disk; make it available to this process for the run only.
         topics_module.READY.add(kind)
@@ -826,7 +1032,8 @@ def _build_engine(factory, items, root, day, explored, ready, requests, rounds, 
         topics_module.TOPICS[kind] = {'label': engine['label'], 'question': question,
                                       'notes': engine['model_notes'] + topics_module.COMMON}
         try:
-            state = run(provider, rounds, on_update=record, topic=kind, question=question)
+            # The investigation gets its own provider, so the build's calls and minutes do not eat into its budget.
+            state = run(factory(), rounds, on_update=record, topic=kind, question=question)
         except Exception as error:
             state = {'id': 'engine-' + day, 'provider': provider.name, 'status': 'failed', 'scene': None,
                      'created': datetime.now(timezone.utc).isoformat(), 'revisions': [], 'checks': [],
@@ -835,6 +1042,14 @@ def _build_engine(factory, items, root, day, explored, ready, requests, rounds, 
         status = state.get('status')
         review_status = ('reviewed' if status in ('reviewed', 'fixture_complete')
                          else 'needs_changes' if status == 'needs_review' else 'stopped')
+        if push and review_status == 'reviewed' and state.get('provider') != 'fixture':
+            # Owner decision (2026-11-13): an engine whose first guide passed every gate, every render check and all
+            # four reviews goes live without waiting for approval. Anything less stays a review candidate below.
+            published = _publish_build(root, state, kind, curriculum_id, snaps)
+            mark_day(root, day, kind, f'published {published}')
+            print(f'Engine for {kind} and its first guide {published} passed every review and are published.', flush=True)
+            return {'built': True, 'published': published, 'model': kind, 'curriculum': curriculum_id,
+                    'question': question, 'review_status': review_status, 'run_id': published}
         draft_id = save_draft(state, root, review_status, question, kind, curriculum_id, research, design, retrieved_by)
         draft_path = root / 'web' / 'drafts' / f'{draft_id}.json'
         branch = CANDIDATE_PREFIX + f'{day}-{kind}'
@@ -869,6 +1084,63 @@ def _build_engine(factory, items, root, day, explored, ready, requests, rounds, 
         mark_day(root, day, kind, 'rolled-back')
         print(f'Engine build rolled back ({type(error).__name__}: {str(error)[:160]}); falling back.', flush=True)
         return None
+
+
+# Writing a whole engine is the longest single call, so it gets more time than the default worker limit, and the
+# build as a whole gets enough minutes for research, design and two engine attempts.
+ENGINE_SECONDS = 900
+BUILD_MINUTES = 50
+ENGINE_ATTEMPTS = 2
+
+
+def _generate_engine(provider, question, kind, research, design, feedback=''):
+    """One engine call with the longer time limit; raises ValueError when the result is out of bounds or unsafe."""
+    limit = getattr(provider, 'timeout', None)
+    if limit:
+        provider.timeout = max(limit, ENGINE_SECONDS)
+    try:
+        return validate_engine(provider.generate('engine', question + '\n' + json.dumps({'model': kind})
+            + '\nResearch:\n' + json.dumps(research) + '\nDesign brief:\n' + json.dumps(design) + '\n' + BUILDER
+            + feedback, ENGINE_SCHEMA))
+    finally:
+        if limit:
+            provider.timeout = limit
+
+
+def _retry_note(reason):
+    return (f'\nYour previous engine was rejected: {str(reason)[:600]} Return a corrected engine that fixes this and '
+            'keeps everything else that worked.')
+
+
+
+def _publish_build(root, state, kind, curriculum_id, snaps):
+    """Export the reviewed first guide and commit it with the engine files onto main, then push. On any failure the
+    commit is undone and the guide folder removed, and the caller's rollback restores every snapshotted file, so a
+    failed publication leaves main exactly as it was. After a push, notify the owner once the site serves it."""
+    from .daily import export_accepted, _commit_and_push, site_live, SITE
+    from . import PUBLICATION
+    from . import push as webpush
+    state['curriculum'] = curriculum_id
+    before = _git(root, 'rev-parse', 'HEAD').stdout.strip()
+    target = export_accepted(state, root)
+    try:
+        _commit_and_push(root, list(ENGINE_FILES) + ['web/published/index.json', f'web/published/{state["id"]}'],
+                         f'Publish agent-built picture {kind} and its first reviewed guide {state["id"]}',
+                         replayable=PUBLICATION + ENGINE_FILES)
+    except Exception:
+        _git(root, 'reset', '-q', '--mixed', before, check=False)
+        shutil.rmtree(target, ignore_errors=True)
+        restore(root, snaps)
+        public = root / 'web' / 'published'
+        if public.is_dir() and not any(public.iterdir()):
+            public.rmdir()
+        raise
+    scene = state.get('scene') or {}
+    if not site_live(state['id']):
+        print('The site did not show the new guide within ten minutes; notifying anyway.', flush=True)
+    webpush.notify(scene.get('title', 'New guide'), scene.get('subtitle', ''), f'{SITE}?guide={state["id"]}',
+                   root / '.council-state')
+    return state['id']
 
 
 def _prune_drafts_dir(root):

@@ -14,7 +14,7 @@ from .topics import TOPICS
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
     parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive'])
-    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
+    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
     parser.add_argument('--model',help='Optional CLI model override; required for the direct OpenAI API.')
@@ -55,8 +55,16 @@ def main():
                 parser.exit(2,f'Not a valid notification code: {error}\n')
         elif action=='test' and not rest:
             raise SystemExit(0 if push.notify('Intuition Lab','Notifications are working',SITE) else 1)
+        elif action=='announce' and len(rest)==1:
+            # Notify about a guide published by hand, with the same title, line and link a daily run would send.
+            record=ROOT/'web'/'published'/rest[0]/'record.json'
+            if not rest[0].replace('-','').isalnum() or not record.is_file():
+                parser.exit(2,f'No published guide {rest[0]!r} in this checkout.\n')
+            scene=json.loads(record.read_text()).get('scene') or {}
+            raise SystemExit(0 if push.notify(scene.get('title','New guide').replace('\n',' '),scene.get('subtitle',''),
+                                              f'{SITE}?guide={rest[0]}') else 1)
         else:
-            parser.error("push needs: keys | add '<code>' | test")
+            parser.error("push needs: keys | add '<code>' | test | announce <guide-id>")
         return
     if args.command=='schedule':
         from .schedule import write_schedule

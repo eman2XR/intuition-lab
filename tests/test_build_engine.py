@@ -337,7 +337,9 @@ class BuildEngineTests(unittest.TestCase):
                 be.approve_engine(root, 'main')
 
     @unittest.skipUnless(BROWSER, 'Playwright browser unavailable')
-    def test_network_and_timer_engines_fail_the_sandboxed_gate_and_roll_back(self):
+    def test_network_and_timer_engines_are_refused_and_roll_back(self):
+        # The browser-global denylist refuses these before any edit; the sandbox, probed directly below, catches the
+        # same code behaviourally, so either layer alone stops it.
         cases = {
             'demo-fetch': "function drawDemoBars(ctx,w,h,spec,st){ window['fet'+'ch']('http://evil.example/x'); }",
             'demo-ws': "function drawDemoBars(ctx,w,h,spec,st){ new WebSocket('ws://evil.example'); }",
@@ -349,6 +351,9 @@ class BuildEngineTests(unittest.TestCase):
                 root = engine_root(tmp, [self.item(kind)], full=True)
                 before = be.snapshot(root, be.SNAPSHOT_FILES)
                 engine = {**GOOD_ENGINE, 'kind': kind, 'checksName': 'demoBarsChecks', 'scene': scene}
+                if BROWSER and kind != 'demo-clock':
+                    probe = be.gate_probe(be.provisional_scene('', kind), engine_root_with_engine(root, engine, kind), kind)
+                    self.assertTrue(probe['fired'] or probe['network'] or probe['pageerrors'], kind)
                 with patch('lab.build_engine.capture', pass_render), \
                      patch('lab.build_engine.run') as runner:
                     built = be.build_engine(lambda: EngineProvider(engine), [self.item(kind)], root, '2026-11-08',
@@ -404,6 +409,152 @@ class BuildEngineTests(unittest.TestCase):
                 self.assertIsNone(built, kind)
                 self.assertEqual(be.snapshot(root, be.SNAPSHOT_FILES), before, kind)
                 runner.assert_not_called()
+
+
+class HardeningTests(unittest.TestCase):
+    """Reviewed engines go live without a human reading the code, so the validators refuse what a drawing never needs."""
+
+    def engine(self, **fields):
+        return {**GOOD_ENGINE, **fields}
+
+    def test_browser_globals_this_and_string_keys_are_refused(self):
+        refused = [
+            "function drawDemoBars(ctx,w,h,spec,st){ location.href='https://evil.example'; }",
+            "function drawDemoBars(ctx,w,h,spec,st){ ctx.canvas.ownerDocument.title='x'; }",
+            "function drawDemoBars(ctx,w,h,spec,st){ this.alert; }",
+            "function drawDemoBars(ctx,w,h,spec,st){ ctx.canvas['owner'+'Document']; }",
+            "function drawDemoBars(ctx,w,h,spec,st){ top.name='x'; }",
+            "function drawDemoBars(ctx,w,h,spec,st){ open('https://evil.example'); }",
+        ]
+        for scene in refused:
+            with self.assertRaises(ValueError, msg=scene):
+                be.validate_engine(self.engine(scene=scene))
+        # Words in labels are not code, and the physics object may call its own methods through `this`.
+        be.validate_engine(self.engine(scene=GOOD_ENGINE['scene'].replace("'amount'", "'window of time'")))
+
+    def test_code_in_a_template_expression_is_scanned(self):
+        sneaky = GOOD_ENGINE['scene'] + "\nconst caption=`${(()=>{ location.href='https://evil.example'; })()}`;"
+        with self.assertRaises(ValueError):
+            be.validate_engine(self.engine(scene=sneaky))
+        self.assertIn('f(1)', be._strip_js('const s=`a${f(1)}b`;'))
+
+    def test_entry_values_that_run_at_load_are_refused(self):
+        for entry in (GOOD_ENGINE['entry'] + ",x:(()=>1)()", GOOD_ENGINE['entry'] + ",x:function(){return 1}()",
+                      GOOD_ENGINE['entry'] + ",x:helper(1)"):
+            with self.assertRaises(ValueError, msg=entry):
+                be.validate_engine(self.engine(entry=entry))
+        self.assertEqual(be.entry_values_only(GOOD_ENGINE['entry']), (True, ''))
+
+    def test_label_and_category_are_plain_words_and_spliced_as_literals(self):
+        with self.assertRaises(ValueError):
+            be.validate_engine(self.engine(category="Space\\';location='//evil';//"))
+        be.validate_engine(self.engine(label="Newton's cradle", category='Space and time'))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = engine_root(tmp, [{'id': '9.1', 'question': 'Why?', 'model': 'demo-bars'}])
+            # Notes ending in quotes or backslashes, which once could end the Python string early, still compile.
+            be.install(self.engine(model_notes="Ends with a quote '", label="Newton's cradle"), 'demo-bars', '9.1', root)
+            compile((root / 'lab' / 'topics.py').read_text(), 'topics.py', 'exec')
+            self.assertIn('TOPICS[\'demo-bars\']="New investigations";', (root / 'web' / 'app.js').read_text())
+            self.assertEqual(subprocess.run(['node', '--check', 'web/app.js'], cwd=root).returncode, 0)
+
+
+class ReliabilityTests(unittest.TestCase):
+    ITEM = BuildEngineTests.ITEM
+
+    def setUp(self):
+        self.addCleanup(lambda: topics_module.TOPICS.pop('demo-bars', None))
+        self.addCleanup(lambda: topics_module.READY.discard('demo-bars'))
+
+    def build(self, root, factory, push=False, run_state=None, day='2026-11-08'):
+        with mock_render(), patch('lab.build_engine.run', return_value=run_state or reviewed_state('fixture_complete')):
+            return be.build_engine(factory, [self.ITEM], root, day, lambda q, model=None: False, set(),
+                                   requests=[], rounds=2, push=push)
+
+    def test_a_rejected_engine_goes_back_once_with_the_reason(self):
+        class Flaky(EngineProvider):
+            prompts = []
+            def generate(self, role, prompt, schema=None, images=(), research=False):
+                if role == 'engine':
+                    Flaky.prompts.append(prompt)
+                    if len(Flaky.prompts) == 1:
+                        self.calls += 1
+                        return {**GOOD_ENGINE, 'scene': "function drawDemoBars(ctx,w,h,spec,st){ document.title='x'; }"}
+                return super().generate(role, prompt, schema, images, research)
+        with tempfile.TemporaryDirectory() as tmp:
+            git, origin, root = git_checkout(tmp, [self.ITEM])
+            built = self.build(root, lambda: Flaky())
+            self.assertTrue(built and built['built'])
+            self.assertEqual(len(Flaky.prompts), 2)
+            self.assertIn('Your previous engine was rejected', Flaky.prompts[1])
+            self.assertIn('document', Flaky.prompts[1])
+
+    def test_a_saved_brief_skips_research_and_design(self):
+        class NoResearch(EngineProvider):
+            def generate(self, role, prompt, schema=None, images=(), research=False):
+                if role in ('researcher', 'scientist', 'designer', 'source_finder'):
+                    raise AssertionError(f'{role} should not run when a brief is saved')
+                return super().generate(role, prompt, schema, images, research)
+        with tempfile.TemporaryDirectory() as tmp:
+            git, origin, root = git_checkout(tmp, [self.ITEM])
+            provider = EngineProvider()
+            research = provider.generate('scientist', 'Q', be.RESEARCH_SCHEMA)
+            design = provider.generate('designer', 'Q', be.DESIGN_SCHEMA)
+            (root / 'web' / 'briefs').mkdir()
+            (root / 'web' / 'briefs' / '9.1.json').write_text(json.dumps(
+                {'id': '9.1', 'model': 'demo-bars', 'research': research, 'design': design, 'retrieved_by': 'agent'}))
+            built = self.build(root, lambda: NoResearch())
+            self.assertTrue(built and built['built'])
+            # A brief for another model is ignored rather than trusted.
+            self.assertIsNone(be.saved_brief(root, '9.1', 'other-model'))
+
+    def test_a_model_rests_after_three_failed_builds(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = engine_root(tmp, [self.ITEM])
+            for n, day in enumerate(('2026-11-08', '2026-11-09', '2026-11-10'), 1):
+                self.assertIsNone(self.build(root, lambda: EngineProvider(BROKEN_ENGINE), day=day))
+                self.assertEqual(be.build_failures(root), {'demo-bars': n})
+            # The fourth morning moves on: no waiting item is left, so nothing is attempted.
+            with patch('lab.build_engine._research_and_design') as research:
+                self.assertIsNone(self.build(root, lambda: EngineProvider(), day='2026-11-11'))
+                research.assert_not_called()
+
+    def live_state(self):
+        state = reviewed_state('reviewed')
+        state.update(provider='test-live', question=self.ITEM['question'], topic='demo-bars',
+                     research={'sources': [{'url': 'https://example.edu/a', 'title': 'A'}]})
+        for revision in state['revisions']:
+            revision['frames'] = []
+        return state
+
+    def test_a_reviewed_build_is_published_to_main_with_its_engine(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            git, origin, root = git_checkout(tmp, [self.ITEM])
+            with patch('lab.daily.site_live', return_value=True), patch('lab.push.notify') as notify:
+                built = self.build(root, lambda: EngineProvider(), push=True, run_state=self.live_state())
+            run_id = self.live_state()['id']
+            self.assertEqual(built['published'], run_id)
+            shipped = git(origin, 'ls-tree', '-r', '--name-only', 'main').splitlines()
+            for rel in ('web/scene.js', 'web/published/index.json', f'web/published/{run_id}/record.json'):
+                self.assertIn(rel, shipped)
+            self.assertIn('function drawDemoBars', git(origin, 'show', 'main:web/scene.js'))
+            self.assertEqual(git(root, 'rev-parse', 'main'), git(origin, 'rev-parse', 'main'))
+            self.assertEqual(git(root, 'branch', '--list', 'engine-candidate/*'), '')
+            self.assertEqual(git(root, 'status', '--porcelain', '--untracked-files=no'), '')
+            notify.assert_called_once()
+
+    def test_a_failed_publication_leaves_main_exactly_as_it_was(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            git, origin, root = git_checkout(tmp, [self.ITEM])
+            before, head = be.snapshot(root, be.SNAPSHOT_FILES), git(root, 'rev-parse', 'main')
+            git(root, 'remote', 'set-url', 'origin', str(Path(tmp) / 'missing.git'))
+            with patch('lab.daily.site_live', return_value=True), patch('lab.push.notify') as notify:
+                built = self.build(root, lambda: EngineProvider(), push=True, run_state=self.live_state())
+            self.assertIsNone(built)
+            self.assertEqual(git(root, 'rev-parse', 'main'), head)
+            self.assertEqual(be.snapshot(root, be.SNAPSHOT_FILES), before)
+            self.assertFalse((root / 'web' / 'published').exists())
+            self.assertEqual(git(root, 'status', '--porcelain', '--untracked-files=no'), '')
+            notify.assert_not_called()
 
 
 def engine_root_with_engine(root, engine, kind):
