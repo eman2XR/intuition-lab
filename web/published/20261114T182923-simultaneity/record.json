@@ -1,0 +1,469 @@
+{
+  "id": "20261114T182923-simultaneity",
+  "status": "reviewed",
+  "question": "Can two events be simultaneous for one person but not another?",
+  "topic": "simultaneity",
+  "created": "2026-11-14T18:29:23.913812+00:00",
+  "research": {
+    "claim": "Yes, for events at different places. In special relativity, two events at different places that are simultaneous in one inertial frame are generally not simultaneous in another inertial frame moving relative to it along the line joining them. Here \"simultaneous for a person\" means \"at the same time according to that person's own synchronized clocks\", not \"seen at the same moment\". All observers still agree on three things. Events at the same place and the same time are simultaneous for everyone. Events separated only at right angles to the motion stay simultaneous. Any two events where one could affect the other (timelike or lightlike pairs) keep the same order in every frame. Only pairs too far apart in space for any signal to link them (spacelike pairs) can be simultaneous, earlier or later depending on the frame.",
+    "explanation": "1. What \"simultaneous for me\" means. You can't judge distant simultaneity by what reaches your eyes at the same moment, because light from a farther event takes longer to arrive. Physics uses a better definition. Imagine a lattice of clocks at rest with you, all synchronized. The time of an event is what the clock right next to it reads. Two events are simultaneous for you if those clocks show the same reading. The standard way to synchronize two clocks (Einstein synchrony) is with light. Send a flash from clock A at time t1. It bounces off B and comes back at time t2. The bounce counts as happening at (t1 + t2)/2 on A's clock. In other words, the trip out and the trip back are assumed to take equal times.\n\n2. Why moving observers disagree. Every inertial observer measures light moving at the same speed c. The SEP entry on inertial frames puts it this way: frames in relative motion \"can agree on the velocity of light only if they disagree on simultaneity\".\n\nPicture the classic thought experiment. Lightning strikes both ends of a train as it passes a platform. The platform observer stands halfway between the two strike points. Both flashes reach them at the same moment. The distances are equal and light travels at c both ways, so the strikes were simultaneous for the platform.\n\nA rider sits in the middle of the train. They are moving toward the front strike, so they meet its light first. In the rider's own frame the train is at rest. The scorch marks are equally far away at the two ends, and light comes from both directions at c. The rider allows for travel time and still concludes that the front strike happened first. The disagreement is not caused by light delay. It remains after each observer corrects for travel time.\n\n3. The formula. The Lorentz transformation gives t' = \u03b3(t \u2212 vx/c\u00b2), where \u03b3 = 1/\u221a(1 \u2212 v\u00b2/c\u00b2). For two events this becomes \u0394t' = \u03b3(\u0394t \u2212 v\u0394x/c\u00b2). If the events are simultaneous in frame S (\u0394t = 0), the time between them in frame S' is \u0394t' = \u2212\u03b3v\u0394x/c\u00b2. This is not zero whenever the events are separated along the direction of motion. With \u0394x > 0 and v > 0, the result is negative. So the event farther ahead in the direction S' moves (the front of the train) comes first in S'.\n\nThe effect grows with both speed and distance. At everyday speeds it is tiny. At 30 m/s, with events 3,000 km apart, it is about v\u0394x/c\u00b2 \u2248 1 nanosecond.\n\n4. What everyone agrees on. The interval s\u00b2 = c\u00b2\u0394t\u00b2 \u2212 |\u0394x|\u00b2 has the same value in every inertial frame. The SEP describes Minkowski spacetime as having \"an invariant spatio-temporal interval\".\n- Spacelike pairs (s\u00b2 < 0) are too far apart for even light to connect them. Their order depends on the frame, and these are the only pairs that show the effect.\n- Timelike or lightlike pairs (s\u00b2 \u2265 0) have the same order in every frame, so cause never comes after effect.\n- Events at the same place and time are simultaneous for everyone.\n- On a spacetime diagram, each frame has its own \"now\" lines. For a frame moving at v, those lines are tilted by slope v/c compared with the rest frame's lines. There is no single universal \"now\" line. The SEP says \"there is no invariant relation of simultaneity\".\n\n5. A useful rule. Suppose a set of clocks is synchronized in its own rest frame, and those clocks move past you. In your frame the rear clock reads ahead of the front clock by vL/c\u00b2, where L is their separation in their rest frame. This is sometimes summed up as \"leading clocks lag.\"\n\n6. The honest caveat about convention. The SEP entry on the conventionality of simultaneity explains a debate (Reichenbach and Gr\u00fcnbaum). Within one frame, the choice that the outgoing and return trips take equal times (\u03b5 = \u00bd) may be partly a definition, because only the round-trip speed of light can be measured directly. Malament's theorem argues that standard synchrony is the only choice that can be defined from causal structure alone. The entry says the debate \"seems far from settled\".\n\nThis does not make the effect imaginary. Once each frame uses the standard rule, their disagreement is fixed by the Lorentz transformation. The same transformation predicts time dilation and length contraction, and those have been measured. No experiment measures relativity of simultaneity on its own. It is tested through the whole Lorentz structure. The Baez experiments page lists Michelson\u2013Morley and Kennedy\u2013Thorndike for the round-trip speed of light, and Krisher et al. 1990 for one-way speed tests. It notes that one-way tests are limited by the convention issue. It also lists time-dilation tests: Ives\u2013Stilwell 1938, Frisch\u2013Smith 1963, and the Bailey et al. 1977 stored-muon experiment.",
+    "assumptions": [
+      "Flat spacetime (special relativity only; gravity and general relativity are excluded).",
+      "Observers are inertial (not accelerating) and use ordinary non-rotating coordinates.",
+      "Principle of relativity: the laws of physics are the same in every inertial frame.",
+      "Light has the same speed c in every inertial frame. Strictly, only the round-trip speed is measured; the one-way speed rests on the synchronization convention.",
+      "Einstein synchrony (\u03b5 = \u00bd) is used within each frame. The disagreement BETWEEN frames is what this record calls physical.",
+      "No signals faster than light. The SEP notes that such signals (tachyons) would change the conventionality argument.",
+      "'Simultaneous for a person' means simultaneous according to that person's rest-frame synchronized clocks, after correcting for light travel time. It does not mean the moment light reaches their eyes."
+    ],
+    "prediction": "A train whose own length is L = 1 light-second (about 3\u00d710^8 m) passes a platform at v = 0.4c, so \u03b3 = 1/\u221a(1 \u2212 0.4\u00b2) \u2248 1.091. Lightning strikes both ends at the same moment by the platform's clocks (\u0394t = 0). On the platform the moving train is L/\u03b3 \u2248 0.917 light-seconds long, so the strikes are \u0394x \u2248 0.917 light-seconds apart, and both flashes reach an observer halfway between them together, 0.458 s later. By the train's clocks, \u0394t' = \u2212\u03b3v\u0394x/c\u00b2 = \u2212vL/c\u00b2 = \u22120.4 \u00d7 1 s = \u22120.40 s: the front end, ahead in the direction of motion, is struck 0.40 s before the back. The rider at the middle, 0.5 light-seconds from each end, receives each flash 0.50 s after its strike, so by her clock the front flash arrives 0.40 s before the back one; every observer agrees it arrives first. Seen from a frame moving the other way (v = \u22120.4c), the order of the same two strikes reverses, and v = 0 gives no gap. The interval is the same in both frames: s\u00b2 = 0 \u2212 (0.917)\u00b2 \u2248 \u22120.84 (light-seconds)\u00b2 on the platform and (0.40)\u00b2 \u2212 (1.00)\u00b2 = \u22120.84 (light-seconds)\u00b2 on the train. The same rule gives 0.75 s for events 1 light-second apart on the platform seen at 0.6c (a train 1.25 light-seconds long). Everyday scale: a 300 m train at 30 m/s gives vL/c\u00b2 \u2248 1.0\u00d710^-13 s, about a ten-trillionth of a second. If the two events are separated only at right angles to the motion, \u0394t' = 0.",
+    "falsifier": "Relativity of simultaneity is never measured on its own, because it is partly conventional. It would be refuted by a failure of the Lorentz structure it belongs to. Any one of these would do it: the round-trip speed of light varying with the apparatus's orientation or speed (contradicting Michelson\u2013Morley and Kennedy\u2013Thorndike type results); moving clocks failing to slow by the factor \u03b3 (contradicting Ives\u2013Stilwell, Frisch\u2013Smith and the Bailey et al. stored-muon results); a one-way light-speed anisotropy that clock-transport effects cannot cancel; or a usable faster-than-light signal that picked out one preferred, frame-independent synchronization (absolute simultaneity). Within the theory, a clear sign the guide's picture is wrong would be two causally connected (timelike) events found in opposite orders in two inertial frames.",
+    "limitations": [
+      "This applies to special relativity only. In curved spacetime, and on the rotating Earth, a single global 'now' raises further problems.",
+      "Primary sources (Einstein 1905, Einstein's 1916/1920 popular book with the train example, and Norton's Pitt chapter) were not retrieved. The train thought experiment is described without a primary citation.",
+      "Only about the first 100k of the Baez experiments page's 124k characters were read. The experiment citations are as listed on that page and were not checked against the original papers.",
+      "Wikipedia is used only as secondary background (perpendicular-motion case, the vx/c\u00b2 term). It names no direct experiment.",
+      "No experiment isolates the relativity of simultaneity. Evidence for it comes through time dilation, light-speed tests and the overall Lorentz transformation.",
+      "Philosophers have not settled how far simultaneity within one frame is a convention (the SEP calls the debate 'far from settled'). This record treats the Einstein-synchrony disagreement between frames as the physical content.",
+      "Hafele\u2013Keating combines special-relativistic, gravitational and Sagnac effects, so it is not a clean test of this effect.",
+      "This record makes no new-discovery claim. It summarizes standard physics."
+    ],
+    "misconceptions": [
+      "Simultaneous means the light from both events reaches my eyes at the same moment. (No: travel time is corrected for. Simultaneity is defined by synchronized clocks at the events.)",
+      "It's just light delay; once both observers correct for travel time they'll agree. (No: the disagreement remains after correction, because each uses light speed c in their own frame.)",
+      "The light from the front strike is carried along by the train, so it moves at c + v. (That is the pre-relativity ballistic picture. Light moves at c in both frames.)",
+      "There is one true universal 'now' sweeping across the universe, and one of the observers has it right. (Both frames are equally valid. Each has its own tilted lines of simultaneity.)",
+      "The moving person's clocks must be broken or badly synchronized. (Both sets are properly synchronized by the same rule and still disagree.)",
+      "The person who is 'really moving' is the one who's wrong. (There is no absolute rest frame. Each observer can treat themselves as at rest.)",
+      "Wait, but if order can flip, can't someone see an effect before its cause? (No: only spacelike pairs, which cannot influence each other, change order.)",
+      "It's only an illusion or appearance, not real. (It is a real difference in how frames assign times. It follows from the same transformation that predicts measured time dilation.)",
+      "Philosophers say simultaneity is a convention, so the effect is made up. (The convention concerns the choice within one frame. Given the standard choice, the disagreement between frames is fixed.)",
+      "Two people standing in the same place will disagree about whether two firecrackers going off right next to them were at once. (Events at the same place and time are simultaneous for everyone.)",
+      "It works in any direction of motion. (Events separated only at right angles to the motion stay simultaneous.)",
+      "Speed is all that matters. (The time offset is \u03b3v\u0394x/c\u00b2, so it grows with distance as well. That is why tiny speeds over huge distances give noticeable offsets.)",
+      "Nothing moves fast enough for this to matter in real life. (At everyday speeds the offset is nanoseconds over thousands of km. Precise clock networks must handle synchronization carefully.)",
+      "If two people disagree about what is happening 'now' on a distant galaxy, one of them can see or change it. (That is a difference in coordinates only. Neither can see or influence those distant events any sooner.)",
+      "This is the same thing as time dilation. (They are related through the Lorentz transformation but distinct: time dilation concerns the rate of one clock, simultaneity concerns the readings of separated clocks.)",
+      "Spacetime diagrams can be read with an ordinary ruler. (The moving frame's axes look squeezed together. Their tick marks must be calibrated with hyperbolas.)"
+    ],
+    "questions": [
+      {
+        "q": "Two firecrackers go off at the same spot at the same instant by your clocks. Could a rocket pilot flying past say they went off at different times?",
+        "a": "No. Events at the same place and the same time have \u0394x = 0 and \u0394t = 0, so \u0394t' = \u03b3(\u0394t \u2212 v\u0394x/c\u00b2) = 0 in every frame. Disagreement only happens for events at different places."
+      },
+      {
+        "q": "Lightning strikes both ends of a platform at once for the platform observer. A train rider is moving toward the front strike. A friend says: 'The rider only thinks the front strike came first because its light arrived first. Correct for travel time and they'll agree.' Is the friend right?",
+        "a": "No. In the rider's own frame the two scorch marks are equally far away and both flashes travel at c. The front flash arrives first, so after correcting for travel time the rider still concludes the front strike happened first. The disagreement is not caused by light delay."
+      },
+      {
+        "q": "Could a fast enough spaceship find a frame in which you were born before your mother?",
+        "a": "No. Your mother's birth could influence yours (a timelike pair), and every inertial frame agrees on the order of such pairs. Only events too far apart for any signal to connect them (spacelike pairs) can swap order."
+      },
+      {
+        "q": "Two lamps flash at the same moment in the station frame. One is directly north of the other, and a train moves east. Do the train passengers say the flashes were simultaneous?",
+        "a": "Yes. The effect depends on separation along the direction of motion (the v\u0394x/c\u00b2 term). Separation purely at right angles to the motion gives zero time offset."
+      },
+      {
+        "q": "About how big is the effect for a car at 30 m/s and two events 3,000 km apart (along the road) that are simultaneous on the ground? Why does nobody notice?",
+        "a": "\u0394t' \u2248 v\u0394x/c\u00b2 = (30 \u00d7 3\u00d710^6)/(9\u00d710^16) s \u2248 10^-9 s, about one nanosecond. It is far too small to notice without precise clocks, yet it grows with distance as well as speed."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Stanford Encyclopedia of Philosophy, \"Inertial Frames\"",
+        "url": "https://plato.stanford.edu/entries/spacetime-iframes/",
+        "supports": "Retrieved, according to the research notes. Quoted: frames in relative motion 'can agree on the velocity of light only if they disagree on simultaneity'; 'there is no invariant relation of simultaneity'; Minkowski spacetime has 'an invariant spatio-temporal interval between any two points'."
+      },
+      {
+        "title": "Stanford Encyclopedia of Philosophy, \"Conventionality of Simultaneity\"",
+        "url": "https://plato.stanford.edu/entries/spacetime-convensimul/",
+        "supports": "Retrieved, according to the research notes. Einstein's light-signal synchrony, with the distant event simultaneous with time (t1+t2)/2 at A; Reichenbach and Gr\u00fcnbaum's choice of \u03b5 between 0 and 1, with \u03b5 = \u00bd standard; Malament's theorem and the replies to it; the debate 'seems far from settled'; faster-than-light signals would undermine the conventionality argument."
+      },
+      {
+        "title": "J. Baez et al., \"What is the experimental basis of Special Relativity?\" (UC Riverside)",
+        "url": "https://math.ucr.edu/home/baez/physics/Relativity/SR/experiments.html",
+        "supports": "Retrieved, about the first 100k of 124k characters read. Lists the experimental tests of the Lorentz structure: round-trip light speed (Michelson\u2013Morley, Kennedy\u2013Thorndike, Brillet & Hall, Hils & Hall); one-way light speed (Krisher et al. 1990 and others), with the warning that one-way tests 'are inherently unable to rule out a large class of theories'; time dilation (Ives & Stilwell 1938, Frisch & Smith 1963, Bailey et al. 1977, Hafele & Keating 1972)."
+      },
+      {
+        "title": "Wikipedia, \"Relativity of simultaneity\" (secondary, background only)",
+        "url": "https://en.wikipedia.org/wiki/Relativity_of_simultaneity",
+        "supports": "Retrieved, according to the research notes. Background only: the effect comes from the vx/c\u00b2 term in the Lorentz transformation and disappears when the motion is perpendicular to the line joining the events. It names no direct experiment."
+      }
+    ]
+  },
+  "scene": {
+    "title": "Does \u201cat the same time\u201d depend on how you move?",
+    "subtitle": "Lightning strikes both ends of a passing train at once, says the platform. The rider says the front was struck first. Both are right.",
+    "why": "There is no single \u201cnow\u201d shared across space. This idea makes the rest of special relativity, from moving clocks that run slow to the travelling twin, fit together.",
+    "opening": "If two distant things happen at the same time for you, do they happen at the same time for everyone?",
+    "beats": [
+      {
+        "title": "A test for \u201cat the same time\u201d",
+        "body": "A train at a platform is so long that light takes a full second to cross it, and lightning strikes both ends. Both flashes reach the middle of the train together. The flashes travel equal distances at the same speed, so the strikes happened at the same time."
+      },
+      {
+        "title": "Same time, says the platform",
+        "body": "Now the train rushes past at 40% of light speed, and lightning strikes both ends again. Both flashes meet on the platform, halfway between the strikes. So for the platform, the two strikes happened at the same moment."
+      },
+      {
+        "title": "The rider sees the front flash first",
+        "body": "Now watch the rider: she moves toward the front flash, so it reaches her first. Isn\u2019t that only because the front flash had less far to travel?"
+      },
+      {
+        "title": "On the train, the front was struck first",
+        "body": "If the train moves steadily, no experiment on board can tell it is moving, so the rider may say she sits still and the platform slides back. For her, both ends are equally far away, and everyone measures the same speed of light. Yet in both views the front flash reaches her first, so for her the front was struck first."
+      },
+      {
+        "title": "No single \u201cnow\u201d",
+        "body": "The faster or longer the train, the bigger the rider\u2019s gap between the strikes: here, 0.40 seconds. On a real train it is about a ten-trillionth of a second, far too small to notice. There is no single \u201cnow\u201d, but if one event can affect another, everyone agrees which came first."
+      }
+    ],
+    "takeaway": "Whether two distant events happen at the same time depends on how you move. The platform and the rider are both right, and if one event can affect another, everyone agrees which came first.",
+    "mass": 0.5,
+    "distance": 1,
+    "controls": "both",
+    "accent": "blue",
+    "kind": "simultaneity",
+    "ray_count": 1,
+    "show_reference": true,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "If the train moved the other way, which end would the rider say was struck first?",
+        "a": "The end at the front of its motion: whichever end she is moving toward."
+      },
+      {
+        "q": "Is the rider seeing the front flash first just because it had less far to travel?",
+        "a": "Not from her own point of view. From the platform, yes: she moves toward the front flash. But on the train both ends are equally far from her and light has the same speed both ways, so after allowing for travel time she still finds the front was struck first."
+      },
+      {
+        "q": "Who is right about whether the strikes were simultaneous?",
+        "a": "Both. Whether distant events happen at the same time depends on the observer's motion; neither view is the true one."
+      },
+      {
+        "q": "Could someone see an effect before its cause?",
+        "a": "No. Events that light (or anything slower) could connect keep their order for every observer; only events too far apart for any signal to link them can swap order."
+      },
+      {
+        "q": "Why does nobody notice this on real trains?",
+        "a": "The gap is the speed times the length divided by light speed squared: about a ten-trillionth of a second for a 300 m train at 30 m/s."
+      }
+    ],
+    "links": [
+      {
+        "text": "the travelling twin",
+        "url": "https://eman2xr.github.io/intuition-lab/?guide=20261101T170217-twin-paths"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "With the train at rest, platform and train agree the strikes were simultaneous",
+      "pass": true
+    },
+    {
+      "name": "By the train\u2019s clocks the front end is struck first, earlier by speed times length",
+      "pass": true
+    },
+    {
+      "name": "At 40% of light speed a one-light-second train finds a 0.40 s gap",
+      "pass": true
+    },
+    {
+      "name": "On the train, both struck ends are half the train\u2019s length from the rider",
+      "pass": true
+    },
+    {
+      "name": "Both flashes reach the platform\u2019s midpoint together",
+      "pass": true
+    },
+    {
+      "name": "The front flash reaches the moving rider first",
+      "pass": true
+    },
+    {
+      "name": "Allowing for light\u2019s travel time on the train still puts the front strike first",
+      "pass": true
+    },
+    {
+      "name": "A real 300 m train at 30 m/s gives about a ten-trillionth of a second",
+      "pass": true
+    },
+    {
+      "name": "A cause stays before its effect for every observer",
+      "pass": true
+    },
+    {
+      "name": "A train moving the other way finds the opposite end struck first",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 10)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 4)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "agent",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the picture, the model and all wording from the lab\u2019s research brief, and AI reviewers checked them in two rounds with the render checks, an accuracy review, a visual review, a first-time-reader test with a copy edit, and a blind-viewer test. The reviews below are from the second round; the small fixes they asked for were applied and checked before publishing."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Does \u201cat the same time\u201d depend on how you move?",
+        "subtitle": "Lightning strikes both ends of a passing train at once, says the platform. The rider says the front was struck first. Both are right.",
+        "why": "There is no single \u201cnow\u201d shared across space. This idea makes the rest of special relativity, from moving clocks that run slow to the travelling twin, fit together.",
+        "opening": "If two distant things happen at the same time for you, do they happen at the same time for everyone?",
+        "beats": [
+          {
+            "title": "A test for \u201cat the same time\u201d",
+            "body": "A train at a platform is so long that light takes a full second to cross it, and lightning strikes both ends. Both flashes reach the middle of the train together. The flashes travel equal distances at the same speed, so the strikes happened at the same time."
+          },
+          {
+            "title": "Same time, says the platform",
+            "body": "Now the train rushes past at 40% of light speed, and lightning strikes both ends again. Both flashes meet on the platform, halfway between the strikes. So for the platform, the two strikes happened at the same moment."
+          },
+          {
+            "title": "The rider sees the front flash first",
+            "body": "Now watch the rider: she moves toward the front flash, so it reaches her first. Isn\u2019t that only because the front flash had less far to travel?"
+          },
+          {
+            "title": "On the train, the front was struck first",
+            "body": "If the train moves steadily, no experiment on board can tell it is moving, so the rider may say she sits still and the platform slides back. For her, both ends are equally far away, and everyone measures the same speed of light. Yet in both views the front flash reaches her first, so for her the front was struck first."
+          },
+          {
+            "title": "No single \u201cnow\u201d",
+            "body": "The faster or longer the train, the bigger the rider\u2019s gap between the strikes: here, 0.40 seconds. On a real train it is about a ten-trillionth of a second, far too small to notice. There is no single \u201cnow\u201d, but if one event can affect another, everyone agrees which came first."
+          }
+        ],
+        "takeaway": "Whether two distant events happen at the same time depends on how you move. The platform and the rider are both right, and if one event can affect another, everyone agrees which came first.",
+        "mass": 0.5,
+        "distance": 1,
+        "controls": "both",
+        "accent": "blue",
+        "kind": "simultaneity",
+        "ray_count": 1,
+        "show_reference": true,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "If the train moved the other way, which end would the rider say was struck first?",
+            "a": "The end at the front of its motion: whichever end she is moving toward."
+          },
+          {
+            "q": "Is the rider seeing the front flash first just because it had less far to travel?",
+            "a": "Not from her own point of view. From the platform, yes: she moves toward the front flash. But on the train both ends are equally far from her and light has the same speed both ways, so after allowing for travel time she still finds the front was struck first."
+          },
+          {
+            "q": "Who is right about whether the strikes were simultaneous?",
+            "a": "Both. Whether distant events happen at the same time depends on the observer's motion; neither view is the true one."
+          },
+          {
+            "q": "Could someone see an effect before its cause?",
+            "a": "No. Events that light (or anything slower) could connect keep their order for every observer; only events too far apart for any signal to link them can swap order."
+          },
+          {
+            "q": "Why does nobody notice this on real trains?",
+            "a": "The gap is the speed times the length divided by light speed squared: about a ten-trillionth of a second for a 300 m train at 30 m/s."
+          }
+        ],
+        "links": [
+          {
+            "text": "the travelling twin",
+            "url": "https://eman2xr.github.io/intuition-lab/?guide=20261101T170217-twin-paths"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "With the train at rest, platform and train agree the strikes were simultaneous",
+          "pass": true
+        },
+        {
+          "name": "By the train\u2019s clocks the front end is struck first, earlier by speed times length",
+          "pass": true
+        },
+        {
+          "name": "At 40% of light speed a one-light-second train finds a 0.40 s gap",
+          "pass": true
+        },
+        {
+          "name": "On the train, both struck ends are half the train\u2019s length from the rider",
+          "pass": true
+        },
+        {
+          "name": "Both flashes reach the platform\u2019s midpoint together",
+          "pass": true
+        },
+        {
+          "name": "The front flash reaches the moving rider first",
+          "pass": true
+        },
+        {
+          "name": "Allowing for light\u2019s travel time on the train still puts the front strike first",
+          "pass": true
+        },
+        {
+          "name": "A real 300 m train at 30 m/s gives about a ten-trillionth of a second",
+          "pass": true
+        },
+        {
+          "name": "A cause stays before its effect for every observer",
+          "pass": true
+        },
+        {
+          "name": "A train moving the other way finds the opposite end struck first",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 10)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 4)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Every number recomputes from exact special relativity: gamma about 1.091, the moving train 0.917 light-seconds long, both flashes at the platform's midpoint after 0.458 s, the rider's arrivals at 0.30 s and 0.70 s by her clock, the gap v L = 0.40 s, the same spacetime interval (-0.84) in both frames, and about 1e-13 s for a 300 m train at 30 m/s. The frames match the model: the moving train and the platform's tiles are drawn shortened by 1/gamma, light keeps one speed on screen in both views, and chapter 3's light paths are 0.327 and 0.764 light-seconds. The chapter 4 reasoning (steady motion, the same measured speed of light, both views agreeing which flash reaches her first) closes the 'just light delay' objection.",
+        "changes": [
+          "Scoped the why line to special relativity.",
+          "Added 'If the train moves steadily' to the principle-of-relativity sentence.",
+          "Said 'the rider's gap' in chapter 5 and named the platform in chapter 2."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Every frame shows what its subtitle says. In chapter 4 the front strike, the back strike 0.40 s later (each clock appearing as its end is struck) and both arrivals now play under the sentence that names them, and chapter 5 is a still hold whose readout matches the end clocks. The train's front is clear (nose, headlight, red lamp), labels peak at 10 words, and the picture is calm.",
+        "changes": [
+          "Platform replays now pause with the train and rings frozen and dimmed.",
+          "The platform view shifts so the held train fits on phones.",
+          "The train's strike marks dim with the train; the lightning's flash lights only the sky.",
+          "Chapter 3's light paths are further apart with arrowheads; chapter 5 keeps chapter 4's platform."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The idea: whether two distant events happen at the same time depends on how you move, so there is no single 'now' shared across space, the idea that makes the rest of special relativity fit together. A first-time reader answered every transfer question from the guide alone: the rider would say the end she moves toward was struck first; seeing the front flash first is the shorter path only from the platform's point of view; both observers are right; causes still come first; and the gap is far too small on a real train. The stopped-train test, the voiced doubt and the rider's equal-distance answer carry a beginner through the argument.",
+        "changes": [
+          "Reordered chapter 1's first sentence.",
+          "Chapter 2 now says the flashes meet on the platform, halfway between the strikes.",
+          "Chapter 4 presents light's speed as measured; chapter 5 drops a misleading 'So'."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "From the pictures alone: lightning strikes both ends of a train; from the platform the strikes are simultaneous (both 0.00 s, equally far from the watcher), yet the rider in the middle is carried toward the front flash and meets its light first; from the train, where the rider sits still exactly midway and light covers equal distances, the front was struck 0.40 s earlier. The switch of view is readable from the header, the equal-distance bar and the larger front ring, and the shortened train and platform tiles are noticed only on comparison.",
+        "changes": [
+          "Pulled chapter 3's two light paths apart and gave them arrowheads.",
+          "Rings in the train view fade once they pass the rider.",
+          "Strike marks dim after the instant of each strike."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261114T182923-simultaneity/revision-1-0.png",
+        "published/20261114T182923-simultaneity/revision-1-1.png",
+        "published/20261114T182923-simultaneity/revision-1-2.png",
+        "published/20261114T182923-simultaneity/revision-1-3.png",
+        "published/20261114T182923-simultaneity/revision-1-4.png",
+        "published/20261114T182923-simultaneity/revision-1-5.png",
+        "published/20261114T182923-simultaneity/revision-1-6.png",
+        "published/20261114T182923-simultaneity/revision-1-7.png",
+        "published/20261114T182923-simultaneity/revision-1-8.png",
+        "published/20261114T182923-simultaneity/revision-1-9.png"
+      ]
+    }
+  ]
+}

@@ -946,6 +946,136 @@ function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
  if(moving&&since>6)pill(ctx,`${Math.round(slow*10)} ticks to Earth’s 10`,w/2,small?h*.94:h*.9,{align:'center',size:small?11:13,weight:600});
 }
 
+// Einstein's train: lightning strikes both ends of a train as it passes a platform. Seen from the platform the strikes
+// are simultaneous: the light from each spreads at light speed from where it struck, meets the person halfway between
+// the strikes together, and reaches the rider, who moves toward the front, front first. Seen from the train, the train
+// stands still and the platform (with its clouds) slides back, shortened by gamma; both ends are equally far from the
+// rider and light keeps one speed, so the front must have been struck first, earlier by Physics.simulGap. The train's
+// own length always spans the same width, so light keeps one speed on screen in both views. Chapter 1 is at rest,
+// chapters 2 to 4 use the scene's speed, the last chapter holds the result, and the controls drive the replay
+// afterwards. Story time runs six times slower than playback; each platform replay holds once its flashes have arrived.
+const SIMUL={show:false,gap:0};
+function simulTrain(ctx,x0,x1,top,bottom,accent,alpha,n){
+ // The front (right) end has a rounder nose and a headlight, the back end a red lamp. The window count stays the same
+ // when the moving train is shorter, so the rider stays in the middle window.
+ const H=bottom-top, len=x1-x0, cell=len/n, rf=Math.min(H*.45,26), rb=Math.min(H*.18,8), ly=top+H*.88;
+ const box=(x,y,w,h,r)=>{ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);};
+ ctx.save();ctx.globalAlpha=alpha;
+ box(x0,top,len,H,[rb,rf,3,3]);ctx.fillStyle='#f8fafc';ctx.fill();ctx.strokeStyle=rgba(accent,.8);ctx.lineWidth=2;ctx.stroke();
+ ctx.fillStyle=rgba(accent,.78);ctx.fillRect(x0+1,top+H*.7,len-2,H*.09);
+ for(let i=0;i<n;i++){box(x0+cell*i+cell*.2,top+H*.14,cell*.6,H*.42,3);ctx.fillStyle='rgba(186,206,234,.85)';ctx.fill();}
+ const lamp=ctx.createRadialGradient(x1-7,ly,0,x1-7,ly,16);lamp.addColorStop(0,'rgba(255,236,170,.95)');lamp.addColorStop(1,'rgba(255,236,170,0)');
+ ctx.fillStyle=lamp;ctx.fillRect(x1-23,ly-16,32,32);ctx.beginPath();ctx.arc(x1-7,ly,3.2,0,TAU);ctx.fillStyle='#fcd34d';ctx.fill();
+ ctx.beginPath();ctx.arc(x0+6,ly,2.6,0,TAU);ctx.fillStyle='#dc2626';ctx.fill();
+ ctx.restore();
+}
+function simulBolt(ctx,x,y0,y1,seed,alpha){
+ if(alpha<=.01)return;
+ const pts=[[x+(hash(seed)-.5)*14,y0]];
+ for(let i=1;i<7;i++){const f=i/7;pts.push([x+(hash(seed+i*1.7)-.5)*(30*(1-f)+6),y0+(y1-y0)*f]);}
+ pts.push([x,y1]);
+ ctx.save();ctx.globalAlpha=alpha;ctx.lineJoin='round';ctx.lineCap='round';
+ trace(ctx,pts);ctx.strokeStyle='rgba(109,40,217,.22)';ctx.lineWidth=10;ctx.stroke();
+ trace(ctx,pts);ctx.strokeStyle='#facc15';ctx.lineWidth=3.6;ctx.stroke();
+ trace(ctx,pts);ctx.strokeStyle='#fffdf2';ctx.lineWidth=1.3;ctx.stroke();
+ ctx.restore();
+}
+function drawSimultaneity(ctx,w,h,spec,st){
+ const small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, amber='#d97706', ink='#14171c', mint='#0e9f7a';
+ const preview=st.since===undefined, live=!!st.live, last=(st.chapters?.length||5)-1, stage=preview?1:live?last:st.stage;
+ const own=live||stage===last, v=stage===0?0:Physics.simulSpeed(own?st.mass:spec.mass), L=Physics.simulLength(own?st.distance:(spec.distance||1));
+ const g=Physics.simulGamma(v), gap=Physics.simulGap(v,L), trainView=stage>=3, S=6, still=stage===last&&!live;
+ if(!preview){SIMUL.show=own;SIMUL.gap=gap;}
+ const ch=st.chapters?.[stage], c0=ch?.start||0, at=i=>ch?.lines?.[i]?ch.lines[i].start-c0:1+4*i, since=preview?0:Math.max(0,st.since);
+ const trainPx=small?w*.64:Math.min(w*.56,760), k=trainPx/L;
+ const cx=w/2, yPlat=h*(small?.74:.77), platH=h*(small?.075:.085), platTop=platH*.42, yFace=yPlat+platTop, yGround=yPlat+platH+(small?12:16);
+ const trainH=small?Math.min(h*.16,86):Math.min(h*.17,120), top=yPlat-trainH, nWin=2*Math.round((trainPx/(trainH*.62)-1)/2)+1;
+ const rHead=trainH*(small?.1:.085), yEye=top+trainH*.3, yFeet=yPlat+platTop*.8, yHead=yFeet-trainH*.56+rHead;
+ // Where things are. Platform view: platform time t is zero at the strikes, which hit the train's ends together.
+ // Train view: train time tau is zero at the front strike; the back end is struck gap later.
+ let drift=0, tiles=1;
+ const P={};
+ if(!trainView){
+  P.arr=Physics.simulArrivals(v,L);P.cx=w/2-(stage>0?v*(P.arr.back+.25)*k/2:0);
+  P.half=L/g/2;P.xF=P.cx+P.half*k;P.xB=P.cx-P.half*k;P.dP=Math.hypot(P.half*k,yHead-yEye)/k;
+  P.ts=preview?0:stage===0?Math.max(at(0)+4.5,at(1)+.8-P.dP*S):stage===1?Math.max(at(0)+3,at(1)+.8-P.dP*S):at(0)+1;
+  P.hold=stage===1?P.dP+.45:stage===2?P.arr.back+.25:1e9;
+  P.raw=preview?.22:(since-P.ts)/S;P.t=Math.min(P.raw,P.hold);P.frozen=P.raw>P.hold?smooth((P.raw-P.hold)*S):0;P.xr=P.cx+v*P.t*k;
+ }else{
+  const loop=(gap+L/2+1.2)*S+1.5, ts=stage===3?at(2)+.3:0;
+  const c3=st.chapters?.[3], end3=c3?((c3.end-c3.start)-((c3.lines?.[2]?.start??c3.start)-c3.start+.3))/S:gap+L/2+2;
+  P.tau=live?(since%loop)/S-.3:stage===3?(since-ts)/S:Math.max(end3,gap);
+  P.xF=cx+L/2*k;P.xB=cx-L/2*k;P.xP=cx-v*(P.tau-v*L/2)*k;
+  drift=P.xP-cx;tiles=1/g;
+ }
+ // Sky with storm cloud (fixed to the ground, so it slides with the platform in the train view), and the ground.
+ const sky=ctx.createLinearGradient(0,0,0,yPlat);sky.addColorStop(0,'#c9d2df');sky.addColorStop(1,'#eef1f5');ctx.fillStyle=sky;ctx.fillRect(0,0,w,yPlat);
+ const sinceStrike=trainView?Math.min(...[P.tau*S,(P.tau-gap)*S].filter(e=>e>=0),1):P.raw*S;
+ if(!still&&sinceStrike>=0&&sinceStrike<.35){ctx.fillStyle=`rgba(255,255,255,${.3*(1-sinceStrike/.35)})`;ctx.fillRect(0,0,w,yPlat);}
+ ctx.fillStyle='#e9e4da';ctx.fillRect(0,yPlat,w,h-yPlat);ctx.fillStyle='#ddd6c9';ctx.fillRect(0,yPlat+platH,w,h*.02);
+ const cloudY=h*(small?.08:.09), span=w*1.3;
+ for(let i=0;i<13;i++){const x=((w*(i/12)*1.3+(hash(i*4.1)-.5)*w*.08+drift)%span+span)%span-w*.15, y=cloudY+hash(i*2.3)*h*.03, r=w*(.06+.05*hash(i*1.9));
+  ctx.fillStyle=`rgba(120,132,152,${.12+.08*hash(i*3.7)})`;ctx.beginPath();ctx.ellipse(x,y,r,r*.32,0,0,TAU);ctx.fill();}
+ const burn=(x,y,r,e=9,a=1)=>{ctx.save();ctx.globalAlpha=a*(.55+.45*Math.exp(-Math.max(0,e)/.6));ctx.fillStyle='rgba(38,30,24,.82)';ctx.beginPath();ctx.arc(x,y,r*.42,0,TAU);ctx.fill();ctx.strokeStyle=rgba(amber,.9);ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.arc(x,y,r*.72,0,TAU);ctx.stroke();for(let i=0;i<8;i++){const a=i*TAU/8+.2;trace(ctx,[[x+Math.cos(a)*r*.9,y+Math.sin(a)*r*.9],[x+Math.cos(a)*r*1.3,y+Math.sin(a)*r*1.3]]);ctx.stroke();}ctx.restore();};
+ const glow=(x,y,a)=>{if(a<=.01)return;const r=small?20:28, gr=ctx.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,rgba(amber,.62*a));gr.addColorStop(1,rgba(amber,0));ctx.fillStyle=gr;ctx.fillRect(x-r,y-r,2*r,2*r);};
+ const fade=r=>1-smooth((r-(trainView?.62:.92)*L*k)/(.3*L*k));
+ const ring=(x,r,a)=>{if(r<=0||a<=.01)return;ctx.save();ctx.beginPath();ctx.rect(0,0,w,yFace);ctx.clip();
+  ctx.beginPath();ctx.arc(x,yEye,r,0,TAU);ctx.strokeStyle=rgba(amber,.2*a);ctx.lineWidth=7;ctx.stroke();
+  ctx.beginPath();ctx.arc(x,yEye,r,0,TAU);ctx.strokeStyle=rgba(amber,.9*a);ctx.lineWidth=2;ctx.stroke();ctx.restore();};
+ const flashAt=e=>e>=0?Math.exp(-e/1.2):0;
+ const person=(x,a)=>{ctx.save();ctx.globalAlpha=a;ctx.fillStyle=ink;ctx.beginPath();ctx.arc(x,yHead,rHead,0,TAU);ctx.fill();const b=yHead+rHead*1.25;
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x-rHead*.95,b,rHead*1.9,yFeet-b,rHead*.6);else ctx.rect(x-rHead*.95,b,rHead*1.9,yFeet-b);ctx.fill();ctx.restore();};
+ const riderAt=(x,a)=>{ctx.save();ctx.globalAlpha=a;ctx.fillStyle=mint;ctx.beginPath();ctx.arc(x,yEye,rHead,0,TAU);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x,yEye+rHead*2.2,rHead*1.25,rHead*1.05,0,Math.PI,TAU);ctx.fill();ctx.restore();};
+ const platform=()=>{ctx.fillStyle='#e4ded3';ctx.fillRect(0,yPlat,w,platTop);ctx.fillStyle='#d3ccbe';ctx.fillRect(0,yFace,w,platH-platTop);
+  ctx.fillStyle='#b9b1a2';ctx.fillRect(0,yFace,w,1.5);const step=Math.max(28,k*.12)*tiles, o=((drift%step)+step)%step;ctx.strokeStyle='rgba(20,23,28,.12)';ctx.lineWidth=1;
+  for(let x=o-step;x<w+step;x+=step){trace(ctx,[[x,yFace+3],[x,yPlat+platH]]);ctx.stroke();}};
+ const strike=(x,e)=>{if(e<0)return;simulBolt(ctx,x,cloudY+h*.02,yEye,Math.round(x),1-e/.45);};
+ const equal=(x0,x1,xm,y,a)=>{if(a<=.01)return;ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=1.4;
+  for(const [p,q] of [[x0,xm],[xm,x1]]){trace(ctx,[[p+3,y],[q-3,y]]);ctx.stroke();for(const x of [p+3,q-3]){trace(ctx,[[x,y-5],[x,y+5]]);ctx.stroke();}}ctx.restore();};
+ const size=small?11:13, secs=x=>x.toFixed(2)+' s', labels=st.labels!==false, r0=small?8:11, onStage=x=>clamp(x,small?30:40,w-(small?30:40));
+ const tag=s=>{ctx.save();ctx.globalAlpha=preview||live?1:smooth(since/.8);pill(ctx,s,small?14:20,small?16:24,{size:small?10:11,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.8)'});ctx.restore();};
+ if(!trainView){
+  const {xF,xB,xr,t,raw,dP,arr,frozen}=P, e=raw*S, half=P.half;
+  const dimTrain=stage===1?1-.5*smooth(e/1.5):1, dimPerson=stage===2?.4:1, rings=1-.55*frozen;
+  simulTrain(ctx,xr-half*k,xr+half*k,top,yPlat+2,accent,dimTrain,nWin);
+  if(raw>=0){burn(xr+half*k-6,yEye,r0,e,dimTrain);burn(xr-half*k+6,yEye,r0,e,dimTrain);}
+  riderAt(xr,dimTrain);glow(xr,yEye,Math.max(flashAt((raw-arr.front)*S),flashAt((raw-arr.back)*S))*dimTrain);
+  platform();
+  if(raw>=0&&stage>0){burn(xF,yPlat+platTop*.5,r0*.8,e);burn(xB,yPlat+platTop*.5,r0*.8,e);}
+  person(P.cx,dimPerson);glow(P.cx,yHead,stage===2?0:flashAt((raw-dP)*S));
+  if(raw>=0){ring(xF,t*k,fade(t*k)*rings);ring(xB,t*k,fade(t*k)*rings);}
+  strike(xF,e);strike(xB,e);
+  if(!labels)return;
+  if(stage===0){pill(ctx,'rider',onStage(xr),top-(small?12:16),{align:'center',size,weight:600,color:mint});
+   text(ctx,'platform',P.cx,yFace+(platH-platTop)*.55,{align:'center',size:small?10:12,weight:600,color:'rgba(20,23,28,.62)'});
+   const a=smooth((since-at(2))/.6);equal(xB,xF,P.cx,top-(small?30:40),a);if(a>.01)text(ctx,'same distance',P.cx,top-(small?42:56),{align:'center',size:small?10:12,weight:600,color:'rgba(20,23,28,.7)'});
+   return;}
+  tag('SEEN FROM THE PLATFORM');
+  if(stage===1){equal(xB,xF,P.cx,yGround,smooth((since-at(1))/.6));
+   if(since>=at(2))for(const x of [xF,xB])pill(ctx,secs(0),onStage(x),yFace+(platH-platTop)*.55,{align:'center',size,weight:600,color:ink});}
+  if(stage===2){if(t>=arr.front)pill(ctx,'front flash first',clamp(xr,small?62:84,w-(small?62:84)),top-(small?12:16),{align:'center',size,weight:600,color:mint});
+   // The two light paths along the track: short from the front strike to where it met her, long from the back.
+   const a=smooth((since-at(1))/.6);if(a>.01){const mF=P.cx+v*arr.front*k, mB=P.cx+v*arr.back*k, y2=yGround+(small?14:18);ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=amber;ctx.fillStyle=amber;ctx.lineWidth=2.4;ctx.lineCap='round';
+    for(const [x0,x1,y] of [[xF,mF,yGround],[xB,mB,y2]]){const d=Math.sign(x1-x0), tip=x1-d*6;trace(ctx,[[x0,y],[tip,y]]);ctx.stroke();
+     ctx.beginPath();ctx.moveTo(tip,y);ctx.lineTo(tip-d*8,y-5);ctx.lineTo(tip-d*8,y+5);ctx.closePath();ctx.fill();}
+    for(const [x,y] of [[mF,yGround],[mB,y2]]){ctx.beginPath();ctx.arc(x,y,4,0,TAU);ctx.fillStyle=mint;ctx.fill();}ctx.restore();}}
+  return;
+ }
+ const {xF,xB,xP,tau}=P, eF=tau*S, eB=(tau-gap)*S;
+ simulTrain(ctx,xB,xF,top,yPlat+2,accent,1,nWin);
+ if(tau>=0)burn(xF-6,yEye,r0,still?9:eF);if(tau>=gap)burn(xB+6,yEye,r0,still?9:eB);
+ riderAt(cx,1);glow(cx,yEye,still?0:Math.max(flashAt((tau-L/2)*S),flashAt((tau-gap-L/2)*S)));
+ platform();
+ person(xP,still?.4*(1-smooth(since/.5)):.4);
+ if(!still){if(tau>=0)ring(xF,tau*k,fade(tau*k));if(tau>=gap)ring(xB,(tau-gap)*k,fade((tau-gap)*k));strike(xF,eF);strike(xB,eB);}
+ if(!labels)return;
+ tag('SEEN FROM THE TRAIN');
+ if(stage===3){const a=smooth((since-at(1))/.6);equal(xB,xF,cx,top-(small?30:40),a);if(a>.01)text(ctx,'same distance',cx,top-(small?42:56),{align:'center',size:small?10:12,weight:600,color:'rgba(20,23,28,.7)'});}
+ if(tau>=0||still)pill(ctx,secs(0),onStage(xF),top-(small?12:16),{align:'center',size,weight:600,color:ink});
+ if(tau>=gap||still)pill(ctx,secs(gap),onStage(xB),top-(small?12:16),{align:'center',size,weight:600,color:ink});
+}
 function drawPaths(ctx,w,h,spec,st){
  if(st.stage===1&&st.labels!==false)return drawLightClocks(ctx,w,h,spec,st,{vplan:Physics.speed(spec.mass)});
  const accent=ACCENT[spec.accent]||ACCENT.blue, L=pathsLayout(w,h,st), {small,v,T,H,map,x0,bottom}=L, g=Physics.gamma(v);
@@ -2618,6 +2748,13 @@ const ENGINES={
   measure:['Rocket clock ticks slower by',a=>(Physics.agingGap(a)*100).toFixed(0)+'%'],scale:'Seen from Earth',
   disclosure:'Exact special relativity: light moves at the same speed for every observer. The clocks are slowed down for viewing; the rocket clock ticks normally for its crew.',
   try:'Slide the speed down to zero: the clocks agree. Push it toward light speed: the slanted path grows and the rocket clock nearly stops.',aria:'Two light clocks: one on Earth with light going straight up and down, one on a moving rocket whose light must slant to hit the moving mirrors, so it ticks less often.'},
+ 'simultaneity':{draw:drawSimultaneity,demo:false,a:['Train speed','how fast the train moves'],b:['Train length','the train’s own length',''],
+  fa:a=>Math.round(Physics.simulSpeed(a)*100)+'% of light',fb:b=>Physics.simulLength(b).toFixed(1)+' light-seconds',
+  effect:(a,b)=>Physics.simulGap(Physics.simulSpeed(a),Physics.simulLength(b)),
+  measure:[()=>SIMUL.gap>1e-9?'Front end struck first by':'Both ends struck',()=>!SIMUL.show?'':SIMUL.gap>1e-9?SIMUL.gap.toFixed(2)+' s':'together'],scale:'',
+  disclosure:'Exact special relativity for an ideal train and instant lightning. Times are read from each side’s own clocks, set to agree using light.',
+  try:'Slide the speed to zero and both ends are struck together. A faster or longer train makes the front strike come earlier.',
+  aria:'A train passes a platform as lightning strikes both of its ends. Seen from the platform, the two flashes meet at its midpoint together. Seen from the train, the front end is struck first, so its flash reaches the rider first.'},
  'spacetime-paths':{draw:drawPaths,drag:dragPaths,demo:false,a:['Speed','how fast the traveller flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
   measure:['Traveller’s clock counts less by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',

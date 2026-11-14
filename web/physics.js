@@ -522,9 +522,44 @@
     /* AGENT-ENGINES: physics. Model functions and a <kind>Checks() method for engines the daily run builds from a
        research brief are spliced in above this line (lab/build_engine.py) as Physics object methods. */
     // Which checks belong to each visual model; light bending uses checks().
+    // Relativity of simultaneity (Einstein's train), in units where light speed is 1: lengths in light-seconds, times in
+    // seconds. A train whose own length is L passes a platform at speed v (positive: toward its front), and lightning
+    // strikes both its ends at the same moment by the platform's clocks, when the train's centre passes the platform's
+    // midpoint. The first control sets the speed (up to 0.8 of light speed), the second the train's own length.
+    simulSpeed(a) { return .8 * a; },
+    simulLength(b) { return b; },
+    simulGamma(v) { return 1 / Math.sqrt(1 - v * v); },
+    // Platform coordinates (x, t) as measured on a train moving at v: the Lorentz transformation.
+    simulToTrain(x, t, v) { const g = this.simulGamma(v); return {x: g * (x - v * t), t: g * (t - v * x)}; },
+    // The two strikes in platform coordinates: the moving train is L / gamma long there, centred on the midpoint.
+    simulStrikes(v, L) { const h = L / this.simulGamma(v) / 2; return {front: {x: h, t: 0}, back: {x: -h, t: 0}}; },
+    // By the train's clocks the front end is struck first, earlier by v L.
+    simulGap(v, L) { return v * L; },
+    // When each flash reaches the rider at the middle of the train (x = v t), by the platform's clocks.
+    simulArrivals(v, L) { const h = L / this.simulGamma(v) / 2; return {front: h / (1 + v), back: h / (1 - v)}; },
+    simulChecks() {
+      const near = (a, b, e = 1e-12) => Math.abs(a - b) < e, speeds = [.1, .4, .6, .8], lengths = [1, 1.7, 2.5];
+      const trainTimes = (v, L) => { const s = this.simulStrikes(v, L);
+        return {front: this.simulToTrain(s.front.x, s.front.t, v), back: this.simulToTrain(s.back.x, s.back.t, v)}; };
+      const c = 299792458;
+      return Object.entries({
+        'With the train at rest, platform and train agree the strikes were simultaneous': lengths.every(L => near(this.simulGap(0, L), 0) && near(trainTimes(0, L).front.t, trainTimes(0, L).back.t)),
+        'By the train\u2019s clocks the front end is struck first, earlier by speed times length': speeds.every(v => lengths.every(L => { const T = trainTimes(v, L); return T.front.t < T.back.t && near(T.back.t - T.front.t, this.simulGap(v, L)); })),
+        'At 40% of light speed a one-light-second train finds a 0.40 s gap': near(this.simulGap(this.simulSpeed(.5), this.simulLength(1)), .4),
+        'On the train, both struck ends are half the train\u2019s length from the rider': speeds.every(v => lengths.every(L => { const T = trainTimes(v, L); return near(T.front.x, L / 2) && near(T.back.x, -L / 2); })),
+        'Both flashes reach the platform\u2019s midpoint together': speeds.every(v => { const s = this.simulStrikes(v, 1); return near(s.front.t + Math.abs(s.front.x), s.back.t + Math.abs(s.back.x)); }),
+        'The front flash reaches the moving rider first': speeds.every(v => { const a = this.simulArrivals(v, 1); return a.front < a.back; }),
+        'Allowing for light\u2019s travel time on the train still puts the front strike first': speeds.every(v => lengths.every(L => { const a = this.simulArrivals(v, L), g = this.simulGamma(v);
+          return near((a.back / g - L / 2) - (a.front / g - L / 2), this.simulGap(v, L)); })),
+        'A real 300 m train at 30 m/s gives about a ten-trillionth of a second': Math.abs(this.simulGap(30 / c, 300 / c) - 1e-13) < 2e-15,
+        'A cause stays before its effect for every observer': [-.9, -.5, 0, .5, .9].every(u => { const s = this.simulStrikes(.4, 1), a = this.simulArrivals(.4, 1);
+          const strike = this.simulToTrain(s.front.x, s.front.t, u), effect = this.simulToTrain(.4 * a.front, a.front, u); return effect.t > strike.t; }),
+        'A train moving the other way finds the opposite end struck first': speeds.every(v => { const T = trainTimes(-v, 1); return T.back.t < T.front.t; }),
+      }).map(([name, pass]) => ({name, pass}));
+    },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,
+        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },
