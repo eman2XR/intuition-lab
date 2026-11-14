@@ -951,9 +951,10 @@ function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
 // the strikes together, and reaches the rider, who moves toward the front, front first. Seen from the train, the train
 // stands still and the platform (with its clouds) slides back, shortened by gamma; both ends are equally far from the
 // rider and light keeps one speed, so the front must have been struck first, earlier by Physics.simulGap. The train's
-// own length always spans the same width, so light keeps one speed on screen in both views. Chapter 1 is at rest,
-// chapters 2 to 4 use the scene's speed, the last chapter holds the result, and the controls drive the replay
-// afterwards. Story time runs six times slower than playback; each platform replay holds once its flashes have arrived.
+// own length always spans the same width, so light keeps one speed on screen in both views. Seven chapters: at rest;
+// the platform's view; the rider's arrivals; the change to the train's view; the front-first strikes; the size of the
+// gap; and no single "now". The last two hold the result, and the controls drive the replay afterwards. Story time runs
+// six times slower than playback; each platform replay holds once its flashes have arrived.
 const SIMUL={show:false,gap:0};
 function simulTrain(ctx,x0,x1,top,bottom,accent,alpha,n){
  // The front (right) end has a rounder nose and a headlight, the back end a red lamp. The window count stays the same
@@ -984,8 +985,8 @@ function drawSimultaneity(ctx,w,h,spec,st){
  const small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, amber='#d97706', ink='#14171c', mint='#0e9f7a';
  const preview=st.since===undefined, live=!!st.live, last=(st.chapters?.length||5)-1, stage=preview?1:live?last:st.stage;
  const own=live||stage===last, v=stage===0?0:Physics.simulSpeed(own?st.mass:spec.mass), L=Physics.simulLength(own?st.distance:(spec.distance||1));
- const g=Physics.simulGamma(v), gap=Physics.simulGap(v,L), trainView=stage>=3, S=6, still=stage===last&&!live;
- if(!preview){SIMUL.show=own;SIMUL.gap=gap;}
+ const g=Physics.simulGamma(v), gap=Physics.simulGap(v,L), trainView=stage>=3, S=6, still=stage>=5&&!live;
+ if(!preview){SIMUL.show=live||stage>=5;SIMUL.gap=gap;}
  const ch=st.chapters?.[stage], c0=ch?.start||0, at=i=>ch?.lines?.[i]?ch.lines[i].start-c0:1+4*i, since=preview?0:Math.max(0,st.since);
  const trainPx=small?w*.64:Math.min(w*.56,760), k=trainPx/L;
  const cx=w/2, yPlat=h*(small?.74:.77), platH=h*(small?.075:.085), platTop=platH*.42, yFace=yPlat+platTop, yGround=yPlat+platH+(small?12:16);
@@ -998,13 +999,14 @@ function drawSimultaneity(ctx,w,h,spec,st){
  if(!trainView){
   P.arr=Physics.simulArrivals(v,L);P.cx=w/2-(stage>0?v*(P.arr.back+.25)*k/2:0);
   P.half=L/g/2;P.xF=P.cx+P.half*k;P.xB=P.cx-P.half*k;P.dP=Math.hypot(P.half*k,yHead-yEye)/k;
-  P.ts=preview?0:stage===0?Math.max(at(0)+4.5,at(1)+.8-P.dP*S):stage===1?Math.max(at(0)+3,at(1)+.8-P.dP*S):at(0)+1;
+  P.ts=preview?0:stage===0?Math.max(at(0)+1.6,at(1)+.8-P.dP*S):stage===1?Math.max(at(0)+3,at(1)+.8-P.dP*S):Math.max(at(0)+1,at(1)+.25-P.arr.front*S);
   P.hold=stage===1?P.dP+.45:stage===2?P.arr.back+.25:1e9;
   P.raw=preview?.22:(since-P.ts)/S;P.t=Math.min(P.raw,P.hold);P.frozen=P.raw>P.hold?smooth((P.raw-P.hold)*S):0;P.xr=P.cx+v*P.t*k;
  }else{
-  const loop=(gap+L/2+1.2)*S+1.5, ts=stage===3?at(2)+.3:0;
-  const c3=st.chapters?.[3], end3=c3?((c3.end-c3.start)-((c3.lines?.[2]?.start??c3.start)-c3.start+.3))/S:gap+L/2+2;
-  P.tau=live?(since%loop)/S-.3:stage===3?(since-ts)/S:Math.max(end3,gap);
+  // One train clock runs through chapters 4 and 5: the platform slides past first, and the strikes come with
+  // chapter 5's third sentence. The last two chapters hold the result where chapter 5 left it.
+  const loop=(gap+L/2+1.2)*S+1.5, c4=st.chapters?.[4], strikeAt=c4?.lines?.[2]?c4.lines[2].start+.3:null, now=c0+since;
+  P.tau=live?(since%loop)/S-.3:strikeAt===null?gap+L/2+2:stage<=4?(now-strikeAt)/S:Math.max((c4.end-strikeAt)/S,gap);
   P.xF=cx+L/2*k;P.xB=cx-L/2*k;P.xP=cx-v*(P.tau-v*L/2)*k;
   drift=P.xP-cx;tiles=1/g;
  }
@@ -1038,10 +1040,10 @@ function drawSimultaneity(ctx,w,h,spec,st){
  const tag=s=>{ctx.save();ctx.globalAlpha=preview||live?1:smooth(since/.8);pill(ctx,s,small?14:20,small?16:24,{size:small?10:11,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.8)'});ctx.restore();};
  if(!trainView){
   const {xF,xB,xr,t,raw,dP,arr,frozen}=P, e=raw*S, half=P.half;
-  const dimTrain=stage===1?1-.5*smooth(e/1.5):1, dimPerson=stage===2?.4:1, rings=1-.55*frozen;
+  const dimTrain=stage===1?1-.5*smooth(e/1.5):1, dimPerson=stage===2?.4:1, rings=1-frozen;
   simulTrain(ctx,xr-half*k,xr+half*k,top,yPlat+2,accent,dimTrain,nWin);
   if(raw>=0){burn(xr+half*k-6,yEye,r0,e,dimTrain);burn(xr-half*k+6,yEye,r0,e,dimTrain);}
-  riderAt(xr,dimTrain);glow(xr,yEye,Math.max(flashAt((raw-arr.front)*S),flashAt((raw-arr.back)*S))*dimTrain);
+  riderAt(xr,dimTrain);if(stage!==1)glow(xr,yEye,Math.max(flashAt((raw-arr.front)*S),flashAt((raw-arr.back)*S)));
   platform();
   if(raw>=0&&stage>0){burn(xF,yPlat+platTop*.5,r0*.8,e);burn(xB,yPlat+platTop*.5,r0*.8,e);}
   person(P.cx,dimPerson);glow(P.cx,yHead,stage===2?0:flashAt((raw-dP)*S));
@@ -1057,7 +1059,7 @@ function drawSimultaneity(ctx,w,h,spec,st){
    if(since>=at(2))for(const x of [xF,xB])pill(ctx,secs(0),onStage(x),yFace+(platH-platTop)*.55,{align:'center',size,weight:600,color:ink});}
   if(stage===2){if(t>=arr.front)pill(ctx,'front flash first',clamp(xr,small?62:84,w-(small?62:84)),top-(small?12:16),{align:'center',size,weight:600,color:mint});
    // The two light paths along the track: short from the front strike to where it met her, long from the back.
-   const a=smooth((since-at(1))/.6);if(a>.01){const mF=P.cx+v*arr.front*k, mB=P.cx+v*arr.back*k, y2=yGround+(small?14:18);ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=amber;ctx.fillStyle=amber;ctx.lineWidth=2.4;ctx.lineCap='round';
+   const a=smooth((since-at(2))/.6);if(a>.01){const mF=P.cx+v*arr.front*k, mB=P.cx+v*arr.back*k, y2=yGround+(small?14:18);ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=amber;ctx.fillStyle=amber;ctx.lineWidth=2.4;ctx.lineCap='round';
     for(const [x0,x1,y] of [[xF,mF,yGround],[xB,mB,y2]]){const d=Math.sign(x1-x0), tip=x1-d*6;trace(ctx,[[x0,y],[tip,y]]);ctx.stroke();
      ctx.beginPath();ctx.moveTo(tip,y);ctx.lineTo(tip-d*8,y-5);ctx.lineTo(tip-d*8,y+5);ctx.closePath();ctx.fill();}
     for(const [x,y] of [[mF,yGround],[mB,y2]]){ctx.beginPath();ctx.arc(x,y,4,0,TAU);ctx.fillStyle=mint;ctx.fill();}ctx.restore();}}
@@ -1069,10 +1071,17 @@ function drawSimultaneity(ctx,w,h,spec,st){
  riderAt(cx,1);glow(cx,yEye,still?0:Math.max(flashAt((tau-L/2)*S),flashAt((tau-gap-L/2)*S)));
  platform();
  person(xP,still?.4*(1-smooth(since/.5)):.4);
- if(!still){if(tau>=0)ring(xF,tau*k,fade(tau*k));if(tau>=gap)ring(xB,(tau-gap)*k,fade((tau-gap)*k));strike(xF,eF);strike(xB,eB);}
+ const ringA=still?(stage===5?1-smooth(since/.5):0):1;
+ if(ringA>.01){if(tau>=0)ring(xF,tau*k,fade(tau*k)*ringA);if(tau>=gap)ring(xB,(tau-gap)*k,fade((tau-gap)*k)*ringA);}
+ if(!still){strike(xF,eF);strike(xB,eB);}
  if(!labels)return;
  tag('SEEN FROM THE TRAIN');
- if(stage===3){const a=smooth((since-at(1))/.6);equal(xB,xF,cx,top-(small?30:40),a);if(a>.01)text(ctx,'same distance',cx,top-(small?42:56),{align:'center',size:small?10:12,weight:600,color:'rgba(20,23,28,.7)'});}
+ if(stage===4){const a=smooth((since-at(0))/.6), words=a*(1-smooth((since-at(2))/.6));equal(xB,xF,cx,top-(small?30:40),a);
+  if(words>.01){ctx.save();ctx.globalAlpha=words;text(ctx,'same distance',cx,top-(small?42:56),{align:'center',size:small?10:12,weight:600,color:'rgba(20,23,28,.7)'});ctx.restore();}}
+ // Chapters 6 and 7: the train's own length, so 0.40 s reads as 40% of the time light takes to cross it.
+ if(stage>=5){const a=live?1:stage===5?smooth((since-at(0))/.6):1, y=top-(small?30:40);if(a>.01){ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=1.4;
+  trace(ctx,[[xB+3,y],[xF-3,y]]);ctx.stroke();for(const x of [xB+3,xF-3]){trace(ctx,[[x,y-5],[x,y+5]]);ctx.stroke();}
+  text(ctx,Math.abs(L-1)<1e-9?'1 light-second':L.toFixed(1)+' light-seconds',cx,top-(small?42:56),{align:'center',size:small?10:12,weight:600,color:'rgba(20,23,28,.7)'});ctx.restore();}}
  if(tau>=0||still)pill(ctx,secs(0),onStage(xF),top-(small?12:16),{align:'center',size,weight:600,color:ink});
  if(tau>=gap||still)pill(ctx,secs(gap),onStage(xB),top-(small?12:16),{align:'center',size,weight:600,color:ink});
 }
@@ -2911,6 +2920,13 @@ function paint(){
 }
 // A sentence ends at . ! or ? followed by a space or the end, so decimals such as 4.8 stay whole.
 function sentences(body){return body.match(/(?:[^.!?]|[.!?](?=[^\s.!?"”’)]))+[.!?]*["”’)]*(?:\s+|$)/g)?.map(s=>s.trim()).filter(Boolean)||[body];}
+// A subtitle too long for one line breaks after the comma nearest its middle, when both halves fit on a line, so each
+// line holds a whole phrase; otherwise the browser balances the two lines.
+function phrased(text){
+ const fit=44;if(text.length<=fit)return text;
+ let best=-1;for(let i=text.indexOf(', ');i>=0;i=text.indexOf(', ',i+1))if(best<0||Math.abs(i-text.length/2)<Math.abs(best-text.length/2))best=i;
+ return best>=0&&best+1<=fit&&text.length-best-2<=fit?text.slice(0,best+1)+'\n'+text.slice(best+2):text;
+}
 function captions(){
  let chapter, line, hint='';
  if(!started&&spec.opening){chapter=`Before you watch · ${fmt(timeline.total)}`;line=spec.opening;hint='Press play to find out.';}
@@ -2927,7 +2943,7 @@ function captions(){
  $('beat-title').textContent=chapter;
  $('try-hint').textContent=hint;
  const body=$('beat-body'), key=stage+'|'+chapter+'|'+line;
- if(key!==captionKey){captionKey=key;body.textContent=line;body.classList.remove('enter');if(mode==='playing'){void body.offsetWidth;body.classList.add('enter');}}
+ if(key!==captionKey){captionKey=key;body.textContent=phrased(line);body.classList.remove('enter');if(mode==='playing'){void body.offsetWidth;body.classList.add('enter');}}
 }
 function transport(){
  const progress=started?clamp(time/timeline.total):0, scrub=$('scrub');

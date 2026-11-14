@@ -94,31 +94,39 @@
   "scene": {
     "title": "Does \u201cat the same time\u201d depend on how you move?",
     "subtitle": "Lightning strikes both ends of a passing train at once, says the platform. The rider says the front was struck first. Both are right.",
-    "why": "There is no single \u201cnow\u201d shared across space. This idea makes the rest of special relativity, from moving clocks that run slow to the travelling twin, fit together.",
-    "opening": "If two distant things happen at the same time for you, do they happen at the same time for everyone?",
+    "why": "There is no single \u201cnow\u201d shared across space. This idea ties together the rest of special relativity, from moving clocks that run slow to the travelling twin.",
+    "opening": "If two things far apart happen at the same time for you, do they for everyone?",
     "beats": [
       {
         "title": "A test for \u201cat the same time\u201d",
-        "body": "A train at a platform is so long that light takes a full second to cross it, and lightning strikes both ends. Both flashes reach the middle of the train together. The flashes travel equal distances at the same speed, so the strikes happened at the same time."
+        "body": "Imagine a train at a platform, struck by lightning at both ends. Both flashes reach the middle of the train at the same moment. Both covered equal distances at light speed, so the strikes happened together."
       },
       {
         "title": "Same time, says the platform",
-        "body": "Now the train rushes past at 40% of light speed, and lightning strikes both ends again. Both flashes meet on the platform, halfway between the strikes. So for the platform, the two strikes happened at the same moment."
+        "body": "Now lightning strikes the train racing past at 40% of light speed. The flashes meet on the platform, halfway between the strikes. So for the platform, the strikes happened together."
       },
       {
         "title": "The rider sees the front flash first",
-        "body": "Now watch the rider: she moves toward the front flash, so it reaches her first. Isn\u2019t that only because the front flash had less far to travel?"
+        "body": "Watch it again, and follow the rider toward the front flash. So the front flash reaches her first. Is that just because it had less far to go?"
+      },
+      {
+        "title": "Seen from the train",
+        "body": "On a smooth, steady ride, nothing on board shows the train is moving. So the rider can say she sits still while the platform slides past."
       },
       {
         "title": "On the train, the front was struck first",
-        "body": "If the train moves steadily, no experiment on board can tell it is moving, so the rider may say she sits still and the platform slides back. For her, both ends are equally far away, and everyone measures the same speed of light. Yet in both views the front flash reaches her first, so for her the front was struck first."
+        "body": "Both ends are the same distance from her. And everyone measures the same speed of light. Yet the front flash reaches her first, so for her, the front was struck first."
+      },
+      {
+        "title": "How big is the gap?",
+        "body": "This train is so long that light takes a second to cross it. At 40% of light speed, she finds the front struck 0.40 seconds earlier. On a real train, the gap is about a ten-trillionth of a second."
       },
       {
         "title": "No single \u201cnow\u201d",
-        "body": "The faster or longer the train, the bigger the rider\u2019s gap between the strikes: here, 0.40 seconds. On a real train it is about a ten-trillionth of a second, far too small to notice. There is no single \u201cnow\u201d, but if one event can affect another, everyone agrees which came first."
+        "body": "So there is no single \u201cnow\u201d that everyone shares. But if one event can cause another, everyone agrees on the order."
       }
     ],
-    "takeaway": "Whether two distant events happen at the same time depends on how you move. The platform and the rider are both right, and if one event can affect another, everyone agrees which came first.",
+    "takeaway": "Whether two events far apart happen together depends on how you move. The platform and the rider are both right.",
     "mass": 0.5,
     "distance": 1,
     "controls": "both",
@@ -208,7 +216,11 @@
       "pass": true
     },
     {
-      "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+      "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 78)",
       "pass": true
     },
     {
@@ -248,7 +260,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "agent",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the picture, the model and all wording from the lab\u2019s research brief, and AI reviewers checked them in two rounds with the render checks, an accuracy review, a visual review, a first-time-reader test with a copy edit, and a blind-viewer test. The reviews below are from the second round; the small fixes they asked for were applied and checked before publishing."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the picture, the model and all wording from the lab\u2019s research brief, and AI reviewers checked them with the render checks, an accuracy review, a visual review, a first-time-reader test with a copy edit, and a blind-viewer test. After the owner found the first wording hard to read, the subtitles were rewritten the same day as short spoken lines over seven chapters and reviewed again; the reviews below are from that final review."
   },
   "revisions": [
     {
@@ -464,6 +476,235 @@
         "published/20261114T182923-simultaneity/revision-1-8.png",
         "published/20261114T182923-simultaneity/revision-1-9.png"
       ]
+    },
+    {
+      "number": 2,
+      "scene": {
+        "title": "Does \u201cat the same time\u201d depend on how you move?",
+        "subtitle": "Lightning strikes both ends of a passing train at once, says the platform. The rider says the front was struck first. Both are right.",
+        "why": "There is no single \u201cnow\u201d shared across space. This idea ties together the rest of special relativity, from moving clocks that run slow to the travelling twin.",
+        "opening": "If two things far apart happen at the same time for you, do they for everyone?",
+        "beats": [
+          {
+            "title": "A test for \u201cat the same time\u201d",
+            "body": "Imagine a train at a platform, struck by lightning at both ends. Both flashes reach the middle of the train at the same moment. Both covered equal distances at light speed, so the strikes happened together."
+          },
+          {
+            "title": "Same time, says the platform",
+            "body": "Now lightning strikes the train racing past at 40% of light speed. The flashes meet on the platform, halfway between the strikes. So for the platform, the strikes happened together."
+          },
+          {
+            "title": "The rider sees the front flash first",
+            "body": "Watch it again, and follow the rider toward the front flash. So the front flash reaches her first. Is that just because it had less far to go?"
+          },
+          {
+            "title": "Seen from the train",
+            "body": "On a smooth, steady ride, nothing on board shows the train is moving. So the rider can say she sits still while the platform slides past."
+          },
+          {
+            "title": "On the train, the front was struck first",
+            "body": "Both ends are the same distance from her. And everyone measures the same speed of light. Yet the front flash reaches her first, so for her, the front was struck first."
+          },
+          {
+            "title": "How big is the gap?",
+            "body": "This train is so long that light takes a second to cross it. At 40% of light speed, she finds the front struck 0.40 seconds earlier. On a real train, the gap is about a ten-trillionth of a second."
+          },
+          {
+            "title": "No single \u201cnow\u201d",
+            "body": "So there is no single \u201cnow\u201d that everyone shares. But if one event can cause another, everyone agrees on the order."
+          }
+        ],
+        "takeaway": "Whether two events far apart happen together depends on how you move. The platform and the rider are both right.",
+        "mass": 0.5,
+        "distance": 1,
+        "controls": "both",
+        "accent": "blue",
+        "kind": "simultaneity",
+        "ray_count": 1,
+        "show_reference": true,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "If the train moved the other way, which end would the rider say was struck first?",
+            "a": "The end at the front of its motion: whichever end she is moving toward."
+          },
+          {
+            "q": "Is the rider seeing the front flash first just because it had less far to travel?",
+            "a": "Not from her own point of view. From the platform, yes: she moves toward the front flash. But on the train both ends are equally far from her and light has the same speed both ways, so after allowing for travel time she still finds the front was struck first."
+          },
+          {
+            "q": "Who is right about whether the strikes were simultaneous?",
+            "a": "Both. Whether distant events happen at the same time depends on the observer's motion; neither view is the true one."
+          },
+          {
+            "q": "Could someone see an effect before its cause?",
+            "a": "No. Events that light (or anything slower) could connect keep their order for every observer; only events too far apart for any signal to link them can swap order."
+          },
+          {
+            "q": "Why does nobody notice this on real trains?",
+            "a": "The gap is the speed times the length divided by light speed squared: about a ten-trillionth of a second for a 300 m train at 30 m/s."
+          }
+        ],
+        "links": [
+          {
+            "text": "the travelling twin",
+            "url": "https://eman2xr.github.io/intuition-lab/?guide=20261101T170217-twin-paths"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "With the train at rest, platform and train agree the strikes were simultaneous",
+          "pass": true
+        },
+        {
+          "name": "By the train\u2019s clocks the front end is struck first, earlier by speed times length",
+          "pass": true
+        },
+        {
+          "name": "At 40% of light speed a one-light-second train finds a 0.40 s gap",
+          "pass": true
+        },
+        {
+          "name": "On the train, both struck ends are half the train\u2019s length from the rider",
+          "pass": true
+        },
+        {
+          "name": "Both flashes reach the platform\u2019s midpoint together",
+          "pass": true
+        },
+        {
+          "name": "The front flash reaches the moving rider first",
+          "pass": true
+        },
+        {
+          "name": "Allowing for light\u2019s travel time on the train still puts the front strike first",
+          "pass": true
+        },
+        {
+          "name": "A real 300 m train at 30 m/s gives about a ten-trillionth of a second",
+          "pass": true
+        },
+        {
+          "name": "A cause stays before its effect for every observer",
+          "pass": true
+        },
+        {
+          "name": "A train moving the other way finds the opposite end struck first",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 78)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 10)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 4)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Every number recomputes exactly from special relativity and all ten model checks pass: gamma 1.091; strikes 0.917 light-seconds apart on the platform; both flashes at its midpoint after 0.458 s; the rider's arrivals at 0.30 and 0.70 s by her clock; the gap v L = 0.40 s; the same interval (-0.84) in both frames; about 1e-13 s for a 300 m train at 30 m/s. Every frame is physically honest: the moving train and the platform's tiles are shortened, light keeps one on-screen speed in both views, and every strike and arrival plays under the sentence that names it.",
+        "changes": [
+          "Restored 'for her' on the front-first conclusion and 'On the train' in its title.",
+          "Restored 'steady' on the principle of relativity and 'about' on the real-train figure.",
+          "Chapter 6 now names the speed (40% of light speed) as well as the length behind the 0.40 s."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Every frame shows what its subtitle says, and every intended timing holds when recomputed from the drawing and the subtitle pacing: the flashes meet as the second line starts in chapters 1 and 2, the front flash reaches the rider as 'So the front flash reaches her first.' begins, and the front-first strikes play under chapter 5's third line. The seven short chapters read more calmly than the five long ones; labels peak at 10 words and the readout matches the end clocks.",
+        "changes": [
+          "The light rings fade out when a platform replay pauses.",
+          "The rider no longer lights up in chapter 2, so chapter 3's reveal is not given away.",
+          "The last rings fade as chapter 6 begins, and chapter 6 marks the train's length, 1 light-second."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The idea: whether two events far apart happen at the same time depends on how you move, so there is no single 'now' shared across space. The rewrite reads like spoken English: short lines, nearly all one idea each, and a first-time reader can follow the step from the platform's view to the rider's and answer the transfer questions from the guide alone.",
+        "changes": [
+          "Chapter 2 now opens with one picture instead of two joined clauses.",
+          "A bare 'it' became 'the front flash'.",
+          "Chapter 6 says where 0.40 seconds comes from; two-line subtitles now break at the comma."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "From the pictures alone: flashes hit both ends of the moving train at the same moment for the platform (both stamped 0.00 s), the watcher midway gets both lights together, and the rider, carried toward the front flash, gets that one first; seen from the train, where she sits still midway, that early arrival means the front end was struck first, by 0.40 s. The shortening of the moving train and of the platform's tiles matches the drawn speed.",
+        "changes": [
+          "Chapter 6 now differs from chapter 5: it marks the train's length.",
+          "The rings no longer pile up as a frozen arch in the platform replays."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261114T182923-simultaneity/revision-2-0.png",
+        "published/20261114T182923-simultaneity/revision-2-1.png",
+        "published/20261114T182923-simultaneity/revision-2-2.png",
+        "published/20261114T182923-simultaneity/revision-2-3.png",
+        "published/20261114T182923-simultaneity/revision-2-4.png",
+        "published/20261114T182923-simultaneity/revision-2-5.png",
+        "published/20261114T182923-simultaneity/revision-2-6.png",
+        "published/20261114T182923-simultaneity/revision-2-7.png",
+        "published/20261114T182923-simultaneity/revision-2-8.png",
+        "published/20261114T182923-simultaneity/revision-2-9.png",
+        "published/20261114T182923-simultaneity/revision-2-10.png",
+        "published/20261114T182923-simultaneity/revision-2-11.png",
+        "published/20261114T182923-simultaneity/revision-2-12.png",
+        "published/20261114T182923-simultaneity/revision-2-13.png"
+      ]
     }
-  ]
+  ],
+  "updated": "2026-11-14T20:04:31Z"
 }

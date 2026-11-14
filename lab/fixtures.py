@@ -89,7 +89,7 @@ CLOCK_SCENE = {**deepcopy(SCENE),
     'beats':[
         {'title':'Start with matching clocks.', 'body':'Without this mass, both hands move together. We start them at the same position.'},
         {'title':'Add the mass. Watch the lower hand.', 'body':'The lower clock accumulates less time over the comparison. Each clock still ticks normally for someone right beside it.'},
-        {'title':'Move both clocks farther out.', 'body':'Increase the lower clock radius: both clocks move outward, keeping the same separation. The rate difference shrinks. The hand-speed difference is exaggerated to make it visible.'},
+        {'title':'Move both clocks farther out.', 'body':'Raise the lower clock: both clocks move outward, the same distance apart. The rate difference shrinks. The hand-speed difference is exaggerated to make it visible.'},
     ],
     'takeaway':'Gravity changes how much time stationary clocks accumulate between comparisons.'}
 
@@ -104,8 +104,8 @@ ENGINE_SCENES = {
     'SPEED LIMIT': _engine_scene('Why nothing can travel faster than light', [
         ('Push again and again', 'One push brings the rocket to half light speed. Everyday adding says a second push reaches light speed and a third goes faster.'),
         ('Light does not add', 'As the rocket passes a lamp on the ground, both lamps flash together. Seen from the ground, the two flashes travel side by side at light speed.'),
-        ('The crew’s view', 'The crew time their flash too: it pulls away from them at full light speed. They push again, and the same flash still pulls away at that speed, so they never gain on it.'),
-        ('Each push adds less', 'The crew feel every push the same, yet from the ground a second push brings the rocket to 80%, a third to 93%. Every push adds less, creeping toward light speed but never reaching it.')], 'blue', mass=1, duration=40),
+        ('The crew’s view', 'The crew time their flash too: it pulls away from them at full light speed. They push again, and the flash still pulls away at that speed.'),
+        ('Each push adds less', 'Every push feels the same, yet from the ground the rocket reaches 80%, then 93%. Every push adds less, creeping toward light speed but never reaching it.')], 'blue', mass=1, duration=40),
     'SPACETIME DIAGRAM': _engine_scene('Two twins, two paths through spacetime', [
         ('Nobody moves: the twins age together.', 'With zero speed the traveller never leaves. Both columns of ticks line up.'),
         ('Now the traveller flies out and back.', 'The traveller’s dots are spaced farther apart. Fewer of them fit before the twins meet again.'),
@@ -144,8 +144,8 @@ ENGINE_SCENES = {
         ('Narrow the gap, lengthen the waves.', 'A narrower gap or longer waves make the spreading wider.')], 'blue', .6, 1.4),
     'LIGHT CLOCK (WHY A MOVING': _engine_scene('Why a moving clock ticks slowly', [
         ('A parked rocket: the clocks agree.', 'With the rocket at rest, both light clocks tick together.'),
-        ('The rocket moves.', 'Seen from Earth, the rocket clock\u2019s light must slant to hit its moving mirrors, so it ticks less often.'),
-        ('Slow down, then speed up.', 'At low speed the clocks nearly agree; near light speed the rocket clock nearly stops.')], 'blue', .9),
+        ('The rocket moves.', 'Seen from Earth, the rocket clock\u2019s light must slant, so it ticks less often.'),
+        ('Slow down, then speed up.', 'At low speed the clocks agree; near light speed the rocket clock nearly stops.')], 'blue', .9),
     'TWIN TRIP.': _engine_scene('Two twins, one trip', [
         ('Nobody leaves.', 'With the rocket on Earth, both clocks and both rows of birthdays keep pace.'),
         ('The traveller flies to a star and back.', 'The traveller’s clock turns more slowly. Fewer birthdays pile up.'),

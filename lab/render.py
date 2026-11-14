@@ -53,6 +53,9 @@ LABEL_WORDS_AT_ONCE = 12
 LABEL_WORDS_EACH = 5
 
 
+SUBTITLE_CHARACTERS = 80
+
+
 def label_words(label):
     return len([t for t in str(label).split() if re.search(r'[A-Za-z0-9]', t)])
 
@@ -95,6 +98,9 @@ def capture(scene, directory, research=None, provider='fixture', root=None):
             most_lines = max(len(chapter['lines']) for chapter in page.evaluate('CouncilScene.timeline()')['chapters'])
             checks.append({'name': f'Each chapter has at most 3 subtitle sentences (most: {most_lines})', 'pass': most_lines <= 3})
             checks.append({'name': f'Each subtitle stays up at least {shortest:.1f} s (minimum 2.5)', 'pass': shortest >= 2.5})
+            # Subtitles read like film subtitles: short lines, at most about two lines on screen.
+            longest = max(len(l['text']) for l in lines)
+            checks.append({'name': f'Every subtitle is at most {SUBTITLE_CHARACTERS} characters (longest: {longest})', 'pass': longest <= SUBTITLE_CHARACTERS})
             interaction = page.evaluate('''async () => {
                 const slider=document.getElementById('mass'); slider.value='0';
                 slider.dispatchEvent(new Event('input'));
