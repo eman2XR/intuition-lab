@@ -19,12 +19,17 @@ def main():
             index=ROOT/'web'/'published'/'index.json'
             entries=json.loads(index.read_text()) if index.exists() else []
             if entries:
-                # Home: the newest investigation is featured; every other one appears once in the grid.
-                lead=max(entries,key=lambda e:e.get('created',''))['id']
-                page.wait_for_function('n=>document.querySelectorAll("#gallery a[data-guide]").length>=n',arg=len(entries)-1)
-                assert page.locator(f'#featured a[data-guide="{lead}"]').count()==1, 'Newest investigation is not featured'
-                assert page.locator('#gallery a[data-guide]').count()==len(entries)-1
-                assert page.locator(f'#gallery a[data-guide="{lead}"]').count()==0, 'Featured investigation repeated in the grid'
+                # Home: the newest investigation that is not archived is featured; every other listed one appears once
+                # in the grid, and archived ones only in the closed Archived section.
+                shown=[e for e in entries if not e.get('archived')]
+                archived=[e for e in entries if e.get('archived')]
+                lead=max(shown,key=lambda e:e.get('created',''))['id'] if shown else None
+                page.wait_for_function('n=>document.querySelectorAll("#gallery a[data-guide]").length>=n',arg=len(entries)-(1 if lead else 0))
+                if lead:
+                    assert page.locator(f'#featured a[data-guide="{lead}"]').count()==1, 'Newest investigation is not featured'
+                    assert page.locator(f'#gallery a[data-guide="{lead}"]').count()==0, 'Featured investigation repeated in the grid'
+                assert page.locator('#gallery > .thumbs a[data-guide]').count()==max(0,len(shown)-1), 'Grid does not list every other investigation once'
+                assert page.locator('#gallery .archived-shelf a[data-guide]').count()==len(archived), 'Archived investigations are not in the Archived section'
             for entry in entries or [{'id':'example'}]:
                 page.goto(url+'?guide='+entry['id'],wait_until='networkidle')
                 page.wait_for_function('(id)=>{const r=document.getElementById("record").textContent;return r&&(id==="example"||JSON.parse(r).id===id)}',arg=entry['id'])

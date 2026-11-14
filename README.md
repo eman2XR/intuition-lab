@@ -109,7 +109,7 @@ Runs are saved in `web/runs/<id>/record.json` with scenes, frames, source notes,
 
 ## Daily investigations
 
-Scheduled runs come from a separate worker checkout, `~/Projects/intuition-lab-worker`, because launchd cannot run a project kept on the Desktop or in Documents (macOS privacy protection). Manual runs work from any checkout.
+The owner runs the lab from a Claude Code loop in a session on this checkout, so it only works while that session is open. A Claude Code session cannot run the agent CLI itself, so the loop does each day's research, picture and guide in the session and runs the reviews as subagents. The commands below run the full agent pipeline from a Terminal. A launchd schedule (further below) is optional and needs a checkout outside Desktop and Documents, because macOS privacy protection blocks launchd there.
 
 Run one daily cycle using existing Claude Code authentication:
 
@@ -131,7 +131,7 @@ To set a published guide aside without deleting it, use `python3 -m lab archive 
 
 ### Schedule on macOS
 
-Generate a launch-agent configuration for 9 AM local time, in the worker checkout:
+Optional, and not used at the moment. Generate a launch-agent configuration for 9 AM local time, in a checkout outside Desktop and Documents:
 
 ```sh
 python3 -m lab schedule --provider claude --hour 9 --count 1
@@ -175,7 +175,7 @@ The home page features the newest published guide and lists every other one, new
 
 ## Install on iPhone
 
-Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, and send the code it shows to the owner. The owner runs this once in the worker folder (`~/Projects/intuition-lab-worker`):
+Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, and send the code it shows to the owner. The owner runs this once in this checkout:
 
 ```sh
 python3 -m lab push add '<code>'

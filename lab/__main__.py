@@ -13,7 +13,7 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive'])
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','checkin'])
     parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--topic',choices=list(TOPICS),default='light-bending')
     parser.add_argument('--question',help='Optional question for a single run; defaults to the topic question.')
     args=parser.parse_args()
-    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive'):
+    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive','checkin'):
         parser.error('unexpected arguments: '+' '.join(args.push_args))
     if not 1<=args.rounds<=4:
         parser.error('--rounds must be 1–4')
@@ -80,6 +80,20 @@ def main():
             print(f'Merged candidate into main at {approve_engine(ROOT,args.push_args[0])}.')
         except ValueError as error:
             parser.exit(2,f'Cannot approve this engine: {error}\n')
+        return
+    if args.command=='checkin':
+        # A daily run done by hand in a session (the session loop) records its one-line outcome on the site's lab panel,
+        # as a scheduled run's check-in would, and publishes the status file.
+        from .dashboard import Dashboard
+        from .daily import publish
+        if len(args.push_args)!=1 or not args.push_args[0].strip():
+            parser.error('checkin needs one quoted line saying what the run did')
+        Dashboard(ROOT).checked(args.push_args[0])
+        try:
+            publish(ROOT)
+        except Exception as error:
+            parser.exit(1,f'Checked in locally; publication is pending ({type(error).__name__}: {str(error)[:160]}).\n')
+        print('Checked in on the lab panel.')
         return
     if args.command in ('archive','unarchive'):
         # Hide a published guide from the home page, or list it again. The guide folder stays in place; only the index

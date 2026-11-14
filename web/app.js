@@ -263,7 +263,7 @@ function renderNext(){
   // One short phrase; the exact time is in the tooltip.
   put('next-title',labActive?'':`Next run in ${hours?hours+' h ':''}${minutes} min`);$('next-title').title=label;
   if(labPreview)labPreview.shown='';
-  put('dashboard-schedule','One new investigation each morning. Only investigations that pass physics and visual review are published.');
+  put('dashboard-schedule','About one new investigation a day. Only investigations that pass physics and visual review are published.');
  }else{
   put('next-title',schedule?.state==='paused'?'Improving how investigations are made':schedule?.state==='blocked'?'Schedule paused':'No schedule confirmed');
   put('dashboard-schedule',schedule?.state==='paused'?'The lab is improving how investigations are made. Published ones stay available.':schedule?.state==='blocked'?'The background worker needs setup before daily runs resume.':'Investigations are started by hand for now.');
@@ -369,7 +369,7 @@ function simStrip(model,key){
  $('steps').hidden=at<0;$('steps').replaceChildren(...STEPS.map((name,j)=>el('li',{className:j<at?'done':j===at?'active':'',textContent:name})));
  const note=noteList()[0];
  put('dashboard-phase',!note?'':model.mode==='working'?'Your note is taped to the board for the designer, writer and reviewers.':model.outcome==='published'?'In a real run, the lab replies on your note with what it did.':'');
- put('dashboard-freshness','');put('dashboard-schedule','Nothing here is sent or published. The real lab runs at 9 AM.');
+ put('dashboard-freshness','');put('dashboard-schedule','Nothing here is sent or published. The real lab runs once a day.');
  markStates();
 }
 function stopPreview(){labPreview=null;markStates();refreshDashboard();drawLabStill();}
@@ -384,11 +384,11 @@ function tryState(label){
 // Guidance notes: the owner's GitHub issues labelled council:guidance wait for the next run, which follows them where
 // they fit the quality bar, replies on each and closes it. Notes pinned on this page stay in this browser until sent.
 const NOTE_TAIL='\n\nA guidance note from the lab on the home page.';
-// One note to the lab, routed to the label the 9 AM run reads: a question, an idea for what to work on, or feedback.
+// One note to the lab, routed to the label the daily run reads: a question, an idea for what to work on, or feedback.
 function tellURL(kind,text){
  if(kind==='guidance')return issueURL('council:guidance',`Guidance: ${text}`.slice(0,120),text+NOTE_TAIL);
  if(kind==='feedback')return issueURL('council:feedback',`Feedback: ${text}`.slice(0,120),`${text}\n\nSent from the Intuition Lab home page.`);
- return issueURL('council:question',`Question: ${text}`.slice(0,120),`${text}\n\nAsked from the Intuition Lab home page. The next 9 AM run reads it.`);
+ return issueURL('council:question',`Question: ${text}`.slice(0,120),`${text}\n\nAsked from the Intuition Lab home page. The next daily run reads it.`);
 }
 let guideIssues=[];
 const localNotes=()=>{try{return JSON.parse(localStorage.getItem('council-notes')||'[]');}catch{return [];}};
@@ -403,8 +403,8 @@ function renderNotes(){
  const list=$('guide-notes');if(!list)return;
  list.replaceChildren(...noteList().map(n=>{
   const item=el('li',{},el('span',{className:'note-text',textContent:n.text}));
-  if(n.url)item.append(el('a',{className:'state',href:n.url,target:'_blank',rel:'noopener noreferrer',textContent:n.status==='applied'?'Used · read the reply':'Waiting for the 9 AM run'}));
-  else{item.append(el('a',{className:'state',target:'_blank',rel:'noopener noreferrer',textContent:'Waiting for the 9 AM run',href:tellURL('guidance',n.text)}));
+  if(n.url)item.append(el('a',{className:'state',href:n.url,target:'_blank',rel:'noopener noreferrer',textContent:n.status==='applied'?'Used · read the reply':'Waiting for the next run'}));
+  else{item.append(el('a',{className:'state',target:'_blank',rel:'noopener noreferrer',textContent:'Waiting for the next run',href:tellURL('guidance',n.text)}));
    const drop=el('button',{type:'button',className:'note-drop',textContent:'×',title:'Remove this note'});drop.setAttribute('aria-label','Remove this note');
    drop.onclick=()=>{saveNotes(localNotes().filter(x=>x.id!==n.id));renderNotes();};item.append(drop);}
   return item;}));
