@@ -3,6 +3,7 @@ takes effect in a minute or two instead of at the next morning run. Run by .gith
 `python -m lab.archive_issue "$GITHUB_EVENT_PATH"`. Any request this misses stays open and the daily run applies it
 (lab.daily.apply_archive)."""
 import json
+import os
 import subprocess
 import sys
 from datetime import date
@@ -45,6 +46,10 @@ def main(event_path, root=ROOT):
         return 0
     notes = apply_archive([request], root, date.today().isoformat())
     print(' '.join(notes) or 'The request was answered without a change.', flush=True)
+    # The workflow republishes the site only when a guide actually changed.
+    if notes and os.environ.get('GITHUB_OUTPUT'):
+        with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+            output.write('changed=true\n')
     return 0
 
 

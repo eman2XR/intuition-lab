@@ -590,6 +590,16 @@ class ArchiveIssueTests(unittest.TestCase):
             with patch('lab.archive_issue.still_open',return_value=True),patch('lab.archive_issue.apply_archive',return_value=['Archived the guide run-1.']) as apply:
                 archive_issue.main(path,root=Path(tmp))
             self.assertEqual(apply.call_args.args[0][0]['number'],7)
+            # A change asks the workflow to republish the site; an answered request without a change does not.
+            output=Path(tmp)/'output'
+            with patch.dict(os.environ,{'GITHUB_OUTPUT':str(output)}),patch('lab.archive_issue.still_open',return_value=True),\
+                 patch('lab.archive_issue.apply_archive',return_value=[]):
+                archive_issue.main(path,root=Path(tmp))
+            self.assertFalse(output.exists())
+            with patch.dict(os.environ,{'GITHUB_OUTPUT':str(output)}),patch('lab.archive_issue.still_open',return_value=True),\
+                 patch('lab.archive_issue.apply_archive',return_value=['Archived the guide run-1.']):
+                archive_issue.main(path,root=Path(tmp))
+            self.assertEqual(output.read_text(),'changed=true\n')
             # The second event for the same issue finds it closed and applies nothing.
             with patch('lab.archive_issue.still_open',return_value=False),patch('lab.archive_issue.apply_archive') as apply:
                 archive_issue.main(path,root=Path(tmp))

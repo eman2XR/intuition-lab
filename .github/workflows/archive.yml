@@ -32,6 +32,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Apply the request
+        id: apply
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -40,6 +41,7 @@ jobs:
           python -m lab.archive_issue "$GITHUB_EVENT_PATH"
       # A push made with the workflow token does not start other workflows, so the site is republished explicitly.
       - name: Republish the site
+        if: steps.apply.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref main --repo "$GITHUB_REPOSITORY"
