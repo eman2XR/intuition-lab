@@ -5,7 +5,8 @@
     "topic": "light-clock",
     "created": "2026-11-15T20:19:17.474375+00:00",
     "curriculum": "2.1",
-    "title": "Why does a moving clock tick slowly?"
+    "title": "Why does a moving clock tick slowly?",
+    "theme": "night"
   },
   {
     "id": "20261114T182923-simultaneity",
@@ -14,7 +15,8 @@
     "created": "2026-11-14T18:29:23.913812+00:00",
     "curriculum": "2.2",
     "title": "Does \u201cat the same time\u201d depend on how you move?",
-    "updated": "2026-11-15T04:24:43Z"
+    "updated": "2026-11-15T04:24:43Z",
+    "theme": "sky"
   },
   {
     "id": "20261102T170016-a02e7bd6",
@@ -24,7 +26,8 @@
     "curriculum": "2.4",
     "title": "Why can nothing travel faster than light?",
     "updated": "2026-11-09T03:17:36Z",
-    "archived": true
+    "archived": true,
+    "theme": "night"
   },
   {
     "id": "20261101T172324-12e71822",
@@ -33,7 +36,8 @@
     "created": "2026-11-01T17:23:24.058415+00:00",
     "curriculum": "6.1",
     "title": "Why is the night sky dark?",
-    "updated": "2026-11-01T19:19:30Z"
+    "updated": "2026-11-01T19:19:30Z",
+    "theme": "night"
   },
   {
     "id": "20261101T170219-falling-lift",
@@ -41,7 +45,8 @@
     "topic": "lift",
     "created": "2026-11-01T17:02:19+00:00",
     "title": "How much do you weigh in a falling lift?",
-    "updated": "2026-11-01T17:02:19Z"
+    "updated": "2026-11-01T17:02:19Z",
+    "theme": "rose"
   },
   {
     "id": "20261101T170218-who-is-falling",
@@ -49,7 +54,8 @@
     "topic": "fall-views",
     "created": "2026-11-01T17:02:18+00:00",
     "title": "Who is really falling?",
-    "updated": "2026-11-01T17:02:18Z"
+    "updated": "2026-11-01T17:02:18Z",
+    "theme": "sage"
   },
   {
     "id": "20261101T170217-twin-paths",
@@ -57,7 +63,8 @@
     "topic": "spacetime-paths",
     "created": "2026-11-01T17:02:17+00:00",
     "title": "Why the travelling twin comes home younger",
-    "updated": "2026-11-01T17:02:17Z"
+    "updated": "2026-11-01T17:02:17Z",
+    "theme": "mist"
   },
   {
     "id": "20261101T170216-curvature",
@@ -65,7 +72,8 @@
     "topic": "tides",
     "created": "2026-11-01T17:02:16+00:00",
     "title": "What curved spacetime really means",
-    "updated": "2026-11-01T17:02:16Z"
+    "updated": "2026-11-01T17:02:16Z",
+    "theme": "lilac"
   },
   {
     "id": "20261101T170215-moon-two-tides",
@@ -73,7 +81,8 @@
     "topic": "moon-tides",
     "created": "2026-11-01T17:02:15+00:00",
     "title": "Why the Moon raises two tides, not one",
-    "updated": "2026-11-01T17:02:15Z"
+    "updated": "2026-11-01T17:02:15Z",
+    "theme": "sky"
   },
   {
     "id": "20261101T170214-river-black-hole",
@@ -81,7 +90,8 @@
     "topic": "river",
     "created": "2026-11-01T17:02:14+00:00",
     "title": "Why light can\u2019t escape a black hole",
-    "updated": "2026-11-01T17:02:14Z"
+    "updated": "2026-11-01T17:02:14Z",
+    "theme": "sand"
   },
   {
     "id": "20261101T071813-sky-colour",
@@ -89,7 +99,8 @@
     "topic": "sky-colour",
     "created": "2026-11-01T07:18:13+00:00",
     "title": "Why is the sky blue, but the sunset red?",
-    "updated": "2026-11-02T01:58:05Z"
+    "updated": "2026-11-02T01:58:05Z",
+    "theme": "mist"
   },
   {
     "id": "20261101T071812-shared-birthdays",
@@ -97,7 +108,8 @@
     "topic": "birthdays",
     "created": "2026-11-01T07:18:12+00:00",
     "title": "Why do 23 people give even odds of a shared birthday?",
-    "updated": "2026-11-01T07:18:12Z"
+    "updated": "2026-11-01T07:18:12Z",
+    "theme": "rose"
   },
   {
     "id": "20261029T175059-82fa6e44",
@@ -107,7 +119,8 @@
     "curriculum": "5.1",
     "title": "How \u201cAttention Is All You Need\u201d led to ChatGPT",
     "updated": "2026-11-01T18:08:37Z",
-    "featured": "2026-11-15T04:49:22Z"
+    "featured": "2026-11-15T04:49:22Z",
+    "theme": "lilac"
   },
   {
     "id": "20261027T163256-3e5bd32e",
@@ -116,7 +129,8 @@
     "created": "2026-10-27T16:32:56.404366+00:00",
     "curriculum": "3.4",
     "title": "Why waves fan out after a narrow gap",
-    "updated": "2026-11-01T18:08:37Z"
+    "updated": "2026-11-01T18:08:37Z",
+    "theme": "sage"
   },
   {
     "id": "20261027T163007-b6176074",
@@ -125,7 +139,8 @@
     "created": "2026-10-27T16:30:07.534725+00:00",
     "curriculum": "4.3",
     "title": "Why a particle can\u2019t have an exact place and an exact speed",
-    "updated": "2026-11-02T01:58:05Z"
+    "updated": "2026-11-02T01:58:05Z",
+    "theme": "lilac"
   },
   {
     "id": "20261027T162558-9d749f98",
@@ -134,7 +149,8 @@
     "created": "2026-10-27T16:25:58.551402+00:00",
     "curriculum": "4.2",
     "title": "Why a trapped particle can only have certain energies",
-    "updated": "2026-11-01T18:08:37Z"
+    "updated": "2026-11-01T18:08:37Z",
+    "theme": "sand"
   },
   {
     "id": "20261027T160931-173edbbc",
@@ -143,7 +159,8 @@
     "created": "2026-10-27T16:09:31.841062+00:00",
     "curriculum": "3.2",
     "title": "Why a guitar string plays only certain notes",
-    "updated": "2026-11-01T18:08:37Z"
+    "updated": "2026-11-01T18:08:37Z",
+    "theme": "sky"
   },
   {
     "id": "20261027T160200-e017fbe8",
@@ -152,7 +169,8 @@
     "created": "2026-10-27T16:02:00.292831+00:00",
     "curriculum": "3.1",
     "title": "When two waves meet: ripples that add, cancel and draw stripes",
-    "updated": "2026-11-01T18:08:37Z"
+    "updated": "2026-11-01T18:08:37Z",
+    "theme": "mist"
   },
   {
     "id": "20261027T154449-550db489",
@@ -162,7 +180,8 @@
     "curriculum": "1.2",
     "title": "Why does gravity bend light?",
     "updated": "2026-11-01T18:08:37Z",
-    "featured": "2026-11-15T20:25:48Z"
+    "featured": "2026-11-15T20:25:48Z",
+    "theme": "sand"
   },
   {
     "id": "20261027T041411-61589ffe",
@@ -170,6 +189,7 @@
     "topic": "gravity-clocks",
     "created": "2026-10-27T04:14:11.455135+00:00",
     "title": "Why clocks at different heights tick at different rates",
-    "updated": "2026-11-02T01:58:05Z"
+    "updated": "2026-11-02T01:58:05Z",
+    "theme": "sage"
   }
 ]

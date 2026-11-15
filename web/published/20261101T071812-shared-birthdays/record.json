@@ -73,7 +73,8 @@
     "q": "Real birthdays bunch up in some months. Does that make a match more or less likely?",
     "a": "Slightly more likely: when some dates are more common, two people land on the same one a little more often. 23 people still give just over even odds."
    }
-  ]
+  ],
+  "theme": "rose"
  },
  "checks": [
   {

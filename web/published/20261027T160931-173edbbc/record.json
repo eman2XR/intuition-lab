@@ -76,7 +76,8 @@
     "controls": "second",
     "kind": "standing-waves",
     "why": "It is why a guitar or violin string sounds a clear note, not a noise. Pressing a string down shortens it, so it swings faster and the note goes up.",
-    "opening": "Why does a guitar string ring only at certain notes, not just any pitch?"
+    "opening": "Why does a guitar string ring only at certain notes, not just any pitch?",
+    "theme": "sky"
   },
   "checks": [
     {

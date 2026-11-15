@@ -81,7 +81,8 @@
     "q": "What would a clock carried at light speed show?",
     "a": "No time at all. The closer a clock gets to light speed, the slower it ticks; at light speed itself it would stop, though no clock can ever quite get there."
    }
-  ]
+  ],
+  "theme": "mist"
  },
  "checks": [
   {

@@ -100,7 +100,8 @@
     "controls": "both",
     "kind": "quantum-well",
     "why": "This is why each kind of atom glows only in certain colours, which is how astronomers tell what distant stars are made of. Quantum-dot TV screens get their colours from the same rule.",
-    "opening": "A ball in a pit can roll with any energy. Why can an electron trapped in an atom have only certain energies?"
+    "opening": "A ball in a pit can roll with any energy. Why can an electron trapped in an atom have only certain energies?",
+    "theme": "sand"
   },
   "checks": [
     {

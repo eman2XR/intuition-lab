@@ -2,6 +2,8 @@
  color-scheme:light;
  --bg:#fff;--paper:#faf7f1;--ink:#1b1b1b;--muted:#4f5157;--faint:#6b6e74;--line:#e6e2da;--track:#e7e3dc;
  --orange:#e2832b;--orange-ink:#b45309;--brown:#7a5434;--beige:#efe8dc;--accent:#2563eb;--warm:#ea580c;
+ /* Each guide's theme sets these on its page (CouncilDraw.theme); the defaults are the paper theme. */
+ --page:#fff;--stage-top:#fbf8f1;--stage-bottom:#f3eee3;--theme-accent:var(--orange);--end-card:rgba(239,232,220,.92);
  --serif:ui-serif,"New York","Iowan Old Style","Charter","Source Serif Pro",Georgia,serif;
  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif;
@@ -148,7 +150,7 @@ body[data-view=article] .lab-wrap{display:none}
 /* Article head */
 .hero{padding:40px 0 8px}
 .hero-head{max-width:860px;margin:0 auto 34px;text-align:center}
-.category{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);padding-bottom:5px;border-bottom:2px solid var(--orange);margin-bottom:18px}
+.category{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);padding-bottom:5px;border-bottom:2px solid var(--theme-accent);margin-bottom:18px}
 h1{font:700 clamp(34px,4.6vw,58px)/1.08 var(--serif);letter-spacing:-.015em;margin:0 0 18px;white-space:pre-line;text-wrap:balance}
 /* Under the title: one line on why it matters, then when the guide was published or last updated. */
 .dek{font:400 clamp(17px,1.5vw,20px)/1.5 var(--serif);color:var(--muted);max-width:52ch;margin:0 auto 14px;text-wrap:pretty}
@@ -171,10 +173,15 @@ h1{font:700 clamp(34px,4.6vw,58px)/1.08 var(--serif);letter-spacing:-.015em;marg
 .tag[data-status=unverified],.tag[data-status=needs_review],.tag[data-status=failed]{background:#fdf1e6;color:#9a3d0a}
 
 /* The interactive figure */
-.workspace{margin:0 calc(50% - 50vw + 32px);max-width:none;background:var(--bg)}
+.workspace{margin:0 calc(50% - 50vw + 32px);max-width:none;background:var(--page)}
+body[data-view=article]{background:var(--page)}
+body[data-view=article] .top{background:#fff}
 @media (min-width:1304px){.workspace{margin:0 -32px}}
 /* One box holds the scene, its subtitle and the playback bar, like a video with subtitles. */
-.viewer{position:relative;background:linear-gradient(180deg,#fbf8f1 0%,#f3eee3 100%)}
+.viewer{position:relative;background:linear-gradient(180deg,var(--stage-top) 0%,var(--stage-bottom) 100%)}
+/* A dark stage is a band of its own, like a magazine's full-bleed art; the subtitles below stay on the page. */
+body[data-stage=dark] .viewer{background:var(--page)}
+body[data-stage=dark] .stage{background:linear-gradient(180deg,var(--stage-top),var(--stage-bottom))}
 .stage{position:relative;height:clamp(260px,calc(100svh - 360px),580px)}
 #universe{position:absolute;inset:0;width:100%;height:100%;display:block}
 .stage-note{position:absolute;left:20px;top:16px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.85);padding:4px 11px;border-radius:999px}
@@ -187,7 +194,7 @@ h1{font:700 clamp(34px,4.6vw,58px)/1.08 var(--serif);letter-spacing:-.015em;marg
 .chapter-label{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--faint)}
 .chapter-label:empty{display:none}
 .caption-line{font:500 clamp(21px,2vw,27px)/1.4 var(--serif);max-width:44ch;text-wrap:balance;white-space:pre-line;color:var(--ink);min-height:2.9em}
-.workspace.ended .captions{background:rgba(239,232,220,.92);border-radius:16px;margin:0 auto 18px;padding:22px 32px 24px;max-width:860px}
+.workspace.ended .captions{background:var(--end-card);border-radius:16px;margin:0 auto 18px;padding:22px 32px 24px;max-width:860px}
 .workspace.ended .chapter-label{color:var(--brown)}
 .workspace.ended .caption-line{font-weight:700}
 .try-hint{font-size:14px;color:var(--brown);max-width:60ch}
@@ -250,7 +257,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 
 /* The featured investigation: a large preview beside its title */
 .card{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:48px;align-items:start}
-.card-media{position:relative;aspect-ratio:16/9;background:linear-gradient(180deg,#fbf8f1,#f2ece1);overflow:hidden}
+.card-media{position:relative;aspect-ratio:16/9;background:linear-gradient(180deg,var(--card-top,#fbf8f1),var(--card-bottom,#f2ece1));overflow:hidden}
 .thumb{position:absolute;inset:0;width:100%;height:100%}
 .mini-play{position:absolute;left:16px;bottom:16px;width:40px;height:40px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
 .mini-play::after{content:"";position:absolute;left:16px;top:13px;border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent}

@@ -85,7 +85,8 @@
     "controls": "first",
     "kind": "wave-packet",
     "why": "This is the uncertainty principle, a central rule of quantum physics. It is not a flaw in our instruments, and it is part of why atoms have a size at all instead of collapsing.",
-    "opening": "Why can\u2019t a particle have an exact place and an exact speed at the same time?"
+    "opening": "Why can\u2019t a particle have an exact place and an exact speed at the same time?",
+    "theme": "lilac"
   },
   "checks": [
     {

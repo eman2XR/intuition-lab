@@ -75,7 +75,8 @@
     "q": "Why are the biggest tides at new moon and full moon?",
     "a": "The Sun stretches the oceans too, about half as strongly as the Moon. At new and full moon, the Sun, Earth and Moon line up and the two stretches add."
    }
-  ]
+  ],
+  "theme": "sky"
  },
  "checks": [
   {

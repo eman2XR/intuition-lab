@@ -85,7 +85,8 @@
     "q": "You jump off a diving board with a small scale strapped under your feet. What does it read on the way down?",
     "a": "Zero. You and the scale fall together, so nothing presses on it."
    }
-  ]
+  ],
+  "theme": "rose"
  },
  "checks": [
   {

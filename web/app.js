@@ -48,8 +48,17 @@ function heading(scene){
  put('title',scene.title);$('why').replaceChildren(...linked(scene.why||scene.subtitle||'',scene.links));
 }
 
+// The guide page takes its guide's theme: page tint, stage colours, accent and end card.
+function applyTheme(scene){
+ const th=CouncilDraw.theme(scene||{}), r=document.documentElement.style;
+ for(const [k,v] of [['--page',th.page],['--stage-top',th.top],['--stage-bottom',th.bottom],['--theme-accent',th.accent],['--end-card',th.end]])r.setProperty(k,v);
+ document.body.dataset.stage=th.dark?'dark':'light';
+}
+// A card shows its guide's stage colours behind the preview.
+function themed(media,entry,record){const th=CouncilDraw.theme(record?.scene||{theme:entry.theme,kind:entry.topic||entry.kind});
+ media.style.setProperty('--card-top',th.top);media.style.setProperty('--card-bottom',th.bottom);return media;}
 function show(data){
- current=data;const scene=data.scene, fixture=data.provider==='fixture', draft=data.provider==='draft';
+ current=data;if(VIEW==='article')applyTheme(data.scene);const scene=data.scene, fixture=data.provider==='fixture', draft=data.provider==='draft';
  document.body.dataset.draft=draft?'yes':'';delete document.body.dataset.pending;
  if(scene){heading(scene);CouncilScene.load(scene);}
  const title=(scene?.title||'').replace(/\n/g,' ');
@@ -123,7 +132,7 @@ function card(entry,record){
  const isExample=entry.id==='example', id=entry.id;
  const link=el('a',{href:isExample?'?guide=example':(entry.draft?'?draft=':'?guide=')+encodeURIComponent(id),className:'card'});
  if(!isExample)link.dataset.guide=id;
- const media=el('div',{className:'card-media'},preview(!isExample&&keyOf(entry),record),el('span',{className:'mini-play',ariaHidden:'true'}));
+ const media=themed(el('div',{className:'card-media'},preview(!isExample&&keyOf(entry),record),el('span',{className:'mini-play',ariaHidden:'true'})),entry,record);
  const badge=el('span',{className:'badge'});
  if(current&&(current.id===id||(isExample&&current.provider==='fixture'))){badge.textContent='Now showing';badge.dataset.kind='now';}
  else if(!isExample&&revisedAt(entry,record)){badge.textContent='Updated';badge.dataset.kind='updated';}
@@ -137,7 +146,7 @@ function card(entry,record){
 function thumbCard(entry,record){
  const link=el('a',{href:(entry.draft?'?draft=':'?guide=')+encodeURIComponent(entry.id),className:'thumb-card'});
  if(!entry.draft)link.dataset.guide=entry.id;
- const media=el('div',{className:'card-media'},preview(keyOf(entry),record));
+ const media=themed(el('div',{className:'card-media'},preview(keyOf(entry),record)),entry,record);
  if(!entry.draft&&revisedAt(entry,record))media.append(el('span',{className:'thumb-updated',textContent:'Updated'}));
  link.append(media,
   el('span',{className:'card-cat',textContent:topicOf(record||entry)}),el('h3',{textContent:(entry.title||entry.question||'').replace(/\n/g,' ')}));

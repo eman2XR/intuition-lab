@@ -634,3 +634,22 @@ class FeatureTests(unittest.TestCase):
         feature.assert_called_once_with(Path('/root'),'run-1')
         self.assertEqual(notes,['Featured the guide run-1.'])
         self.assertIn('top of the home page',comment.call_args.args[1]);close.assert_called_once_with(8)
+
+
+class ThemeTests(unittest.TestCase):
+    def test_a_new_guide_avoids_the_themes_shown_first_and_night_needs_a_dark_ready_picture(self):
+        from lab.daily import pick_theme, THEMES
+        index=[{'id':'a','created':'2026-11-03','theme':'sage'},{'id':'b','created':'2026-11-02','theme':'sky'},
+               {'id':'c','created':'2026-11-01','theme':'sand'},{'id':'d','created':'2026-10-31','theme':'lilac'}]
+        for kind in ('gravity-clocks','light-clock'):
+            theme=pick_theme(index,kind)
+            self.assertIn(theme,THEMES);self.assertNotIn(theme,{'sage','sky','sand'})
+        self.assertTrue(all(pick_theme(index[:n],'gravity-clocks')!='night' for n in range(len(index)+1)))
+
+    def test_the_dark_ready_pictures_match_the_site(self):
+        import re
+        from lab.daily import DARK_READY, THEMES
+        scene=(Path(__file__).resolve().parents[1]/'web'/'scene.js').read_text()
+        self.assertEqual(DARK_READY,set(re.findall(r"'([a-z0-9-]+)'",re.search(r'const DARK_READY=new Set\(\[([^\]]*)\]\)',scene).group(1))))
+        site=set(re.findall(r'^ ([a-z]+):\{page:',scene,re.M))-{'paper'}
+        self.assertEqual(set(THEMES),site)

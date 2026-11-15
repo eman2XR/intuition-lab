@@ -99,7 +99,8 @@
     "duration": 32,
     "takeaway": "Light isn't pulled off course. Mass warps space and time, and light's straightest path through them curves.",
     "kind": "light-bending",
-    "why": "In 1919, starlight bending around the Sun during an eclipse was the first test of Einstein\u2019s theory of gravity. Astronomers now use the same bending to weigh galaxies and map matter they cannot see."
+    "why": "In 1919, starlight bending around the Sun during an eclipse was the first test of Einstein\u2019s theory of gravity. Astronomers now use the same bending to weigh galaxies and map matter they cannot see.",
+    "theme": "sand"
   },
   "checks": [
     {

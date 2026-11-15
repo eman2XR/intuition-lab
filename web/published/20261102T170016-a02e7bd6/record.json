@@ -144,7 +144,8 @@
     "duration": 110,
     "takeaway": "Light always pulls away from you at full speed, however fast you go, so no number of pushes ever catches it.",
     "controls": "first",
-    "kind": "speed-limit"
+    "kind": "speed-limit",
+    "theme": "night"
   },
   "checks": [
     {

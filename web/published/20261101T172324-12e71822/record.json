@@ -144,7 +144,8 @@
     "duration": 40,
     "takeaway": "The night is dark because the stars haven't shone long enough for their light to fill the sky.",
     "controls": "first",
-    "kind": "night-sky"
+    "kind": "night-sky",
+    "theme": "night"
   },
   "checks": [
     {

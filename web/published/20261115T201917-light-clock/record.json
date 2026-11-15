@@ -149,7 +149,8 @@
     "ratio_lines": {
       "2": 2,
       "4": 1
-    }
+    },
+    "theme": "night"
   },
   "checks": [
     {

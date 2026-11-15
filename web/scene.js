@@ -160,6 +160,18 @@ function drawClocks(ctx,w,h,spec,st){
  }
 }
 
+// A soft shaded sphere lit from the upper left, with a faint shadow, for pictures drawn in a rounder 3D style.
+function sphere(ctx,x,y,r,hex,a=1){
+ ctx.save();ctx.globalAlpha=a;
+ const shade=ctx.createRadialGradient(x,y+r*.9,0,x,y+r*.9,r*1.2);shade.addColorStop(0,'rgba(0,0,0,.18)');shade.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=shade;ctx.beginPath();ctx.ellipse(x,y+r*.95,r*1.05,r*.35,0,0,TAU);ctx.fill();
+ const body=ctx.createRadialGradient(x-r*.35,y-r*.4,r*.08,x,y,r);body.addColorStop(0,'#ffffff');body.addColorStop(.18,rgba(hex,1));body.addColorStop(1,rgba(hex,1));
+ ctx.fillStyle=body;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
+ const rim=ctx.createRadialGradient(x,y,r*.6,x,y,r);rim.addColorStop(0,'rgba(0,0,0,0)');rim.addColorStop(1,'rgba(0,0,0,.28)');ctx.fillStyle=rim;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
+ ctx.restore();
+}
+// Ink for lines and words: dark on a light stage, light on a dark one.
+const inkOf=(st,a=1)=>st?.dark?`rgba(229,233,240,${a})`:`rgba(20,23,28,${a})`;
 function pill(ctx,value,x,y,opts={}){
  // A label on a soft white backing so moving labels stay legible over lines and other text.
  const size=opts.size||11;ctx.font=`${opts.weight||500} ${size}px ${FONT}`;if('letterSpacing' in ctx)ctx.letterSpacing=opts.spacing||'0px';
@@ -925,7 +937,7 @@ function pathsLayout(w,h,st){
 // changes.
 const LIGHTCLOCK={crew:false};
 function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
- const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', light='#d97706', small=w<520, v=Physics.speed(st.mass), since=Math.max(0,(st.since??st.t)-1);
+ const accent=st.dark?'#8fb0ff':ACCENT[spec.accent]||ACCENT.blue, dark=inkOf(st), light=st.dark?'#f59e0b':'#d97706', small=w<520, v=Physics.speed(st.mass), since=Math.max(0,(st.since??st.t)-1);
  const L=small?h*.13:Math.min(h*.24,130), lanes=small?[h*.33,h*.7]:[h*.3,h*.7], xa=w*(small?.16:.12), xb=w*(small?.9:.88);
  const last=(st.chapters?.length??0)-1, crew=Number.isInteger(spec.crew_view)&&st.stage===spec.crew_view&&!st.live;
  if(st.since!==undefined)LIGHTCLOCK.crew=crew;
@@ -935,8 +947,8 @@ function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
  // The story clock: during playback it stops when the moving clock reaches the far edge, so the picture holds there.
  // After playback it keeps holding until the viewer moves a control.
  const driving=st.live&&!!st.touched, now=moving&&!driving?Math.min(since,.999*(xb-xa)/(v*c)):since;
- const mirrors=(x,y0)=>{ctx.lineCap='round';for(const y of [y0-L/2,y0+L/2]){trace(ctx,[[x-18,y],[x+18,y]]);ctx.strokeStyle='rgba(20,23,28,.7)';ctx.lineWidth=3;ctx.stroke();}};
- const photon=(x,y)=>{const glow=ctx.createRadialGradient(x,y,0,x,y,12);glow.addColorStop(0,rgba(light,.5));glow.addColorStop(1,rgba(light,0));ctx.fillStyle=glow;ctx.fillRect(x-12,y-12,24,24);
+ const mirrors=(x,y0)=>{ctx.lineCap='round';for(const y of [y0-L/2,y0+L/2]){trace(ctx,[[x-18,y],[x+18,y]]);ctx.strokeStyle=inkOf(st,.75);ctx.lineWidth=3;ctx.stroke();}};
+ const photon=(x,y)=>{const g=st.dark?18:12, glow=ctx.createRadialGradient(x,y,0,x,y,g);glow.addColorStop(0,rgba(light,st.dark?.75:.5));glow.addColorStop(1,rgba(light,0));ctx.fillStyle=glow;ctx.fillRect(x-g,y-g,2*g,2*g);
   ctx.beginPath();ctx.arc(x,y,4,0,TAU);ctx.fillStyle=light;ctx.fill();};
  const dots=pts=>{ctx.fillStyle=rgba(light,.65);for(const [x,y] of pts){ctx.beginPath();ctx.arc(x,y,1.9,0,TAU);ctx.fill();}};
  const path=pts=>{trace(ctx,pts);ctx.setLineDash([3,4]);ctx.strokeStyle=rgba(light,.5);ctx.lineWidth=1.4;ctx.stroke();ctx.setLineDash([]);};
@@ -2868,8 +2880,23 @@ const ENGINES={
 };
 const engineOf=spec=>ENGINES[spec?.kind]||ENGINES['light-bending'];
 
-function draw(ctx,w,h,spec,state){engineOf(spec).draw(ctx,w,h,spec,state);}
-window.CouncilDraw={draw,accent:spec=>ACCENT[spec.accent]||ACCENT.mint,disclosure:spec=>engineOf(spec).disclosure||''};
+// Page and stage themes. Each guide names one (scene.theme), so guides differ in colour the way magazine articles do.
+// A night stage is dark, so it is offered only to pictures drawn for one (DARK_READY); any other picture falls back to
+// paper. Pictures read state.dark to choose light ink on a dark stage.
+const THEMES={
+ paper:{page:'#ffffff',top:'#fbf8f1',bottom:'#f3eee3',accent:'#e2832b',end:'rgba(239,232,220,.92)'},
+ sage:{page:'#eaf1ed',top:'#f6faf7',bottom:'#e1ebe5',accent:'#0f766e',end:'rgba(214,230,221,.92)'},
+ sky:{page:'#eaf0f7',top:'#f6f9fc',bottom:'#e0e9f4',accent:'#2563eb',end:'rgba(212,225,241,.92)'},
+ sand:{page:'#f5efe4',top:'#fcf8f1',bottom:'#efe5d3',accent:'#b45309',end:'rgba(236,223,201,.92)'},
+ lilac:{page:'#efecf6',top:'#f9f7fc',bottom:'#e6dff2',accent:'#6d28d9',end:'rgba(224,216,240,.92)'},
+ rose:{page:'#f7edec',top:'#fdf7f6',bottom:'#f1e1de',accent:'#be123c',end:'rgba(240,220,216,.92)'},
+ mist:{page:'#ebf0f1',top:'#f7f9fa',bottom:'#e0e8ea',accent:'#0e7490',end:'rgba(213,228,231,.92)'},
+ night:{page:'#e8edf1',top:'#162030',bottom:'#0b1119',accent:'#d97706',end:'rgba(220,228,236,.92)',dark:true},
+};
+const DARK_READY=new Set(['light-clock','night-sky','speed-limit']);
+function themeOf(spec){const t=THEMES[spec?.theme];return t&&(!t.dark||DARK_READY.has(spec.kind))?t:THEMES.paper;}
+function draw(ctx,w,h,spec,state){engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
+window.CouncilDraw={draw,accent:spec=>ACCENT[spec.accent]||ACCENT.mint,disclosure:spec=>engineOf(spec).disclosure||'',theme:themeOf,themes:()=>Object.keys(THEMES),darkReady:kind=>DARK_READY.has(kind)};
 window.CouncilLab={draw:drawLab,hit:labHit,view:()=>labXf};
 
 const $=id=>document.getElementById(id);

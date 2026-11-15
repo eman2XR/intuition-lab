@@ -80,7 +80,8 @@
     "q": "Does anything move through space faster than light inside the horizon?",
     "a": "No: light still moves at light speed through the space around it; it is the space that flows in faster."
    }
-  ]
+  ],
+  "theme": "sand"
  },
  "checks": [
   {

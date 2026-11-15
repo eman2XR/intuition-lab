@@ -81,7 +81,8 @@
     "q": "Is air blue, like tinted glass?",
     "a": "No. Blue glass turns the light passing through it blue by soaking up the red. Air does the opposite: light that crosses a lot of air turns orange, as at sunset. The blue sky is light bounced sideways."
    }
-  ]
+  ],
+  "theme": "mist"
  },
  "checks": [
   {

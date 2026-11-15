@@ -92,6 +92,22 @@ def daily_lock(root):
 REVIEWS = ('physics_review','visual_review','learner_review')
 
 
+# Page and stage themes, as in web/scene.js (THEMES). Night is dark, so only pictures drawn for a dark stage get it.
+THEMES = ('sage', 'sky', 'sand', 'lilac', 'rose', 'mist', 'night')
+DARK_READY = {'light-clock', 'night-sky', 'speed-limit'}
+
+
+def pick_theme(index, kind):
+    """A theme for a new guide that none of the three guides shown first on the home page uses, so neighbouring guides
+    differ; rotating through the themes so they spread evenly, and offering night only to dark-ready pictures."""
+    rank = lambda e: max(e.get('created', ''), (e.get('featured') or '').replace('Z', '+00:00'))
+    recent = {e.get('theme') for e in sorted([e for e in index if not e.get('archived')], key=rank, reverse=True)[:3]}
+    choices = [t for t in THEMES if t != 'night' or kind in DARK_READY]
+    start = len(index) % len(choices)
+    ordered = choices[start:] + choices[:start]
+    return next((t for t in ordered if t not in recent), ordered[0])
+
+
 def export_accepted(state, root=ROOT):
     """Never export drafts, fixtures, local source notes, or provider metadata. Everything is checked before anything
     is written; the guide is assembled in a temporary folder beside the archive and renamed into place, so a refusal
@@ -128,7 +144,10 @@ def export_accepted(state, root=ROOT):
     public=root/'web'/'published'
     index_path=public/'index.json'
     index=json.loads(index_path.read_text()) if index_path.exists() else []
+    theme=pick_theme(index,record['topic'])
+    record['scene']['theme']=theme
     entry={key:record[key] for key in ('id','question','topic','created')}
+    entry['theme']=theme
     if state.get('curriculum'):
         entry['curriculum']=state['curriculum']
     entry['title']=record['scene']['title']

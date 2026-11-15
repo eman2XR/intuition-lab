@@ -85,7 +85,8 @@
     "q": "Why does your scale read your weight while you stand still?",
     "a": "The ground pushes up on you through the scale, and that push is what the scale measures."
    }
-  ]
+  ],
+  "theme": "sage"
  },
  "checks": [
   {
