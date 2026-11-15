@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-14T18:53:57.029259+00:00",
-    "outcome": "Today\u2019s guide is already published (\u201cDoes \u201cat the same time\u201d depend on how you move?\u201d); the next round is tomorrow."
+    "at": "2026-11-15T20:22:03.079733+00:00",
+    "outcome": "Published \u201cWhy does a moving clock tick slowly?\u201d, made in the session loop after three review rounds passed."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
