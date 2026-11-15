@@ -45,7 +45,7 @@ STANDARD = ('Quality bar: explain WHY, not only what happens. Start from somethi
     'Every sentence must match what is on screen while it plays; the model notes say what each chapter shows. '
     'Change one thing at a time. Answer the likely objections listed in the research. Write the sentences like film '
     'subtitles: two or three per chapter, each short (about 12 words, never over 80 characters), one idea each, in the '
-    'plain word order you would use reading it aloud; never join two ideas in one sentence. If a chapter has more to '
+    'plain word order you would use reading it aloud; never join two ideas in one sentence. When someone judges, sees or says something, name a person (someone on the platform), never a place or a thing. If a chapter has more to '
     'say than three short lines hold, leave out the less important idea rather than pack two into one line. Never refer to other guides. The first chapter must set the scene before any claim, in its first sentence: say in plain words what the viewer is looking at and what is happening (who, what, where), for example "Imagine a train at a platform, struck by lightning at both ends.", so a newcomer with no prior context can follow it cold; never open on a bare assertion. Keep the picture calm: the stage shows only a few short labels (names of '
     'five words or fewer, never sentences), the subtitles carry every explanation, and only what the current sentence is '
     'about moves or changes. Answer the question behind the topic for a newcomer: why it matters in the world, not only '

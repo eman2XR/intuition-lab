@@ -93,7 +93,7 @@
   },
   "scene": {
     "title": "Does \u201cat the same time\u201d depend on how you move?",
-    "subtitle": "Lightning strikes both ends of a passing train at once, says the platform. The rider says the front was struck first. Both are right.",
+    "subtitle": "Lightning strikes both ends of a passing train. For someone on the platform, the two strikes happen at the same time. For the rider, the front is struck first. Both are right.",
     "why": "There is no single \u201cnow\u201d shared across space. This idea ties together the rest of special relativity, from moving clocks that run slow to the travelling twin.",
     "opening": "If two things far apart happen at the same time for you, do they for everyone?",
     "beats": [
@@ -102,8 +102,8 @@
         "body": "Imagine a train at a platform, struck by lightning at both ends. Both flashes reach the middle of the train at the same moment. Both covered equal distances at light speed, so the strikes happened together."
       },
       {
-        "title": "Same time, says the platform",
-        "body": "Now lightning strikes the train racing past at 40% of light speed. The flashes meet on the platform, halfway between the strikes. So for the platform, the strikes happened together."
+        "title": "Same time, for someone on the platform",
+        "body": "Now lightning strikes the train racing past at 40% of light speed. The flashes meet on the platform, halfway between the strikes. So for someone on the platform, the strikes happened together."
       },
       {
         "title": "The rider sees the front flash first",
@@ -126,7 +126,7 @@
         "body": "So there is no single \u201cnow\u201d that everyone shares. But if one event can cause another, everyone agrees on the order."
       }
     ],
-    "takeaway": "Whether two events far apart happen together depends on how you move. The platform and the rider are both right.",
+    "takeaway": "Whether two events far apart happen together depends on how you move. Someone on the platform and the rider are both right.",
     "mass": 0.5,
     "distance": 1,
     "controls": "both",
@@ -260,7 +260,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "agent",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the picture, the model and all wording from the lab\u2019s research brief, and AI reviewers checked them with the render checks, an accuracy review, a visual review, a first-time-reader test with a copy edit, and a blind-viewer test. After the owner found the first wording hard to read, the subtitles were rewritten the same day as short spoken lines over seven chapters and reviewed again; the reviews below are from that final review."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the picture, the model and all wording from the lab\u2019s research brief, and AI reviewers checked them with the render checks, an accuracy review, a visual review, a first-time-reader test with a copy edit, and a blind-viewer test. After the owner found the first wording hard to read, the subtitles were rewritten the same day as short spoken lines over seven chapters and reviewed again; the reviews below are from that final review, after which a few words were changed at the owner\u2019s request."
   },
   "revisions": [
     {
@@ -481,7 +481,7 @@
       "number": 2,
       "scene": {
         "title": "Does \u201cat the same time\u201d depend on how you move?",
-        "subtitle": "Lightning strikes both ends of a passing train at once, says the platform. The rider says the front was struck first. Both are right.",
+        "subtitle": "Lightning strikes both ends of a passing train. For someone on the platform, the two strikes happen at the same time. For the rider, the front is struck first. Both are right.",
         "why": "There is no single \u201cnow\u201d shared across space. This idea ties together the rest of special relativity, from moving clocks that run slow to the travelling twin.",
         "opening": "If two things far apart happen at the same time for you, do they for everyone?",
         "beats": [
@@ -490,8 +490,8 @@
             "body": "Imagine a train at a platform, struck by lightning at both ends. Both flashes reach the middle of the train at the same moment. Both covered equal distances at light speed, so the strikes happened together."
           },
           {
-            "title": "Same time, says the platform",
-            "body": "Now lightning strikes the train racing past at 40% of light speed. The flashes meet on the platform, halfway between the strikes. So for the platform, the strikes happened together."
+            "title": "Same time, for someone on the platform",
+            "body": "Now lightning strikes the train racing past at 40% of light speed. The flashes meet on the platform, halfway between the strikes. So for someone on the platform, the strikes happened together."
           },
           {
             "title": "The rider sees the front flash first",
@@ -514,7 +514,7 @@
             "body": "So there is no single \u201cnow\u201d that everyone shares. But if one event can cause another, everyone agrees on the order."
           }
         ],
-        "takeaway": "Whether two events far apart happen together depends on how you move. The platform and the rider are both right.",
+        "takeaway": "Whether two events far apart happen together depends on how you move. Someone on the platform and the rider are both right.",
         "mass": 0.5,
         "distance": 1,
         "controls": "both",
@@ -706,5 +706,5 @@
       ]
     }
   ],
-  "updated": "2026-11-14T20:04:31Z"
+  "updated": "2026-11-15T04:24:43Z"
 }

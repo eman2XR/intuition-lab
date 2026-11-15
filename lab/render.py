@@ -40,11 +40,22 @@ def launch(p):
     options.append(('webkit', None))
     errors = []
     for name, channel in options:
-        try:
-            kind = getattr(p, name)
-            return kind.launch(headless=True, channel=channel) if channel else kind.launch(headless=True)
-        except Exception as error:
-            errors.append(f'{name}: {str(error).splitlines()[0]}')
+        # A browser can start and then die before its first page opens; it is checked with a throwaway page and, if
+        # it died, started again once before falling back to the next option.
+        for attempt in range(2):
+            browser = None
+            try:
+                kind = getattr(p, name)
+                browser = kind.launch(headless=True, channel=channel) if channel else kind.launch(headless=True)
+                browser.new_page().close()
+                return browser
+            except Exception as error:
+                errors.append(f'{name}: {str(error).splitlines()[0]}')
+                try:
+                    if browser:
+                        browser.close()
+                except Exception:
+                    pass
     raise RuntimeError('No browser could start: ' + '; '.join(errors))
 
 
