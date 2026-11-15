@@ -915,35 +915,61 @@ function pathsLayout(w,h,st){
 }
 // Why a moving clock ticks slowly: light crosses a light clock at the same speed for everyone, so on the moving
 // rocket (seen from Earth) it must zigzag farther between the mirrors and each tick takes longer.
+// Two light clocks. Seen from Earth: Earth's clock (top) has light going straight up and down; the rocket's clock
+// (bottom) flies right at v, so its light, keeping light speed, must slant to hit the moving mirrors and ticks
+// sqrt(1 - v^2) as often. A scene may name one chapter (crew_view) seen from the rocket instead: the rocket's clock
+// stands still and Earth's flies left, so Earth's clock is the slow one. Light keeps one speed on screen in every
+// chapter, set so the planned speed crosses the stage once in the longest chapter. During playback the picture holds
+// once the moving clock reaches the far edge; when the viewer drives the controls it starts again instead. The ratio
+// pill can wait for a chapter (ratio_from) or a sentence (ratio_lines); the tick counters are hidden while the speed
+// changes.
+const LIGHTCLOCK={crew:false};
 function drawLightClocks(ctx,w,h,spec,st,{vplan}={}){
  const accent=ACCENT[spec.accent]||ACCENT.blue, dark='#14171c', light='#d97706', small=w<520, v=Physics.speed(st.mass), since=Math.max(0,(st.since??st.t)-1);
  const L=small?h*.13:Math.min(h*.24,130), lanes=small?[h*.33,h*.7]:[h*.3,h*.7], xa=w*(small?.16:.12), xb=w*(small?.9:.88);
- // Light's speed on screen is chosen so the rocket crosses the stage about once per chapter: its slanted trail stays visible.
- const ch=st.chapters?.[st.stage], span=ch?Math.max(6,ch.end-ch.start+1):18;
+ const last=(st.chapters?.length??0)-1, crew=Number.isInteger(spec.crew_view)&&st.stage===spec.crew_view&&!st.live;
+ if(st.since!==undefined)LIGHTCLOCK.crew=crew;
+ const spans=(st.chapters||[]).map(c=>c.end-c.start+1), span=spans.length?Math.max(6,...spans):18;
  const c=Math.min(L/1.1,(xb-xa)/(Math.max(vplan??Physics.speed(spec.mass),.2)*span)), slow=1/Physics.lightTick(v), moving=v>.01;
  const bounce=y=>{const f=((y%2)+2)%2;return f<1?f:2-f;}, step=L/c/5;
+ // The story clock: during playback it stops when the moving clock reaches the far edge, so the picture holds there.
+ // After playback it keeps holding until the viewer moves a control.
+ const driving=st.live&&!!st.touched, now=moving&&!driving?Math.min(since,.999*(xb-xa)/(v*c)):since;
  const mirrors=(x,y0)=>{ctx.lineCap='round';for(const y of [y0-L/2,y0+L/2]){trace(ctx,[[x-18,y],[x+18,y]]);ctx.strokeStyle='rgba(20,23,28,.7)';ctx.lineWidth=3;ctx.stroke();}};
  const photon=(x,y)=>{const glow=ctx.createRadialGradient(x,y,0,x,y,12);glow.addColorStop(0,rgba(light,.5));glow.addColorStop(1,rgba(light,0));ctx.fillStyle=glow;ctx.fillRect(x-12,y-12,24,24);
   ctx.beginPath();ctx.arc(x,y,4,0,TAU);ctx.fillStyle=light;ctx.fill();};
  const dots=pts=>{ctx.fillStyle=rgba(light,.65);for(const [x,y] of pts){ctx.beginPath();ctx.arc(x,y,1.9,0,TAU);ctx.fill();}};
  const path=pts=>{trace(ctx,pts);ctx.setLineDash([3,4]);ctx.strokeStyle=rgba(light,.5);ctx.lineWidth=1.4;ctx.stroke();ctx.setLineDash([]);};
- // Earth clock: light goes straight up and down. Dots mark equal steps of time along its path.
- const homeTicks=since*c/L, ey=lanes[0];
- path([[xa,ey+L/2],[xa,ey-L/2]]);dots(Array.from({length:6},(_,k)=>[xa,ey-L/2+k*L/5]));
- drawEarth(ctx,xa,ey+L/2+(small?16:22),small?9:12);mirrors(xa,ey);photon(xa,ey+L/2-bounce(homeTicks)*L);
- // Rocket clock: it moves right at v; its light keeps light speed, so it climbs only at sqrt(1 - v^2) of it and
- // needs more equal time steps per crossing. A viewer pushing the speed past the plan sees the rocket start again at the left.
- const ry=lanes[1], lap=(xb-xa)/(Math.max(v,.01)*c), s0=moving?Math.floor(since/lap)*lap:0, x=xa+v*c*(since-s0), rocketTicks=since*c*slow/L;
- const at=t=>[xa+v*c*(t-s0),ry+L/2-bounce(t*c*slow/L)*L];
- if(moving){path(Array.from({length:161},(_,i)=>at(s0+(since-s0)*i/160)));dots(Array.from({length:Math.floor((since-s0)/step)+1},(_,k)=>at(s0+k*step)));}
- else{path([[xa,ry+L/2],[xa,ry-L/2]]);dots(Array.from({length:6},(_,k)=>[xa,ry-L/2+k*L/5]));}
- drawRocket(ctx,x,ry+L/2+(small?16:22),small?12:16,1,moving,st.t);mirrors(x,ry);photon(...at(since));
+ const iconY=y=>y+L/2+(small?16:22);
+ const icon=(who,x,y)=>who==='earth'?drawEarth(ctx,x,iconY(y),small?9:12):drawRocket(ctx,x,iconY(y),small?12:16,1,
+  !crew&&moving&&st.stage===last&&!st.live&&st.mass<.99,st.t);
+ // The clock at rest in this view: light straight up and down. Dots mark equal steps of time along its path.
+ const still=crew?{who:'rocket',y:lanes[1],x:xb}:{who:'earth',y:lanes[0],x:xa}, stillTicks=now*c/L;
+ path([[still.x,still.y+L/2],[still.x,still.y-L/2]]);dots(Array.from({length:6},(_,k)=>[still.x,still.y-L/2+k*L/5]));
+ icon(still.who,still.x,still.y);mirrors(still.x,still.y);photon(still.x,still.y+L/2-bounce(stillTicks)*L);
+ // The moving clock: it travels at v, and its light, keeping light speed, climbs at only sqrt(1 - v^2) of it, so each
+ // crossing takes more equal time steps.
+ const mover=crew?{who:'earth',y:lanes[0],x0:xb,dir:-1}:{who:'rocket',y:lanes[1],x0:xa,dir:1};
+ // A lap is a whole number of round trips, so each new lap starts with the light on the bottom mirror.
+ const trip=2*L/(c*slow), lap=Math.max(trip,Math.floor((xb-xa)/(Math.max(v,.01)*c)/trip)*trip), s0=moving&&driving?Math.floor(since/lap)*lap:0, x=mover.x0+mover.dir*v*c*(now-s0), moverTicks=now*c*slow/L;
+ const at=t=>[mover.x0+mover.dir*v*c*(t-s0),mover.y+L/2-bounce(t*c*slow/L)*L];
+ if(moving){path(Array.from({length:161},(_,i)=>at(s0+(now-s0)*i/160)));dots(Array.from({length:Math.floor((now-s0)/step)+1},(_,k)=>at(s0+k*step)));}
+ else{path([[mover.x0,mover.y+L/2],[mover.x0,mover.y-L/2]]);dots(Array.from({length:6},(_,k)=>[mover.x0,mover.y-L/2+k*L/5]));}
+ icon(mover.who,x,mover.y);mirrors(x,mover.y);photon(...at(now));
  if(!st.labels)return;
- const size=small?11:13, ticks=n=>`${n} tick${n===1?'':'s'}`;
- text(ctx,`Earth: ${ticks(Math.floor(homeTicks))}`,xa+40,ey-L/2+4,{size,weight:600,color:dark});
- const head=`Rocket: ${ticks(Math.floor(rocketTicks))}`;
- text(ctx,head,xa,ry-L/2-(small?34:42),{size,weight:600,color:accent});
- if(moving&&since>6)pill(ctx,`${Math.round(slow*10)} ticks to Earth’s 10`,w/2,small?h*.94:h*.9,{align:'center',size:small?11:13,weight:600});
+ const size=small?11:13, ticks=n=>`${n} tick${n===1?'':'s'}`, tint=who=>who==='earth'?dark:accent;
+ pill(ctx,crew?'SEEN FROM THE ROCKET':'SEEN FROM EARTH',small?14:20,small?16:24,{size:small?10:11,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.8)'});
+ // The tick counters are exact only while the speed holds, so they are left out while it changes.
+ if(st.stage!==last&&!st.live){
+  // Each clock's own icon says whose it is, so its counter is only the count.
+  const label=(who,n,cx,y,side,moves)=>{const room=small?64:84, left=side<0||cx+28+room>w;
+   if(small&&moves)return text(ctx,ticks(Math.floor(n)),clamp(cx,36,w-36),y-L/2-14,{align:'center',size,weight:600,color:tint(who)});
+   text(ctx,ticks(Math.floor(n)),left?cx-28:cx+28,y-L/2+4,{align:left?'right':'left',size,weight:600,color:tint(who)});};
+  label(still.who,stillTicks,still.x,still.y,1,false);label(mover.who,moverTicks,x,mover.y,mover.dir,true);
+ }
+ const ratio=Math.round(slow*100)/10, shown=Number.isInteger(ratio)?String(ratio):ratio.toFixed(1);
+ const line=spec.ratio_lines?.[st.stage], said=line===undefined?since>6&&st.stage>=(spec.ratio_from??0):(st.chapters?.[st.stage]?.lines?.[line]?.start??0)-(st.chapters?.[st.stage]?.start??0)<=(st.since??0);
+ if(!crew&&moving&&said)pill(ctx,`${shown} ticks to ${crew?'rocket’s':'Earth’s'} 10`,w/2,small?h*.94:h*.9,{align:'center',size:small?11:13,weight:600});
 }
 
 // Einstein's train: lightning strikes both ends of a train as it passes a platform. Seen from the platform the strikes
@@ -2751,12 +2777,12 @@ const ENGINES={
   measure:['Traveller comes home younger by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',demoEnd:()=>2.5,
   disclosure:'Ages and speeds are exact special relativity; the rocket turns around instantly.',
   try:'Set Speed to zero: do the twins still agree? Speed up, then make the trip longer and compare the two bars.',aria:'Twins: one stays on Earth while the other flies to a star and back. Two bars show how much each twin has aged.'},
- 'light-clock':{draw:(ctx,w,h,spec,st)=>drawLightClocks(ctx,w,h,spec,st,{vplan:Physics.speed(st.stage===(st.chapters?.length??0)-1?1:spec.mass)}),
+ 'light-clock':{draw:(ctx,w,h,spec,st)=>drawLightClocks(ctx,w,h,spec,st,{vplan:Physics.speed(spec.mass)}),
   demo:(p,spec)=>({mass:spec.mass+(1-spec.mass)*smooth(p/.12),distance:spec.distance}),a:['Speed','how fast the rocket flies'],b:['Unused','',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>'',
-  measure:['Rocket clock ticks slower by',a=>(Physics.agingGap(a)*100).toFixed(0)+'%'],scale:'Seen from Earth',
-  disclosure:'Exact special relativity: light moves at the same speed for every observer. The clocks are slowed down for viewing; the rocket clock ticks normally for its crew.',
-  try:'Slide the speed down to zero: the clocks agree. Push it toward light speed: the slanted path grows and the rocket clock nearly stops.',aria:'Two light clocks: one on Earth with light going straight up and down, one on a moving rocket whose light must slant to hit the moving mirrors, so it ticks less often.'},
+  measure:[()=>LIGHTCLOCK.crew?'Earth clock ticks slower by':'Rocket clock ticks slower by',a=>(Physics.agingGap(a)*100).toFixed(0)+'%'],scale:'',
+  disclosure:'Exact special relativity: light moves at the same speed for every observer. The rocket clock ticks normally for its crew, who find Earth’s clocks slow instead.',
+  try:'Slide the speed down to zero: the clocks agree. Push it toward light speed: the slanted path grows and the rocket clock ticks less than half as fast.',aria:'Two light clocks: one on Earth with light going straight up and down, one on a moving rocket whose light must slant to hit the moving mirrors, so it ticks less often.'},
  'simultaneity':{draw:drawSimultaneity,demo:false,a:['Train speed','how fast the train moves'],b:['Train length','the train’s own length',''],
   fa:a=>Math.round(Physics.simulSpeed(a)*100)+'% of light',fb:b=>Physics.simulLength(b).toFixed(1)+' light-seconds',
   effect:(a,b)=>Physics.simulGap(Physics.simulSpeed(a),Physics.simulLength(b)),
@@ -2909,7 +2935,7 @@ function paint(){
  const live=started&&mode==='live';
  LABELS=[];
  // Engines time each chapter from the chapters passed here; previews pass none and fall back to their own frame.
- draw(ctx,w,h,spec,{t:time,since,stage,mass:shown,distance,labels:spec.show_labels,live,playing:mode==='playing',chapters:timeline.chapters});
+ draw(ctx,w,h,spec,{t:time,since,stage,mass:shown,distance,labels:spec.show_labels,live,touched,playing:mode==='playing',chapters:timeline.chapters});
  lastLabels=LABELS;LABELS=null;
  voice();
  const value=target();
@@ -2920,19 +2946,24 @@ function paint(){
 }
 // A sentence ends at . ! or ? followed by a space or the end, so decimals such as 4.8 stay whole.
 function sentences(body){return body.match(/(?:[^.!?]|[.!?](?=[^\s.!?"”’)]))+[.!?]*["”’)]*(?:\s+|$)/g)?.map(s=>s.trim()).filter(Boolean)||[body];}
-// A subtitle too long for one line breaks after the comma nearest its middle, when both halves fit on a line, so each
-// line holds a whole phrase; otherwise the browser balances the two lines.
+// A subtitle too long for one line breaks after the comma, colon or semicolon nearest its middle, when both halves fit
+// on a line, so each line holds a whole phrase; otherwise the browser balances the two lines.
 function phrased(text){
  const fit=44;if(text.length<=fit)return text;
- let best=-1;for(let i=text.indexOf(', ');i>=0;i=text.indexOf(', ',i+1))if(best<0||Math.abs(i-text.length/2)<Math.abs(best-text.length/2))best=i;
+ let best=-1;for(let i=0;i<text.length-1;i++)if(',:;'.includes(text[i])&&text[i+1]===' '&&(best<0||Math.abs(i-text.length/2)<Math.abs(best-text.length/2)))best=i;
  return best>=0&&best+1<=fit&&text.length-best-2<=fit?text.slice(0,best+1)+'\n'+text.slice(best+2):text;
+}
+// The hint on the end card. A readout label may be a function (it can change with the view), so it is called here.
+function endHint(){
+ const c=spec.controls||'both', e=engineOf(spec), m=e.measure?.[0], label=typeof m==='function'?m():m;
+ return spec.next||(c==='none'?'':c==='both'||e.tryAny||!label?'Now try it: '+e.try:`Now try it: move ${(c==='first'?e.a:e.b)[0]} and watch “${label}”.`);
 }
 function captions(){
  let chapter, line, hint='';
  if(!started&&spec.opening){chapter=`Before you watch · ${fmt(timeline.total)}`;line=spec.opening;hint='Press play to find out.';}
  else if(!started){chapter=`${spec.beats.length} chapters · ${fmt(timeline.total)}`;line='Press play to watch the explanation.';}
  else if(ended&&mode!=='playing'){const c=spec.controls||'both', e=engineOf(spec);chapter='The idea';line=spec.takeaway||'';
-  hint=spec.next||(c==='none'?'':c==='both'||e.tryAny?'Now try it: '+e.try:`Now try it: move ${(c==='first'?e.a:e.b)[0]} and watch “${e.measure[0]}”.`);}
+  hint=endHint();}
  else{
   const beat=spec.beats[stage];chapter='';line=beat.body;
   {
@@ -2998,12 +3029,14 @@ function restore(){mass=spec.mass;distance=spec.distance;demoed=false;}
 function play(){
  if(!spec)return;
  if(!started||ended||time>=timeline.total){time=0;restore();setStage(0);shown=0;}
- audioStart();started=true;ended=false;mode='playing';exploreOpen=null;last=0;emit('play');paint();
+ audioStart();started=true;ended=false;mode='playing';exploreOpen=null;last=0;touched=false;emit('play');paint();
 }
 function pause(){if(mode==='playing'){mode='paused';paint();}}
 function toggle(){mode==='playing'?pause():play();}
 // Seeking shows exactly what playback shows at that moment, including the last chapter's control demo.
 let demoed=false;
+// Whether the viewer has moved a control since playback last started; engines may hold a finished picture until then.
+let touched=false;
 function seek(t,beat=chapterAt(t)){
  mode='paused';started=true;ended=false;time=t;
  const last=timeline.chapters.length-1, c=timeline.chapters[last];
@@ -3049,14 +3082,14 @@ function explore(){if(!started){started=true;ended=true;}mode='live';const last=
 function input(id,value){
  // Touching a control before playing means exploring; during playback it hands control to the viewer.
  if(id==='mass')mass=value;else distance=value;
- audioStart();
+ touched=true;audioStart();
  explore();paint();
 }
 
 window.CouncilScene={load,seek,play,pause,toggle,chapter,render:t=>{time=t;paint();},labels:()=>lastLabels.slice(),
  getState:()=>({time,mass,distance,stage,mode,ended}),
  sound:()=>({on:SOUND.on,state:SOUND.ctx?.state||null,plucked:GUITAR.plucked.slice(),rope:{rate:ROPE.rate,size:+ROPE.size.toFixed(2)}}),
- timeline:()=>timeline&&JSON.parse(JSON.stringify(timeline)),on:fn=>listeners.add(fn),
+ timeline:()=>timeline&&JSON.parse(JSON.stringify(timeline)),endHint:()=>spec?endHint():'',on:fn=>listeners.add(fn),
  checks:()=>Physics.checksFor(spec?.kind)};
 // The size of the modelled effect at the current controls, for render checks: the readout's number unless the engine
 // measures it itself (attention's readout is a share, which is not zero when focus is off).

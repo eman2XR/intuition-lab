@@ -1,5 +1,13 @@
 [
   {
+    "id": "20261115T201917-light-clock",
+    "question": "Why does a moving clock tick slowly?",
+    "topic": "light-clock",
+    "created": "2026-11-15T20:19:17.474375+00:00",
+    "curriculum": "2.1",
+    "title": "Why does a moving clock tick slowly?"
+  },
+  {
     "id": "20261114T182923-simultaneity",
     "question": "Can two events be simultaneous for one person but not another?",
     "topic": "simultaneity",

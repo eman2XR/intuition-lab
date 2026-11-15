@@ -180,17 +180,18 @@ LIGHT_CLOCK_NOTES = '''LIGHT CLOCK (WHY A MOVING CLOCK TICKS SLOWLY). Special re
 observer, as experiments since 1887 show. Drawn: two light clocks, each two mirrors with light bouncing between them, one
 tick per crossing. Top: a clock on Earth whose light goes straight up and down. Bottom: the same kind of clock on a rocket
 moving right at speed v, seen from Earth; its light must slant to hit the moving mirrors, tracing a dashed zigzag, a longer
-path at the same speed, so each tick takes longer; the rocket crosses the stage once per chapter. Dots along both light
+path at the same speed, so each tick takes longer. Light keeps one speed on screen in every chapter, set so the planned
+speed crosses the stage once in the longest chapter (a faster rocket starts again at the left). Dots along both light
 paths mark equal steps of time, so light visibly covers the same distance per step but needs more steps on the slant. Each
-clock's label carries its tick count, and after a few seconds a line says how many times the rocket clock ticks for every
-10 on Earth (10/gamma). In the last chapter playback speeds the rocket up to 90% of light speed (no dip), so write that
+clock's label carries its tick count (left out in the last chapter, while the speed changes), and after a few seconds a
+line says how many times the rocket clock ticks for every 10 on Earth (10/gamma, to one decimal). In the last chapter playback speeds the rocket up to 90% of light speed (no dip), so write that
 chapter about approaching light speed. Field mass sets v = 0.9*mass (UI "Speed", shown as a percentage of light speed; 0 parks the rocket and
 the clocks agree); field distance is unused, so set controls to "first" or "none". The readout is how much slower the
 rocket clock ticks, 1 - 1/gamma. Supported questions: why a moving clock ticks slowly, why the effect only matters near
 light speed, why clocks agree again when the rocket stops. Honesty points: the rocket clock ticks normally for anyone on
 board; the slowing is how the moving clock runs as measured from Earth, and the crew would say the same of Earth's clocks
 while both coast; every kind of clock, and the crew's bodies, slow the same way, or the crew could tell they were moving.
-No twin-paradox resolution, acceleration, gravity or Doppler effects. Slowed down for viewing.
+No twin-paradox resolution, acceleration, gravity or Doppler effects.
 No new-discovery claims.'''+COMMON
 
 ATTENTION_NOTES = '''HOW ATTENTION LED TO CHATBOTS. Exact softmax attention (scaled dot products of hand-made four-number vectors, as in

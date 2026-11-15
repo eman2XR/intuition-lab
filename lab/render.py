@@ -166,6 +166,9 @@ def capture(scene, directory, research=None, provider='fixture', root=None):
             page.screenshot(path=str(overview),animations='disabled')
             frames.append(overview)
             checks.append({'name':'Mobile page fits viewport', 'pass': page.evaluate('document.documentElement.scrollWidth <= innerWidth')})
+            # The end card is text a viewer reads: it must never show code, such as a readout label left uncalled.
+            hint = page.evaluate('CouncilScene.endHint?CouncilScene.endHint():""')
+            checks.append({'name':'The end card hint is plain text', 'pass': not any(s in hint for s in ('=>', 'function', '${', 'undefined'))})
             checks.append({'name':'Renderer has no JavaScript errors', 'pass':not errors})
             if errors:
                 raise RuntimeError('Renderer errors: '+ '; '.join(errors))
