@@ -23,7 +23,8 @@ def main():
                 # in the grid, and archived ones only in the closed Archived section.
                 shown=[e for e in entries if not e.get('archived')]
                 archived=[e for e in entries if e.get('archived')]
-                lead=max(shown,key=lambda e:e.get('created',''))['id'] if shown else None
+                # Ranked like the site: the later of when each was published and last featured.
+                lead=max(shown,key=lambda e:max(e.get('created',''),(e.get('featured') or '').replace('Z','+00:00')))['id'] if shown else None
                 page.wait_for_function('n=>document.querySelectorAll("#gallery a[data-guide]").length>=n',arg=len(entries)-(1 if lead else 0))
                 if lead:
                     assert page.locator(f'#featured a[data-guide="{lead}"]').count()==1, 'Newest investigation is not featured'

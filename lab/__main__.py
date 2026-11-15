@@ -13,7 +13,7 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','checkin'])
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','feature','checkin'])
     parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--topic',choices=list(TOPICS),default='light-bending')
     parser.add_argument('--question',help='Optional question for a single run; defaults to the topic question.')
     args=parser.parse_args()
-    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive','checkin'):
+    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive','feature','checkin'):
         parser.error('unexpected arguments: '+' '.join(args.push_args))
     if not 1<=args.rounds<=4:
         parser.error('--rounds must be 1–4')
@@ -94,6 +94,19 @@ def main():
         except Exception as error:
             parser.exit(1,f'Checked in locally; publication is pending ({type(error).__name__}: {str(error)[:160]}).\n')
         print('Checked in on the lab panel.')
+        return
+    if args.command=='feature':
+        # Move a published guide to the top of the home page; featuring guides one after another sets their order.
+        from .daily import set_featured
+        if len(args.push_args)!=1:
+            parser.error('feature needs exactly one published guide id')
+        try:
+            set_featured(ROOT,args.push_args[0])
+        except ValueError as error:
+            parser.exit(2,f'Cannot feature this guide: {error}\n')
+        except RuntimeError as error:
+            parser.exit(1,f'Recorded the change locally, but publication is pending: {error}\nPush main yourself when ready.\n')
+        print(f'Featured {args.push_args[0]}: it is now at the top of the home page.')
         return
     if args.command in ('archive','unarchive'):
         # Hide a published guide from the home page, or list it again. The guide folder stays in place; only the index

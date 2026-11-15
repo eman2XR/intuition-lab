@@ -1,7 +1,7 @@
-name: Archive or restore a guide
+name: Archive, restore or feature a guide
 
-# The Archive button on a guide opens a council:archive (or council:unarchive) issue. This applies it right away:
-# it flips the guide's archived flag in web/published/index.json, pushes, republishes the site and closes the issue.
+# The Archive and Feature buttons on a guide open a council:archive, council:unarchive or council:feature issue.
+# This applies it right away in web/published/index.json, pushes, republishes the site and closes the issue.
 on:
   issues:
     types: [opened, labeled]
@@ -22,7 +22,8 @@ jobs:
       github.event.issue.user.login == github.repository_owner &&
       github.event.sender.login == github.repository_owner &&
       (contains(github.event.issue.labels.*.name, 'council:archive') ||
-       contains(github.event.issue.labels.*.name, 'council:unarchive'))
+       contains(github.event.issue.labels.*.name, 'council:unarchive') ||
+       contains(github.event.issue.labels.*.name, 'council:feature'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -19,7 +19,11 @@ const records=new Map(), loading=new Map(), thumbs=new Set();
 document.body.dataset.view=VIEW;
 
 function norm(s){return (s||'').toLowerCase().replace(/\W+/g,'');}
-function newestFirst(a,b){return new Date(b.created||0)-new Date(a.created||0);}
+// Guides are listed by the later of when each was published and when the owner last featured it, so featuring guides
+// one after another sets their order and a new guide still arrives on top.
+const rankOf=e=>Math.max(new Date(e.created||0).getTime()||0,new Date(e.featured||0).getTime()||0);
+function newestFirst(a,b){return rankOf(b)-rankOf(a);}
+const featuredLead=e=>!!e?.featured&&new Date(e.featured).getTime()>new Date(e.created).getTime();
 function issueURL(label,title,body){return `https://github.com/${REPO}/issues/new?${new URLSearchParams({title,body,labels:label})}`;}
 function safeURL(url){try{const u=new URL(url);return ['http:','https:'].includes(u.protocol)?u.href:null;}catch{return null;}}
 function topicOf(data){return TOPICS[data?.scene?.kind]||TOPICS[data?.kind]||TOPICS[data?.topic]||TOPICS['light-bending'];}
@@ -111,8 +115,10 @@ function preview(key,record){
  thumbs.add(canvas);visible.observe(canvas);return canvas;
 }
 // A guide shows an "Updated" marker when it was revised after first publishing, within the last fortnight.
+// A guide revised after the day it was published shows Updated for a few days, then the badge goes.
+const UPDATED_DAYS=3;
 function revisedAt(entry,record){const u=(entry&&entry.updated)||(record&&record.updated), c=entry&&new Date(entry.created), d=u&&new Date(u);
- return d&&!isNaN(d)&&c&&!isNaN(c)&&d.toDateString()!==c.toDateString()&&Date.now()-d.getTime()<14*864e5?d:null;}
+ return d&&!isNaN(d)&&c&&!isNaN(c)&&d.toDateString()!==c.toDateString()&&Date.now()-d.getTime()<UPDATED_DAYS*864e5?d:null;}
 function card(entry,record){
  const isExample=entry.id==='example', id=entry.id;
  const link=el('a',{href:isExample?'?guide=example':(entry.draft?'?draft=':'?guide=')+encodeURIComponent(id),className:'card'});
@@ -142,14 +148,14 @@ let cardsKey='';
 function renderCards(){
  const lead=VIEW==='home'?[...entries].filter(e=>!e.archived).sort(newestFirst)[0]:null;
  // Rebuilt only when what the cards show has changed, so the minute's status refresh keeps keyboard focus.
- const key=JSON.stringify([current?.id,entries.map(e=>e.id+(e.archived?'~':'')),drafts.map(d=>d.id),[...watched],records.has(lead?.id),!!example,
+ const key=JSON.stringify([current?.id,entries.map(e=>e.id+(e.archived?'~':'')+(e.featured||'')),drafts.map(d=>d.id),[...watched],records.has(lead?.id),!!example,
   VIEW==='home'&&[!!curriculum,[...picks.keys()],attempts.map(a=>[a.question,a.status,a.topic]),document.body.dataset.paused]]);
  if(key===cardsKey)return;cardsKey=key;
  thumbs.forEach(c=>visible.unobserve(c));thumbs.clear();
  if(VIEW==='home'){
   // The newest published investigation leads; every other one follows in a single grid.
   const leadCard=lead?card(lead,records.get(lead.id)):example?card({id:'example',title:example.scene.title.replace(/\n/g,' ')},example):null;
-  $('featured').replaceChildren(...(leadCard?[el('p',{className:'lab-latest',textContent:'Latest from the lab'}),leadCard]:[]));
+  $('featured').replaceChildren(...(leadCard?[el('p',{className:'lab-latest',textContent:featuredLead(lead)?'Featured':'Latest from the lab'}),leadCard]:[]));
   const shown=entries.filter(e=>!e.archived).length;
   put('past-count',shown?`${shown} investigation${shown>1?'s':''}`:'');
   $('gallery').replaceChildren(...gallery(lead));
@@ -514,6 +520,8 @@ function updateTalk(){
  // that a workflow applies within a few minutes; issues from anyone else are ignored.
  const link=$('archive'), real=current?.id&&current.provider!=='fixture'&&current.provider!=='draft'&&entries.some(e=>e.id===current.id), archived=entries.some(e=>e.id===current?.id&&e.archived);
  link.hidden=$('archive-sep').hidden=!real;
+ const feature=$('feature');feature.hidden=$('feature-sep').hidden=!real||archived;
+ if(real&&!archived)feature.href=issueURL('council:feature',`Feature: ${title}`.slice(0,120),`guide: ${guide}\n\nMove this guide to the top of the home page.`);
  if(real){
   link.textContent=archived?'Restore':'Archive';
   link.href=issueURL(archived?'council:unarchive':'council:archive',`${archived?'Restore':'Archive'}: ${title}`.slice(0,120),

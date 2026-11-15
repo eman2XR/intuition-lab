@@ -1,5 +1,5 @@
-"""Apply one owner archive or restore request straight from its GitHub issue event, so the Archive button on a guide
-takes effect in a minute or two instead of at the next morning run. Run by .github/workflows/archive.yml as
+"""Apply one owner archive, restore or feature request straight from its GitHub issue event, so the Archive and
+Feature buttons on a guide take effect in a minute or two instead of at the next daily run. Run by .github/workflows/archive.yml as
 `python -m lab.archive_issue "$GITHUB_EVENT_PATH"`. Any request this misses stays open and the daily run applies it
 (lab.daily.apply_archive)."""
 import json
@@ -21,7 +21,7 @@ def request_from_event(event):
     if issue.get('state') != 'open' or not isinstance(issue.get('number'), int):
         return None
     kinds = [KINDS.get(label.get('name')) for label in issue.get('labels', [])]
-    kind = next((k for k in kinds if k in ('archive', 'unarchive')), None)
+    kind = next((k for k in kinds if k in ('archive', 'unarchive', 'feature')), None)
     if not kind:
         return None
     return {'number': issue['number'], 'kind': kind, 'title': str(issue.get('title', ''))[:200],

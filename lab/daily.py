@@ -261,13 +261,34 @@ def set_archived(root, guide_id, archived=True):
     return bool(archived)
 
 
+def set_featured(root, guide_id, now=None):
+    """Move a published guide to the top of the home page by stamping it featured now: the site orders guides by the
+    later of when each was published and last featured, so featuring guides one after another sets their order, and a
+    new guide still arrives on top. Commits and pushes only the index. Raises ValueError for an unknown or archived
+    guide; RuntimeError if publication is left pending."""
+    index_path=root/'web'/'published'/'index.json'
+    index=json.loads(index_path.read_text()) if index_path.exists() else []
+    entry=next((e for e in index if e.get('id')==guide_id),None)
+    if entry is None:
+        raise ValueError(f'No published investigation has id {guide_id!r}.')
+    if entry.get('archived'):
+        raise ValueError(f'The guide {guide_id!r} is archived; restore it before featuring it.')
+    entry['featured']=(now or datetime.now(timezone.utc)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    write_json(index_path,index)
+    _commit_and_push(root,['web/published/index.json'],f'Feature investigation {guide_id}')
+    return entry['featured']
+
+
+CURATION=('archive','unarchive','feature')
+
+
 def apply_archive(requests, root, day):
-    """Apply the owner's archive and restore requests that name a published guide, replying on each issue. A request
-    with no id or an unknown id is answered and closed; a transient publication failure leaves the issue open so the
-    next cycle retries. Returns the lines describing what changed, for the dashboard check-in."""
+    """Apply the owner's archive, restore and feature requests that name a published guide, replying on each issue. A
+    request with no id or an unknown id is answered and closed; a transient publication failure leaves the issue open so
+    the next cycle retries. Returns the lines describing what changed, for the dashboard check-in."""
     notes=[]
-    for request in [r for r in requests if r['kind'] in ('archive','unarchive')]:
-        want=request['kind']=='archive'
+    for request in [r for r in requests if r['kind'] in CURATION]:
+        kind=request['kind'];want=kind=='archive'
         match=GUIDE_RE.search(request.get('body') or '')
         guide_id=match.group(1) if match else None
         if not guide_id:
@@ -275,7 +296,10 @@ def apply_archive(requests, root, day):
             inbox.close(request['number'])
             continue
         try:
-            set_archived(root,guide_id,want)
+            if kind=='feature':
+                set_featured(root,guide_id)
+            else:
+                set_archived(root,guide_id,want)
         except ValueError as error:
             inbox.comment(request['number'],f'Intuition Lab could not change this guide: {error}')
             inbox.close(request['number'])
@@ -283,11 +307,13 @@ def apply_archive(requests, root, day):
         except RuntimeError as error:
             inbox.comment(request['number'],f'Intuition Lab recorded the change but publication is pending ({error}); it will retry next cycle.')
             continue
+        done={'archive':'archived','unarchive':'restored','feature':'featured'}[kind]
         inbox.comment(request['number'],
-            f'Intuition Lab {"archived" if want else "restored"} the guide "{guide_id}" on {day}; it is now '
-            +('hidden from the home page, in the Archived section.' if want else 'listed on the home page again.'))
+            f'Intuition Lab {done} the guide "{guide_id}" on {day}; it is now '
+            +{'archive':'hidden from the home page, in the Archived section.','unarchive':'listed on the home page again.',
+              'feature':'at the top of the home page.'}[kind])
         inbox.close(request['number'])
-        notes.append(f'{"Archived" if want else "Restored"} the guide {guide_id}.')
+        notes.append(f'{done.capitalize()} the guide {guide_id}.')
     return notes
 
 
@@ -501,7 +527,7 @@ def daily(factory, count=1, rounds=3, push=False, root=ROOT, requests=None, blue
         # Archive and restore are curation, not investigation, so they are applied first, even on a paused or used-up
         # day, then dropped so they are never read as questions.
         visibility=apply_archive(requests,root,day) if push else []
-        requests=[r for r in requests if r['kind'] not in ('archive','unarchive')]
+        requests=[r for r in requests if r['kind'] not in CURATION]
         # Every cycle checks in on the dashboard, so the site can tell a resting Mac from one that did not run.
         if paused(root):
             # No slot is used and nothing is started.

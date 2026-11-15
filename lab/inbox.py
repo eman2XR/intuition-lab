@@ -13,7 +13,7 @@ OWNER = 'eman2XR'
 REPO = 'eman2XR/intuition-lab'
 KINDS = {'council:choose': 'choose', 'council:question': 'question', 'council:feedback': 'feedback',
          'council:approve': 'approve', 'council:decline': 'decline', 'council:guidance': 'guidance',
-         'council:archive': 'archive', 'council:unarchive': 'unarchive'}
+         'council:archive': 'archive', 'council:unarchive': 'unarchive', 'council:feature': 'feature'}
 # Guidance notes sent from the home page end with this line, which is not part of the note.
 NOTE_TAIL = '\n\nA guidance note from the lab on the home page.'
 

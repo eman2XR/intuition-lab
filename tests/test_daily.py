@@ -7,7 +7,7 @@ import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 from lab.daily import EARLY_STOPS, daily, daily_lock, export_accepted, publish, research_brief, site_live
@@ -604,3 +604,33 @@ class ArchiveIssueTests(unittest.TestCase):
             with patch('lab.archive_issue.still_open',return_value=False),patch('lab.archive_issue.apply_archive') as apply:
                 archive_issue.main(path,root=Path(tmp))
             apply.assert_not_called()
+
+
+class FeatureTests(unittest.TestCase):
+    def test_featuring_stamps_the_guide_and_refuses_an_archived_one(self):
+        from lab.daily import set_featured
+        with tempfile.TemporaryDirectory() as tmp:
+            git,origin,worker,push_from_me=checkouts(tmp)
+            for run in ('run-1','run-2'):
+                (worker/'web'/'published'/run).mkdir(parents=True);(worker/'web'/'published'/run/'record.json').write_text('{}')
+            (worker/'web'/'published'/'index.json').write_text(json.dumps([{'id':'run-1'},{'id':'run-2','archived':True}]))
+            git(worker,'add','.');git(worker,'commit','-qm','seed');git(worker,'push','-q','origin','main')
+            stamp=set_featured(worker,'run-1',now=datetime(2026,11,15,9,30,tzinfo=timezone.utc))
+            self.assertEqual(stamp,'2026-11-15T09:30:00Z')
+            self.assertEqual(json.loads((worker/'web'/'published'/'index.json').read_text())[0]['featured'],stamp)
+            self.assertEqual(git(origin,'log','-1','--format=%s','main'),'Feature investigation run-1')
+            with self.assertRaises(ValueError):set_featured(worker,'run-2')
+            with self.assertRaises(ValueError):set_featured(worker,'missing')
+
+    def test_a_feature_request_is_applied_and_answered(self):
+        from lab.daily import apply_archive
+        from lab.archive_issue import request_from_event
+        event={'issue':{'number':8,'state':'open','user':{'login':'eman2XR'},'title':'Feature: X','body':'guide: run-1',
+                        'labels':[{'name':'council:feature'}]},'sender':{'login':'eman2XR'}}
+        request=request_from_event(event)
+        self.assertEqual(request['kind'],'feature')
+        with patch('lab.daily.set_featured') as feature,patch('lab.daily.inbox.comment') as comment,patch('lab.daily.inbox.close') as close:
+            notes=apply_archive([request],Path('/root'),'2026-11-15')
+        feature.assert_called_once_with(Path('/root'),'run-1')
+        self.assertEqual(notes,['Featured the guide run-1.'])
+        self.assertIn('top of the home page',comment.call_args.args[1]);close.assert_called_once_with(8)
