@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-15T20:22:03.079733+00:00",
-    "outcome": "Published \u201cWhy does a moving clock tick slowly?\u201d, made in the session loop after three review rounds passed."
+    "at": "2026-11-16T19:26:42.623821+00:00",
+    "outcome": "Nov 16: published the double-slit guide (curriculum 4.1, renamed per issue #11; 2.5 removed); two review rounds, all four reviews 9."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
