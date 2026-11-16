@@ -314,8 +314,8 @@ READY = {'light-bending', 'gravity-clocks', 'spacetime-paths', 'light-clock', 'i
 # Not ready (2026-10-28): twin-trip shows what rather than why; spacetime, falling-time and tunneling are graph-style;
 # standing-waves, quantum-well (five chapters), attention (six) and wave-packet (four chapters) are hand-made guides
 # with fixed choreography, which agent-written scenes would not match;
-# two-slit-particles failed a beginner test (faint ripples, slits read as one gap, unexplained screen marks, stripes
-# form before the narration says so).
+# two-slit-particles was redrawn for a hand-made guide (2026-11-16) with fixed six-chapter choreography (one slit,
+# both slits, waves, then the slit covered again), which agent-written scenes would not match.
 
 TOPICS = {
     'light-bending': {'label':'Light bending', 'question':'Why does gravity bend light?', 'notes':LIGHT_NOTES},

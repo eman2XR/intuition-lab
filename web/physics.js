@@ -704,6 +704,7 @@
         'Equal path lengths give a bright stripe':near(this.intensity(1,0),1),
         'Half-wavelength path difference cancels equal waves':near(this.intensity(1,Math.PI),0),
         'Unequal sources leave dark stripes partly lit':this.intensity(.5,Math.PI)>0,
+        'Opening a second slit leaves some spots darker than one slit alone':near(this.intensity(1,Math.PI),0)&&this.intensity(0,Math.PI)>0,
         'Two equal sources make bright stripes four times one source':near(this.brightness(1,0),4*this.brightness(0,0)),
         'Wider separation packs stripes closer':firstDark(2.5)<firstDark(1),
       }).map(([name,pass])=>({name,pass}));

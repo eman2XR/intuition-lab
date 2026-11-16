@@ -265,42 +265,63 @@ function slitPattern(A,sep,bins){
  const key=A.toFixed(3)+'|'+sep.toFixed(3)+'|'+bins;
  if(patternCache.key===key)return patternCache;
  const p=[];let total=0;
- for(let i=0;i<bins;i++){const y=(i+.5)/bins*2-1, env=Math.pow(Math.cos(y*Math.PI/2.15),2), I=env*Physics.intensity(A,TAU*sep*y*.9);p.push(I);total+=I;}
+ for(let i=0;i<bins;i++){const y=(i+.5)/bins*2-1, env=Math.pow(Math.cos(y*Math.PI/2.15),2), I=env*Physics.intensity(A,TAU*sep*y*2.1);p.push(I);total+=I;}
  const cdf=[];let run=0;for(const v of p){run+=v/total;cdf.push(run);}
  patternCache={key,p:p.map(v=>v/Math.max(...p)),cdf};return patternCache;
 }
+// The double-slit experiment in bold colour fields: a source fires particles one at a time at a deep-navy wall with two
+// slits (a mustard shutter covers the second); each lands as one glowing dot on a dark screen, and coral bars count
+// where they land. Arrivals are deterministic samples of the predicted pattern. Chapter plan: one slit, a few dots; one
+// slit, thousands (one soft patch); both slits, a few dots; both slits, thousands (stripes, with the one-slit outline for
+// comparison); the waves of possibility through both slits; then the controls. No particle path is ever drawn.
 function drawParticles(ctx,w,h,spec,st){
- const accent=ACCENT[spec.accent]||ACCENT.mint, A=st.mass, sep=Physics.separation(st.distance), small=w<520;
- const srcX=w*.08, wallX=w*.42, scrX=w*.8, midY=st.labels&&small?h*.58:h*.5, span=st.labels&&small?h*.32:h*.38, gap=span*.075*sep, slit=Math.max(6,h*.025);
+ const small=w<520, preview=st.since===undefined, live=!!st.live, last=(st.chapters?.length||6)-1, stage=preview?3:live?last:st.stage;
+ const own=live||stage===last, A=own?st.mass:stage<=1?0:1, sep=Physics.separation(own?st.distance:spec.distance);
+ const since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+4*i;
+ const navy='#1f3a5a', shutter='#f2b134', screenC='#13263a', dot='#ff9f80', bar='#ef6f4f', wave='#4c9be8';
+ const srcX=w*(small?.1:.09), wallX=w*(small?.42:.4), sw=w*(small?.12:.07), scrX=w*(small?.68:.7), midY=h*.5, span=h*(small?.36:.4);
+ const gap=span*.16*sep, slit=Math.max(5,h*.022), slab=Math.max(10,w*.028), y1=midY-gap/2, y2=midY+gap/2;
  const bins=120, pat=slitPattern(A,sep,bins);
- // Probability ripples: possibilities spread through every open slit; no path is drawn.
- const phase=(st.t*.8)%1;
- for(let r=0;r<5;r++){const rad=((r+phase)/5)*(wallX-srcX);ctx.beginPath();ctx.arc(srcX,midY,rad,-.6,.6);ctx.strokeStyle=rgba(accent,.18*(1-r/5));ctx.lineWidth=1.2;ctx.stroke();}
- for(const [y,on] of [[midY-gap/2,1],[midY+gap/2,A]]){if(on<.001)continue;for(let r=0;r<6;r++){const rad=((r+phase)/6)*(scrX-wallX);ctx.beginPath();ctx.arc(wallX,y,rad,-.9,.9);ctx.strokeStyle=rgba(accent,.14*on*(1-r/6));ctx.lineWidth=1.1;ctx.stroke();}}
- ctx.beginPath();ctx.arc(srcX,midY,6,0,TAU);ctx.fillStyle=accent;ctx.fill();
- // Barrier with two slits; the second opens with the first slider.
- ctx.fillStyle='rgba(20,23,28,.78)';
- const y1=midY-gap/2, y2=midY+gap/2;
- ctx.fillRect(wallX-3,midY-span,6,y1-slit-(midY-span));ctx.fillRect(wallX-3,y1+slit,6,y2-slit-(y1+slit));ctx.fillRect(wallX-3,y2+slit,6,midY+span-(y2+slit));
- if(A<1){ctx.fillStyle=`rgba(20,23,28,${.78*(1-A)})`;ctx.fillRect(wallX-3,y2-slit,6,2*slit);}
- // Screen and arrivals, accumulated one at a time.
- const sw=small?14:18;ctx.fillStyle='#fff';ctx.fillRect(scrX,midY-span,sw,2*span);ctx.strokeStyle='rgba(20,23,28,.15)';ctx.strokeRect(scrX,midY-span,sw,2*span);
- const count=Math.min(2400,Math.floor(st.t*55)), counts=new Array(bins).fill(0);
- for(let i=0;i<count;i++){
+ // How many have landed so far in this chapter.
+ // In the last chapter's playback the second slit closes, the screen is cleared and fills again.
+ const pLast=!live&&stage===last&&ch?since/Math.max(1,ch.end-ch.start):0;
+ const n=Math.floor(pLast>=.14?2400*smooth((pLast-.16)/.5):preview||stage>=4?2400:stage===0?Math.min(14,Math.max(0,since-1)/1.1):stage===1?2400*smooth((since-1)/8):stage===2?Math.min(36,Math.max(0,since-1)/.45):2400*smooth((since-.5)/9));
+ // Waves of possibility, from the source and through every open slit (chapter 5 on, and when exploring).
+ if(stage>=4){const ph=(since*.5)%1;ctx.save();ctx.beginPath();ctx.rect(0,midY-span,scrX,2*span);ctx.clip();ctx.lineWidth=small?5:8;
+  for(let r=0;r<6;r++){const rad=((r+ph)/6)*(wallX-srcX);ctx.beginPath();ctx.arc(srcX,midY,rad,-.7,.7);ctx.strokeStyle=rgba(wave,.22*(1-r/6));ctx.stroke();}
+  for(const [y,on] of [[y1,1],[y2,A]]){if(on<.01)continue;for(let r=0;r<9;r++){const rad=((r+ph)/9)*(scrX-wallX);ctx.beginPath();ctx.arc(wallX,y,rad,-1.1,1.1);ctx.strokeStyle=rgba(wave,.2*on*(1-r/9)**2);ctx.stroke();}}
+  ctx.restore();}
+ // The source: a small block that flashes as it fires.
+ const fire=stage===0||stage===2?((since-1)%(stage===0?1.1:.45)):9, flash=fire>=0&&fire<.25&&n>0?1-fire/.25:0;
+ ctx.fillStyle=bar;ctx.beginPath();if(ctx.roundRect)ctx.roundRect(srcX-14,midY-11,28,22,5);else ctx.rect(srcX-14,midY-11,28,22);ctx.fill();
+ if(flash){ctx.beginPath();ctx.arc(srcX+14,midY,6+10*(1-flash),0,TAU);ctx.strokeStyle=rgba(bar,.6*flash);ctx.lineWidth=2;ctx.stroke();}
+ // The wall with two slits; the shutter covers the second as the first control closes it.
+ ctx.fillStyle=navy;
+ ctx.fillRect(wallX-slab/2,midY-span,slab,y1-slit-(midY-span));ctx.fillRect(wallX-slab/2,y1+slit,slab,y2-slit-(y1+slit));ctx.fillRect(wallX-slab/2,y2+slit,slab,midY+span-(y2+slit));
+ if(A<.999){ctx.fillStyle=rgba(shutter,1-A);ctx.fillRect(wallX-slab/2-3,y2-slit-2,slab+6,2*slit+4);}
+ // The screen and the landings, one glowing dot each; the latest few are larger.
+ ctx.fillStyle=screenC;ctx.fillRect(scrX,midY-span,sw,2*span);
+ const counts=new Array(bins).fill(0);
+ for(let i=0;i<n;i++){
   const u=hash(i+1);let lo=0,hi=bins-1;while(lo<hi){const m=(lo+hi)>>1;if(pat.cdf[m]<u)lo=m+1;else hi=m;}
-  counts[lo]++;const y=midY-span+(lo+hash(i+7.3))/bins*2*span, x=scrX+2+hash(i+3.1)*(sw-4), fresh=i>=count-3;
-  ctx.beginPath();ctx.arc(x,y,fresh?2.6:1.1,0,TAU);ctx.fillStyle=fresh?accent:rgba(accent,.55);ctx.fill();
+  counts[lo]++;const y=midY-span+(lo+hash(i+7.3))/bins*2*span, x=scrX+3+hash(i+3.1)*(sw-6), fresh=(stage===0||stage===2)&&i>=n-1;
+  if(fresh){const g=ctx.createRadialGradient(x,y,0,x,y,12);g.addColorStop(0,rgba(dot,.9));g.addColorStop(1,rgba(dot,0));ctx.fillStyle=g;ctx.fillRect(x-12,y-12,24,24);}
+  ctx.beginPath();ctx.arc(x,y,fresh?3.4:n>200?1.2:2.4,0,TAU);ctx.fillStyle=fresh?'#fff3ec':rgba(dot,n>200?.7:.95);ctx.fill();
  }
- const hx=scrX+sw+8, hw=w-hx-16, peak=Math.max(1,...counts);
- for(let i=0;i<bins;i++){if(!counts[i])continue;const y=midY-span+i/bins*2*span;ctx.fillStyle=rgba(accent,.35);ctx.fillRect(hx,y,counts[i]/peak*hw*.9,2*span/bins+.5);}
- if(spec.show_reference){trace(ctx,pat.p.map((v,i)=>[hx+v*hw*.9,midY-span+(i+.5)/bins*2*span]));ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(20,23,28,.4)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);}
- if(st.labels){
-  const size=small?9:11;
-  text(ctx,'ONE AT A TIME',srcX,midY-24,{size,weight:600,spacing:'1px'});
-  text(ctx,A>0.001?'TWO SLITS':'ONE SLIT OPEN',wallX,midY-span-12,{align:'center',size,weight:600,spacing:'1px'});
-  text(ctx,`${count} arrivals`,scrX,midY+span+16,{size,weight:600,color:accent});
-  if(!small)text(ctx,'each lands at one random spot; the pattern is not random',scrX+sw,midY-span-12,{align:'right',size:10});
- }
+ // Coral bars count the landings in each band of the screen.
+ const hx=scrX+sw+(small?6:10), hw=w-hx-(small?10:20), peak=Math.max(8,...counts);
+ if(n>0)for(let i=0;i<bins;i++){if(!counts[i])continue;const y=midY-span+i/bins*2*span;ctx.fillStyle=rgba(bar,.85);ctx.fillRect(hx,y,counts[i]/peak*hw*.95,2*span/bins+.6);}
+ // For comparison with one slit, its outline once the stripes have formed.
+ const compare=stage===3&&since>=at(2);
+ if(compare){const one=slitPattern(0,sep,bins);
+  trace(ctx,one.p.map((v,i)=>[hx+v*hw*.95*.5,midY-span+(i+.5)/bins*2*span]));ctx.setLineDash([5,4]);ctx.strokeStyle=navy;ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);}
+ if(!st.labels)return;
+ const size=small?10:12, label=(s,x,y,o={})=>text(ctx,s,x,y,{size,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.75)',...o});
+ if(stage===0){label('SOURCE',srcX,midY-24,{align:'center'});label('SCREEN',scrX+sw/2,midY-span-14,{align:'center'});}
+ label(A>.001?'TWO SLITS':'ONE SLIT OPEN',wallX,small?midY+span+16:midY-span-14,{align:'center'});
+ text(ctx,`${n} ${n===1?'particle':'particles'}`,scrX+sw/2,midY+span+16,{align:'center',size,weight:700,color:bar});
+ if(compare){const one=slitPattern(0,sep,bins), i=Math.round(bins*.19);pill(ctx,'one slit',hx+one.p[i]*hw*.95*.5+(small?30:40),midY-span+(i+.5)/bins*2*span,{size:small?10:11,weight:600,color:navy});}
+ if(A<.5)label('COVERED',wallX+slab/2+8,y2+4,{size:small?9:10});
 }
 
 // The rope: simulated, not drawn from a formula. Each chapter has its own shaking plan; the simulation runs from the
@@ -2750,8 +2771,11 @@ const ENGINES={
   try:'Turn the second source off: what happens to the stripes? Bring it back, then spread the sources apart.',aria:'Two circular wave sources overlapping, making bright and dark stripes on a screen.'},
  'two-slit-particles':{draw:drawParticles,a:['Second slit','how open the second slit is'],b:['Slit spacing','relative distance between the slits',''],
   fa:a=>a<.005?'closed':Math.round(a*100)+'% open',fb:b=>b.toFixed(2)+'×',
-  measure:['Stripe contrast',a=>(Physics.visibility(a)*100).toFixed(0)+'%'],scale:'',disclosure:'Arrivals are pseudo-random samples from the predicted pattern; the ripples show possibilities, not paths.',demoEnd:()=>2.5,
-  try:'Close the second slit: do the stripes survive? Open it again, then move the slits apart.',aria:'Particles arrive one at a time on a screen behind two slits and slowly build up stripes.'},
+  // Chapter 2 still has the second slit covered, whatever the scene's setting; its readout says so. Chapter 3 has too
+  // few dots to show any contrast yet, so its readout is hidden.
+  measure:['Stripe contrast',a=>stage===2?'':(stage===1?0:Physics.visibility(a)*100).toFixed(0)+'%'],scale:'',disclosure:'Each dot is a sample from the predicted pattern; the waves show where a particle may land, not a path through one slit.',demoEnd:()=>2.5,
+  demo:(p,s)=>({mass:s.mass*(1-smooth((p-.06)/.08)),distance:s.distance}),
+  try:'Open the second slit again and watch the stripes return. Then move the slits apart.',aria:'Particles fired one at a time at a wall with two slits land as single dots on a screen, and thousands of them build up stripes.'},
  'standing-waves':{draw:drawRope,demo:false,plucks:true,
   a:['How hard you pluck','how far you pull the string'],b:['Where you press','toward the middle, a shorter string rings',''],
   fa:a=>Math.round(a*100)+'%',fb:b=>{const L=guitarLen(b);return L>.996?'open string':Math.round(L*100)+'% rings';},

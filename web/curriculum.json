@@ -48,11 +48,6 @@
           "question": "Why can nothing travel faster than light?",
           "model": "speed-limit",
           "ready": true
-        },
-        {
-          "id": "2.5",
-          "question": "If gravity slows time, why do things fall?",
-          "model": "falling-time"
         }
       ]
     },
@@ -93,7 +88,7 @@
       "items": [
         {
           "id": "4.1",
-          "question": "Why do particles fired one at a time still make stripes?",
+          "question": "The double-slit experiment: how do particles fired one at a time build up stripes?",
           "model": "two-slit-particles"
         },
         {
@@ -120,7 +115,7 @@
       "items": [
         {
           "id": "5.1",
-          "question": "How did \u201cAttention Is All You Need\u201d lead to ChatGPT?",
+          "question": "How did “Attention Is All You Need” lead to ChatGPT?",
           "model": "attention"
         }
       ]

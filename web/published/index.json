@@ -1,5 +1,14 @@
 [
   {
+    "id": "20261116T192404-two-slit-particles",
+    "question": "The double-slit experiment: how do particles fired one at a time build up stripes?",
+    "topic": "two-slit-particles",
+    "created": "2026-11-16T19:24:04.671670+00:00",
+    "curriculum": "4.1",
+    "title": "The double-slit experiment: how can single particles make stripes?",
+    "theme": "rose"
+  },
+  {
     "id": "20261115T201917-light-clock",
     "question": "Why does a moving clock tick slowly?",
     "topic": "light-clock",
