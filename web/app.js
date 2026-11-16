@@ -55,8 +55,9 @@ function applyTheme(scene){
  document.body.dataset.stage=th.dark?'dark':'light';
 }
 // A card shows its guide's stage colours behind the preview.
+// Cards use the page tint (stronger than the stage), so the grid stays colourful; night cards keep their dark stage.
 function themed(media,entry,record){const th=CouncilDraw.theme(record?.scene||{theme:entry.theme,kind:entry.topic||entry.kind});
- media.style.setProperty('--card-top',th.top);media.style.setProperty('--card-bottom',th.bottom);return media;}
+ media.style.setProperty('--card-top',th.dark?th.top:th.page);media.style.setProperty('--card-bottom',th.dark?th.bottom:th.bottom);return media;}
 function show(data){
  current=data;if(VIEW==='article')applyTheme(data.scene);const scene=data.scene, fixture=data.provider==='fixture', draft=data.provider==='draft';
  document.body.dataset.draft=draft?'yes':'';delete document.body.dataset.pending;

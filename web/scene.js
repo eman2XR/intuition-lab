@@ -2885,12 +2885,12 @@ const engineOf=spec=>ENGINES[spec?.kind]||ENGINES['light-bending'];
 // paper. Pictures read state.dark to choose light ink on a dark stage.
 const THEMES={
  paper:{page:'#ffffff',top:'#fbf8f1',bottom:'#f3eee3',accent:'#e2832b',end:'rgba(239,232,220,.92)'},
- sage:{page:'#eaf1ed',top:'#f6faf7',bottom:'#e1ebe5',accent:'#0f766e',end:'rgba(214,230,221,.92)'},
- sky:{page:'#eaf0f7',top:'#f6f9fc',bottom:'#e0e9f4',accent:'#2563eb',end:'rgba(212,225,241,.92)'},
- sand:{page:'#f5efe4',top:'#fcf8f1',bottom:'#efe5d3',accent:'#b45309',end:'rgba(236,223,201,.92)'},
- lilac:{page:'#efecf6',top:'#f9f7fc',bottom:'#e6dff2',accent:'#6d28d9',end:'rgba(224,216,240,.92)'},
- rose:{page:'#f7edec',top:'#fdf7f6',bottom:'#f1e1de',accent:'#be123c',end:'rgba(240,220,216,.92)'},
- mist:{page:'#ebf0f1',top:'#f7f9fa',bottom:'#e0e8ea',accent:'#0e7490',end:'rgba(213,228,231,.92)'},
+ sage:{page:'#e2ece6',top:'#fcfefd',bottom:'#eaf2ed',accent:'#0f766e',end:'rgba(214,230,221,.92)'},
+ sky:{page:'#e2eaf4',top:'#fcfdff',bottom:'#e9f0f8',accent:'#2563eb',end:'rgba(212,225,241,.92)'},
+ sand:{page:'#efe6d6',top:'#fffdf8',bottom:'#f5eee1',accent:'#b45309',end:'rgba(236,223,201,.92)'},
+ lilac:{page:'#e8e3f2',top:'#fdfcff',bottom:'#efeaf7',accent:'#6d28d9',end:'rgba(224,216,240,.92)'},
+ rose:{page:'#f2e4e1',top:'#fffbfa',bottom:'#f7ecea',accent:'#be123c',end:'rgba(240,220,216,.92)'},
+ mist:{page:'#e2e9eb',top:'#fcfdfd',bottom:'#ebf1f2',accent:'#0e7490',end:'rgba(213,228,231,.92)'},
  night:{page:'#e8edf1',top:'#162030',bottom:'#0b1119',accent:'#d97706',end:'rgba(220,228,236,.92)',dark:true},
 };
 const DARK_READY=new Set(['light-clock','night-sky','speed-limit']);
