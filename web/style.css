@@ -178,11 +178,10 @@ body[data-view=article]{background:var(--page)}
 body[data-view=article] .top{background:#fff}
 @media (min-width:1304px){.workspace{margin:0 -32px}}
 /* One box holds the scene, its subtitle and the playback bar, like a video with subtitles. */
-.viewer{position:relative;background:var(--page)}
+.viewer{position:relative;background:linear-gradient(180deg,var(--stage-top) 0%,var(--stage-bottom) 100%)}
 /* A dark stage is a band of its own, like a magazine's full-bleed art; the subtitles below stay on the page. */
-/* The stage is a band of its own, lighter than the page (or dark, for night) and lifted by a hairline and a soft
-   shadow, so the picture stands out; the subtitles below sit on the page. */
-.stage{background:linear-gradient(180deg,var(--stage-top),var(--stage-bottom));box-shadow:0 0 0 1px rgba(20,23,28,.07),0 26px 50px -32px rgba(20,23,28,.5)}
+body[data-stage=dark] .viewer{background:var(--page)}
+body[data-stage=dark] .stage{background:linear-gradient(180deg,var(--stage-top),var(--stage-bottom))}
 .stage{position:relative;height:clamp(260px,calc(100svh - 360px),580px)}
 #universe{position:absolute;inset:0;width:100%;height:100%;display:block}
 .stage-note{position:absolute;left:20px;top:16px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.85);padding:4px 11px;border-radius:999px}
