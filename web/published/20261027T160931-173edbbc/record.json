@@ -73,7 +73,7 @@
     "line_width": 3,
     "duration": 30,
     "takeaway": "A string rings only at speeds where its returning humps land in step: 1, 2, 3 times the slowest, and so on.",
-    "controls": "second",
+    "controls": "both",
     "kind": "standing-waves",
     "why": "It is why a guitar or violin string sounds a clear note, not a noise. Pressing a string down shortens it, so it swings faster and the note goes up.",
     "opening": "Why does a guitar string ring only at certain notes, not just any pitch?",
@@ -172,7 +172,7 @@
         "line_width": 3,
         "duration": 30,
         "takeaway": "A string held at both ends can only keep up patterns of whole loops, so it rings only certain notes.",
-        "controls": "first",
+        "controls": "both",
         "kind": "standing-waves"
       },
       "checks": [

@@ -230,6 +230,8 @@ body[data-stage=dark] .stage{background:linear-gradient(180deg,var(--stage-top),
 .controls{display:none;grid-template-columns:1fr 1fr;gap:28px 40px;max-width:760px;margin:0 auto;padding:2px 32px 16px}
 .workspace.exploring .controls{display:grid}
 .workspace[data-controls=none] #explore{display:none}
+/* A picture played directly keeps its sliders button for keyboard users only. */
+.workspace[data-direct] #explore:not(:focus-visible){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);border:0}
 #explore[aria-pressed=true]{background:#efe9df;color:var(--ink)}
 #sound .off{display:none}#sound[aria-pressed=false] .waves{display:none}#sound[aria-pressed=false] .off{display:inline}
 .workspace[data-controls=first] .controls,.workspace[data-controls=second] .controls{grid-template-columns:1fr;max-width:520px}

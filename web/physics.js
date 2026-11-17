@@ -100,9 +100,10 @@
     stringFade: n => .1 + .25 * (n - 1),
     // The slowest swing of the ringing part, in drawn swings a second: a shorter string swings faster.
     stringRate: len => 1 / len,
-    stringY(u, t, len = 1, M = 16) {
+    // p: where the string was pulled, as a fraction of its ringing length.
+    stringY(u, t, len = 1, M = 16, p = this.stringPluckAt) {
       let y = 0;
-      for (let n = 1; n <= M; n++) y += this.stringMode(n, this.stringPluckAt) * Math.sin(n * Math.PI * u) * Math.cos(2 * Math.PI * n * this.stringRate(len) * t) * Math.exp(-this.stringFade(n) * t);
+      for (let n = 1; n <= M; n++) y += this.stringMode(n, p) * Math.sin(n * Math.PI * u) * Math.cos(2 * Math.PI * n * this.stringRate(len) * t) * Math.exp(-this.stringFade(n) * t);
       return y;
     },
     stringChecks() {

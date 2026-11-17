@@ -274,6 +274,12 @@ function slitPattern(A,sep,bins){
 // where they land. Arrivals are deterministic samples of the predicted pattern. Chapter plan: one slit, a few dots; one
 // slit, thousands (one soft patch); both slits, a few dots; both slits, thousands (stripes, with the one-slit outline for
 // comparison); the waves of possibility through both slits; then the controls. No particle path is ever drawn.
+// Covering a slit directly: tap the second slit to cover or uncover it. While exploring, each change clears the screen
+// and particles land again from the new start (from), so dots already landed never move.
+const PARTICLES={A:null,from:-1e9,geo:null};
+const PARTICLES_TOUCH={hint:'tap the second slit to cover or uncover it.',
+ grab(w,h,spec,st,x,y){const g=PARTICLES.geo;return g&&Math.abs(x-g.wallX)<g.slab/2+16&&Math.abs(y-g.y2)<g.slit+16?{cursor:'pointer'}:null;},
+ release(w,h,spec,st,x,y,hd,moved){return moved?null:{mass:st.target>.5?0:1};}};
 function drawParticles(ctx,w,h,spec,st){
  const small=w<520, preview=st.since===undefined, live=!!st.live, last=(st.chapters?.length||6)-1, stage=preview?3:live?last:st.stage;
  const own=live||stage===last, A=own?st.mass:stage<=1?0:1, sep=Physics.separation(own?st.distance:spec.distance);
@@ -285,11 +291,13 @@ function drawParticles(ctx,w,h,spec,st){
  // How many have landed so far in this chapter.
  // In the last chapter's playback the second slit closes, the screen is cleared and fills again.
  const pLast=!live&&stage===last&&ch?since/Math.max(1,ch.end-ch.start):0;
- const n=Math.floor(pLast>=.14?2400*smooth((pLast-.16)/.5):preview||stage>=4?2400:stage===0?Math.min(14,Math.max(0,since-1)/1.1):stage===1?2400*smooth((since-1)/8):stage===2?Math.min(36,Math.max(0,since-1)/.45):2400*smooth((since-.5)/9));
+ if(live){if(PARTICLES.A===null||Math.abs(A-PARTICLES.A)>.002){PARTICLES.from=PARTICLES.A===null?-1e9:st.t;PARTICLES.A=A;}}else PARTICLES.A=null;
+ PARTICLES.geo={wallX,slab,y2,slit};
+ const n=live?Math.floor(2400*smooth((st.t-PARTICLES.from-.3)/5)):Math.floor(pLast>=.14?2400*smooth((pLast-.16)/.5):preview||stage>=4?2400:stage===0?Math.min(14,Math.max(0,since-1)/1.1):stage===1?2400*smooth((since-1)/8):stage===2?Math.min(36,Math.max(0,since-1)/.45):2400*smooth((since-.5)/9));
  // Waves of possibility, from the source and through every open slit (chapter 5 on, and when exploring).
  if(stage>=4){const ph=(since*.5)%1;ctx.save();ctx.beginPath();ctx.rect(0,midY-span,scrX,2*span);ctx.clip();ctx.lineWidth=small?5:8;
   for(let r=0;r<6;r++){const rad=((r+ph)/6)*(wallX-srcX);ctx.beginPath();ctx.arc(srcX,midY,rad,-.7,.7);ctx.strokeStyle=rgba(wave,.22*(1-r/6));ctx.stroke();}
-  for(const [y,on] of [[y1,1],[y2,A]]){if(on<.01)continue;for(let r=0;r<9;r++){const rad=((r+ph)/9)*(scrX-wallX);ctx.beginPath();ctx.arc(wallX,y,rad,-1.1,1.1);ctx.strokeStyle=rgba(wave,.2*on*(1-r/9)**2);ctx.stroke();}}
+  for(const [y,on] of [[y1,1],[y2,A]]){if(on<.01)continue;for(let r=0;r<9;r++){const rad=((r+ph)/9)*(scrX-wallX);if(rad<slab)continue;ctx.beginPath();ctx.arc(wallX,y,rad,-1.1,1.1);ctx.strokeStyle=rgba(wave,.2*on*(1-r/9)**2);ctx.stroke();}}
   ctx.restore();}
  // The source: a small block that flashes as it fires.
  const fire=stage===0||stage===2?((since-1)%(stage===0?1.1:.45)):9, flash=fire>=0&&fire<.25&&n>0?1-fire/.25:0;
@@ -369,7 +377,7 @@ function drawHand(ctx,x,y,size){
 }
 // The guitar string: pulled into a bend and let go; it rings in its in-step patterns, mostly the slowest. Pressing it
 // at the middle leaves half the string ringing, twice as fast. Drawn slowed down 220 times; heard at the real pitch.
-const GUITAR={active:false,len:1,plucked:[],tAbs:null,lastSince:-1,lastLen:null,key:''};
+const GUITAR={active:false,len:1,plucked:[],tAbs:null,lastSince:-1,lastLen:null,key:'',p:.25,sign:1,hold:null,geo:null};
 const guitarLen=b=>1-(b-1)/1.5*.5;
 function guitarPlan(st){
  const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0;
@@ -377,16 +385,20 @@ function guitarPlan(st){
  return {plucks:[[.9,1],[press+.9,.5]],press};
 }
 function drawGuitar(ctx,w,h,spec,st){
- const accent=ACCENT[spec.accent]||ACCENT.gold, warm='#c2410c', small=w<520, P=Physics, p=P.stringPluckAt;
+ const accent=ACCENT[spec.accent]||ACCENT.gold, warm='#c2410c', small=w<520, P=Physics;
+ let p=P.stringPluckAt, sign=1;
  const x0=w*(small?.08:.12), x1=w*(small?.92:.88), yc=h*.46, W=x1-x0, amp=(small?.16:.1)*W*st.mass;
  let len, age, pull=0;
  if(st.live){
-  // Exploring: each move of "Where you press" plucks the string again.
+  // Exploring: the viewer pulls the string and lets go (GUITAR.hold while it is pulled), or presses it somewhere new,
+  // which plucks it again at the new length.
   len=guitarLen(st.distance);
   if(GUITAR.lastLen===null)GUITAR.lastLen=len;
-  if(Math.abs(len-GUITAR.lastLen)>.004){GUITAR.lastLen=len;GUITAR.tAbs=st.t;soundPluck(220/len);GUITAR.plucked.push(Math.round(220/len));}
-  age=GUITAR.tAbs===null?99:st.t-GUITAR.tAbs;
+  if(Math.abs(len-GUITAR.lastLen)>.004){GUITAR.lastLen=len;GUITAR.hold=null;GUITAR.p=P.stringPluckAt;GUITAR.sign=1;GUITAR.tAbs=st.t;soundPluck(220/len,st.mass);GUITAR.plucked.push(Math.round(220/len));}
+  if(GUITAR.hold){pull=GUITAR.hold.sign;p=GUITAR.hold.p;age=null;}
+  else{p=GUITAR.p;sign=GUITAR.sign;age=GUITAR.tAbs===null?99:st.t-GUITAR.tAbs;}
  }else{
+  GUITAR.p=P.stringPluckAt;GUITAR.sign=1;GUITAR.hold=null;
   const {plucks,press}=guitarPlan(st), since=st.since;
   if(GUITAR.key!==String(st.stage)||since<GUITAR.lastSince){GUITAR.key=String(st.stage);GUITAR.lastSince=-1;}
   for(const [tp,L] of plucks)if(st.playing&&GUITAR.lastSince<tp&&since>=tp){soundPluck(220/L);GUITAR.plucked.push(Math.round(220/L));}
@@ -405,13 +417,14 @@ function drawGuitar(ctx,w,h,spec,st){
  ctx.fillStyle='#efe6d4';ctx.fillRect(x0-6,yc-board/2-2,6,board+4);ctx.fillStyle='#2a2a2e';ctx.fillRect(x1,yc-board/2-2,7,board+4);
  // The string: still between the nut and a pressing finger; the ringing part from there to the bridge.
  const xs=x0+W*(1-len), N=200, ring=Array.from({length:N+1},(_,i)=>{const u=i/N;let v=0;
-  if(pull>0)v=pull*(u<p?u/p:(1-u)/(1-p));else if(age!==null)v=P.stringY(u,age,len);return [xs+u*(x1-xs),yc-v*amp];});
+  if(pull!==0)v=pull*(u<p?u/p:(1-u)/(1-p));else if(age!==null)v=sign*P.stringY(u,age,len,16,p);return [xs+u*(x1-xs),yc-v*amp];});
+ GUITAR.geo={x0,x1,xs,yc,W,board,reach:(small?.16:.1)*W,len};
  if(xs>x0+1){trace(ctx,[[x0,yc],[xs,yc]]);ctx.strokeStyle='rgba(225,225,230,.9)';ctx.lineWidth=2;ctx.stroke();}
  trace(ctx,ring);ctx.strokeStyle='rgba(245,240,230,.95)';ctx.lineWidth=2.4;ctx.stroke();
  trace(ctx,ring);ctx.strokeStyle=rgba(accent,.35);ctx.lineWidth=6;ctx.stroke();
  const skin='#e0ad86', edge='rgba(110,62,35,.55)';
  // A fingertip pulls the string before each pluck.
- if(pull>0){const fx=xs+p*(x1-xs), fy=yc-pull*amp;ctx.fillStyle=skin;ctx.strokeStyle=edge;ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(fx,fy-9,8,11,0,0,TAU);ctx.fill();ctx.stroke();}
+ if(pull!==0){const fx=xs+p*(x1-xs), fy=yc-pull*amp;ctx.fillStyle=skin;ctx.strokeStyle=edge;ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(fx,fy-9*Math.sign(pull),8,11,0,0,TAU);ctx.fill();ctx.stroke();}
  // A finger pressing the string at the middle.
  if(len<.999){const f=small?9:12;ctx.fillStyle=skin;ctx.strokeStyle=edge;ctx.lineWidth=1.2;
   ctx.beginPath();ctx.roundRect(xs-f*.9,yc-f*5.2,f*1.8,f*4.6,f*.9);ctx.fill();ctx.stroke();
@@ -421,8 +434,21 @@ function drawGuitar(ctx,w,h,spec,st){
  const lsize=small?10:11, base=yc+board/2+(small?24:30);
  text(ctx,'a guitar string',(x0+x1)/2,yc-board/2-(small?40:52),{align:'center',size:lsize,weight:600,color:'rgba(20,23,28,.7)'});
  text(ctx,len<.999?(len>.51?`${Math.round(len*100)}% of it rings`:'pressed at the middle'):'open string',(x0+x1)/2,base,{align:'center',size:small?11:12,weight:600,color:len<.999?warm:accent});
- if(pull>0)pill(ctx,'pluck',xs+p*(x1-xs),yc-amp-34,{align:'center',size:lsize,weight:600,color:accent});
+ if(pull>0&&!st.live)pill(ctx,'pluck',xs+p*(x1-xs),yc-amp-34,{align:'center',size:lsize,weight:600,color:accent});
 }
+// Playing the string directly: pull it up or down and let go to pluck it (how far sets how hard), or tap a fret to
+// press the string there, which plucks it at the new length; a tap on the pressed fret lets the string go open.
+const GUITAR_TOUCH={hint:'pull the string and let go, or tap a fret to press it.',
+ grab(w,h,spec,st,x,y){const g=GUITAR.geo;return GUITAR.active&&g&&x>g.x0-10&&x<g.x1+10&&Math.abs(y-g.yc)<g.board/2+(w<520?26:20)?{cursor:'grab'}:null;},
+ move(w,h,spec,st,x,y){const g=GUITAR.geo;if(x<g.xs+4)return null;
+  const d=(g.yc-y)/g.reach;GUITAR.hold={p:clamp((x-g.xs)/(g.x1-g.xs),.06,.94),sign:d<0?-1:1};return {mass:clamp(Math.abs(d),.04,1)};},
+ release(w,h,spec,st,x,y,hd,moved){const g=GUITAR.geo;
+  if(GUITAR.hold){const {p,sign}=GUITAR.hold;GUITAR.hold=null;Object.assign(GUITAR,{p,sign,tAbs:st.t});soundPluck(220/g.len,st.mass);GUITAR.plucked.push(Math.round(220/g.len));return {};}
+  if(moved)return null;
+  // Fret k leaves 2^(-k/12) of the string ringing; frets past the twelfth (the middle) are not offered.
+  const k=Math.round(-12*Math.log2(Math.max(1e-6,1-(x-g.x0)/g.W))), now=Math.round(-12*Math.log2(g.len));
+  if(k>12){Object.assign(GUITAR,{p:Physics.stringPluckAt,sign:1,tAbs:st.t});soundPluck(220/g.len,Math.max(.5,st.mass));GUITAR.plucked.push(Math.round(220/g.len));return {};}
+  const len=Math.pow(2,-(k===now?0:k)/12);return {distance:1+(1-len)/.5*1.5};}};
 function drawRope(ctx,w,h,spec,st){
  if(st.stage>=4||st.live)return drawGuitar(ctx,w,h,spec,st);
  const still=st.since===undefined;if(!still)GUITAR.active=false;
@@ -582,7 +608,15 @@ function drawPacket(ctx,w,h,spec,st){
 // A trapped particle's wave at a trial energy, started fading into the left wall. Inside the trap it wiggles; in the
 // walls it can only fade or grow. Only at a few energies does it fade into the right wall too: the allowed energies.
 // Each chapter has a fixed plan; after playback the viewer chooses the energy and the trap's width.
-const TRAP={mode:'',found:0,fits:false,colours:0,L:2};
+const TRAP={mode:'',found:0,fits:false,colours:0,L:2,geo:null};
+// Trying energies directly: drag the energy line up or down (it clicks onto an allowed energy when close), or drag a
+// wall sideways to make the trap wider or narrower.
+const TRAP_TOUCH={hint:'drag the energy line up and down, or drag a wall to widen the trap.',
+ grab(w,h,spec,st,x,y){const g=TRAP.geo;if(TRAP.mode!=='live'||!g)return null;
+  for(const s of [-1,1])if(Math.abs(x-(g.cx+s*g.half*g.sx))<14&&y>g.rim-10&&y<g.floor+10)return {kind:'wall',cursor:'ew-resize'};
+  return Math.abs(y-g.yE)<Math.max(16,g.A*.8)?{kind:'energy',cursor:'ns-resize'}:null;},
+ move(w,h,spec,st,x,y,hd){const g=TRAP.geo;if(hd.kind==='wall')return {distance:clamp(2*Math.abs(x-g.cx)/g.sx,1,2.5)};
+  const E=g.Etop-(y-g.top)/(g.bottom-g.top)*(g.Etop-g.Ebot);return {mass:clamp((1+E/Physics.trapDepth)/.985)};}};
 const trapE=a=>-Physics.trapDepth*(1-.985*clamp(a)), trapL=b=>clamp(b,1,2.5);
 // The energy control clicks onto an allowed energy when it comes close, like a dial finding a station.
 const trapSnap=(E,levels)=>levels.find(e=>Math.abs(e-E)<.35)??E;
@@ -626,7 +660,7 @@ function drawWell(ctx,w,h,spec,st){
  const xm=small?2.3:3.0, sx=(small?.94:.84)*w/(2*xm), cx=w/2, X=x=>cx+x*sx;
  const Etop=2.2, Ebot=-V-1.2, top=h*(small?.22:.15), bottom=h*.93, Y=E=>top+(Etop-E)/(Etop-Ebot)*(bottom-top);
  const half=plan.L/2, rim=Y(0), floor=Y(-V), A=small?22:30, lsize=small?10:12, lv=plan.levels;
- Object.assign(TRAP,{mode:plan.mode,found:plan.found.length,L:plan.L,fits:false,colours:0});
+ Object.assign(TRAP,{mode:plan.mode,found:plan.found.length,L:plan.L,fits:false,colours:0,geo:{cx,sx,half,rim,floor,top,bottom,Etop,Ebot,A,yE:Y(plan.E??0)}});
  // Ground: the walls and the rock under the floor. Being there takes more energy than the particle has.
  ctx.beginPath();ctx.moveTo(0,rim);ctx.lineTo(X(-half),rim);ctx.lineTo(X(-half),floor);ctx.lineTo(X(half),floor);ctx.lineTo(X(half),rim);ctx.lineTo(w,rim);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
  ctx.fillStyle='rgba(150,112,78,.12)';ctx.fill();
@@ -1187,6 +1221,9 @@ function drawPaths(ctx,w,h,spec,st){
  // At the reunion: how much younger the traveller is.
  if(tc>=H-1e-6&&v>.001)pill(ctx,`traveller: ${T2(H-H/g)} years younger`,small?w/2:w*.745,small?h*.95:h*.3+132,{align:'center',size:small?11:13,weight:600});
 }
+const PATHS_TOUCH={hint:'drag the turnaround sideways for a faster trip, or up for a longer one.',
+ grab:(w,h,spec,st,x,y)=>dragPaths(w,h,spec,st,x,y,true)?{cursor:'grab'}:null,
+ move:(w,h,spec,st,x,y)=>dragPaths(w,h,spec,st,x,y,false)};
 function dragPaths(w,h,spec,st,x,y,grab){
  const L=pathsLayout(w,h,st);
  if(grab)return st.stage>0&&Math.hypot(x-L.kink[0],y-L.kink[1])<22;
@@ -1960,7 +1997,19 @@ function drawNight(ctx,w,h,spec,st){
 // one at a time, each newcomer must miss every birthday already in the room, so the chance of a shared birthday
 // passes one half with the 23rd person and reaches 97% with 50. Exact for 365 equally likely birthdays
 // (Physics.birthdayShared); after playback the viewer sets how many people are in the room.
-const BDAY={mode:''};
+const BDAY={mode:'',geo:null};
+// Filling the room directly: tap it to bring in one more person, tap someone to send them home, or drag the gold bar
+// to a chance and the room fills to the number of people that gives it.
+const bdayMass=n=>(clamp(n,1,60)-1)/59;
+const BDAY_TOUCH={hint:'tap the room to bring people in, tap someone to send them home, or drag the gold bar.',
+ grab(w,h,spec,st,x,y){const g=BDAY.geo;if(BDAY.mode!=='live'||!g)return null;const b=g.bar;
+  if(x>b.bx-12&&x<b.bx+b.bw+12&&Math.abs(y-b.y)<b.bh/2+12)return {kind:'bar',cursor:'grab'};
+  for(let k=0;k<g.n;k++){const [px,py]=g.pos(k);if(Math.hypot(x-px,y-py)<12)return {kind:'person',cursor:'pointer'};}
+  return Math.hypot(x-g.cx,y-g.cy)<g.R+14?{kind:'room',cursor:'pointer'}:null;},
+ move(w,h,spec,st,x,y,hd){if(hd.kind!=='bar')return null;const b=BDAY.geo.bar, f=clamp((x-b.bx)/b.bw);let best=1;
+  for(let n=2;n<=60;n++)if(Math.abs(Physics.birthdayShared(n)-f)<Math.abs(Physics.birthdayShared(best)-f))best=n;return {mass:bdayMass(best)};},
+ release(w,h,spec,st,x,y,hd,moved){if(hd.kind==='bar')return moved?null:BDAY_TOUCH.move(w,h,spec,st,x,y,hd);if(moved)return null;
+  const n=Math.round(1+59*clamp(st.target));return {mass:bdayMass(hd.kind==='person'?n-1:n+1)};}};
 function bdayPlan(st){
  const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
  const last=lines.length?at(lines.length-1):3;
@@ -2020,6 +2069,7 @@ function drawBirthdays(ctx,w,h,spec,st){
   if(st.labels&&show>.5){text(ctx,name,bx,by-bh/2-(small?10:13),{size,weight:700,color:ink});
    text(ctx,v<.995?Math.round(v*100)+'%':(v*100).toFixed(1)+'%',bx+bw+(small?8:12),by,{size:size+1,weight:700,color});}
   ctx.restore();}
+ BDAY.geo={cx,cy,R,n:whole,pos,bar:{bx,bw,bh,y:rows[1][2]}};
  const lowest=anyShow>.5?rows[1]:rows[0];
  if(st.labels&&(anyShow>.5||youShown))text(ctx,'half',bx+bw/2,lowest[2]+bh/2+(small?11:14),{align:'center',size:size-1,weight:600,color:muted});
 }
@@ -2029,7 +2079,11 @@ function drawBirthdays(ctx,w,h,spec,st){
 // wave than red, shakes them more often and is scattered about six times as much. So blue reaches you from all over the
 // sky, while at sunset the light crosses so much air that most of its blue is scattered away before it arrives.
 // Rayleigh scattering by clean air at sea level (Physics.skyThrough); after playback the viewer sets the Sun's height.
-const SKY={mode:''};
+const SKY={mode:'',geo:null};
+// Moving the Sun directly: drag it along the sky; its height is the angle between it and the horizon, seen from you.
+const SKY_TOUCH={hint:'drag the Sun down to the horizon, then back up.',
+ grab(w,h,spec,st,x,y){const g=SKY.geo;return SKY.mode==='live'&&g&&Math.hypot(x-g.sx,y-g.sy)<g.R*2.4+8?{cursor:'grab'}:null;},
+ move(w,h,spec,st,x,y){const g=SKY.geo;return {mass:clamp(Math.atan2(g.oy-y,g.ox-x)*180/Math.PI/90)};}};
 // Fixed scattered positions, so the air, the sparks and the lines to the eye are the same at every frame.
 const SKY_DOTS=(()=>{let x=5;const r=()=>{x=(x*1103515245+12345)%2147483648;return x/2147483648;};return Array.from({length:150},()=>[r(),r(),r()]);})();
 function skyPlan(st){
@@ -2174,14 +2228,14 @@ function drawSky(ctx,w,h,spec,st){
   const seen=e=>({e,dusk:1-Physics.skyThrough(450,e)/Physics.skyThrough(450,90),col:skyLight(Physics.skyAirMass(e))});
   if(plan.mode==='live')view={...seen(Math.max(0,plan.sun)),show:1};
   else view={...seen(90*(1-plan.tint)),show:plan.noon};
-  if(plan.mode==='live')ray(Math.max(0,plan.sun),1,1,'');
+  if(plan.mode==='live'){const e=Math.max(0,plan.sun), {d,L}=path(e);ray(e,1,1,'');SKY.geo={ox,oy,sx:ox+d[0]*(L+gapOut),sy:oy+d[1]*(L+gapOut),R:small?11:16};}
   else{ray(90,plan.noon,plan.tint,'noon');ray(0,plan.dusk*1.0001,plan.tint,'sunset');}
   drawPerson(ctx,ox,oy,small?5:7,'#14171c');
   ctx.restore();
   const vr=small?w*.17:h*.21, vx=small?w*.25:w*.82, vy=small?h*.17:h*.31;
   if(view.show>0){ctx.globalAlpha=view.show;skyView(ctx,vx,vy,vr,view.e,view.dusk,view.col);ctx.globalAlpha=1;}
   if(st.labels){text(ctx,'you',ox+(small?10:14),oy-(small?6:9),{size,weight:700,color:'#f8fafc'});
-   if(view.show>.5)text(ctx,'what you see',vx,small?vy+vr+14:vy-vr-14,{align:'center',size,weight:700,color:'#f8fafc'});}
+   if(view.show>.5)text(ctx,'what you see',vx,vy+vr+(small?14:20),{align:'center',size,weight:700,color:'#f8fafc'});}
   return;
  }
  // The sky: a landscape with the Sun at the upper left and you on the ground; on the Moon, with no air, the sky is
@@ -2769,14 +2823,14 @@ const ENGINES={
   fa:a=>a<.005?'off':Math.round(a*100)+'%',fb:b=>Physics.separation(b).toFixed(1)+' λ',
   measure:['Stripe contrast',a=>(Physics.visibility(a)*100).toFixed(0)+'%'],scale:'Seen from above',disclosure:'The stripe contrast is computed exactly for two point sources.',demoEnd:()=>2.5,
   try:'Turn the second source off: what happens to the stripes? Bring it back, then spread the sources apart.',aria:'Two circular wave sources overlapping, making bright and dark stripes on a screen.'},
- 'two-slit-particles':{draw:drawParticles,a:['Second slit','how open the second slit is'],b:['Slit spacing','relative distance between the slits',''],
+ 'two-slit-particles':{draw:drawParticles,touch:PARTICLES_TOUCH,a:['Second slit','how open the second slit is'],b:['Slit spacing','relative distance between the slits',''],
   fa:a=>a<.005?'closed':Math.round(a*100)+'% open',fb:b=>b.toFixed(2)+'×',
   // Chapter 2 still has the second slit covered, whatever the scene's setting; its readout says so. Chapter 3 has too
   // few dots to show any contrast yet, so its readout is hidden.
   measure:['Stripe contrast',a=>stage===2?'':(stage===1?0:Physics.visibility(a)*100).toFixed(0)+'%'],scale:'',disclosure:'Each dot is a sample from the predicted pattern; the waves show where a particle may land, not a path through one slit.',demoEnd:()=>2.5,
   demo:(p,s)=>({mass:s.mass*(1-smooth((p-.06)/.08)),distance:s.distance}),
   try:'Open the second slit again and watch the stripes return. Then move the slits apart.',aria:'Particles fired one at a time at a wall with two slits land as single dots on a screen, and thousands of them build up stripes.'},
- 'standing-waves':{draw:drawRope,demo:false,plucks:true,
+ 'standing-waves':{draw:drawRope,touch:GUITAR_TOUCH,demo:false,plucks:true,
   a:['How hard you pluck','how far you pull the string'],b:['Where you press','toward the middle, a shorter string rings',''],
   fa:a=>Math.round(a*100)+'%',fb:b=>{const L=guitarLen(b);return L>.996?'open string':Math.round(L*100)+'% rings';},
   measure:[()=>GUITAR.active?'Note':'Rope swings',a=>GUITAR.active?(a>.001?Math.round(220/GUITAR.len):0)+' swings a second':ROPE.key==='pulse'||ROPE.size<.05?'':ROPE.size.toFixed(1)+'× as far as your hand'],tryAny:true,scale:'',
@@ -2793,7 +2847,7 @@ const ENGINES={
   measure:[()=>BLEND.sound?'Pitches mixed in':'Spread of speeds',()=>BLEND.sound?String(BLEND.count):BLEND.sk===null?String(BLEND.count)+' waves':BLEND.sk<=.01?'none: one exact speed':(BLEND.sk/.25).toFixed(1)+'×'],scale:'',
   disclosure:'Exact sums of waves. The particle is free and in one dimension, drawn at one instant in units where ħ = 1; speed is shown as wave length, since a particle’s momentum is set by its wave length. Real beeps and clicks are messier mixtures, but the trade-off is the same: a burst short in time is a wide blend of pitches. The blend is a bell curve, the shape that makes the trade-off as small as it can be.',
   try:'Slide “Blend of speeds” down to one wave: it spreads everywhere, with one exact speed. Widen the blend and the burst gets narrower.',aria:'Waves of slightly different lengths, each in its own row, are added together. Two make a pattern that swells and fades; many make one short burst. For a particle, a narrower burst needs a wider blend of speeds.'},
- 'quantum-well':{draw:drawWell,demo:false,tryAny:true,a:['Energy','slide it to try other energies'],b:['Trap width','a wider trap holds more allowed energies',''],
+ 'quantum-well':{draw:drawWell,touch:TRAP_TOUCH,demo:false,tryAny:true,a:['Energy','slide it to try other energies'],b:['Trap width','a wider trap holds more allowed energies',''],
   fa:a=>{const lv=Physics.trapLevels(TRAP.L||2), n=lv.findIndex(e=>Math.abs(e-trapE(a))<.35);return n<0?'in between':`allowed energy ${n+1}`;},fb:b=>Physics.trapLevels(trapL(b)).length+' allowed',
   // The modelled effect for the render checks: how far the chosen energy sits above the trap's floor.
   effect:a=>trapE(a)+Physics.trapDepth,
@@ -2826,7 +2880,7 @@ const ENGINES={
   disclosure:'Exact special relativity for an ideal train and instant lightning. Times are read from each side’s own clocks, set to agree using light.',
   try:'Slide the speed to zero and both ends are struck together. A faster or longer train makes the front strike come earlier.',
   aria:'A train passes a platform as lightning strikes both of its ends. Seen from the platform, the two flashes meet at its midpoint together. Seen from the train, the front end is struck first, so its flash reaches the rider first.'},
- 'spacetime-paths':{draw:drawPaths,drag:dragPaths,demo:false,a:['Speed','how fast the traveller flies'],b:['Trip','time out before turning back',''],
+ 'spacetime-paths':{draw:drawPaths,touch:PATHS_TOUCH,demo:false,a:['Speed','how fast the traveller flies'],b:['Trip','time out before turning back',''],
   fa:a=>Math.round(Physics.speed(a)*100)+'% of light',fb:b=>Physics.turnaround(b).toFixed(1)+' years out',
   measure:['Traveller’s clock counts less by',a=>(Physics.agingGap(a)*100).toFixed(1)+'%'],scale:'',
   disclosure:'Exact special relativity in years and light-years; the turnaround is instant. The light clocks are slowed down for viewing. Distances on the page are not spacetime lengths: tilted paths look longer than they hold.',
@@ -2878,7 +2932,7 @@ const ENGINES={
   disclosure:'Stars are treated as Sun-like and spread evenly: about 10²² of them in today’s observable universe, a rough count (estimates run from 10²² to 10²⁴). A sight line then travels about 2 × 10²⁴ light-years, on average, before it meets a star. Within the 13.8 billion light-years that light has crossed since the beginning, stars cover about 1 part in 180 trillion of the sky. The slider imagines an unchanging universe whose stars have shone for the chosen time. The picture is a slice through space: a ring twice as far holds twice as many stars, where a full shell holds four times as many. The expansion of the universe, which stretches and dims distant light further, is left out of the numbers.',
   try:'Set the age to 13.8 billion years: stars cover about 1 part in 180 trillion of the sky. How old would an unchanging universe have to be before the whole night sky lit up?',
   aria:'You stand on a hill under a dark, starry sky. If stars filled endless, unchanging space, every shell of stars around you would add the same light and every line of sight would end on a star, so the whole sky would blaze like the Sun. But the universe began about 13.8 billion years ago, so only light from a bubble around you has had time to arrive; light from farther stars is still on its way, and the night stays dark.'},
- 'birthdays':{draw:drawBirthdays,demo:false,tryAny:true,a:['People','how many people are in the room'],b:['Unused','',''],
+ 'birthdays':{draw:drawBirthdays,touch:BDAY_TOUCH,demo:false,tryAny:true,a:['People','how many people are in the room'],b:['Unused','',''],
   fa:a=>{const n=Math.max(1,Math.round(1+59*clamp(a)));return `${n} ${n===1?'person':'people'}`;},fb:b=>'',
   // The modelled effect for the render checks: the chance of a shared birthday for the chosen number of people.
   effect:a=>Physics.birthdayShared(Math.max(1,Math.round(1+59*clamp(a)))),
@@ -2886,7 +2940,7 @@ const ENGINES={
   disclosure:'Exact for 365 equally likely birthdays, ignoring 29 February and twins. Real birthdays are slightly uneven, which makes a match a little more likely.',
   try:'Set “People” to 40: there are 780 pairs, and a shared birthday is 89% likely.',
   aria:'People sit around a circle with a line between every pair. With 23 people there are 253 pairs, and the chance that two share a birthday passes one half; with 50 people it is 97%.'},
- 'sky-colour':{draw:drawSky,demo:false,tryAny:true,a:['Sun height','how high the Sun is above the horizon'],b:['Unused','',''],
+ 'sky-colour':{draw:drawSky,touch:SKY_TOUCH,demo:false,tryAny:true,a:['Sun height','how high the Sun is above the horizon'],b:['Unused','',''],
   fa:a=>a<.006?'on the horizon':`${Math.round(clamp(a)*90)}° up`,fb:b=>'',
   // The modelled effect for the render checks: the share of the Sun's blue light that reaches you directly.
   effect:a=>a<=0?0:Physics.skyThrough(450,clamp(a)*90),
@@ -2968,10 +3022,11 @@ function stringBuffer(freq){
  for(let i=0;i<n;i++)y[i]=y[i]/(peak||1)*(i>n-fade?(n-i)/fade:1);
  const buffer=a.createBuffer(1,n,rate);buffer.copyToChannel(y,0);SOUND.buffers.set(key,buffer);return buffer;
 }
-function soundPluck(freq){SOUND.queue.push(freq);}
+function soundPluck(freq,gain=1){SOUND.queue.push([freq,gain]);}
 function voice(){
  if(!SOUND.ctx||!SOUND.on){SOUND.queue.length=0;return;}
- while(SOUND.queue.length){const src=SOUND.ctx.createBufferSource();src.buffer=stringBuffer(SOUND.queue.shift());src.connect(SOUND.out);src.start();}
+ while(SOUND.queue.length){const [f,g]=SOUND.queue.shift(), src=SOUND.ctx.createBufferSource();src.buffer=stringBuffer(f);
+  if(g<.999){const v=SOUND.ctx.createGain();v.gain.value=Math.max(.08,g);src.connect(v);v.connect(SOUND.out);}else src.connect(SOUND.out);src.start();}
 }
 // A hidden tab freezes the picture, so its sound pauses too.
 document.addEventListener('visibilitychange',()=>{if(!SOUND.ctx)return;if(document.hidden)SOUND.ctx.suspend?.();else SOUND.ctx.resume?.();});
@@ -3007,6 +3062,7 @@ function phrased(text){
 // The hint on the end card. A readout label may be a function (it can change with the view), so it is called here.
 function endHint(){
  const c=spec.controls||'both', e=engineOf(spec), m=e.measure?.[0], label=typeof m==='function'?m():m;
+ if(!spec.next&&c!=='none'&&e.touch)return 'Now try it: '+e.touch.hint;
  return spec.next||(c==='none'?'':c==='both'||e.tryAny||!label?'Now try it: '+e.try:`Now try it: move ${(c==='first'?e.a:e.b)[0]} and watch “${label}”.`);
 }
 function captions(){
@@ -3040,12 +3096,13 @@ function transport(){
  document.querySelector('.workspace')?.classList.toggle('ended',ended&&!playing);
  document.body.classList.toggle('idea-shown',ended&&!playing);
  // The sliders show once playback has ended, or when the viewer opens them; never while it plays.
- const exploring=!playing&&(exploreOpen??ended);
+ const exploring=!playing&&(exploreOpen??(ended&&!direct()));
  document.querySelector('.workspace')?.classList.toggle('exploring',exploring);
  $('explore').setAttribute('aria-pressed',String(exploring));
 }
 // null: sliders follow playback (shown at the end); true or false: the viewer opened or closed them.
 let exploreOpen=null;
+const direct=()=>!!(spec&&spec.controls!=='none'&&engineOf(spec)?.touch);
 function syncControls(){
  const control=$('mass');control.disabled=stage===0;control.value=stage===0?0:mass;
  $('distance').value=distance;
@@ -3059,6 +3116,8 @@ function configure(){
  const e=engineOf(spec), controls=spec.controls||'both';
  const ws=document.querySelector('.workspace');
  ws?.setAttribute('data-controls',controls);
+ // A picture the viewer plays directly needs no sliders panel; it stays reachable from the keyboard.
+ ws?.toggleAttribute('data-direct',direct());
  $('mass').closest('.control').hidden=!['both','first'].includes(controls);
  $('distance').closest('.control').hidden=!['both','second'].includes(controls);
  document.documentElement.style.setProperty('--accent',CouncilDraw.accent(spec));
@@ -3168,16 +3227,32 @@ document.addEventListener('keydown',e=>{
  else if(e.key==='ArrowRight'&&started){chapter(stage+1);}
  else if(e.key==='ArrowLeft'&&started){chapter(stage-1);}
 });
-// Engines with a handle let the viewer drag the scene itself; it moves the same values as the sliders.
-let dragging=false;
+// Direct play: an engine with touch lets the viewer move parts of the picture itself (pull a string, drag the Sun)
+// instead of using sliders, once the guide has played. touch.grab returns a handle when the pointer is on one; move
+// (while dragging) and release return new control values, limited to the controls the guide offers.
+let grip=null;
 const at=e=>{const b=canvas.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top,b.width,b.height];};
-const dragState=()=>({stage,mass:shown,distance,since:0,t:time});
-// A guide without controls offers nothing to drag either.
-const dragOf=()=>spec&&spec.controls!=='none'?engineOf(spec)?.drag:null;
-canvas.addEventListener('pointerdown',e=>{const d=dragOf();if(!d||!started)return;const [x,y,w,h]=at(e);if(d(w,h,spec,dragState(),x,y,true)){dragging=true;canvas.setPointerCapture(e.pointerId);e.preventDefault();}});
-canvas.addEventListener('pointermove',e=>{const d=dragOf();if(!d){canvas.style.cursor='';return;}const [x,y,w,h]=at(e);
- if(dragging){const v=d(w,h,spec,dragState(),x,y,false),c=spec.controls||'both';ended=true;if(c!=='second')mass=shown=Math.round(v.mass*100)/100;if(c!=='first')distance=Math.round(v.distance*100)/100;explore();paint();}
- else canvas.style.cursor=started&&d(w,h,spec,dragState(),x,y,true)?'grab':'';});
-canvas.addEventListener('pointerup',()=>{dragging=false;});
+const dragState=()=>({stage,mass:shown,distance,since:0,t:time,target:mass});
+// A guide without controls offers nothing to touch either.
+const touchOf=()=>spec&&spec.controls!=='none'?engineOf(spec)?.touch:null;
+const handleAt=(x,y,w,h)=>{const t=touchOf();return t&&started&&mode==='live'?t.grab(w,h,spec,dragState(),x,y):null;};
+function applyTouch(v,instant){
+ if(!v)return;const c=spec.controls||'both';
+ if(v.mass!==undefined&&c!=='second'){mass=Math.round(clamp(v.mass)*100)/100;if(instant)shown=mass;}
+ if(v.distance!==undefined&&c!=='first')distance=Math.round(v.distance*100)/100;
+ touched=true;audioStart();ended=true;explore();paint();
+}
+canvas.addEventListener('pointerdown',e=>{const [x,y,w,h]=at(e), hd=handleAt(x,y,w,h);if(!hd)return;
+ grip={hd,x,y,moved:false};try{canvas.setPointerCapture(e.pointerId);}catch(error){}canvas.style.cursor=hd.cursor==='pointer'?'pointer':'grabbing';e.preventDefault();});
+canvas.addEventListener('pointermove',e=>{const t=touchOf(), [x,y,w,h]=at(e);
+ if(grip&&t){if(Math.hypot(x-grip.x,y-grip.y)>6)grip.moved=true;if(grip.moved&&t.move)applyTouch(t.move(w,h,spec,dragState(),x,y,grip.hd),true);return;}
+ const hd=handleAt(x,y,w,h);canvas.style.cursor=hd?hd.cursor||'grab':'';});
+const letGo=(e,cancel)=>{const t=touchOf(), g=grip;grip=null;if(!g||!t)return;const [x,y,w,h]=at(e);
+ if(t.release)applyTouch(t.release(w,h,spec,dragState(),x,y,g.hd,g.moved||cancel),false);canvas.style.cursor='';};
+canvas.addEventListener('pointerup',e=>letGo(e,false));
+canvas.addEventListener('pointercancel',e=>letGo(e,true));
+// On a phone, a touch that lands on something to drag plays the picture instead of scrolling the page. Things to tap
+// (cursor pointer) leave scrolling alone: a tap still works, and a scroll cancels it.
+canvas.addEventListener('touchstart',e=>{const p=e.touches[0], b=canvas.getBoundingClientRect(), hd=p&&handleAt(p.clientX-b.left,p.clientY-b.top,b.width,b.height);if(hd&&hd.cursor!=='pointer')e.preventDefault();},{passive:false});
 new ResizeObserver(paint).observe(canvas);requestAnimationFrame(tick);
 })();

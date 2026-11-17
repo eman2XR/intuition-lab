@@ -15,6 +15,8 @@ Field controls chooses which sliders the viewer gets: none, first, second or bot
 watched, not played with, and a slider that only replays what the chapters showed feels unnecessary. Offer one only
 when trying it yourself is genuinely interesting, showing something playback cannot (for example a number you pick
 and watch the odds change, or a sound you make); at most one slider unless both are that good.
+Some pictures let the viewer play with the picture itself instead (pull the string, drag the Sun, tap a slit); the
+player then hides the sliders and the end card says what to touch.
 The stage shows only a few short labels (each five words or fewer, at most about a dozen words at once, checked
 automatically); the subtitles carry every explanation. Never write a sentence that relies on a label the model notes do
 not list, and never ask for extra labels.'''
