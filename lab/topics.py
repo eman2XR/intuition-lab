@@ -11,8 +11,10 @@ ray_count is unused unless this model says otherwise. The stage carries no scale
 are illustrations, and each model's caveats are shown once in the investigation details. Never say that a picture is not
 to scale, enlarged or magnified, on the stage or in any text: drawings are obviously illustrations. Do not ask for such
 labels or sentences.
-Field controls chooses which sliders the viewer gets: none, first, second or both. Offer a slider only when moving
-it builds intuition beyond what playback already shows; otherwise choose none.
+Field controls chooses which sliders the viewer gets: none, first, second or both. Default to none: most guides are
+watched, not played with, and a slider that only replays what the chapters showed feels unnecessary. Offer one only
+when trying it yourself is genuinely interesting, showing something playback cannot (for example a number you pick
+and watch the odds change, or a sound you make); at most one slider unless both are that good.
 The stage shows only a few short labels (each five words or fewer, at most about a dozen words at once, checked
 automatically); the subtitles carry every explanation. Never write a sentence that relies on a label the model notes do
 not list, and never ask for extra labels.'''

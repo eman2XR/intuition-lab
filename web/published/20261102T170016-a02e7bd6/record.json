@@ -143,7 +143,7 @@
     "line_width": 2,
     "duration": 110,
     "takeaway": "Light always pulls away from you at full speed, however fast you go, so no number of pushes ever catches it.",
-    "controls": "first",
+    "controls": "none",
     "kind": "speed-limit",
     "theme": "night"
   },
@@ -277,7 +277,7 @@
         "line_width": 2,
         "duration": 110,
         "takeaway": "Light always pulls away from you at full speed, however fast you go, so no number of pushes ever catches it.",
-        "controls": "first",
+        "controls": "none",
         "kind": "speed-limit"
       },
       "checks": [

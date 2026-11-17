@@ -50,7 +50,7 @@
   "accent": "blue",
   "mass": 1,
   "distance": 1.6,
-  "controls": "first",
+  "controls": "none",
   "takeaway": "Spacetime is curved wherever paths that nothing pushes start side by side but then come together or spread apart. Mass is what curves it.",
   "beats": [
    {
@@ -139,7 +139,7 @@
     "accent": "blue",
     "mass": 1,
     "distance": 1.6,
-    "controls": "first",
+    "controls": "none",
     "takeaway": "Spacetime is curved wherever paths that nothing pushes start side by side but then come together or spread apart. Mass is what curves it.",
     "beats": [
      {

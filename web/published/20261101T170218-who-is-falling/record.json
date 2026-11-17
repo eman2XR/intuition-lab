@@ -50,7 +50,7 @@
   "accent": "blue",
   "mass": 1,
   "distance": 1.6,
-  "controls": "first",
+  "controls": "none",
   "takeaway": "Falling needs no push; staying put does. A scale on the falling ball reads zero, while yours reads your weight.",
   "beats": [
    {
@@ -131,7 +131,7 @@
     "accent": "blue",
     "mass": 1,
     "distance": 1.6,
-    "controls": "first",
+    "controls": "none",
     "takeaway": "Falling needs no push; staying put does. A scale on the falling ball reads zero, while yours reads your weight.",
     "beats": [
      {

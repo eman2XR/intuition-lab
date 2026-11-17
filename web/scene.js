@@ -3172,8 +3172,10 @@ document.addEventListener('keydown',e=>{
 let dragging=false;
 const at=e=>{const b=canvas.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top,b.width,b.height];};
 const dragState=()=>({stage,mass:shown,distance,since:0,t:time});
-canvas.addEventListener('pointerdown',e=>{const d=engineOf(spec)?.drag;if(!d||!started)return;const [x,y,w,h]=at(e);if(d(w,h,spec,dragState(),x,y,true)){dragging=true;canvas.setPointerCapture(e.pointerId);e.preventDefault();}});
-canvas.addEventListener('pointermove',e=>{const d=engineOf(spec)?.drag;if(!d)return;const [x,y,w,h]=at(e);
+// A guide without controls offers nothing to drag either.
+const dragOf=()=>spec&&spec.controls!=='none'?engineOf(spec)?.drag:null;
+canvas.addEventListener('pointerdown',e=>{const d=dragOf();if(!d||!started)return;const [x,y,w,h]=at(e);if(d(w,h,spec,dragState(),x,y,true)){dragging=true;canvas.setPointerCapture(e.pointerId);e.preventDefault();}});
+canvas.addEventListener('pointermove',e=>{const d=dragOf();if(!d){canvas.style.cursor='';return;}const [x,y,w,h]=at(e);
  if(dragging){const v=d(w,h,spec,dragState(),x,y,false),c=spec.controls||'both';ended=true;if(c!=='second')mass=shown=Math.round(v.mass*100)/100;if(c!=='first')distance=Math.round(v.distance*100)/100;explore();paint();}
  else canvas.style.cursor=started&&d(w,h,spec,dragState(),x,y,true)?'grab':'';});
 canvas.addEventListener('pointerup',()=>{dragging=false;});

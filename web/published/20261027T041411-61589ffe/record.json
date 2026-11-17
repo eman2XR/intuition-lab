@@ -86,7 +86,8 @@
     "takeaway": "Time passes more slowly lower down near a mass. Both clocks work, but the lower one counts less, and more so near a bigger mass.",
     "kind": "gravity-clocks",
     "why": "It is a core idea of Einstein’s spacetime: gravity changes how fast time passes. Atomic clocks flown on airliners in 1971 confirmed it, and GPS satellites must correct for it every day.",
-    "theme": "sage"
+    "theme": "sage",
+    "controls": "none"
   },
   "checks": [
     {
@@ -302,7 +303,8 @@
         "line_width": 2,
         "duration": 30,
         "takeaway": "Time passes more slowly deeper in gravity than for a clock higher up. Both clocks work perfectly, but the lower one counts less time. The lag grows with more mass and shrinks as the pair moves farther from the mass.",
-        "kind": "gravity-clocks"
+        "kind": "gravity-clocks",
+        "controls": "none"
       },
       "checks": [
         {

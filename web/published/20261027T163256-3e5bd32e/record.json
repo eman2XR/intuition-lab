@@ -76,7 +76,7 @@
     "line_width": 2,
     "duration": 32,
     "takeaway": "The longer the wave compared with the gap, the wider it spreads: sound spreads through doorways, but light barely does.",
-    "controls": "first",
+    "controls": "none",
     "kind": "diffraction",
     "why": "It is why you can hear someone talking around a corner but cannot see them, and why no microscope or telescope can show details below a certain size, however perfect its lenses.",
     "theme": "sage"
@@ -302,7 +302,7 @@
         "line_width": 2,
         "duration": 32,
         "takeaway": "The longer the wave compared with the gap, the wider it spreads: sound spreads through doorways, but light barely does.",
-        "controls": "first",
+        "controls": "none",
         "kind": "diffraction"
       },
       "checks": [

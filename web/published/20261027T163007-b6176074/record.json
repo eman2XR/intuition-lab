@@ -82,7 +82,7 @@
     "line_width": 2.5,
     "duration": 32,
     "takeaway": "A particle in one place is a short burst of wave, a blend of many speeds. The more exact its place, the less exact its speed.",
-    "controls": "first",
+    "controls": "none",
     "kind": "wave-packet",
     "why": "This is the uncertainty principle, a central rule of quantum physics. It is not a flaw in our instruments, and it is part of why atoms have a size at all instead of collapsing.",
     "opening": "Why can\u2019t a particle have an exact place and an exact speed at the same time?",
@@ -185,7 +185,7 @@
         "line_width": 2.5,
         "duration": 32,
         "takeaway": "Making a wave sit in one place takes many wavelengths, so a sharp place always comes with a blurry motion.",
-        "controls": "first",
+        "controls": "none",
         "kind": "wave-packet"
       },
       "checks": [

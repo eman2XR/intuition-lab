@@ -165,7 +165,7 @@
     "line_width": 3,
     "duration": 40,
     "takeaway": "Attention lets every word look straight back at the words that matter, all at once; stacked many times, it powers ChatGPT.",
-    "controls": "first",
+    "controls": "none",
     "kind": "attention",
     "opening": "Your phone guesses your next word. How did that idea turn into ChatGPT?",
     "links": [
@@ -469,7 +469,7 @@
         "line_width": 3,
         "duration": 40,
         "takeaway": "Attention is a calculation: each word blends in the words that best match its question, in shares that add up to 100%.",
-        "controls": "first",
+        "controls": "none",
         "kind": "attention"
       },
       "checks": [
