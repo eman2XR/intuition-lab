@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-16T19:26:42.623821+00:00",
-    "outcome": "Nov 16: published the double-slit guide (curriculum 4.1, renamed per issue #11; 2.5 removed); two review rounds, all four reviews 9."
+    "at": "2026-11-17T20:08:54.802703+00:00",
+    "outcome": "Nov 17: published How did Eratosthenes measure the Earth with a stick? (new curriculum 6.2, per issue #13) and revised the double-slit guide per issue #12; three review rounds, all reviews 8-9."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
