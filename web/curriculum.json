@@ -130,6 +130,11 @@
           "question": "Why is the night sky dark?",
           "model": "night-sky",
           "ready": true
+        },
+        {
+          "id": "6.2",
+          "question": "How did Eratosthenes measure the Earth with a stick?",
+          "model": "eratosthenes"
         }
       ]
     }

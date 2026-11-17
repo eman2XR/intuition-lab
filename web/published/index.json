@@ -1,12 +1,22 @@
 [
   {
+    "id": "20261117T200743-eratosthenes",
+    "question": "How did Eratosthenes measure the Earth with a stick?",
+    "topic": "eratosthenes",
+    "created": "2026-11-17T20:07:43.847428+00:00",
+    "curriculum": "6.2",
+    "title": "How did Eratosthenes measure the Earth with a stick?",
+    "theme": "lilac"
+  },
+  {
     "id": "20261116T192404-two-slit-particles",
     "question": "The double-slit experiment: how do particles fired one at a time build up stripes?",
     "topic": "two-slit-particles",
     "created": "2026-11-16T19:24:04.671670+00:00",
     "curriculum": "4.1",
-    "title": "The double-slit experiment: how can single particles make stripes?",
-    "theme": "rose"
+    "title": "Wave\u2013particle duality: the double-slit experiment",
+    "theme": "rose",
+    "updated": "2026-11-17T20:07:43Z"
   },
   {
     "id": "20261115T201917-light-clock",

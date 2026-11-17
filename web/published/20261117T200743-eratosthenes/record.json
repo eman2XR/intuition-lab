@@ -1,0 +1,428 @@
+{
+  "id": "20261117T200743-eratosthenes",
+  "status": "reviewed",
+  "question": "How did Eratosthenes measure the Earth with a stick?",
+  "topic": "eratosthenes",
+  "created": "2026-11-17T20:07:43.847428+00:00",
+  "research": {
+    "claim": "Sunlight reaches the Earth as effectively parallel rays, so at the same moment two places on a round Earth see the Sun at angles from vertical that differ by exactly the angle between the two places at the Earth's centre. Eratosthenes found that at noon on the summer solstice the Sun was overhead at Syene but about 7.2 degrees from overhead at Alexandria, one fiftieth of a circle; with the two cities about 5,000 stadia (roughly 800 km) apart, the Earth's circumference is about 50 times that: 250,000 stadia, roughly 40,000 km.",
+    "explanation": "According to the simplified account of Cleomedes, at local noon on the summer solstice the Sun stood directly overhead at Syene (modern Aswan): upright rods cast no shadow and sunlight shone straight down into the city's well. At the same moment in Alexandria, a gnomon (an upright rod) did cast a shadow. From the rod's length and the shadow's length, Eratosthenes found that the sunlight came in about 7.2 degrees from vertical, which is 1/50 of a full circle. The Sun is so far away (about 150 million km, the astronomical unit) that its rays arriving at the two cities are parallel to within a thousandth of a degree. On flat ground, parallel light would give both rods the same shadow; different shadows show that the ground curves between the cities. On a sphere, each rod points away from the Earth's centre, so the two rods, extended downward, meet at the centre. The ray that grazes the tip of Alexandria's rod is parallel to Syene's rod, so by alternate interior angles the angle between the ray and Alexandria's rod equals the angle between the two rods at the centre: 7.2 degrees. The arc between the cities is therefore 1/50 of the whole circumference, and the circumference is 50 times the distance between them. That distance was reported as about 5,000 stadia, measured by professional surveyors called bematists, giving 250,000 stadia (Pliny later quoted 252,000). The length of the stadion is uncertain: with a stadion of 155 to 160 m (close to the empirical estimate of about 157.7 m), 5,000 stadia is about 775 to 800 km and the result is within a few per cent of the modern value, while longer stadia (176 to 185 m) give results 10 to 15% too large. The guide uses round modern numbers: 800 km times 50 is 40,000 km, against a modern circumference of 40,075 km around the equator and 40,008 km through the poles. The same reasoning shows why one shadow and one distance are enough: for a fixed distance, a smaller Earth would make the rod lean further, so the shadow's angle measures the Earth's size. The method does not need the Sun overhead anywhere: the difference between two simultaneous shadow angles gives the angle at the centre (C = 360 degrees times d divided by the difference in angle).",
+    "assumptions": [
+      "Sunlight arrives as parallel rays; the Sun is about 150 million km away.",
+      "The Earth is a perfect sphere.",
+      "As in the classic account, the cities are treated as due north and south of each other (Syene is in fact about 3 degrees of longitude east of Alexandria) and the Sun as exactly overhead at Syene (Syene is less than a degree north of the Tropic of Cancer).",
+      "The distance is taken as 800 km, about 5,000 stadia at roughly 157 to 160 m each."
+    ],
+    "prediction": "At the same moment, rods farther from the place where the Sun is overhead cast shadows at larger angles, in proportion to their distance along the ground: about 7.2 degrees for every 800 km.",
+    "falsifier": "If rods at different distances from Syene cast shadows at the same angle at the same moment, the ground would be flat for parallel light, and the method would give no size at all.",
+    "limitations": [
+      "Eratosthenes's own description is lost; the account comes from Cleomedes and is simplified.",
+      "The length of the stadion he used is debated, so his answer in modern units is uncertain.",
+      "The guide uses round modern numbers (800 km, 7.2 degrees, 40,000 km) rather than his units."
+    ],
+    "misconceptions": [
+      "The method needs the Sun to be overhead somewhere: any two simultaneous shadow angles work.",
+      "Different shadows alone prove a round Earth: only together with parallel sunlight do they show curvature."
+    ],
+    "questions": [
+      "Why must the Sun's rays arrive parallel?",
+      "Was the Sun really straight overhead at Syene?",
+      "How close was his answer?"
+    ],
+    "sources": [
+      {
+        "title": "Earth's circumference (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Earth%27s_circumference",
+        "supports": "Cleomedes's simplified account: Syene (modern Aswan) and Alexandria 5,000 stadia apart; the Sun directly overhead at Syene at local noon on the summer solstice (Syene actually less than a degree north of the tropic, and about 3 degrees of longitude east of Alexandria); the gnomon shadow at Alexandria giving about 7 degrees, 1/50 of a circle; 50 times 5,000 = 250,000 stadia; Pliny's 252,000; an error between -2.4% and +0.8% for a stadion of 155 to 160 m, or 10 to 15% for longer stadia; around 240 BC."
+      },
+      {
+        "title": "Eratosthenes (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Eratosthenes",
+        "supports": "Chief librarian at the Library of Alexandria (c. 276 to 194 BC); at noon on the summer solstice rods cast no shadows in Syene and the Sun shone straight down the city well while Alexandria still had shadows; the shadow angle of about 7.2 degrees, 1/50 of a circle, by alternate interior angles; 5,000 stadia measured by bematists; C = 360 degrees times d over the difference in shadow angles; modern circumference 40,075 km (equator) and about 40,008 km (poles)."
+      },
+      {
+        "title": "Stadion (unit) (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Stadion_(unit)",
+        "supports": "The stadion's length is uncertain (150 to 210 m); an empirical estimate from Eratosthenes's and Strabo's distances of about 157.7 m; the error of Eratosthenes's result depends on which stadion is assumed."
+      },
+      {
+        "title": "Aswan (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Aswan",
+        "supports": "Aswan (ancient Syene) lies at about 24 degrees 5 minutes north, a latitude of great interest to ancient geographers as the northern boundary of the tropics."
+      },
+      {
+        "title": "Tropic of Cancer (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Tropic_of_Cancer",
+        "supports": "The Tropic of Cancer, about 23 degrees 26 minutes north, is the northernmost latitude at which the Sun can be directly overhead."
+      },
+      {
+        "title": "Astronomical unit (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Astronomical_unit",
+        "supports": "The average Earth to Sun distance, the astronomical unit, is about 149.6 million km, so sunlight reaching places 800 km apart is parallel to within a few millionths of a radian."
+      }
+    ]
+  },
+  "scene": {
+    "title": "How did Eratosthenes measure the Earth with a stick?",
+    "subtitle": "At noon on the longest day, a stick in one Egyptian city casts no shadow, while a stick 800 km north does. How did that reveal the size of the Earth?",
+    "why": "More than 2,200 years ago, without leaving Egypt, a scholar worked out the size of the whole Earth from one shadow and one distance.",
+    "opening": "How could anyone measure the whole Earth without travelling around it?",
+    "beats": [
+      {
+        "title": "Noon in Syene",
+        "body": "Imagine noon in Syene, Egypt, on the longest day of the year. The Sun is straight overhead, so an upright stick casts no shadow. Sunlight even reaches the water at the bottom of a deep well."
+      },
+      {
+        "title": "A shadow in Alexandria",
+        "body": "At that moment in Alexandria, 800 kilometres north, a stick casts a shadow. Its shadow shows the Sun is about 7 degrees from straight overhead. Over 2,200 years ago, the scholar Eratosthenes used this to measure the Earth."
+      },
+      {
+        "title": "Why the shadows differ",
+        "body": "The Sun is so far away that its rays arrive side by side, parallel. So on flat ground, both sticks would cast the same shadow: none. Different shadows mean the ground between the cities must curve."
+      },
+      {
+        "title": "The angle at the centre",
+        "body": "On a round Earth, the two sticks lean apart by a small angle. Extend them down and they meet at the centre, just over 7 degrees apart. Syene's stick points at the Sun, so Alexandria's misses it by that same angle."
+      },
+      {
+        "title": "Fifty times around",
+        "body": "A full circle is 360 degrees, which is fifty slices of 7.2 degrees. So the 800 kilometres between the cities fits fifty times around the Earth. Fifty times 800 is 40,000 kilometres, about what we measure today."
+      },
+      {
+        "title": "Why one shadow is enough",
+        "body": "On a smaller Earth, the same 800 kilometres would curve more. Alexandria's stick would lean further, and its shadow would grow longer. So one shadow and one distance were enough to measure the planet."
+      }
+    ],
+    "takeaway": "Because sunlight arrives parallel, the shadow's angle equals the angle between the two cities at the Earth's centre, so one shadow and one distance give the size of the whole Earth.",
+    "mass": 0.5,
+    "distance": 1,
+    "controls": "none",
+    "accent": "blue",
+    "kind": "eratosthenes",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Why must the Sun's rays arrive parallel?",
+        "a": "The Sun is about 150 million kilometres away, so rays reaching two cities 800 km apart differ in direction by less than a thousandth of a degree."
+      },
+      {
+        "q": "Was the Sun really straight overhead at Syene?",
+        "a": "Almost. Syene lies less than a degree north of the tropic, the farthest-north line where the Sun can stand straight overhead, so a stick there casts a very short shadow; the classic account treats it as none."
+      },
+      {
+        "q": "How close was his answer?",
+        "a": "He found about 250,000 stadia. A stadion was a Greek unit of length, and how long his was is still debated: his answer was within a few per cent of the true size, or 10 to 15% too big if he used a longer stadion."
+      },
+      {
+        "q": "Does the Sun have to be overhead in one city?",
+        "a": "No. For two cities due north and south of each other, measure both shadows at the same moment: the difference between their angles (or their sum, if the shadows point opposite ways) is the angle at the centre."
+      },
+      {
+        "q": "How did he know the distance?",
+        "a": "It was reported as about 5,000 stadia, measured by bematists, the professional surveyors who worked out distances across Egypt."
+      }
+    ],
+    "theme": "lilac"
+  },
+  "checks": [
+    {
+      "name": "A stick under the overhead Sun casts no shadow",
+      "pass": true
+    },
+    {
+      "name": "On flat ground, parallel light gives every stick the same shadow",
+      "pass": true
+    },
+    {
+      "name": "The shadow comes in at the angle the two sticks make at the centre",
+      "pass": true
+    },
+    {
+      "name": "One fiftieth of a circle means fifty times the distance around",
+      "pass": true
+    },
+    {
+      "name": "Fifty times 800 km is within 1% of the real Earth",
+      "pass": true
+    },
+    {
+      "name": "The real Earth leans a stick 800 km away by about 7 degrees",
+      "pass": true
+    },
+    {
+      "name": "A smaller Earth leans the same stick further",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 4.4 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 78)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 11)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 3)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "How did Eratosthenes measure the Earth with a stick?",
+        "subtitle": "At noon on the longest day, a stick in one Egyptian city casts no shadow, while a stick 800 km north does. How did that reveal the size of the Earth?",
+        "why": "More than 2,200 years ago, without leaving Egypt, a scholar worked out the size of the whole Earth from one shadow and one distance.",
+        "opening": "How could anyone measure the whole Earth without travelling around it?",
+        "beats": [
+          {
+            "title": "Noon in Syene",
+            "body": "Imagine noon in Syene, Egypt, on the longest day of the year. The Sun is straight overhead, so an upright stick casts no shadow. Sunlight even reaches the water at the bottom of a deep well."
+          },
+          {
+            "title": "A shadow in Alexandria",
+            "body": "At that moment in Alexandria, 800 kilometres north, a stick casts a shadow. Its shadow shows the Sun is about 7 degrees from straight overhead. Over 2,200 years ago, the scholar Eratosthenes used this to measure the Earth."
+          },
+          {
+            "title": "Why the shadows differ",
+            "body": "The Sun is so far away that its rays arrive side by side, parallel. So on flat ground, both sticks would cast the same shadow: none. Different shadows mean the ground between the cities must curve."
+          },
+          {
+            "title": "The angle at the centre",
+            "body": "On a round Earth, the two sticks lean apart by a small angle. Extend them down and they meet at the centre, just over 7 degrees apart. Syene's stick points at the Sun, so Alexandria's misses it by that same angle."
+          },
+          {
+            "title": "Fifty times around",
+            "body": "A full circle is 360 degrees, which is fifty slices of 7.2 degrees. So the 800 kilometres between the cities fits fifty times around the Earth. Fifty times 800 is 40,000 kilometres, about what we measure today."
+          },
+          {
+            "title": "Why one shadow is enough",
+            "body": "On a smaller Earth, the same 800 kilometres would curve more. Alexandria's stick would lean further, and its shadow would grow longer. So one shadow and one distance were enough to measure the planet."
+          }
+        ],
+        "takeaway": "Because sunlight arrives parallel, the shadow's angle equals the angle between the two cities at the Earth's centre, so one shadow and one distance give the size of the whole Earth.",
+        "mass": 0.5,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "eratosthenes",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Why must the Sun's rays arrive parallel?",
+            "a": "The Sun is about 150 million kilometres away, so rays reaching two cities 800 km apart differ in direction by less than a thousandth of a degree."
+          },
+          {
+            "q": "Was the Sun really straight overhead at Syene?",
+            "a": "Almost. Syene lies less than a degree north of the tropic, the farthest-north line where the Sun can stand straight overhead, so a stick there casts a very short shadow; the classic account treats it as none."
+          },
+          {
+            "q": "How close was his answer?",
+            "a": "He found about 250,000 stadia. A stadion was a Greek unit of length, and how long his was is still debated: his answer was within a few per cent of the true size, or 10 to 15% too big if he used a longer stadion."
+          },
+          {
+            "q": "Does the Sun have to be overhead in one city?",
+            "a": "No. For two cities due north and south of each other, measure both shadows at the same moment: the difference between their angles (or their sum, if the shadows point opposite ways) is the angle at the centre."
+          },
+          {
+            "q": "How did he know the distance?",
+            "a": "It was reported as about 5,000 stadia, measured by bematists, the professional surveyors who worked out distances across Egypt."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "A stick under the overhead Sun casts no shadow",
+          "pass": true
+        },
+        {
+          "name": "On flat ground, parallel light gives every stick the same shadow",
+          "pass": true
+        },
+        {
+          "name": "The shadow comes in at the angle the two sticks make at the centre",
+          "pass": true
+        },
+        {
+          "name": "One fiftieth of a circle means fifty times the distance around",
+          "pass": true
+        },
+        {
+          "name": "Fifty times 800 km is within 1% of the real Earth",
+          "pass": true
+        },
+        {
+          "name": "The real Earth leans a stick 800 km away by about 7 degrees",
+          "pass": true
+        },
+        {
+          "name": "A smaller Earth leans the same stick further",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 4.4 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 78)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 11)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 3)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Every changed line is accurate: 'misses it by that same angle' states the alternate-angles step correctly for parallel light; 'A full circle is 360 degrees, which is fifty slices of 7.2 degrees' is exact; the takeaway holds because Syene has no shadow; the FAQ sum rule is right when shadows point opposite ways; the bematist wording matches the sources; the research record says 'less than a degree' throughout and the aria text says 7.2 degrees. The pictures match: fifty slices at 7.2 degree spacing, the fifty-arc ring with '50 × 800 km' then '= 40,000 km', '800 km' centred over the gap between the sticks, the chapter 3 ending with 'flat' on the dashed level line and 'round Earth' on the curved ground, and the dashed 'our Earth' outline at the real size, so the smaller globe at 0.59 of it gives the 12.2 degrees shown.",
+        "changes": [
+          "Optional: 'about 800 km north' in chapter 2.",
+          "Optional: the final readout shows 12.2 degrees for the hypothetical Earth; the labels make this clear enough."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "All four earlier blockers are fixed: Alexandria's shadow is a clear dark band labelled 'shadow' (about 30 px desktop, 17 px phone); on a phone '800 km' sits right of the sticks, clear of the readout; chapter 6 ends on the smaller Earth at 12.2 degrees inside the dashed 'our Earth' outline; at the end of chapter 3 'round Earth' sits on the sand and 'flat' is in full ink at the left end of the dashed line. Every frame matches its subtitle and the pictures read at a glance at both sizes. One cosmetic overlap remains: on a phone 'smaller Earth' crosses the dashed outline and touches the small globe's rim.",
+        "changes": [
+          "Chapter 6: place 'smaller Earth' where it clears both outlines at every size, and fade the labels in.",
+          "End of chapter 3: drop the faded ray, wedge and label while the ghost stick shows; nudge the ghost stick.",
+          "Close-up panel: a darker, thicker shadow.",
+          "Optional: clamp edge labels inside the stage; bend the 800 km ruler; restore a connector or drop the ring."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Explanation: at noon on the longest day the Sun stands straight over Syene, so a stick there points right at it, while 800 km north in Alexandria a stick's shadow shows the Sun about 7 degrees from overhead; because the Sun's rays arrive parallel, Alexandria's stick misses the Sun by exactly the angle the two sticks make at the Earth's centre, 7.2 degrees, and a full circle of 360 degrees holds fifty slices that size, so the Earth is fifty times 800 km, about 40,000 km, around. All round 2 notes landed; every line says one thing, sounds natural aloud and is 78 characters or fewer; the numbers move from 'about 7' to 'just over 7' to '7.2', matching the screen; every step explains its cause and every term is explained when it first appears.",
+        "changes": [
+          "Optional: draw 'Earth's centre' over the slice lines.",
+          "Optional: keep phrases together across caption line breaks.",
+          "Optional: FAQ wording 'historians still debate how long his was'."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Blind reading matched all six chapters: noon at Syene with no shadow and a lit well; Alexandria square to its tilted ground with a 7.2 degree wedge and a labelled shadow, 800 km away; a dashed flat line labelled 'flat' with an upright ghost stick showing flat ground gives no shadow at either town, the real ground labelled 'round Earth' in the sand; the globe with the sticks meeting at Earth's centre at 7.2 degrees and Alexandria's close-up at the same angle; fifty rim segments and fifty evenly spaced spokes, '800 km' over the orange arc and '50 × 800 km = 40,000 km'; a smaller Earth (0.59 of the size) labelled against the dashed 'our Earth', with 12.2 degrees and a longer shadow. The numbers agree, and the round 2 label issues are fixed.",
+        "changes": [
+          "The blue ring on Alexandria's stick no longer has a connector; restore it or drop the ring (the panel's title still makes the link).",
+          "Chapter 3: the faded 7.2 degree label could look like a glitch.",
+          "Chapter 2: let the 800 km ruler follow the curve."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261117T200743-eratosthenes/revision-1-0.png",
+        "published/20261117T200743-eratosthenes/revision-1-1.png",
+        "published/20261117T200743-eratosthenes/revision-1-2.png",
+        "published/20261117T200743-eratosthenes/revision-1-3.png",
+        "published/20261117T200743-eratosthenes/revision-1-4.png",
+        "published/20261117T200743-eratosthenes/revision-1-5.png",
+        "published/20261117T200743-eratosthenes/revision-1-6.png",
+        "published/20261117T200743-eratosthenes/revision-1-7.png",
+        "published/20261117T200743-eratosthenes/revision-1-8.png",
+        "published/20261117T200743-eratosthenes/revision-1-9.png",
+        "published/20261117T200743-eratosthenes/revision-1-10.png",
+        "published/20261117T200743-eratosthenes/revision-1-11.png"
+      ]
+    }
+  ]
+}

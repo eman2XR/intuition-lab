@@ -558,9 +558,35 @@
         'A train moving the other way finds the opposite end struck first': speeds.every(v => { const T = trainTimes(-v, 1); return T.back.t < T.front.t; }),
       }).map(([name, pass]) => ({name, pass}));
     },
+    // Eratosthenes: sunlight arrives parallel. On a round Earth of radius R, a stick at distance d along the ground from
+    // the place where the Sun is overhead leans away from the light by d / R radians, so its shadow comes in at that
+    // angle, and the whole way around is d times a full turn divided by the angle. The first control sets how sharply
+    // the ground curves: 0 flat, 0.5 the real Earth, 1 an Earth half as big.
+    earthAngle(d, R) { return d / R; },
+    earthAround(d, angle) { return d * 2 * Math.PI / angle; },
+    earthCurvature: a => 2 * a,
+    earthChecks() {
+      const near=(a,b,e=1e-9)=>Math.abs(a-b)<e, deg=Math.PI/180;
+      // A stick of length L standing at angle phi from the overhead point, in coordinates centred on the Earth: follow
+      // the light (straight down) past its tip to the ground's tangent line by solving the two lines, and read off the
+      // shadow's length and the angle the light makes with the stick.
+      const shadow=(phi,L=1)=>{const n=[Math.sin(phi),Math.cos(phi)], t=[Math.cos(phi),-Math.sin(phi)], down=[0,-1];
+        const det=t[0]*-down[1]+down[0]*t[1], u=(L*n[0]*-down[1]+down[0]*L*n[1])/det;
+        return {length:Math.abs(u),angle:Math.atan2(Math.abs(u),L)};};
+      const real=this.earthAngle(800,6371);
+      return Object.entries({
+        'A stick under the overhead Sun casts no shadow':near(shadow(this.earthAngle(0,6371)).length,0),
+        'On flat ground, parallel light gives every stick the same shadow':this.earthAngle(800,Infinity)===0&&this.earthAngle(1600,Infinity)===0,
+        'The shadow comes in at the angle the two sticks make at the centre':near(shadow(real).angle,real)&&near(shadow(real).length,Math.tan(real)),
+        'One fiftieth of a circle means fifty times the distance around':near(this.earthAround(800,2*Math.PI/50),40000,1e-6),
+        'Fifty times 800 km is within 1% of the real Earth':Math.abs(this.earthAround(800,2*Math.PI/50)-40007)/40007<.01,
+        'The real Earth leans a stick 800 km away by about 7 degrees':real/deg>7&&real/deg<7.3,
+        'A smaller Earth leans the same stick further':this.earthAngle(800,3185)>this.earthAngle(800,6371),
+      }).map(([name,pass])=>({name,pass}));
+    },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,
+        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

@@ -261,11 +261,14 @@ function drawInterference(ctx,w,h,spec,st){
 
 const hash=i=>{let x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);};
 let patternCache={key:'',cdf:null};
-function slitPattern(A,sep,bins){
- const key=A.toFixed(3)+'|'+sep.toFixed(3)+'|'+bins;
+function slitPattern(A,geo,bins){
+ const key=[A.toFixed(3),geo.L.toFixed(1),geo.d.toFixed(1),geo.lam.toFixed(2),geo.span.toFixed(1),bins].join('|');
  if(patternCache.key===key)return patternCache;
  const p=[];let total=0;
- for(let i=0;i<bins;i++){const y=(i+.5)/bins*2-1, env=Math.pow(Math.cos(y*Math.PI/2.15),2), I=env*Physics.intensity(A,TAU*sep*y*2.1);p.push(I);total+=I;}
+ // The waves from the two drawn slits meet each point of the screen out of step by their path difference over the
+ // drawn wavelength, so the stripes fall exactly where the drawn ripples meet top on top.
+ for(let i=0;i<bins;i++){const y=(i+.5)/bins*2-1, Y=y*geo.span, env=Math.pow(Math.cos(y*Math.PI/2.15),2);
+  const dl=Math.hypot(geo.L,Y-geo.d/2)-Math.hypot(geo.L,Y+geo.d/2), I=env*Physics.intensity(A,TAU*dl/geo.lam);p.push(I);total+=I;}
  const cdf=[];let run=0;for(const v of p){run+=v/total;cdf.push(run);}
  patternCache={key,p:p.map(v=>v/Math.max(...p)),cdf};return patternCache;
 }
@@ -282,22 +285,31 @@ const PARTICLES_TOUCH={hint:'tap the second slit to cover or uncover it.',
  release(w,h,spec,st,x,y,hd,moved){return moved?null:{mass:st.target>.5?0:1};}};
 function drawParticles(ctx,w,h,spec,st){
  const small=w<520, preview=st.since===undefined, live=!!st.live, last=(st.chapters?.length||6)-1, stage=preview?3:live?last:st.stage;
- const own=live||stage===last, A=own?st.mass:stage<=1?0:1, sep=Physics.separation(own?st.distance:spec.distance);
  const since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+4*i;
+ // In chapter 3 the cover slides off the second slit with its first sentence.
+ const own=live||stage===last, A=own?st.mass:stage<=1?0:stage===2&&!preview?smooth((since-.4)/1.2):1, sep=Physics.separation(own?st.distance:spec.distance);
  const navy='#1f3a5a', shutter='#f2b134', screenC='#13263a', dot='#ff9f80', bar='#ef6f4f', wave='#4c9be8';
- const srcX=w*(small?.1:.09), wallX=w*(small?.42:.4), sw=w*(small?.12:.07), scrX=w*(small?.68:.7), midY=h*.5, span=h*(small?.36:.4);
- const gap=span*.16*sep, slit=Math.max(5,h*.022), slab=Math.max(10,w*.028), y1=midY-gap/2, y2=midY+gap/2;
- const bins=120, pat=slitPattern(A,sep,bins);
- // How many have landed so far in this chapter.
- // In the last chapter's playback the second slit closes, the screen is cleared and fills again.
+ const srcX=w*(small?.07:.09), wallX=w*(small?.3:.4), sw=w*(small?.12:.07), scrX=w*(small?.68:.7), midY=h*.5, span=h*(small?.36:.4);
+ const gap=span*.32*sep, slit=Math.max(5,h*.022), slab=Math.max(10,w*.028), y1=midY-gap/2, y2=midY+gap/2;
+ // The drawn wavelength puts a bright stripe about every 0.3 (0.25 on a phone) of the screen's half height.
+ const L=scrX-wallX, geo={L,d:gap,span,lam:(small?.25:.3)*span*gap/L};
+ const bins=60, pat=slitPattern(A,geo,bins);
+ // How many have landed so far in this chapter; chapters 2 and 4 carry on from the dots already there. In the last
+ // chapter's playback the screen is cleared first, then the second slit closes, then it fills again.
  const pLast=!live&&stage===last&&ch?since/Math.max(1,ch.end-ch.start):0;
  if(live){if(PARTICLES.A===null||Math.abs(A-PARTICLES.A)>.002){PARTICLES.from=PARTICLES.A===null?-1e9:st.t;PARTICLES.A=A;}}else PARTICLES.A=null;
  PARTICLES.geo={wallX,slab,y2,slit};
- const n=live?Math.floor(2400*smooth((st.t-PARTICLES.from-.3)/5)):Math.floor(pLast>=.14?2400*smooth((pLast-.16)/.5):preview||stage>=4?2400:stage===0?Math.min(14,Math.max(0,since-1)/1.1):stage===1?2400*smooth((since-1)/8):stage===2?Math.min(36,Math.max(0,since-1)/.45):2400*smooth((since-.5)/9));
+ const n=live?Math.floor(2400*smooth((st.t-PARTICLES.from-.3)/5)):Math.floor(pLast>=.16?2400*smooth((pLast-.16)/.5):pLast>=.05?0:preview||stage>=4?2400:stage===0?Math.min(14,Math.max(0,since-1)/1.1):stage===1?14+2386*smooth((since-.3)/8):stage===2?Math.min(18,Math.max(0,since-1.9)/.45):18+2382*smooth((since-.2)/9));
  // Waves of possibility, from the source and through every open slit (chapter 5 on, and when exploring).
- if(stage>=4){const ph=(since*.5)%1;ctx.save();ctx.beginPath();ctx.rect(0,midY-span,scrX,2*span);ctx.clip();ctx.lineWidth=small?5:8;
-  for(let r=0;r<6;r++){const rad=((r+ph)/6)*(wallX-srcX);ctx.beginPath();ctx.arc(srcX,midY,rad,-.7,.7);ctx.strokeStyle=rgba(wave,.22*(1-r/6));ctx.stroke();}
-  for(const [y,on] of [[y1,1],[y2,A]]){if(on<.01)continue;for(let r=0;r<9;r++){const rad=((r+ph)/9)*(scrX-wallX);if(rad<slab)continue;ctx.beginPath();ctx.arc(wallX,y,rad,-1.1,1.1);ctx.strokeStyle=rgba(wave,.2*on*(1-r/9)**2);ctx.stroke();}}
+ // Ripples one drawn wavelength apart, from the lamp and from each open slit, reaching the screen: where tops from the
+ // two slits meet, the stripes are bright. In the last chapter they hold still and dim. Each arc is cut to end inside
+ // the stage band and before the screen by its own angles, since some browsers do not clip stroked arcs.
+ if(stage>=4){const still=stage===last, ph=still?0:(since*.8)%1, dim=still?.6:1, wl=geo.lam, top=midY-span, bottom=midY+span;
+  const arc=(cx,cy,r,max)=>{const a1=Math.min(max,Math.asin(Math.min(1,(cy-top)/r))), a2=Math.min(max,Math.asin(Math.min(1,(bottom-cy)/r)));ctx.beginPath();ctx.arc(cx,cy,r,-a1,a2);ctx.stroke();};
+  ctx.save();ctx.lineWidth=small?2.5:3;ctx.lineCap='round';
+  const nS=Math.ceil((wallX-srcX)/wl);for(let r=0;r<nS;r++){const rad=(r+ph)*wl;if(rad<4||rad>wallX-srcX-slab/2)continue;ctx.strokeStyle=rgba(wave,.22*dim*(1-.5*r/nS));arc(srcX,midY,rad,.7);}
+  const nW=Math.ceil(L/wl);
+  for(const [y,on] of [[y1,1],[y2,A]]){if(on<.01)continue;for(let r=0;r<nW;r++){const rad=(r+ph)*wl;if(rad<slab*.6||rad>L-2)continue;ctx.strokeStyle=rgba(wave,.34*dim*on*(1-.45*r/nW));arc(wallX,y,rad,1.25);}}
   ctx.restore();}
  // The source: a small block that flashes as it fires.
  const fire=stage===0||stage===2?((since-1)%(stage===0?1.1:.45)):9, flash=fire>=0&&fire<.25&&n>0?1-fire/.25:0;
@@ -317,19 +329,24 @@ function drawParticles(ctx,w,h,spec,st){
   ctx.beginPath();ctx.arc(x,y,fresh?3.4:n>200?1.2:2.4,0,TAU);ctx.fillStyle=fresh?'#fff3ec':rgba(dot,n>200?.7:.95);ctx.fill();
  }
  // Coral bars count the landings in each band of the screen.
- const hx=scrX+sw+(small?6:10), hw=w-hx-(small?10:20), peak=Math.max(8,...counts);
- if(n>0)for(let i=0;i<bins;i++){if(!counts[i])continue;const y=midY-span+i/bins*2*span;ctx.fillStyle=rgba(bar,.85);ctx.fillRect(hx,y,counts[i]/peak*hw*.95,2*span/bins+.6);}
+ // One scale in every chapter: full width is a little above the busiest band of 2,400 landings through two slits.
+ const two=slitPattern(1,geo,bins), top=2400*1.08*Math.max(...two.cdf.map((c,i)=>c-(i?two.cdf[i-1]:0))), hx=scrX+sw+(small?6:10), hw=w-hx-(small?10:20);
+ slitPattern(A,geo,bins);
+ if(n>0&&stage!==0&&stage!==2)for(let i=0;i<bins;i++){if(!counts[i])continue;const y=midY-span+i/bins*2*span;ctx.fillStyle=rgba(bar,.85);ctx.fillRect(hx,y,Math.min(1,counts[i]/top)*hw*.95,2*span/bins+.6);}
  // For comparison with one slit, its outline once the stripes have formed.
  const compare=stage===3&&since>=at(2);
- if(compare){const one=slitPattern(0,sep,bins);
-  trace(ctx,one.p.map((v,i)=>[hx+v*hw*.95*.5,midY-span+(i+.5)/bins*2*span]));ctx.setLineDash([5,4]);ctx.strokeStyle=navy;ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);}
+ if(compare){const one=slitPattern(0,geo,bins);
+  trace(ctx,one.p.map((v,i)=>[hx+v*hw*.95*.5/1.08,midY-span+(i+.5)/bins*2*span]));ctx.setLineDash([5,4]);ctx.strokeStyle=navy;ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);}
  if(!st.labels)return;
  const size=small?10:12, label=(s,x,y,o={})=>text(ctx,s,x,y,{size,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.75)',...o});
- if(stage===0){label('SOURCE',srcX,midY-24,{align:'center'});label('SCREEN',scrX+sw/2,midY-span-14,{align:'center'});}
- label(A>.001?'TWO SLITS':'ONE SLIT OPEN',wallX,small?midY+span+16:midY-span-14,{align:'center'});
- text(ctx,`${n} ${n===1?'particle':'particles'}`,scrX+sw/2,midY+span+16,{align:'center',size,weight:700,color:bar});
- if(compare){const one=slitPattern(0,sep,bins), i=Math.round(bins*.19);pill(ctx,'one slit',hx+one.p[i]*hw*.95*.5+(small?30:40),midY-span+(i+.5)/bins*2*span,{size:small?10:11,weight:600,color:navy});}
- if(A<.5)label('COVERED',wallX+slab/2+8,y2+4,{size:small?9:10});
+ if(stage===0){label(spec.source_label||'SOURCE',srcX,midY-24,{align:'center'});label('SCREEN',scrX+sw/2,midY-span-14,{align:'center'});}
+ label(A<.5?'ONE SLIT OPEN':'TWO SLITS',wallX,small?midY+span+16:midY-span-14,{align:'center'});
+ text(ctx,`${n.toLocaleString('en-US')} ${spec.count_noun||'particle'}${n===1?'':'s'}`,scrX+sw/2,midY+span+16,{align:'center',size,weight:700,color:bar});
+ // The outline's name sits on the curve, inside the stage; on a phone, above the narrow column of bars.
+ if(compare){const one=slitPattern(0,geo,bins), i=Math.round(bins*.09), fs=small?10:11;ctx.font=`600 ${fs}px ${FONT}`;const tw=ctx.measureText('one slit').width;
+  const cx=hx+one.p[i]*hw*.95*.5/1.08+8, at=small?[w-tw-14,midY-span-14]:[Math.min(cx,w-tw-16),midY-span+(i+.5)/bins*2*span];
+  pill(ctx,'one slit',at[0],at[1],{size:fs,weight:600,color:navy});}
+ if(A<.5)pill(ctx,'COVERED',wallX+slab/2+10,y2+4,{size:small?9:10,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.75)'});
 }
 
 // The rope: simulated, not drawn from a formula. Each chapter has its own shaking plan; the simulation runs from the
@@ -1992,6 +2009,164 @@ function drawNight(ctx,w,h,spec,st){
   if(wave.u>.6){ctx.save();ctx.globalAlpha=smooth((wave.u-.6)/.25);text(ctx,'stretched out of sight',wave.head[0]-(L.small?10:16),wave.head[1]-(L.small?16:20),{align:'right',size,weight:600,color:'rgba(226,232,255,.85)'});ctx.restore();}}
 }
 
+// How Eratosthenes measured the Earth, in soft shaded spheres. At noon on the longest day the Sun stood overhead at
+// Syene, so upright sticks cast no shadow there, while in Alexandria, 800 km north, a stick's shadow came in at about
+// 7 degrees. Sunlight arrives parallel, so that is also the angle between the two sticks at the Earth's centre: one
+// fiftieth of a circle, so the Earth is 50 times 800 km around (Physics.earthAngle, earthAround). The world has Syene
+// at the origin and the ground curving away with curvature k (0 flat, 1 the real Earth, whose radius is the unit); u
+// is the distance along the ground towards Alexandria. Sticks keep a fixed size on screen so their shadows show, and
+// every angle is true. Chapter plan: Syene and its well; both cities; flat ground, then round again; the whole globe
+// with the sticks meeting at its centre and Alexandria's shadow close up; fifty arcs around the globe; then a smaller
+// Earth (the first control sets the curvature, 0.5 for the real Earth).
+const ERA={angle:0,show:false};
+const ERA_U=800/(40000/TAU);
+function eraPlan(st){
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ if(st.since===undefined)return {z:1,k:1,t:2,centre:1,inset:1,thumb:true,pulse:0};
+ if(st.live||st.stage>=5)return {z:1,k:Physics.earthCurvature(st.mass),t:st.live?st.t||0:t,centre:1,inset:1,last:true,pulse:0};
+ // 1: Syene alone; with the second sentence, no shadow; with the third, light reaches the water in the well.
+ if(st.stage===0)return {z:0,focus:0,k:1,t,syene:true,none:smooth((t-at(1)-.3)/.6),well:smooth((t-at(2)-.1)/1.2),pulse:1};
+ // 2: the view slides over to show Alexandria too; with the first sentence's end the distance, with the second the angle.
+ if(st.stage===1)return {z:0,focus:smooth((t-.3)/1.8),k:1,t,dist:smooth((t-at(0)-1.8)/.6),angle:smooth((t-at(1)-.5)/.6),shadow:smooth((t-at(0)-2)/.6),none:1,pulse:0};
+ // 3: the rays glow with the first sentence; the ground flattens with the second and curves again with the third.
+ if(st.stage===2){const flat=smooth((t-at(1)+.4)/1.2)-smooth((t-at(2)-.2)/1.8);
+  const glow=smooth(t/.8)*(1-smooth((t-at(1))/.8));
+  const ghost=smooth((t-at(2)-1.8)/.8);
+  return {z:0,focus:1,k:1-flat,flat,t,glow,pulse:glow,tag:t<at(1)?'':flat>.95?'flat ground':t>at(2)+1.6?'round Earth':'',angle:(1-flat)*(1-.7*ghost),ghost};}
+ // 4: zoom out to the whole globe; with the second sentence the sticks reach the centre; with the third, Alexandria up close.
+ if(st.stage===3)return {z:smooth((t-.4)/2.6),k:1,t,centre:smooth((t-at(1)-.4)/1.4),inset:smooth((t-at(2)-.3)/1),pulse:0};
+ // 5: the arc between the cities, then fifty of them around the globe with the second sentence.
+ // The wedge from chapter 4 stays while the first sentence counts slices of the circle.
+ return {z:1,k:1,t,centre:1-smooth((t-at(1))/.6),slices:smooth((t-at(0)-.6)/1.2)*(1-.6*smooth((t-at(1))/.8)),arc:smooth((t-at(0)-.3)/.6),ring:clamp((t-at(1)-.2)/5.5),total:smooth((t-at(2)-.2)/.6),pulse:0};
+}
+function drawEratosthenes(ctx,w,h,spec,st){
+ const plan=eraPlan(st), small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, gold='#e8a33a', ink='rgba(20,23,28,.8)', size=small?10:12;
+ const k=Math.max(0,plan.k), D=ERA_U, theta=k*D, deg=(theta*180/Math.PI).toFixed(1), labels=st.labels;
+ ERA.angle=theta;ERA.show=!plan.thumb&&!plan.syene;
+ // The camera: a close look at the ground (800 km across most of the stage) or the whole globe, zooming between them
+ // about a point that moves with the widening view.
+ const s0=(small?.62:.56)*w/D, s1=small?Math.min(w*.29,h*.23):h*.36;
+ const s=Math.exp(Math.log(s0)+(Math.log(s1)-Math.log(s0))*plan.z), ws=clamp((1/s-1/s0)/(1/s1-1/s0));
+ const R=k>1e-6?1/k:Infinity;
+ const ground=u=>R<Infinity?[-Math.sin(k*u)/k,-(1-Math.cos(k*u))/k]:[-u,0], up=u=>[-Math.sin(k*u),Math.cos(k*u)];
+ const V0=ground(D/2*(plan.focus??1)), C=[0,R<Infinity?-R:0], o0=[w/2,h*(small?.6:.64)], o1=small?[w/2,h*.46]:[w*.34,h*.54];
+ const V=[V0[0]+(C[0]-V0[0])*ws,V0[1]+(C[1]-V0[1])*ws], o=[o0[0]+(o1[0]-o0[0])*ws,o0[1]+(o1[1]-o0[1])*ws];
+ const X=([x,y])=>[o[0]+s*(x-V[0]),o[1]-s*(y-V[1])], rpx=s*R, [gx,gy]=X(C);
+ // Where a ray falling straight down at screen x meets the ground, or passes beside the globe.
+ const hitY=x=>{const xw=V[0]+(x-o[0])/s;if(!(R<Infinity))return o[1]+s*V[1];if(Math.abs(xw)>R)return h+20;return o[1]-s*(-R+Math.sqrt(R*R-xw*xw)-V[1]);};
+ // Sunlight from straight above: a warm glow at the top and parallel rays, each with one bright pulse falling.
+ const sun=ctx.createLinearGradient(0,0,0,h*.3);sun.addColorStop(0,'rgba(255,200,90,.26)');sun.addColorStop(1,'rgba(255,200,90,0)');ctx.fillStyle=sun;ctx.fillRect(0,0,w,h*.3);
+ const gap=small?24:34, glow=plan.glow||0;
+ for(let i=0,x=gap/2;x<w;i++,x+=gap){const y1=Math.min(h,hitY(x));if(y1<=0)continue;
+  trace(ctx,[[x,0],[x,y1]]);ctx.strokeStyle=`rgba(232,163,58,${.22+.3*glow})`;ctx.lineWidth=1.3;ctx.stroke();
+  const run=y1+30, y=((plan.t*(small?60:90)+i*53)%run)-15;
+  if(plan.pulse>0&&y>0&&y<y1){trace(ctx,[[x,Math.max(0,y-12)],[x,Math.min(y1,y+6)]]);ctx.strokeStyle=`rgba(255,214,140,${.85*plan.pulse})`;ctx.lineWidth=2;ctx.stroke();}}
+ if(!(rpx<4*w)){
+  // Close up: the ground's surface, with the desert in cross-section below it.
+  const span=w/s, mid=D/2*(plan.focus??1), pts=[];
+  for(let i=0;i<=96;i++)pts.push(X(ground(mid-span+2*span*i/96)));
+  trace(ctx,pts);ctx.lineTo(pts.at(-1)[0],h+2);ctx.lineTo(pts[0][0],h+2);ctx.closePath();
+  const sand=ctx.createLinearGradient(0,o[1]-30,0,h);sand.addColorStop(0,'#ecd29c');sand.addColorStop(1,'#cfa968');ctx.fillStyle=sand;ctx.fill();
+  trace(ctx,pts);ctx.strokeStyle='rgba(120,84,40,.6)';ctx.lineWidth=1.6;ctx.stroke();
+ }else{
+  // The globe: sea lit from straight above (the Sun is overhead at Syene), night underneath, and the desert around the
+  // two cities as a band at the top.
+  const sea=ctx.createRadialGradient(gx,gy-rpx*.55,rpx*.08,gx,gy,rpx*1.02);sea.addColorStop(0,'#a8d0f2');sea.addColorStop(.5,'#4a88c8');sea.addColorStop(1,'#1f4a80');
+  ctx.beginPath();ctx.arc(gx,gy,rpx,0,TAU);ctx.fillStyle=sea;ctx.fill();
+  const a1=Math.PI/2-.2, a2=Math.PI/2+Math.max(.32,theta+.2);
+  ctx.beginPath();ctx.arc(gx,gy,rpx,-a1,-a2,true);ctx.arc(gx,gy,rpx*.93,-a2,-a1,false);ctx.closePath();
+  const desert=ctx.createLinearGradient(0,gy-rpx,0,gy-rpx*.88);desert.addColorStop(0,'#ecd29c');desert.addColorStop(1,'#d9b77a');ctx.fillStyle=desert;ctx.fill();
+  const night=ctx.createLinearGradient(0,gy,0,gy+rpx);night.addColorStop(0,'rgba(8,16,36,0)');night.addColorStop(1,'rgba(8,16,36,.5)');
+  ctx.beginPath();ctx.arc(gx,gy,rpx,0,TAU);ctx.fillStyle=night;ctx.fill();
+  ctx.beginPath();ctx.arc(gx,gy,rpx+1.5,0,TAU);ctx.strokeStyle='rgba(150,200,255,.55)';ctx.lineWidth=3;ctx.stroke();
+ }
+ // The well at Syene, cut open: sunlight goes straight down it onto the water.
+ if(plan.syene){const [bx,by]=X(ground(-(small?.2:.11)*D)), ww=small?16:22, wd=small?h*.2:h*.24, lit=plan.well;
+  ctx.fillStyle='#8a6a45';ctx.fillRect(bx-ww/2-4,by,ww+8,wd+5);
+  const shaft=ctx.createLinearGradient(0,by,0,by+wd);shaft.addColorStop(0,'#3a2a1b');shaft.addColorStop(1,'#140d07');ctx.fillStyle=shaft;ctx.fillRect(bx-ww/2,by,ww,wd);
+  trace(ctx,[[bx,0],[bx,by+wd-4]]);ctx.strokeStyle=`rgba(255,214,140,${.25+.65*lit})`;ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(bx,by+wd-3,ww/2-2,3.5,0,0,TAU);ctx.fillStyle=lit>.05?`rgba(255,240,190,${.35+.6*lit})`:'#2f5d7c';ctx.fill();
+  if(labels&&lit>.5)text(ctx,'well',bx+ww/2+10,by+wd*.55,{size,weight:600,color:ink});}
+ // A stick at ground distance u: standing straight up from the ground there; its shadow lies along the ground, as long
+ // as the stick times the tangent of its lean.
+ const Lc=h*(small?.28:.4), Ls=Lc+((small?18:26)-Lc)*ws;
+ const stick=u=>{const [bx,by]=X(ground(u)), n=up(u), lean=k*u, tip=[bx+Ls*n[0],by-Ls*n[1]], sl=Ls*Math.tan(lean), end=[bx-sl*Math.cos(lean),by+sl*Math.sin(lean)];
+  if(sl>.5){const c=Math.min(3,sl*.3);trace(ctx,[[bx-c*Math.cos(lean),by+c*Math.sin(lean)],end]);ctx.strokeStyle='rgba(20,23,28,.78)';ctx.lineWidth=ws>.5?(small?3:4):(small?5:6);ctx.lineCap='round';ctx.stroke();}
+  trace(ctx,[[bx,by],tip]);ctx.strokeStyle='#3b2f2a';ctx.lineWidth=small?2.6:3.4;ctx.lineCap='round';ctx.stroke();
+  return {base:[bx,by],tip,end,lean};};
+ const syene=stick(0), alex=stick(D), onStage=p=>p[0]>-20&&p[0]<w+20;
+ // The light that just passes Alexandria's stick, and the angle it makes with the stick.
+ const angle=plan.z<.5?(plan.angle??0):0;
+ if(angle>0&&alex.lean>1e-4&&onStage(alex.tip)){ctx.save();ctx.globalAlpha=angle;
+  trace(ctx,[[alex.tip[0],0],alex.tip,alex.end]);ctx.strokeStyle='rgba(222,128,20,.95)';ctx.lineWidth=2;ctx.stroke();
+  const r=Ls*.6;ctx.beginPath();ctx.moveTo(alex.tip[0],alex.tip[1]);ctx.arc(alex.tip[0],alex.tip[1],r,Math.PI/2-alex.lean,Math.PI/2);ctx.closePath();
+  ctx.fillStyle=rgba(accent,.3);ctx.fill();ctx.strokeStyle=rgba(accent,.95);ctx.lineWidth=1.4;ctx.stroke();
+  trace(ctx,[alex.base,alex.tip]);ctx.strokeStyle='#3b2f2a';ctx.lineWidth=small?2.6:3.4;ctx.lineCap='round';ctx.stroke();
+  if(labels)pill(ctx,`${deg}°`,alex.tip[0]-10,alex.tip[1]+r*.7,{align:'right',size,weight:700,color:ink});ctx.restore();}
+ if(labels&&plan.z<.5){
+  if(onStage(syene.base))text(ctx,'SYENE',syene.base[0],syene.base[1]+(small?20:26),{align:'center',size,weight:700,spacing:'1.2px',color:ink});
+  if(onStage(alex.base))text(ctx,'ALEXANDRIA',alex.base[0],alex.base[1]+(small?20:26),{align:'center',size,weight:700,spacing:'1.2px',color:ink});
+  if(plan.none>.5&&onStage(syene.base))pill(ctx,'no shadow',syene.base[0]-14,syene.base[1]-14,{align:'right',size,weight:600,color:ink});
+  if(plan.shadow>.5&&onStage(alex.end))pill(ctx,'shadow',alex.end[0]-12,alex.end[1]-12,{align:'right',size,weight:600,color:ink});
+  if(plan.tag)pill(ctx,plan.tag,w*.5,plan.tag==='round Earth'?Math.min(h-14,hitY(w*.5)+(small?20:24)):hitY(w*.5)-(small?16:20),{align:'center',size:size+1,weight:700,color:ink});}
+ // After the ground curves again, the flat ground stays as a faint dashed line, with Alexandria's stick as it would stand.
+ if(plan.ghost>0){const [fx,fy]=X([-D,0]);ctx.save();ctx.globalAlpha=.55*plan.ghost;ctx.setLineDash([6,6]);
+  trace(ctx,[[0,syene.base[1]],[w,syene.base[1]]]);ctx.strokeStyle=ink;ctx.lineWidth=1.3;ctx.stroke();
+  trace(ctx,[[fx,fy],[fx,fy-Ls]]);ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
+  ctx.restore();if(labels&&plan.ghost>.5)pill(ctx,'flat',small?10:16,syene.base[1]-(small?12:14),{size,weight:700,color:ink});}
+ // The distance between the cities, below the ground.
+ if(plan.dist>0&&plan.z<.5){const y=Math.max(syene.base[1],alex.base[1])+(small?40:50);ctx.save();ctx.globalAlpha=plan.dist;
+  trace(ctx,[[alex.base[0],y],[syene.base[0],y]]);ctx.strokeStyle=ink;ctx.lineWidth=1.4;ctx.stroke();
+  for(const x of [alex.base[0],syene.base[0]]){trace(ctx,[[x,y-6],[x,y+6]]);ctx.stroke();}
+  if(labels)pill(ctx,'800 km',(alex.base[0]+syene.base[0])/2,y,{align:'center',size,weight:700,color:ink});ctx.restore();}
+ if(R<Infinity&&plan.z>.5){
+  // The globe: the sticks extended to the Earth's centre, where they meet at the shadow's angle.
+  if(plan.centre>0){ctx.save();ctx.globalAlpha=plan.centre;
+   for(const b of [syene.base,alex.base]){trace(ctx,[b,[gx,gy]]);ctx.setLineDash([4,5]);ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=1.4;ctx.stroke();ctx.setLineDash([]);}
+   const rw=Math.max(26,rpx*.3);ctx.beginPath();ctx.moveTo(gx,gy);ctx.arc(gx,gy,rw,-Math.PI/2-theta,-Math.PI/2);ctx.closePath();
+   ctx.fillStyle=rgba(accent,.3);ctx.fill();ctx.strokeStyle=rgba(accent,.95);ctx.lineWidth=1.4;ctx.stroke();
+   ctx.beginPath();ctx.arc(gx,gy,3.2,0,TAU);ctx.fillStyle=ink;ctx.fill();
+   if(labels){pill(ctx,`${deg}°`,gx-rw*Math.sin(theta/2)-10,gy-rw*Math.cos(theta/2)-4,{align:'right',size,weight:700,color:ink});
+    if(!plan.thumb)pill(ctx,'Earth’s centre',gx,gy+(small?16:20),{align:'center',size,weight:600,color:ink});}
+   ctx.restore();}
+  if(labels&&!small&&!plan.ring&&!plan.arc){text(ctx,'SYENE',syene.tip[0]+8,syene.tip[1]-2,{size,weight:700,spacing:'1.2px',color:ink});
+   text(ctx,'ALEXANDRIA',alex.tip[0]-8,alex.tip[1]-2,{align:'right',size,weight:700,spacing:'1.2px',color:ink});}
+  if(plan.last&&k>1.04){ctx.beginPath();ctx.arc(gx,gy,s1,0,TAU);ctx.setLineDash([5,6]);ctx.strokeStyle='rgba(20,23,28,.4)';ctx.lineWidth=1.4;ctx.stroke();ctx.setLineDash([]);}
+  if(labels&&plan.last&&k>1.12){const m=(rpx+s1)/2;pill(ctx,'smaller Earth',gx+m*.7,gy+m*.7,{align:'center',size,weight:700,color:ink});
+   pill(ctx,'our Earth',gx-s1-10,gy,{align:'right',size,weight:600,color:ink});}
+  if(plan.slices>0){ctx.save();ctx.globalAlpha=plan.slices;ctx.strokeStyle=rgba(accent,.55);ctx.lineWidth=1;
+   for(let i=0;i<50;i++){const b=Math.PI/2+i*theta;trace(ctx,[[gx,gy],[gx+rpx*Math.cos(-b),gy+rpx*Math.sin(-b)]]);ctx.stroke();}ctx.restore();}
+  // Fifty arcs, each from Syene's distance to Alexandria's, go once around.
+  if(plan.arc>0){const n=50*plan.ring, band=small?6:8, rr=rpx-band/2-1;ctx.save();ctx.lineCap='butt';
+   for(let i=0;i<Math.min(50,Math.ceil(n-1e-9));i++){const b1=Math.PI/2+i*theta, b2=b1+theta*Math.min(1,n-i);
+    ctx.beginPath();ctx.arc(gx,gy,rr,-b1,-b2,true);ctx.strokeStyle=i%2?rgba(accent,.45):rgba(accent,.9);ctx.lineWidth=band;ctx.stroke();}
+   ctx.globalAlpha=plan.arc;ctx.beginPath();ctx.arc(gx,gy,rr,-Math.PI/2,-Math.PI/2-theta,true);ctx.strokeStyle=gold;ctx.lineWidth=band+2;ctx.stroke();ctx.globalAlpha=1;
+   if(labels){if(plan.arc>.5){const top=Math.min(syene.tip[1],alex.tip[1]);if(small)pill(ctx,'800 km',gx+rpx*.14,gy-rpx-14,{size,weight:700,color:ink});else pill(ctx,'800 km',(syene.tip[0]+alex.tip[0])/2,top-16,{align:'center',size,weight:700,color:ink});}
+    const say=plan.ring>0?`${Math.max(1,Math.min(50,Math.ceil(n-1e-9)))} × 800 km`:'';
+    if(say)pill(ctx,say,gx,gy-(plan.total>0?(small?10:12):0),{align:'center',size:size+2,weight:700,color:ink});
+    if(plan.total>.5)pill(ctx,'= 40,000 km',gx,gy+(small?14:18),{align:'center',size:size+2,weight:700,color:ink});}
+   ctx.restore();}
+ }
+ // Alexandria up close: the stick stands straight, the sunlight slants in at the angle, and the shadow lies on the ground.
+ if(plan.inset>0){ctx.save();ctx.globalAlpha=plan.inset;
+  const [px,py,pw,ph]=small?[w*.06,h*.7,w*.88,h*.28]:[w*.64,h*.14,w*.31,h*.72];
+  // A ring around Alexandria's stick on the globe; the close-up beside it carries the city's name.
+  if(plan.z>.5){const [ax,ay]=alex.base;ctx.beginPath();ctx.arc(ax,ay,small?8:10,0,TAU);ctx.strokeStyle=rgba(accent,.9);ctx.lineWidth=1.6;ctx.stroke();}
+  ctx.beginPath();ctx.roundRect(px,py,pw,ph,14);ctx.fillStyle='rgba(255,255,255,.86)';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.12)';ctx.lineWidth=1;ctx.stroke();
+  ctx.save();ctx.beginPath();ctx.roundRect(px,py,pw,ph,14);ctx.clip();
+  const base=py+ph*.8, sx=px+pw*(small?.66:.62), L=ph*(small?.52:.5), sl=L*Math.tan(theta), tg=Math.tan(theta);
+  ctx.fillStyle='#ecd29c';ctx.fillRect(px,base,pw,py+ph-base);trace(ctx,[[px,base],[px+pw,base]]);ctx.strokeStyle='rgba(120,84,40,.6)';ctx.lineWidth=1.4;ctx.stroke();
+  const step=small?24:30;
+  for(let j=-14;j<=14;j++){const xg=sx-sl+j*step, top=xg+(base-py)*tg;
+   trace(ctx,[[top,py],[xg,base]]);ctx.strokeStyle=j?'rgba(232,163,58,.4)':'rgba(222,128,20,.95)';ctx.lineWidth=j?1.3:2;ctx.stroke();}
+  trace(ctx,[[sx,base],[sx-sl,base]]);ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=small?4:5;ctx.lineCap='round';ctx.stroke();
+  const r=L*.42;ctx.beginPath();ctx.moveTo(sx,base-L);ctx.arc(sx,base-L,r,Math.PI/2,Math.PI/2+theta);ctx.closePath();ctx.fillStyle=rgba(accent,.3);ctx.fill();ctx.strokeStyle=rgba(accent,.95);ctx.lineWidth=1.4;ctx.stroke();
+  trace(ctx,[[sx,base],[sx,base-L]]);ctx.strokeStyle='#3b2f2a';ctx.lineWidth=small?3:4;ctx.stroke();
+  if(labels){text(ctx,'ALEXANDRIA',px+14,py+(small?18:22),{size,weight:700,spacing:'1.2px',color:ink});
+   pill(ctx,`${deg}°`,sx+10,base-L+r*.75,{size,weight:700,color:ink});}
+  ctx.restore();ctx.restore();}
+}
+
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
 // time, from 22 chances; but a match can be between any two people, and 23 people make 253 pairs. As people arrive
 // one at a time, each newcomer must miss every birthday already in the room, so the chance of a shared birthday
@@ -2825,9 +3000,8 @@ const ENGINES={
   try:'Turn the second source off: what happens to the stripes? Bring it back, then spread the sources apart.',aria:'Two circular wave sources overlapping, making bright and dark stripes on a screen.'},
  'two-slit-particles':{draw:drawParticles,touch:PARTICLES_TOUCH,a:['Second slit','how open the second slit is'],b:['Slit spacing','relative distance between the slits',''],
   fa:a=>a<.005?'closed':Math.round(a*100)+'% open',fb:b=>b.toFixed(2)+'×',
-  // Chapter 2 still has the second slit covered, whatever the scene's setting; its readout says so. Chapter 3 has too
-  // few dots to show any contrast yet, so its readout is hidden.
-  measure:['Stripe contrast',a=>stage===2?'':(stage===1?0:Physics.visibility(a)*100).toFixed(0)+'%'],scale:'',disclosure:'Each dot is a sample from the predicted pattern; the waves show where a particle may land, not a path through one slit.',demoEnd:()=>2.5,
+  // The narration never uses the contrast, so it shows only once the guide has played.
+  measure:['Stripe contrast',a=>mode==='live'?(Physics.visibility(a)*100).toFixed(0)+'%':''],scale:'',disclosure:'Each dot is a sample from the predicted pattern; the waves show where a particle may land, not a path through one slit.',demoEnd:()=>2.5,
   demo:(p,s)=>({mass:s.mass*(1-smooth((p-.06)/.08)),distance:s.distance}),
   try:'Open the second slit again and watch the stripes return. Then move the slits apart.',aria:'Particles fired one at a time at a wall with two slits land as single dots on a screen, and thousands of them build up stripes.'},
  'standing-waves':{draw:drawRope,touch:GUITAR_TOUCH,demo:false,plucks:true,
@@ -2932,6 +3106,14 @@ const ENGINES={
   disclosure:'Stars are treated as Sun-like and spread evenly: about 10²² of them in today’s observable universe, a rough count (estimates run from 10²² to 10²⁴). A sight line then travels about 2 × 10²⁴ light-years, on average, before it meets a star. Within the 13.8 billion light-years that light has crossed since the beginning, stars cover about 1 part in 180 trillion of the sky. The slider imagines an unchanging universe whose stars have shone for the chosen time. The picture is a slice through space: a ring twice as far holds twice as many stars, where a full shell holds four times as many. The expansion of the universe, which stretches and dims distant light further, is left out of the numbers.',
   try:'Set the age to 13.8 billion years: stars cover about 1 part in 180 trillion of the sky. How old would an unchanging universe have to be before the whole night sky lit up?',
   aria:'You stand on a hill under a dark, starry sky. If stars filled endless, unchanging space, every shell of stars around you would add the same light and every line of sight would end on a star, so the whole sky would blaze like the Sun. But the universe began about 13.8 billion years ago, so only light from a bubble around you has had time to arrive; light from farther stars is still on its way, and the night stays dark.'},
+ 'eratosthenes':{draw:drawEratosthenes,demo:(p,s)=>({mass:s.mass+(.85-s.mass)*smooth((p-.06)/.3),distance:s.distance}),
+  a:['Earth size','how sharply the ground curves'],b:['Unused','',''],
+  fa:a=>a<.005?'flat':Math.round(40000/Physics.earthCurvature(a)).toLocaleString('en-US')+' km around',fb:b=>'',
+  // The modelled effect for the render checks: how far Alexandria's stick leans (zero on flat ground).
+  effect:a=>ERA_U*Physics.earthCurvature(a),
+  measure:['Shadow angle in Alexandria',()=>ERA.show?(ERA.angle*180/Math.PI).toFixed(1)+'°':''],scale:'',
+  disclosure:'Exact for parallel sunlight on a perfect sphere. As in the classic account, the two cities are treated as due north and south of each other, the Sun as exactly overhead at Syene, and the distance as 800 km.',
+  try:'',aria:'Sunlight falls straight down on a stick in Syene, which casts no shadow, while a stick in Alexandria, 800 km away on the curved Earth, casts a short shadow at 7.2 degrees. Extended down, the two sticks meet at the Earth’s centre at the same 7.2 degrees, one fiftieth of a circle, so the Earth is 50 times 800 km around.'},
  'birthdays':{draw:drawBirthdays,touch:BDAY_TOUCH,demo:false,tryAny:true,a:['People','how many people are in the room'],b:['Unused','',''],
   fa:a=>{const n=Math.max(1,Math.round(1+59*clamp(a)));return `${n} ${n===1?'person':'people'}`;},fb:b=>'',
   // The modelled effect for the render checks: the chance of a shared birthday for the chosen number of people.

@@ -1,88 +1,103 @@
 {
   "id": "20261116T192404-two-slit-particles",
   "status": "reviewed",
-  "question": "The double-slit experiment: how can single particles make stripes?",
+  "question": "Wave–particle duality: the double-slit experiment",
   "topic": "two-slit-particles",
   "created": "2026-11-16T19:24:04.671670+00:00",
   "research": {
-    "claim": "Quantum particles sent through two slits one at a time each arrive as a single localized dot, yet the distribution of many arrivals shows interference stripes. The probability of landing at a point is the squared magnitude of an amplitude that is the sum of contributions through both slits; where the two contributions are out of phase they cancel and almost no particles land, even at spots that receive particles when only one slit is open. Closing a slit, or determining which slit each particle passed, removes the stripes.",
-    "explanation": "In the double-slit experiment a source sends particles toward a barrier with two narrow slits and a screen behind it. With the rate low enough that only one particle is in the apparatus at a time, each detection is a single point on the screen: the particle is never found spread out or split. Where any one particle lands is random. With one slit open, many arrivals build a single broad patch. With both open, the arrivals build bands of many hits separated by bands with almost none. Quantum mechanics describes each particle with a wave of probability amplitude that passes through both slits; the two parts overlap, and the chance of detection at each point is the squared size of their sum, so it is high where they arrive in step and near zero where they arrive half a wavelength out of step. Because amplitudes add before squaring, opening the second slit lowers the count at the dark bands below the one-slit count. Covering a slit leaves only one contribution, so nothing cancels and the stripes vanish; so does any measurement that records which slit each particle used. Thomas Young described the experiment with light in 1801; Claus Jönsson did it with electrons in 1961; Merli, Missiroli and Pozzi showed single electrons building up the pattern in 1974 (with an electron biprism), and Frabboni and colleagues showed the single-electron build-up through two slits in 2012. Davisson–Germer and Thomson confirmed electron waves in 1927. The effect has since been seen with atoms, C60 molecules and, in 2019, molecules of about 2,000 atoms.",
+    "claim": "Light sent through two slits one photon at a time arrives as single dots, yet many arrivals build up interference stripes, so light behaves both as a particle and as a wave: wave–particle duality. The probability of landing at a point is the squared size of an amplitude summed over both slits; where the two contributions are out of step they cancel and almost no photons land, even where some land with one slit open. Closing a slit, or detecting which slit each photon used, removes the stripes. Electrons, atoms and molecules do the same.",
+    "explanation": "Late in the 17th century Isaac Newton argued that light is a stream of tiny particles (corpuscles), a view he set out in Opticks in 1704, while Christiaan Huygens described it as a wave. In 1801 Thomas Young described interference of light, and in 1803 he demonstrated it with sunlight, pinholes and cards; these demonstrations, forerunners of the modern two-slit experiment, played a major role in the acceptance of the wave theory. In 1905 Albert Einstein proposed that light itself comes in lumps of energy, later named photons (Gilbert Lewis, 1926). The two pictures meet in the double-slit experiment done with very dim light: G. I. Taylor first saw interference fringes in very dim light in 1909, lowering the light until photon arrivals were mostly separate. Each photon is detected as one dot at one place, and where any one lands is random. With one slit open, many arrivals build a single broad patch. With both open, the arrivals build bands of many hits separated by bands with almost none. Quantum mechanics describes each photon with a wave of probability amplitude that passes through both slits; the two parts overlap, and the chance of detection at each point is the squared size of their sum, high where they arrive in step (crest on crest) and near zero where they arrive half a wavelength out of step (crest on trough). Because amplitudes add before squaring, opening the second slit lowers the count at the dark bands below the one-slit count. Covering a slit leaves one contribution, so nothing cancels and the stripes vanish; so does any measurement that records which slit each photon used. Matter behaves the same way: electron waves were confirmed in 1927 (Davisson and Germer, and Thomson); Claus Jönsson did a two-slit experiment with electrons in 1961; Merli, Missiroli and Pozzi showed single electrons building up the pattern in 1974 (with an electron biprism), and Frabboni and colleagues showed the single-electron build-up through two slits in 2012. The effect has since been seen with atoms, C60 molecules and, in 2019, molecules of about 2,000 atoms.",
     "assumptions": [
-      "An idealised two-slit setup with a broad single-slit envelope and two equal slits; the picture's pattern is the envelope times 1 + a² + 2a cos(phase).",
-      "Each dot is a pseudo-random sample from the predicted probability pattern, not a simulated trajectory.",
+      "An idealised two-slit setup with a broad single-slit envelope and two equal slits; the picture’s pattern is the envelope times 1 + a² + 2a cos(phase).",
+      "Each dot is a pseudo-random sample from the predicted probability pattern, not a simulated path.",
       "No which-path detector is present, except where the narration says a slit is covered.",
-      "The particle type is generic; electrons, photons, atoms and molecules all show it, with different wavelengths."
+      "The light is dim enough that photons arrive one at a time, as in Taylor’s 1909 experiment and later single-photon experiments."
     ],
     "prediction": "With both slits open, thousands of single arrivals form stripes whose dark bands receive fewer hits than the same spots receive with one slit open; with one slit closed, the arrivals form a single patch.",
     "falsifier": "If single-particle arrivals with both slits open simply added up the two one-slit patterns, with no dark bands below the one-slit level, the wave description would be wrong.",
     "limitations": [
       "The waves drawn depict the probability amplitude, not a path; the picture never shows which slit a particle used.",
-      "The one-slit pattern is drawn centred like the two-slit envelope, a simplification for close slits.",
+      "The one-slit patch is drawn centred between the slits, as it would be with parallel light and a distant screen; with a lamp this close it would sit higher, in line with the open slit.",
       "Particle wavelengths, detector efficiency and decoherence are not modelled."
     ],
     "misconceptions": [
-      "Each particle splits in two: it is always detected whole, in one place.",
-      "The stripes come from particles bumping into each other: they appear even when only one particle is in the apparatus at a time.",
-      "Watching which slit only disturbs the stripes a little: full which-path information removes them."
+      "Each photon splits in two: it is always detected whole, in one place.",
+      "The stripes come from photons bumping into each other: they appear even when only one photon is in the apparatus at a time.",
+      "Light is either a particle or a wave: neither picture alone explains the experiment."
     ],
     "questions": [
-      "Does each particle split in two?",
-      "Why does a second slit leave some spots emptier?",
+      "So is light a wave or a particle?",
+      "Does each photon split in two?",
       "What happens if you detect which slit was used?"
     ],
     "sources": [
       {
         "title": "Double-slit experiment (Wikipedia)",
         "url": "https://en.wikipedia.org/wiki/Double-slit_experiment",
-        "supports": "Single particles arrive as dots and the interference pattern appears in the density of many hits; closing a slit or detecting which slit removes the stripes; Young's 1801 experiment; Jönsson's 1961 electron experiment; Merli, Missiroli and Pozzi 1974 and Frabboni and colleagues' 2012 single-electron build-up through two slits; experiments with atoms, C60 and molecules of up to 2,000 atoms (2019)."
+        "supports": "Single quanta arrive as dots and the interference pattern appears in the density of many hits; G. I. Taylor’s low-intensity double-slit experiment of 1909; interference even when light is detected one photon at a time; which-slit detection removes the stripes; Jönsson’s 1961 electron experiment; Merli, Missiroli and Pozzi 1974 and Frabboni and colleagues 2012; atoms, C60 and molecules of about 2,000 atoms (2019). Young first described this kind of experiment in 1801 and demonstrated optical interference with sunlight, pinholes and cards in 1803."
       },
       {
         "title": "Wave–particle duality (Wikipedia)",
         "url": "https://en.wikipedia.org/wiki/Wave%E2%80%93particle_duality",
-        "supports": "Quanta are detected as localized particles while their probability of detection follows wave interference; single-electron build-up of the two-slit pattern."
+        "supports": "Newton advocated that light was corpuscular while Huygens took a wave description; Thomas Young’s interference experiments in 1801 validated the wave model; later quantum results showed light also behaves as particles."
+      },
+      {
+        "title": "Corpuscular theory of light (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Corpuscular_theory_of_light",
+        "supports": "Newton laid the foundations of the particle theory of light and, with Opticks in 1704, took a clear position for it; the theory dominated the 18th century."
+      },
+      {
+        "title": "Young’s interference experiment (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Young%27s_interference_experiment",
+        "supports": "Young’s experiments at the beginning of the 19th century (his 1801 lecture described interference) played a major role in the acceptance of the wave theory of light; one was the original version of the double-slit experiment."
+      },
+      {
+        "title": "Photon (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Photon",
+        "supports": "Einstein proposed in 1905 that light itself is quantized; the name photon is generally attributed to Gilbert N. Lewis (1926)."
       },
       {
         "title": "Matter wave (Wikipedia)",
         "url": "https://en.wikipedia.org/wiki/Matter_wave",
-        "supports": "De Broglie's matter waves; electron diffraction confirmed in 1927 by Davisson and Germer and by Thomson; interference with atoms and large molecules."
+        "supports": "Electron diffraction confirmed in 1927 by Davisson and Germer and by Thomson; interference with atoms and large molecules."
       }
     ]
   },
   "scene": {
-    "title": "The double-slit experiment: how can single particles make stripes?",
-    "subtitle": "Fire particles one at a time at a wall with two slits. Each lands as a single dot, yet thousands of dots build up stripes, because each particle passes through the slits as a wave.",
-    "why": "Electrons, atoms and molecules fired one at a time still build up stripes. Each lands as a dot, but before it lands it spreads like a wave through both slits.",
-    "opening": "If particles go through the slits one by one, where do the stripes come from?",
+    "title": "Wave–particle duality: the double-slit experiment",
+    "subtitle": "Send light through two slits, one photon at a time. Each lands as a single dot, yet thousands of dots build up stripes. Is light a particle or a wave?",
+    "why": "For centuries, people argued over whether light is made of particles or waves. With light so dim it lands one dot at a time, this experiment shows it behaves as both.",
+    "opening": "Is light made of tiny particles, or is it a wave?",
     "beats": [
       {
-        "title": "One at a time",
-        "body": "Imagine a gun that fires tiny particles, one at a time. Each goes through a slit in a wall and hits a screen. It lands as a single dot."
+        "title": "Particles of light",
+        "body": "Imagine a lamp so dim its light lands on a screen one dot at a time. Each dot is a photon, one tiny lump of light that got through the slit. Isaac Newton thought light was just that: a spray of tiny particles."
       },
       {
-        "title": "Thousands of dots",
-        "body": "Keep firing, thousands of times. With one slit open, they pile up in one soft patch. The bars on the right count where they land."
+        "title": "One slit, thousands of dots",
+        "body": "Now let thousands of photons through. With one slit open, they pile up in one soft patch, as the bars show. Just what a spray of tiny particles would do."
       },
       {
         "title": "Open the second slit",
-        "body": "Now slide the cover off the second slit. Again, each particle lands as one dot. At first, the dots look scattered at random."
+        "body": "Now slide the cover off the second slit. Again, each photon lands as one dot. At first, the dots look scattered at random."
       },
       {
         "title": "Stripes appear",
-        "body": "After thousands more dots, stripes appear. Between the stripes are gaps where almost none land. One slit alone sent dots there; the second slit took them away."
+        "body": "After thousands more dots, stripes appear. Between the stripes are gaps where almost none land. One slit alone sends dots there, but opening the second takes them away."
       },
       {
-        "title": "A wave through both slits",
-        "body": "On its way, each particle acts like a spreading wave. The wave goes through both slits and takes two paths to each spot. Where crest meets crest, dots pile up; crest on trough, none land."
+        "title": "Light acts like a wave",
+        "body": "In 1803, Thomas Young saw such stripes in sunlight: light acts like a wave. Like two pebbles in a pond, both slits send out ripples that cross. Where two tops meet, dots pile up, and where a top meets a dip, none land."
       },
       {
-        "title": "Close a slit",
-        "body": "Now cover the second slit, clear the screen and fire again. With one way through, there is nothing to cancel: no stripes. Electrons, atoms and even big molecules all behave this way."
+        "title": "Both at once",
+        "body": "Cover one slit and start again: with one set of ripples, no stripes form. So light travels like a wave, yet lands like a particle. This is wave–particle duality, and electrons and atoms show it too."
       }
     ],
-    "takeaway": "Each particle lands as one dot, but where it can land is set by a wave that passes through both slits. Where the two parts of the wave cancel, no particle lands, so stripes build up.",
+    "takeaway": "Light travels like a wave, through both slits at once, but always lands as a single dot, like a particle. That is wave–particle duality.",
     "mass": 1,
     "distance": 1,
-    "controls": "first",
+    "controls": "none",
     "accent": "blue",
     "kind": "two-slit-particles",
     "show_reference": false,
@@ -91,27 +106,29 @@
     "duration": 60,
     "questions": [
       {
-        "q": "Does each particle split in two?",
-        "a": "No. Each one is always found as one whole dot on the screen. What spreads through both slits is the wave that sets where it may land."
+        "q": "So is light a wave or a particle?",
+        "a": "Both, in a sense: it travels as a wave that passes through both slits, and it is detected as single photons, one dot at a time. Neither picture alone explains the experiment."
+      },
+      {
+        "q": "Does each photon split in two?",
+        "a": "No. Each one is always found as one whole dot on the screen. What passes through both slits is the wave that sets where it may land."
       },
       {
         "q": "Why do the dots look random at first?",
         "a": "Each landing spot is a matter of chance. Only the odds are fixed, and the odds show up once thousands of dots have landed."
       },
       {
-        "q": "Why does opening a second slit leave some spots empty?",
-        "a": "There the wave from one slit arrives out of step with the wave from the other, and they cancel, so the chance of landing there drops to almost zero."
+        "q": "What if you check which slit each photon goes through?",
+        "a": "Then the stripes vanish, and the dots pile up as if each slit were open on its own. Recording the path, even if nobody looks, stops the two waves from adding and cancelling."
       },
       {
-        "q": "What if you watch which slit each particle goes through?",
-        "a": "Then the stripes disappear and the dots pile up as if from two single slits. Knowing the path removes the overlap of the two waves."
-      },
-      {
-        "q": "Has this really been done one particle at a time?",
-        "a": "Yes. Electrons were shown building up stripes one by one in 1974 and again in 2012, and molecules of up to 2,000 atoms have shown stripes too."
+        "q": "Has this really been done one photon at a time?",
+        "a": "Yes. G. I. Taylor first saw stripes like these in very dim light in 1909, and single-particle interference has since been seen with single photons, electrons, atoms and molecules of about 2,000 atoms."
       }
     ],
-    "theme": "rose"
+    "theme": "rose",
+    "source_label": "LAMP",
+    "count_noun": "photon"
   },
   "checks": [
     {
@@ -159,7 +176,7 @@
       "pass": true
     },
     {
-      "name": "Every subtitle is at most 80 characters (longest: 66)",
+      "name": "Every subtitle is at most 80 characters (longest: 75)",
       "pass": true
     },
     {
@@ -203,7 +220,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the guide for the lab’s two-slit picture from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the guide for the lab’s two-slit picture from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review. On 2026-11-17 it was revised in a coding session at the owner’s request (issue #12): a new title naming wave–particle duality, the story of light as particle and wave (Newton, Young, photons), and no controls at the end; the revision passed the same checks and the four reviews again, and the reviews below are from that review."
   },
   "revisions": [
     {
@@ -417,6 +434,220 @@
         "published/20261116T192404-two-slit-particles/revision-1-10.png",
         "published/20261116T192404-two-slit-particles/revision-1-11.png"
       ]
+    },
+    {
+      "number": 2,
+      "scene": {
+        "title": "Wave–particle duality: the double-slit experiment",
+        "subtitle": "Send light through two slits, one photon at a time. Each lands as a single dot, yet thousands of dots build up stripes. Is light a particle or a wave?",
+        "why": "For centuries, people argued over whether light is made of particles or waves. With light so dim it lands one dot at a time, this experiment shows it behaves as both.",
+        "opening": "Is light made of tiny particles, or is it a wave?",
+        "beats": [
+          {
+            "title": "Particles of light",
+            "body": "Imagine a lamp so dim its light lands on a screen one dot at a time. Each dot is a photon, one tiny lump of light that got through the slit. Isaac Newton thought light was just that: a spray of tiny particles."
+          },
+          {
+            "title": "One slit, thousands of dots",
+            "body": "Now let thousands of photons through. With one slit open, they pile up in one soft patch, as the bars show. Just what a spray of tiny particles would do."
+          },
+          {
+            "title": "Open the second slit",
+            "body": "Now slide the cover off the second slit. Again, each photon lands as one dot. At first, the dots look scattered at random."
+          },
+          {
+            "title": "Stripes appear",
+            "body": "After thousands more dots, stripes appear. Between the stripes are gaps where almost none land. One slit alone sends dots there, but opening the second takes them away."
+          },
+          {
+            "title": "Light acts like a wave",
+            "body": "In 1803, Thomas Young saw such stripes in sunlight: light acts like a wave. Like two pebbles in a pond, both slits send out ripples that cross. Where two tops meet, dots pile up, and where a top meets a dip, none land."
+          },
+          {
+            "title": "Both at once",
+            "body": "Cover one slit and start again: with one set of ripples, no stripes form. So light travels like a wave, yet lands like a particle. This is wave–particle duality, and electrons and atoms show it too."
+          }
+        ],
+        "takeaway": "Light travels like a wave, through both slits at once, but always lands as a single dot, like a particle. That is wave–particle duality.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "two-slit-particles",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "So is light a wave or a particle?",
+            "a": "Both, in a sense: it travels as a wave that passes through both slits, and it is detected as single photons, one dot at a time. Neither picture alone explains the experiment."
+          },
+          {
+            "q": "Does each photon split in two?",
+            "a": "No. Each one is always found as one whole dot on the screen. What passes through both slits is the wave that sets where it may land."
+          },
+          {
+            "q": "Why do the dots look random at first?",
+            "a": "Each landing spot is a matter of chance. Only the odds are fixed, and the odds show up once thousands of dots have landed."
+          },
+          {
+            "q": "What if you check which slit each photon goes through?",
+            "a": "Then the stripes vanish, and the dots pile up as if each slit were open on its own. Recording the path, even if nobody looks, stops the two waves from adding and cancelling."
+          },
+          {
+            "q": "Has this really been done one photon at a time?",
+            "a": "Yes. G. I. Taylor first saw stripes like these in very dim light in 1909, and single-particle interference has since been seen with single photons, electrons, atoms and molecules of about 2,000 atoms."
+          }
+        ],
+        "source_label": "LAMP",
+        "count_noun": "photon"
+      },
+      "checks": [
+        {
+          "name": "One source gives no stripes",
+          "pass": true
+        },
+        {
+          "name": "Equal sources give full-contrast stripes",
+          "pass": true
+        },
+        {
+          "name": "Equal path lengths give a bright stripe",
+          "pass": true
+        },
+        {
+          "name": "Half-wavelength path difference cancels equal waves",
+          "pass": true
+        },
+        {
+          "name": "Unequal sources leave dark stripes partly lit",
+          "pass": true
+        },
+        {
+          "name": "Opening a second slit leaves some spots darker than one slit alone",
+          "pass": true
+        },
+        {
+          "name": "Two equal sources make bright stripes four times one source",
+          "pass": true
+        },
+        {
+          "name": "Wider separation packs stripes closer",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 75)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 8)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 3)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The blocking issue is fixed by construction: on both layouts the dark gaps fall exactly where a ripple top from one slit meets a dip from the other, and the bright stripes where tops meet tops (within a few pixels of correct pull from the single-slit envelope). The new chapter 6 line, FAQ and why line are accurate, the history matches the sources, nothing suggests a photon splits or takes one path, and the dashed one-slit outline stays within about 6% of the true curve. One simplification is more visible: the one-slit patch is centred mid-screen, while a straight line from the lamp through the open slit lands well above centre, so the record's 'for close slits' wording needed correcting.",
+        "changes": [
+          "Research record: reword the centring limitation (the slits are no longer close).",
+          "Optional: let the arcs run to the screen line so the crossings reach every stripe."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Round 3 fixes the last blocking issue: every ripple ends inside the stage band with round caps and stops at the screen, a pixel scan of the late frames finds no ripple outside the band, and the picture no longer depends on whether the browser clips arcs. Every frame reads at a glance and matches its subtitle: the thin ripples clearly read as two sets crossing, labels are few, nothing overlaps or is cut off on desktop or phone, chapters 1 and 3 no longer show stray bars, and the counter wording ('2,400 photons') fits. What remains is optional polish, most visibly the one-slit patch peaking mid-screen rather than behind the open slit.",
+        "changes": [
+          "Optional: centre the one-slit patch behind the open slit.",
+          "Optional: centre the lamp's flash ring on the lamp.",
+          "Optional: slide the cover along the wall in chapter 3."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Explanation: light from a very dim lamp lands one dot at a time, like Newton's tiny particles, but with two slits open the dots build stripes with gaps one slit alone would have filled, because ripples from the two slits cross, and where two tops meet dots pile up while where a top meets a dip none land (the stripes Young saw in sunlight in 1803); so wave–particle duality means light travels like a wave but lands like a particle, and electrons and atoms do the same. Every line reads naturally aloud, one idea each, within 80 characters (longest 75), three per chapter, opening on 'Imagine'; chapter 6 now explains the wiped screen and names the cause; the thin ripples one wavelength apart show the reason, their crossings running into the bright stripes, side stripes included; the bars first appear exactly when 'as the bars show' is said.",
+        "changes": [
+          "FAQ: avoid the undefined 'single-particle interference'.",
+          "Optional: the one-slit patch peaks level with the lamp rather than along the line through the open slit (a stated centring simplification)."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Blind reading matched all six chapters, cleaner than round 2: a lamp, one slit covered, 14 single dots and no stray tally marks; 2,400 photons in one broad smooth hump; both slits open, 18 scattered dots; five clear bands with a dashed one-slit curve equal to the chapter 2 hump, its label in clear space, the bright bands about twice its height and the gaps at zero; a crisscross of ripples from the two slits reaching the screen; then one slit covered, one set of ripples and no crisscross, the screen refilled as one hump. The point: photons arrive as single dots at random places, yet with two slits the dots build stripes because a wave passes through both slits and overlaps itself; with one slit there is no overlap and no stripes.",
+        "changes": [
+          "The one-slit hump peaks mid-screen, below the open slit, more visibly now that the slits are farther apart; an attentive viewer might think the cover leaks.",
+          "The lamp's flash arc looks like a mug handle.",
+          "Optional: calm or emphasise the chapter 5 lattice.",
+          "Optional: fainter dots so the patch shows on the screen itself."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261116T192404-two-slit-particles/revision-2-0.png",
+        "published/20261116T192404-two-slit-particles/revision-2-1.png",
+        "published/20261116T192404-two-slit-particles/revision-2-2.png",
+        "published/20261116T192404-two-slit-particles/revision-2-3.png",
+        "published/20261116T192404-two-slit-particles/revision-2-4.png",
+        "published/20261116T192404-two-slit-particles/revision-2-5.png",
+        "published/20261116T192404-two-slit-particles/revision-2-6.png",
+        "published/20261116T192404-two-slit-particles/revision-2-7.png",
+        "published/20261116T192404-two-slit-particles/revision-2-8.png",
+        "published/20261116T192404-two-slit-particles/revision-2-9.png",
+        "published/20261116T192404-two-slit-particles/revision-2-10.png",
+        "published/20261116T192404-two-slit-particles/revision-2-11.png"
+      ]
     }
-  ]
+  ],
+  "updated": "2026-11-17T20:07:43Z"
 }
