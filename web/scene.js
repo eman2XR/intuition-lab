@@ -2019,6 +2019,21 @@ function drawNight(ctx,w,h,spec,st){
 // with the sticks meeting at its centre and Alexandria's shadow close up; fifty arcs around the globe; then a smaller
 // Earth (the first control sets the curvature, 0.5 for the real Earth).
 const ERA={angle:0,show:false};
+// Land outlines (Natural Earth, public domain, simplified to half-degree steps; values are degrees times two).
+const ERA_LAND=[[-90,-156,-87,-158,-90,-161,-93,-161,-97,-162,-101,-162,-106,-162,-108,-160,-104,-160,-101,-158,-97,-156,-93,-156,-90,-156],[-137,-142,-140,-145,-145,-145,-148,-145,-150,-143,-146,-142,-143,-141,-142,-138,-139,-139,-137,-141],[-117,-128,-120,-128,-123,-129,-125,-131,-127,-133,-130,-134,-131,-137,-128,-138,-125,-140,-123,-142,-122,-145,-123,-148,-127,-149,-129,-151,-132,-151,-137,-152,-140,-152,-144,-153,-148,-153,-151,-153,-154,-153,-151,-155,-147,-156,-150,-156,-153,-156,-156,-157,-154,-159,-151,-161,-146,-161,-143,-161,-140,-162,-136,-163,-131,-163,-127,-163,-123,-164,-119,-165,-116,-166,-111,-165,-107,-165,-103,-164,-100,-163,-95,-163,-90,-164,-86,-164,-82,-163,-76,-163,-73,-162,-69,-162,-65,-162,-60,-161,-57,-161,-59,-159,-63,-159,-67,-159,-71,-159,-71,-156,-68,-156,-64,-155,-60,-154,-55,-153,-52,-153,-48,-152,-45,-152,-42,-152,-38,-151,-35,-150,-31,-149,-31,-146,-27,-145,-23,-144,-18,-143,-15,-143,-12,-142,-9,-143,-6,-143,-1,-142,2,-143,6,-142,10,-141,13,-141,17,-140,20,-141,24,-141,27,-140,30,-141,34,-140,39,-140,43,-140,47,-141,50,-141,54,-141,58,-140,62,-140,66,-139,68,-137,71,-138,74,-138,77,-140,80,-138,84,-137,88,-137,91,-136,95,-135,98,-134,102,-134,104,-132,107,-132,111,-132,114,-132,116,-134,120,-135,123,-136,126,-136,130,-135,134,-136,138,-136,139,-139,136,-141,136,-144,140,-145,143,-143,146,-141,149,-140,153,-139,156,-138,160,-136,163,-135,166,-134,169,-134,174,-134,176,-132,178,-134,181,-134,185,-134,188,-134,192,-135,196,-134,199,-134,202,-133,206,-131,210,-133,214,-134,218,-134,222,-133,226,-132,229,-132,233,-133,237,-134,240,-135,243,-134,246,-133,250,-133,254,-133,258,-134,262,-133,266,-133,270,-132,273,-134,277,-134,280,-134,284,-134,289,-134,292,-134,295,-136,298,-137,303,-137,307,-138,310,-138,314,-139,318,-139,322,-140,325,-141,328,-141,332,-142,335,-142,339,-142,342,-143,340,-146,336,-148,332,-149,328,-151,327,-154,329,-156,333,-157,330,-158,327,-158,324,-158,321,-160,322,-163,325,-164,330,-165,333,-166,338,-167,345,-168,352,-168,357,-169,360,-169,360,-180,-360,-180,-360,-169,-355,-169,-352,-168,-349,-169,-346,-168,-340,-168,-337,-168,-334,-169,-328,-170,-324,-170,-316,-171,-310,-170,-302,-171,-297,-171,-292,-171,-286,-170,-294,-169,-300,-169,-307,-167,-305,-165,-309,-164,-314,-162,-309,-162,-304,-162,-301,-163,-298,-162,-294,-161,-296,-159,-299,-159,-303,-159,-307,-158,-311,-158,-315,-157,-317,-154,-314,-155,-311,-154,-307,-154,-303,-155,-300,-154,-297,-154,-292,-153,-290,-150,-286,-151,-283,-150,-280,-150,-275,-149,-270,-149,-267,-149,-262,-149,-259,-149,-256,-149,-251,-149,-248,-149,-245,-149,-242,-149,-239,-149,-235,-148,-232,-148,-228,-147,-226,-149,-223,-149,-220,-150,-217,-150,-212,-150,-207,-150,-204,-150,-201,-151,-203,-148,-206,-147,-203,-146,-198,-146,-195,-147,-190,-147,-187,-147,-183,-147,-180,-147,-178,-145,-175,-146,-172,-146,-168,-147,-165,-147,-161,-147,-156,-147,-152,-148,-148,-147,-143,-147,-140,-146,-136,-146,-134,-144,-136,-142,-137,-139,-135,-137,-135,-134,-132,-132,-129,-131,-126,-129,-123,-129,-120,-128,-117,-127,-114,-127,-117,-128],[-136,-108,-133,-109,-130,-109,-133,-110,-136,-111,-140,-110,-145,-109,-149,-106,-145,-107,-142,-108,-139,-105,-136,-106],[291,-82,294,-82,297,-82,296,-85,294,-87,291,-85,289,-82],[346,-82,348,-84,346,-86,343,-88,341,-92,337,-93,333,-92,337,-88,341,-86,343,-84,346,-81],[349,-72,351,-74,354,-76,357,-75,356,-78,354,-80,352,-83,349,-83,350,-80,348,-78,349,-75,348,-72,346,-70,349,-71],[100,-27,100,-30,100,-33,99,-36,97,-41,96,-45,95,-48,93,-50,90,-51,88,-49,87,-46,87,-43,89,-40,88,-37,89,-34,91,-32,94,-30,96,-28,98,-26],[287,-28,290,-29,291,-33,292,-36,295,-39,298,-41,299,-45,302,-47,304,-49,306,-51,306,-55,307,-58,306,-61,305,-65,303,-68,301,-70,300,-73,299,-76,295,-76,293,-78,290,-77,287,-78,284,-77,281,-76,280,-73,278,-71,276,-69,274,-71,275,-68,272,-70,270,-68,268,-66,266,-64,263,-63,259,-63,256,-64,252,-64,248,-66,246,-68,243,-68,240,-68,237,-69,233,-70,230,-68,232,-64,230,-61,229,-58,228,-55,227,-52,227,-49,228,-46,231,-43,233,-41,236,-41,239,-40,242,-39,244,-36,246,-33,249,-33,250,-30,252,-28,256,-29,259,-30,260,-27,262,-24,265,-24,269,-24,272,-24,273,-27,271,-29,273,-31,277,-34,280,-35,283,-33,283,-30,283,-27,284,-24,285,-21,286,-24,287,-27],[217,-14,221,-14,225,-14,229,-16,225,-17,221,-16,217,-15,213,-15,212,-12,215,-12,217,-14],[268,-2,269,-6,273,-5,275,-3,278,-4,282,-5,285,-7,289,-8,292,-10,295,-12,294,-15,297,-18,300,-19,302,-21,298,-21,294,-19,292,-16,289,-15,287,-18,284,-18,280,-17,275,-17,277,-15,277,-12,272,-9,267,-7,264,-6,268,-5,264,-4,261,-2,264,-1,268,-2],[250,3,247,0,242,1,240,-1,242,-3,247,-1,245,-3,245,-6,246,-9,244,-11,243,-8,242,-5,241,-8,241,-11,239,-9,238,-6,239,-3,240,0,242,3,246,2,250,3],[212,-12,209,-12,205,-8,203,-6,200,-1,198,2,195,5,193,8,191,10,195,10,198,7,201,4,205,3,208,0,209,-4,212,-6,212,-9,212,-12],[236,4,238,2,235,0,233,-3,232,-8,229,-7,224,-7,220,-6,220,-3,218,-1,218,3,221,3,223,5,226,6,228,9,231,11,233,14,235,12,238,11,236,8,236,5],[253,17,253,14,251,12,248,12,248,15,244,14,246,17,249,17,251,20,253,18],[243,37,245,34,243,32,243,29,248,28,248,25,246,27,242,27,241,30,240,33,241,37],[-145,40,-142,40,-138,39,-137,36,-140,37,-143,35,-146,36,-149,37,-145,37,-147,39],[-159,46,-156,45,-154,43,-151,42,-148,41,-151,40,-156,40,-157,43,-160,44,-164,44,-167,44,-170,44,-168,46,-165,46,-161,46],[282,74,281,70,278,69,274,69,272,67,270,69,267,69,264,68,263,63,260,63,259,67,262,68,265,71,269,71,273,75,278,76,280,79,281,82,284,80,282,76],[288,88,291,89,288,86,286,84,283,85,280,83,281,87,283,90,286,89],[-112,101,-110,99,-107,98,-105,95,-107,93,-108,96,-111,94,-115,95,-119,95,-117,98,-115,101,-113,103],[287,101,289,98,286,99,285,96,287,94,284,92,284,96,284,99,284,102,283,107,285,109,287,105,287,101],[-14,105,-17,103,-20,104,-18,106,-17,109,-13,110,-12,106],[-6,117,-8,115,-4,115,-6,112,-2,109,0,107,3,105,1,102,-2,102,-5,101,-9,101,-12,100,-9,102,-11,104,-8,105,-6,107,-10,110,-11,113,-12,116,-8,117],[-170,131,-166,130,-163,129,-160,127,-165,127,-168,127,-171,126,-174,127,-172,130],[-29,133,-27,130,-30,129,-36,127,-40,127,-46,128,-48,130,-44,130,-49,131,-47,133,-44,133,-41,131,-38,133,-32,133,-29,133],[-350,133,-344,134,-340,132,-345,131,-348,129,-352,130,-357,131,-360,132,-360,138,-355,136,-350,134],[-181,139,-178,139,-176,137,-175,134,-173,136,-171,138,-168,140,-165,139,-162,137,-163,134,-167,133,-172,133,-174,130,-177,128,-180,128,-182,126,-186,124,-188,122,-189,118,-186,118,-185,114,-182,115,-178,114,-175,112,-172,111,-167,110,-164,107,-163,104,-160,102,-157,105,-158,108,-156,110,-154,112,-155,116,-157,118,-155,120,-156,125,-151,125,-148,125,-143,123,-139,122,-139,118,-135,116,-132,118,-130,120,-125,116,-123,114,-121,112,-119,110,-116,110,-114,108,-111,104,-114,103,-118,102,-120,100,-123,100,-128,101,-131,101,-134,99,-137,98,-140,95,-137,97,-133,98,-130,98,-130,94,-126,91,-123,92,-121,94,-122,91,-127,89,-131,87,-129,91,-132,91,-136,89,-140,87,-142,85,-140,83,-144,83,-147,82,-144,82,-147,81,-150,78,-152,74,-152,77,-153,74,-151,71,-155,69,-158,67,-161,65,-163,63,-163,60,-161,57,-160,54,-161,50,-163,52,-165,55,-166,58,-168,60,-171,59,-173,61,-177,61,-179,59,-182,58,-185,59,-188,59,-191,57,-194,56,-195,53,-195,50,-196,46,-195,43,-193,40,-190,37,-187,37,-184,37,-182,39,-181,42,-177,43,-174,43,-175,39,-177,37,-177,34,-177,31,-174,32,-171,32,-168,31,-166,29,-167,26,-167,23,-166,20,-164,18,-161,18,-158,19,-155,18,-152,19,-150,22,-147,22,-144,24,-143,21,-143,18,-143,22,-140,23,-136,22,-132,21,-129,21,-126,21,-123,20,-121,17,-118,16,-116,14,-114,12,-110,12,-107,11,-104,9,-102,7,-101,4,-101,0,-97,0,-93,-2,-90,-3,-87,-5,-83,-6,-80,-6,-77,-7,-74,-10,-71,-10,-70,-13,-70,-18,-74,-22,-77,-26,-78,-31,-78,-34,-79,-37,-82,-42,-84,-45,-89,-47,-93,-48,-95,-50,-97,-52,-97,-56,-99,-58,-101,-62,-103,-64,-105,-66,-107,-68,-110,-70,-114,-69,-117,-68,-114,-71,-114,-74,-118,-77,-122,-78,-125,-78,-124,-81,-128,-82,-130,-84,-127,-85,-130,-87,-131,-90,-135,-91,-133,-94,-134,-97,-136,-100,-138,-104,-142,-106,-145,-107,-150,-105,-150,-102,-151,-97,-148,-94,-151,-93,-149,-88,-146,-89,-145,-85,-147,-87,-148,-84,-147,-80,-147,-77,-147,-74,-145,-71,-144,-68,-143,-65,-143,-62,-143,-58,-142,-55,-141,-51,-141,-47,-140,-43,-140,-40,-141,-37,-143,-35,-147,-33,-150,-31,-152,-29,-154,-24,-156,-21,-158,-17,-160,-14,-162,-12,-163,-9,-161,-7,-160,-4,-162,-2,-160,1,-158,3,-156,5,-154,8,-155,11,-156,14,-156,17,-159,18,-161,16,-164,16,-167,17,-169,19,-172,20,-172,23,-174,25,-176,27,-179,27,-182,28,-187,31,-191,32,-195,32,-198,33,-202,34,-204,36,-207,37,-210,39,-211,42,-211,45,-214,48,-217,50,-219,52,-221,54,-224,57,-226,60,-228,63,-229,60,-227,58,-225,55,-223,53,-221,50,-219,47,-222,48,-224,51,-226,53,-229,54,-228,57,-230,59,-233,62,-234,65,-236,67,-239,69,-243,72,-245,75,-247,78,-249,81,-248,84,-248,87,-248,91,-248,94,-249,97,-246,96,-250,100,-255,102,-256,105,-259,107,-261,109,-264,111,-267,114,-270,116,-273,116,-276,117,-280,119,-285,120,-288,120,-292,121,-296,121,-299,119,-303,118,-303,121,-301,123,-304,121,-308,119,-308,116,-311,115,-316,113,-319,111,-322,111,-326,109,-330,109,-326,111,-321,112,-317,114,-315,117,-318,117,-321,118,-324,117,-325,120,-328,120,-331,121,-331,124,-329,126,-326,126,-323,127,-322,130,-325,129,-330,129,-333,129,-336,131,-333,132,-329,133,-323,132,-327,134,-331,136,-334,137,-329,138,-326,139,-324,141,-318,142,-313,143,-310,142,-304,142,-301,141,-295,140,-291,140,-287,140,-284,140,-278,139,-275,138,-271,139,-266,139,-263,140,-260,140,-257,140,-252,139,-249,140,-246,139,-243,140,-240,139,-235,138,-232,138,-228,137,-231,136,-227,135,-222,136,-218,135,-216,137,-212,138,-209,136,-206,136,-203,135,-200,136,-197,136,-192,136,-189,136,-191,139,-193,142,-190,144,-186,143,-183,140],[-228,146,-225,146,-222,145,-218,145,-216,143,-217,146,-213,146,-210,143,-206,141,-202,140,-205,139,-208,138,-212,138,-218,138,-224,137,-227,137,-230,139,-235,140,-230,140,-227,140,-233,141,-236,141,-232,143,-235,143,-239,143,-237,145,-230,147],[-173,146,-170,147,-165,148,-161,145,-158,145,-151,144,-148,144,-144,143,-138,141,-134,138,-138,137,-133,136,-130,136,-127,134,-124,134,-128,130,-133,133,-136,133,-134,130,-131,129,-129,127,-133,126,-138,127,-135,126,-132,124,-138,125,-142,126,-147,128,-150,129,-155,128,-156,131,-152,131,-148,131,-145,135,-150,137,-154,138,-156,140,-159,140,-163,139,-170,140,-174,141,-177,141,-180,142,-179,146,-172,148],[-201,148,-198,147,-195,148,-193,145,-197,143,-200,143,-205,145,-201,145,-203,147],[-186,146,-189,144,-192,146,-189,148,-185,148,-181,148,-184,146],[-241,143,-246,142,-252,144,-250,146,-250,149,-243,149,-240,148,-235,148,-231,147,-234,146,-238,145,-241,144],[290,151,281,150,278,149,274,151,278,152,283,152,290,151],[-197,153,-195,151,-200,150,-205,151,-203,153,-200,153,-197,153],[-216,152,-212,152,-219,150,-224,149,-227,149,-224,150,-233,150,-231,153,-225,152,-222,151,-218,151,-221,153,-217,153],[115,141,107,142,103,143,105,146,109,147,112,149,116,151,122,153,129,153,132,154,136,154,129,151,123,151,117,149,114,147,111,145,115,141],[-189,154,-183,154,-180,152,-176,151,-173,151,-170,151,-166,152,-162,151,-164,149,-172,149,-176,149,-180,149,-185,150,-188,153,-192,153,-189,154],[-232,155,-234,153,-240,152,-243,152,-246,152,-242,154,-238,155,-235,155,-232,155],[214,154,222,153,227,152,220,149,224,148,227,147,231,148,238,147,246,146,251,147,254,147,257,146,259,142,263,142,265,144,268,143,271,143,275,143,280,143,278,145,281,146,299,144,306,142,314,142,318,142,319,139,322,139,325,139,328,139,332,139,336,139,339,137,342,138,347,140,351,140,357,139,360,138,360,130,357,129,359,126,355,125,349,124,344,122,341,121,338,121,333,120,330,119,327,120,324,116,326,112,323,111,321,109,320,106,317,106,314,102,312,106,311,111,312,114,314,116,317,116,320,119,324,121,327,122,329,125,325,123,320,121,319,124,313,123,308,120,310,118,306,118,303,118,300,119,297,118,291,119,284,118,278,114,270,109,273,109,276,108,280,108,283,106,281,102,280,97,277,94,274,90,271,88,267,86,262,85,259,83,257,80,255,78,258,75,259,71,256,70,253,69,252,73,251,76,251,79,246,79,242,78,244,81,239,80,236,78,238,76,242,76,245,75,242,73,239,71,241,67,244,63,243,60,243,56,241,54,239,51,237,49,235,47,232,46,228,44,224,43,221,41,217,43,213,41,211,38,213,36,215,33,218,31,219,27,218,23,214,21,210,17,210,20,207,21,205,24,202,25,200,27,199,22,198,18,201,17,202,14,204,12,207,10,207,7,208,3,205,4,203,6,201,8,200,11,199,14,197,17,197,20,198,23,197,26,196,30,194,34,191,31,188,32,189,35,187,39,185,41,184,44,181,46,179,44,176,43,174,41,170,39,168,37,166,35,164,33,161,32,160,28,160,24,160,21,158,19,156,17,153,18,152,21,151,24,149,28,147,32,146,36,146,41,142,42,138,44,136,47,134,49,129,50,126,50,123,50,119,51,115,51,114,54,111,54,107,54,103,56,100,60,97,60,97,57,99,55,100,52,102,50,104,48,107,48,109,50,112,52,114,48,117,47,119,45,118,42,116,40,114,38,111,36,108,34,105,33,102,30,99,29,96,28,93,27,90,26,87,25,87,28,85,30,86,33,84,36,82,39,80,41,78,43,77,47,75,49,73,52,71,55,70,58,68,56,65,60,65,57,67,55,68,52,70,50,71,46,73,44,74,40,75,37,78,34,80,31,82,29,85,27,87,25,85,23,88,21,91,21,95,22,98,23,101,23,101,18,99,14,97,11,95,8,93,6,91,4,88,2,84,-2,82,-4,80,-7,78,-9,77,-12,79,-14,78,-17,80,-20,81,-24,81,-28,81,-31,79,-33,75,-35,73,-37,70,-39,70,-43,71,-46,70,-49,66,-51,65,-55,64,-58,62,-60,60,-62,58,-64,56,-66,53,-67,50,-68,47,-68,43,-69,40,-70,37,-68,36,-65,35,-61,33,-57,30,-54,29,-51,29,-48,29,-45,27,-42,26,-39,24,-36,23,-33,24,-30,25,-27,27,-25,27,-21,26,-18,26,-15,24,-13,24,-10,22,-8,20,-6,18,-2,19,1,19,5,18,8,15,9,12,9,10,11,7,13,4,12,-1,11,-4,9,-7,10,-12,10,-15,9,-18,10,-22,12,-25,15,-26,18,-28,20,-30,22,-33,24,-33,27,-35,29,-33,31,-33,34,-33,38,-33,41,-34,44,-32,47,-30,49,-29,53,-26,55,-23,56,-21,58,-19,60,-19,64,-17,66,-14,68,-12,70,-10,72,-7,71,-4,70,0,72,3,73,6,74,10,74,13,74,17,74,20,74,22,71,20,69,22,67,25,66,28,65,31,63,36,62,39,61,40,64,43,66,46,65,50,64,53,63,57,62,60,63,63,63,66,62,69,62,70,66,72,69,72,72,69,74,65,72,61,73,57,73,54,75,54,78,55,81,58,81,62,82,65,83,70,84,74,83,77,82,81,82,83,84,81,86,77,89,73,90,76,92,78,94,75,94,72,93,70,91,73,91,70,90,67,89,65,91,63,93,59,91,57,87,55,85,58,83,55,82,53,80,51,82,47,81,47,78,48,75,46,73,43,74,42,77,40,79,39,83,37,85,34,86,30,88,28,90,25,91,25,88,28,86,30,84,34,82,37,81,34,81,34,78,32,76,31,79,29,81,26,83,22,85,20,88,17,88,13,86,9,87,6,86,4,82,1,81,-1,79,-1,75,-4,73,-7,73,-10,73,-13,74,-16,74,-18,77,-18,80,-18,83,-19,86,-16,87,-11,87,-7,87,-4,87,-2,92,-4,94,-9,96,-7,98,-3,97,-4,100,3,100,5,102,8,103,9,106,12,107,16,107,17,110,16,113,19,114,22,113,19,111,22,109,25,109,28,108,33,109,37,109,40,110,43,110,42,114,45,116,47,114,49,116,47,118,52,119,56,119,53,121,49,120,46,120,43,121,42,125,45,128,49,130,44,131,40,127,36,125,34,123,36,121,36,118,33,114,29,112,26,111,24,115,22,118,17,117,14,116,11,117,10,124,17,127,21,129,25,132,30,136,33,137,38,140,43,141,46,140,49,142,53,142,56,142,63,141,60,140,64,140,68,139,73,138,81,136,80,133,77,132,68,134,70,132,70,129,74,128,79,129,84,133,88,132,87,135,93,137,91,135,93,133,96,134,100,136,107,138,109,136,115,137,118,138,122,138,127,139,130,138,137,136,136,139,133,141,137,144,140,146,145,146,144,143,146,141,145,138,146,135,143,133,146,133,148,135,150,138,147,139,149,141,146,143,150,144,153,142,155,145,159,145,163,144,161,147,165,148,169,148,174,148,177,150,181,151,186,152,192,152,198,153,202,153,204,155,209,155,212,155,209,154,214,154],[37,159,43,158,38,157,35,155,32,154,28,155,22,158,26,160,30,159,34,160,37,159],[51,161,55,160,52,159,46,159,40,159,37,160,41,161,44,161,51,161],[200,158,196,158,190,158,187,159,182,161,188,162,192,163,196,161,200,160],[-174,159,-178,157,-182,156,-186,157,-190,159,-193,160,-191,162,-185,163,-182,161,-179,161,-176,161,-174,159],[-137,166,-132,166,-127,166,-124,165,-129,164,-134,163,-131,163,-136,162,-139,161,-142,160,-146,159,-154,159,-151,158,-153,156,-156,156,-160,154,-156,154,-161,152,-166,153,-172,153,-175,153,-179,153,-176,154,-170,155,-173,156,-176,157,-171,158,-174,161,-168,160,-164,161,-168,161,-175,161,-179,162,-183,163,-180,164,-174,165,-171,165,-166,165,-162,166,-159,166,-152,166,-146,166,-141,166,-137,166],[-54,167,-42,165,-45,165,-53,165,-64,164,-56,164,-50,164,-46,164,-41,163,-32,164,-26,163,-33,161,-40,160,-35,160,-38,159,-39,155,-43,153,-40,152,-39,149,-43,148,-47,147,-45,145,-49,145,-44,143,-47,141,-51,143,-53,140,-47,140,-50,139,-55,137,-61,136,-64,136,-68,133,-73,132,-77,131,-80,131,-81,128,-86,125,-86,122,-90,120,-93,122,-97,122,-100,125,-103,127,-105,130,-107,132,-106,137,-103,137,-102,140,-105,139,-109,139,-109,142,-103,141,-106,142,-110,143,-111,146,-115,149,-117,151,-123,152,-127,152,-132,152,-137,152,-143,154,-138,155,-134,155,-142,155,-147,156,-139,158,-131,159,-136,160,-127,162,-124,163,-121,164,-114,164,-108,164,-101,165,-96,164,-93,164,-89,163,-94,164,-87,166,-80,166,-77,167,-70,167,-54,167]];
+// The globe as seen with Syene at the top and the meridian through Syene and Alexandria as its rim, north to the left:
+// the visible face is centred on the equator at 57° W, over the Atlantic, with the Americas, Africa and Europe.
+const ERA_VIEW=(()=>{const r=Math.PI/180, la=24.1*r, lo=32.9*r, up=[Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)],
+ north=[-Math.sin(la)*Math.cos(lo),-Math.sin(la)*Math.sin(lo),Math.cos(la)];return {up,right:north.map(v=>-v),out:[Math.sin(lo),-Math.cos(lo),0]};})();
+function eraLand(ctx,gx,gy,R){
+ const V=ERA_VIEW, r=Math.PI/180, dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+ ctx.save();ctx.beginPath();ctx.arc(gx,gy,R,0,TAU);ctx.clip();ctx.fillStyle='#9cbf7c';
+ for(const ring of ERA_LAND){const pts=[];let seen=false;
+  for(let i=0;i<ring.length;i+=2){const lo=ring[i]/2*r, la=ring[i+1]/2*r, q=[Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)];
+   let x=dot(q,V.right), y=dot(q,V.up);if(dot(q,V.out)<0){const m=Math.hypot(x,y)||1;x/=m;y/=m;}else seen=true;pts.push([gx+x*R,gy-y*R]);}
+  // Land behind the globe is pressed onto its rim; outlines entirely behind are skipped.
+  if(seen){trace(ctx,pts);ctx.closePath();ctx.fill();}}
+ ctx.restore();}
 const ERA_U=800/(40000/TAU);
 function eraPlan(st){
  const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
@@ -2056,6 +2071,10 @@ function drawEratosthenes(ctx,w,h,spec,st){
  const hitY=x=>{const xw=V[0]+(x-o[0])/s;if(!(R<Infinity))return o[1]+s*V[1];if(Math.abs(xw)>R)return h+20;return o[1]-s*(-R+Math.sqrt(R*R-xw*xw)-V[1]);};
  // Sunlight from straight above: a warm glow at the top and parallel rays, each with one bright pulse falling.
  const sun=ctx.createLinearGradient(0,0,0,h*.3);sun.addColorStop(0,'rgba(255,200,90,.26)');sun.addColorStop(1,'rgba(255,200,90,0)');ctx.fillStyle=sun;ctx.fillRect(0,0,w,h*.3);
+ // Over the globe, straight above Syene, whose stick points at it.
+ {ctx.save();const sx=plan.z<.5?w*.5:gx, sy=plan.z<.5?h*.075:h*.04, sr=h*(small?.04:.05)*(plan.z<.5?1:.7), halo=ctx.createRadialGradient(sx,sy,sr*.4,sx,sy,sr*3.2);
+  halo.addColorStop(0,'rgba(255,214,120,.65)');halo.addColorStop(1,'rgba(255,214,120,0)');ctx.fillStyle=halo;ctx.fillRect(sx-sr*3.4,sy-sr*3.4,sr*6.8,sr*6.8);
+  ctx.beginPath();ctx.arc(sx,sy,sr,0,TAU);ctx.fillStyle='#ffd166';ctx.fill();ctx.strokeStyle='rgba(222,128,20,.6)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();}
  const gap=small?24:34, glow=plan.glow||0;
  for(let i=0,x=gap/2;x<w;i++,x+=gap){const y1=Math.min(h,hitY(x));if(y1<=0)continue;
   trace(ctx,[[x,0],[x,y1]]);ctx.strokeStyle=`rgba(232,163,58,${.22+.3*glow})`;ctx.lineWidth=1.3;ctx.stroke();
@@ -2073,8 +2092,9 @@ function drawEratosthenes(ctx,w,h,spec,st){
   // two cities as a band at the top.
   const sea=ctx.createRadialGradient(gx,gy-rpx*.55,rpx*.08,gx,gy,rpx*1.02);sea.addColorStop(0,'#a8d0f2');sea.addColorStop(.5,'#4a88c8');sea.addColorStop(1,'#1f4a80');
   ctx.beginPath();ctx.arc(gx,gy,rpx,0,TAU);ctx.fillStyle=sea;ctx.fill();
-  const a1=Math.PI/2-.2, a2=Math.PI/2+Math.max(.32,theta+.2);
-  ctx.beginPath();ctx.arc(gx,gy,rpx,-a1,-a2,true);ctx.arc(gx,gy,rpx*.93,-a2,-a1,false);ctx.closePath();
+  eraLand(ctx,gx,gy,rpx);
+  const a1=Math.PI/2-.2, a2=Math.PI/2+theta+.03;
+  ctx.beginPath();ctx.arc(gx,gy,rpx,-a1,-a2,true);ctx.arc(gx,gy,rpx*.96,-a2,-a1,false);ctx.closePath();
   const desert=ctx.createLinearGradient(0,gy-rpx,0,gy-rpx*.88);desert.addColorStop(0,'#ecd29c');desert.addColorStop(1,'#d9b77a');ctx.fillStyle=desert;ctx.fill();
   const night=ctx.createLinearGradient(0,gy,0,gy+rpx);night.addColorStop(0,'rgba(8,16,36,0)');night.addColorStop(1,'rgba(8,16,36,.5)');
   ctx.beginPath();ctx.arc(gx,gy,rpx,0,TAU);ctx.fillStyle=night;ctx.fill();
@@ -2159,13 +2179,163 @@ function drawEratosthenes(ctx,w,h,spec,st){
   const step=small?24:30;
   for(let j=-14;j<=14;j++){const xg=sx-sl+j*step, top=xg+(base-py)*tg;
    trace(ctx,[[top,py],[xg,base]]);ctx.strokeStyle=j?'rgba(232,163,58,.4)':'rgba(222,128,20,.95)';ctx.lineWidth=j?1.3:2;ctx.stroke();}
-  trace(ctx,[[sx,base],[sx-sl,base]]);ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=small?4:5;ctx.lineCap='round';ctx.stroke();
+  trace(ctx,[[sx-2,base],[sx-sl,base]]);ctx.strokeStyle='rgba(20,23,28,.8)';ctx.lineWidth=small?6:8;ctx.lineCap='round';ctx.stroke();
   const r=L*.42;ctx.beginPath();ctx.moveTo(sx,base-L);ctx.arc(sx,base-L,r,Math.PI/2,Math.PI/2+theta);ctx.closePath();ctx.fillStyle=rgba(accent,.3);ctx.fill();ctx.strokeStyle=rgba(accent,.95);ctx.lineWidth=1.4;ctx.stroke();
   trace(ctx,[[sx,base],[sx,base-L]]);ctx.strokeStyle='#3b2f2a';ctx.lineWidth=small?3:4;ctx.stroke();
   if(labels){text(ctx,'ALEXANDRIA',px+14,py+(small?18:22),{size,weight:700,spacing:'1.2px',color:ink});
    pill(ctx,`${deg}°`,sx+10,base-L+r*.75,{size,weight:700,color:ink});}
   ctx.restore();ctx.restore();}
 }
+
+// The Monty Hall problem, in flat line art: three doors, a car behind one and goats behind the others. You pick a
+// door; the host, who knows where the car is, opens another with a goat and offers a switch, which wins two games in
+// three (Physics.montyGames). Chapter plan: the game; fifty-fifty against the true odds; the three equally likely
+// cases; 300 games kept score; 100 doors; the 1990 column and its letters. After playback the viewer plays: pick a
+// door, then stay or switch, with a running score (MONTY_TOUCH).
+const MONTY={mode:'',doors:null,game:{seq:0,phase:'pick',pick:-1,open:-1,final:-1,at:0},score:{stay:[0,0],swap:[0,0]}};
+const montyCarAt=seq=>Math.min(2,Math.floor(hash(seq*9.7+1.3)*3)), MONTY_SAMPLE=1068;
+function montyPlan(st){
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ if(st.since===undefined)return {mode:'game',pick:1,open:1,arrow:1,thumb:true};
+ if(st.live)return {mode:'live',t:st.t||0};
+ // 1: the doors; with the second sentence you pick door 1 and the host opens door 3; with the third, the offer.
+ if(st.stage===0)return {mode:'game',pick:smooth((t-at(1)-.2)/.5),open:smooth((t-at(1)-1.8)/.8),arrow:smooth((t-at(2)-.2)/.6)};
+ // 2: fifty-fifty is tempting; with the second sentence the true odds.
+ if(st.stage===1)return {mode:'game',pick:1,open:1,arrow:0,fifty:smooth((t-at(0)-.4)/.5)*(1-smooth((t-at(1)-.1)/.4)),odds:smooth((t-at(1)-.3)/.6)};
+ // 3: the three cases, one at a time with the sentences.
+ if(st.stage===2)return {mode:'cases',first:smooth((t-at(0)-.3)/.5),others:smooth((t-at(1)-.3)/.5),reveal:smooth((t-at(2)-.3)/.8)};
+ // 4: 300 games fill in through the chapter; each sentence points at its column.
+ if(st.stage===3)return {mode:'many',n:Math.floor(300*clamp((t-at(0)-.6)/Math.max(3,at(2)-at(0)))),stay:smooth((t-at(1)-.2)/.5),swap:smooth((t-at(2)-.2)/.5)};
+ // 5: a hundred doors: your pick, 98 opened, then the one left shut.
+ if(st.stage===4)return {mode:'hundred',pick:smooth((t-at(0)-.5)/.5),opened:98*clamp((t-at(1)-.4)/3.2),final:smooth((t-at(2)-.2)/.6)};
+ // 6: the column, the letters, and the answer.
+ return {mode:'letters',page:smooth((t-at(0)-.2)/.6),letters:clamp((t-at(1)-.2)/3),right:smooth((t-at(2)-.3)/.6)};
+}
+function montyCar(ctx,x,y,s){
+ const body='#e4572e', glass='#cfe3f2', dark='#2b2f36';
+ ctx.save();ctx.translate(x,y);ctx.lineWidth=Math.max(1.2,s*.03);ctx.strokeStyle=dark;ctx.lineJoin='round';
+ ctx.beginPath();ctx.moveTo(-s*.42,s*.02);ctx.lineTo(-s*.4,-s*.12);ctx.lineTo(-s*.2,-s*.15);ctx.lineTo(-s*.1,-s*.3);ctx.lineTo(s*.16,-s*.3);ctx.lineTo(s*.27,-s*.15);ctx.lineTo(s*.42,-s*.12);ctx.lineTo(s*.44,s*.02);ctx.closePath();ctx.fillStyle=body;ctx.fill();ctx.stroke();
+ ctx.beginPath();ctx.moveTo(-s*.15,-s*.16);ctx.lineTo(-s*.07,-s*.26);ctx.lineTo(s*.13,-s*.26);ctx.lineTo(s*.21,-s*.16);ctx.closePath();ctx.fillStyle=glass;ctx.fill();ctx.stroke();
+ for(const wx of [-s*.24,s*.26]){ctx.beginPath();ctx.arc(wx,s*.03,s*.09,0,TAU);ctx.fillStyle=dark;ctx.fill();ctx.beginPath();ctx.arc(wx,s*.03,s*.035,0,TAU);ctx.fillStyle='#d9dde3';ctx.fill();}
+ ctx.restore();}
+function montyGoat(ctx,x,y,s){
+ const coat='#f3efe6', horn='#8a7a63', dark='#2b2f36';
+ ctx.save();ctx.translate(x,y);ctx.lineWidth=Math.max(1.2,s*.03);ctx.strokeStyle=dark;ctx.lineCap='round';ctx.lineJoin='round';
+ for(const lx of [-s*.2,-s*.1,s*.1,s*.2]){trace(ctx,[[lx,-s*.02],[lx,s*.13]]);ctx.stroke();}
+ trace(ctx,[[-s*.27,-s*.15],[-s*.33,-s*.24]]);ctx.stroke();
+ ctx.beginPath();ctx.ellipse(0,-s*.1,s*.28,s*.13,0,0,TAU);ctx.fillStyle=coat;ctx.fill();ctx.stroke();
+ // Neck, a long head with a beard, an ear, and two horns curving back.
+ ctx.beginPath();ctx.moveTo(s*.18,-s*.18);ctx.lineTo(s*.26,-s*.32);ctx.lineTo(s*.34,-s*.3);ctx.lineTo(s*.26,-s*.12);ctx.closePath();ctx.fill();ctx.stroke();
+ ctx.beginPath();ctx.moveTo(s*.24,-s*.34);ctx.quadraticCurveTo(s*.34,-s*.38,s*.43,-s*.27);ctx.quadraticCurveTo(s*.4,-s*.22,s*.32,-s*.24);ctx.closePath();ctx.fill();ctx.stroke();
+ trace(ctx,[[s*.41,-s*.25],[s*.4,-s*.16]]);ctx.stroke();
+ ctx.strokeStyle=horn;ctx.lineWidth=Math.max(1.6,s*.04);
+ for(const o of [0,s*.05]){ctx.beginPath();ctx.moveTo(s*.27+o,-s*.36);ctx.quadraticCurveTo(s*.22+o,-s*.5,s*.12+o,-s*.46);ctx.stroke();}
+ ctx.strokeStyle=dark;ctx.lineWidth=Math.max(1.2,s*.03);trace(ctx,[[s*.22,-s*.34],[s*.15,-s*.36]]);ctx.stroke();
+ ctx.beginPath();ctx.arc(s*.33,-s*.31,s*.014,0,TAU);ctx.fillStyle=dark;ctx.fill();
+ ctx.restore();}
+// One door: the doorway shows what is behind it, and the door swings open on its left hinge as open goes from 0 to 1.
+function montyDoor(ctx,x,y,w,h,{open=0,item='goat',pick=0,ghost=0,accent,colour='#3d6fb6'}){
+ ctx.fillStyle='#fbf7f0';ctx.fillRect(x,y,w,h);
+ const icon=(a)=>{ctx.save();ctx.globalAlpha=a;(item==='car'?montyCar:montyGoat)(ctx,x+w/2,y+h*.66,w*.86);ctx.restore();};
+ if(open>0)icon(Math.min(1,open*1.5));
+ const dw=w*(1-.84*open);
+ if(dw>.5){ctx.fillStyle=colour;ctx.fillRect(x,y,dw,h);
+  ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.4;if(dw>w*.3){ctx.strokeRect(x+dw*.16,y+h*.08,dw*.68,h*.36);ctx.strokeRect(x+dw*.16,y+h*.52,dw*.68,h*.4);}
+  ctx.beginPath();ctx.arc(x+dw*.84,y+h*.52,Math.max(1.5,w*.035),0,TAU);ctx.fillStyle='#f2c14e';ctx.fill();}
+ if(ghost>0&&open<.5){const a=ghost*(1-open*2);ctx.save();ctx.globalAlpha=a*.9;ctx.fillStyle='#fbf7f0';ctx.beginPath();ctx.roundRect(x+w*.08,y+h*.42,w*.84,h*.42,w*.08);ctx.fill();ctx.restore();icon(Math.min(1,a*1.6));}
+ ctx.strokeStyle='#2b2f36';ctx.lineWidth=1.6;ctx.strokeRect(x,y,w,h);
+ if(pick>0){ctx.save();ctx.globalAlpha=pick;ctx.strokeStyle=accent;ctx.lineWidth=Math.max(3,w*.05);ctx.strokeRect(x-5,y-5,w+10,h+10);ctx.restore();}
+}
+function drawMonty(ctx,w,h,spec,st){
+ const plan=montyPlan(st), small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, ink='rgba(20,23,28,.82)', size=small?11:13, labels=st.labels;
+ const win='#2f9e6f', lose='rgba(20,23,28,.18)';
+ MONTY.mode=plan.mode;MONTY.doors=null;
+ const L=(s,x,y,o={})=>labels&&text(ctx,s,x,y,{align:'center',size,weight:700,color:ink,...o});
+ const P=(s,x,y,o={})=>labels&&pill(ctx,s,x,y,{align:'center',size,weight:700,color:ink,...o});
+ // Three big doors in a row.
+ const row=(open,{pick=-1,pickA=0,car=1,openDoor=2,ghost=0,top=h*.16,dh=h*(small?.42:.52)}={})=>{
+  const dw=Math.min(dh/1.7,w*(small?.24:.15)), gap=dw*.45, x0=w/2-(3*dw+2*gap)/2, doors=[0,1,2].map(i=>({x:x0+i*(dw+gap),y:top,w:dw,h:dh}));
+  doors.forEach((d,i)=>{montyDoor(ctx,d.x,d.y,d.w,d.h,{open:typeof open==='function'?open(i):i===openDoor?open:0,item:i===car?'car':'goat',pick:i===pick?pickA:0,ghost,accent});L(String(i+1),d.x+d.w/2,d.y-(small?12:16));});
+  return doors;};
+ if(plan.mode==='game'){
+  const doors=row(plan.open,{pick:0,pickA:plan.pick});
+  if(plan.pick>.5)P('your pick',doors[0].x+doors[0].w/2,doors[0].y+doors[0].h+(small?18:24));
+  if(plan.arrow>0){const a=doors[0], b=doors[1], y=a.y+a.h+(small?40:52);ctx.save();ctx.globalAlpha=plan.arrow;ctx.strokeStyle=accent;ctx.lineWidth=2.4;
+   ctx.beginPath();ctx.moveTo(a.x+a.w*.6,y);ctx.quadraticCurveTo((a.x+b.x+b.w)/2,y+(small?18:24),b.x+b.w*.4,y);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(b.x+b.w*.4,y);ctx.lineTo(b.x+b.w*.4-9,y-5);ctx.lineTo(b.x+b.w*.4-7,y+7);ctx.closePath();ctx.fillStyle=accent;ctx.fill();
+   P('switch?',(a.x+b.x+b.w)/2,y+(small?30:38),{color:accent});ctx.restore();}
+  if(plan.fifty>0){ctx.save();ctx.globalAlpha=plan.fifty;P('50/50?',(doors[0].x+doors[0].w+doors[1].x)/2,doors[0].y-(small?30:40),{size:size+4});ctx.restore();}
+  if(plan.odds>0){ctx.save();ctx.globalAlpha=plan.odds;const y=doors[0].y+doors[0].h+(small?44:58), bh=small?10:12;
+   for(const [d,f,name] of [[doors[0],1/3,'stay 1/3'],[doors[1],2/3,'switch 2/3']]){ctx.fillStyle='rgba(20,23,28,.08)';ctx.fillRect(d.x,y,d.w,bh);ctx.fillStyle=f>.5?win:accent;ctx.fillRect(d.x,y,d.w*f,bh);
+    ctx.strokeStyle='rgba(20,23,28,.35)';ctx.lineWidth=1;for(const k of [1,2]){trace(ctx,[[d.x+d.w*k/3,y-2],[d.x+d.w*k/3,y+bh+2]]);ctx.stroke();}
+    P(name,d.x+d.w/2,y+bh+(small?16:20));}ctx.restore();}
+  return;}
+ if(plan.mode==='cases'){
+  // Three equally likely cases, one per row: the car behind door 1, 2 or 3. You always pick door 1.
+  const dh=h*(small?.16:.2), dw=dh/1.6, gap=dw*.35, rowsY=[h*.09,h*.38,h*.67], x0=w/2-(3*(dw+gap)+(small?104:140))/2;
+  if(labels)text(ctx,'your pick',x0+dw/2,h*.05,{align:'center',size:size-1,weight:700,color:accent});
+  rowsY.forEach((y,car)=>{const show=car===0?plan.first:plan.others;if(show<=0)return;ctx.save();ctx.globalAlpha=.25+.75*show;
+   const host=car===0?1:[1,2].find(d=>d!==car);
+   for(let i=0;i<3;i++)montyDoor(ctx,x0+i*(dw+gap),y,dw,dh,{open:i===host?plan.reveal:0,item:i===car?'car':'goat',pick:i===0?1:0,ghost:.45,accent});
+   if(plan.reveal>.5){const winSwap=car!==0;P(winSwap?'switch wins':'switch loses',x0+3*(dw+gap)+(small?52:70),y+dh/2,{color:winSwap?win:'rgba(20,23,28,.6)'});}
+   ctx.restore();});
+  return;}
+ if(plan.mode==='many'){
+  // The same 300 games scored both ways: staying wins when your first pick hid the car; switching wins otherwise.
+  const cols=20, rows=15, cell=Math.min(w*(small?.4:.3)/cols,h*.62/rows), gw=cols*cell, panels=[[w*.5-gw-(small?12:40),'stay',plan.stay,true],[w*.5+(small?12:40),'switch',plan.swap,false]];
+  for(const [x,name,em,stayCol] of panels){let wins=0;
+   for(let i=0;i<300;i++){const cx=x+(i%cols)*cell, cy=h*.16+Math.floor(i/cols)*cell;
+    if(i<plan.n){const car=montyCarAt(i+MONTY_SAMPLE), won=stayCol?car===0:car!==0;if(won)wins++;ctx.fillStyle=won?(stayCol?accent:win):lose;}else ctx.fillStyle='rgba(20,23,28,.05)';
+    ctx.fillRect(cx+1,cy+1,cell-2,cell-2);}
+   L(name,x+gw/2,h*.1,{size:size+1});
+   if(plan.n>0)P(`${wins} wins`,x+gw/2,h*.16+rows*cell+(small?18:24),{color:stayCol?accent:win,size:size+(em>.5?2:0)});}
+  return;}
+ if(plan.mode==='hundred'){
+  // A hundred doors: your pick is the first; the car is behind door 64; the host opens all the others but that one.
+  const cols=10, cell=Math.min(w*(small?.8:.36)/cols,h*.78/10), dw=cell*.72, dh=cell*.86, x0=w/2-cols*cell/2, y0=h*.08, carAt=63;
+  const order=[...Array(100).keys()].filter(i=>i!==0&&i!==carAt).sort((a,b)=>hash(a*3.3)-hash(b*3.3));
+  const opened=new Set(order.slice(0,Math.floor(plan.opened)));
+  for(let i=0;i<100;i++){const x=x0+(i%cols)*cell+(cell-dw)/2, y=y0+Math.floor(i/cols)*cell;
+   montyDoor(ctx,x,y,dw,dh,{open:opened.has(i)?1:0,item:i===carAt?'car':'goat',pick:i===0?plan.pick:(i===carAt?plan.final:0),accent:i===carAt?win:accent});}
+  if(plan.pick>.5)P('your pick',x0+cell/2,y0-(small?10:14),{color:accent});
+  if(plan.final>.5){const x=x0+(carAt%cols)*cell+(cell+dw)/2, y=y0+Math.floor(carAt/cols)*cell+dh/2, ex=x0+cols*cell+(small?4:12);
+   if(!small){ctx.save();ctx.globalAlpha=plan.final;ctx.setLineDash([3,4]);ctx.strokeStyle=win;ctx.lineWidth=1.4;trace(ctx,[[x+3,y],[ex,y]]);ctx.stroke();ctx.restore();P('left shut',ex+8,y,{align:'left',color:win});}
+   else P('left shut',w/2,y0+10*cell+14,{color:win});}
+  return;}
+ if(plan.mode==='letters'){
+  // The 1990 column, then letters piling up, then the answer.
+  const px=w*(small?.5:.3), py=h*(small?.27:.42), pw=w*(small?.3:.17), ph=pw*1.3;
+  if(plan.page>0){ctx.save();ctx.globalAlpha=plan.page;ctx.fillStyle='#fffdf8';ctx.strokeStyle='#2b2f36';ctx.lineWidth=1.6;ctx.fillRect(px-pw/2,py-ph/2,pw,ph);ctx.strokeRect(px-pw/2,py-ph/2,pw,ph);
+   ctx.fillStyle='#2b2f36';ctx.fillRect(px-pw/2,py-ph/2,pw,ph*.16);ctx.fillStyle='rgba(20,23,28,.18)';for(let i=0;i<5;i++)ctx.fillRect(px-pw*.38,py-ph*.24+i*ph*.08,pw*(i===4?.42:.76),ph*.03);
+   montyDoor(ctx,px-pw*.36,py+ph*.2,pw*.2,ph*.24,{open:0,accent});montyDoor(ctx,px-pw*.1,py+ph*.2,pw*.2,ph*.24,{open:0,accent});montyDoor(ctx,px+pw*.16,py+ph*.2,pw*.2,ph*.24,{open:1,accent});
+   ctx.restore();P('Parade, 1990',px,py-ph/2-(small?12:18));}
+  const n=Math.floor(60*plan.letters), cx=small?w*.5:w*.66, base=small?h*.92:h*.8;
+  for(let i=0;i<n;i++){const a=hash(i*1.7), b=hash(i*2.9), x=cx+(a-.5)*w*(small?.6:.34), y=base-Math.floor(i/12)*(small?10:14)-b*(small?18:24), ew=small?26:38, eh=ew*.62;
+   ctx.save();ctx.translate(x,y);ctx.rotate((b-.5)*.6);ctx.fillStyle='#fffaf0';ctx.strokeStyle='#5b5f66';ctx.lineWidth=1.2;ctx.fillRect(-ew/2,-eh/2,ew,eh);ctx.strokeRect(-ew/2,-eh/2,ew,eh);
+   trace(ctx,[[-ew/2,-eh/2],[0,eh*.08],[ew/2,-eh/2]]);ctx.stroke();ctx.restore();}
+  if(n>0)P(`about ${Math.round(10000*plan.letters).toLocaleString('en-US')} letters`,cx,base-(small?58:84),{size:size+1});
+  if(plan.right>0){ctx.save();ctx.globalAlpha=plan.right;P('she was right',small?w*.5:px,small?h*.62:py+ph/2+(small?18:26),{size:size+4,color:win});ctx.restore();}
+  return;}
+ // Live: play the game yourself.
+ const g=MONTY.game, car=montyCarAt(g.seq), now=plan.t, since=now-g.at;
+ const doors=row(i=>g.phase==='done'?(i===g.open?1:smooth(since/.6)):i===g.open?smooth(since/.6):0,{pick:g.phase==='pick'?-1:g.pick,pickA:1,car,ghost:0});
+ MONTY.doors=doors;
+ const say=g.phase==='pick'?'pick a door':g.phase==='decide'?'stay or switch?':g.final===car?'a car!':'a goat';
+ P(say,w/2,doors[0].y+doors[0].h+(small?22:30),{size:size+2,color:g.phase==='done'?(g.final===car?win:ink):accent});
+ const sc=MONTY.score, y=doors[0].y+doors[0].h+(small?52:66);
+ P(`stay wins ${sc.stay[0]}/${sc.stay[1]}`,w/2-(small?72:110),y);P(`switch wins ${sc.swap[0]}/${sc.swap[1]}`,w/2+(small?72:110),y,{color:win});
+}
+// Playing the game directly: tap a door to pick it; the host opens a goat door; tap your door to stay or the other
+// closed door to switch; tap again for a new game. The car's place changes from game to game.
+const MONTY_TOUCH={hint:'pick a door, then stay or switch, and keep score over many games.',
+ grab(w,h,spec,st,x,y){if(MONTY.mode!=='live'||!MONTY.doors)return null;const i=MONTY.doors.findIndex(d=>x>=d.x-6&&x<=d.x+d.w+6&&y>=d.y-6&&y<=d.y+d.h+6);
+  return i>=0||MONTY.game.phase==='done'?{i,cursor:'pointer'}:null;},
+ release(w,h,spec,st,x,y,hd,moved){if(moved)return null;const g=MONTY.game, car=montyCarAt(g.seq);
+  if(g.phase==='done'){Object.assign(g,{seq:g.seq+1,phase:'pick',pick:-1,open:-1,final:-1,at:st.t});return {};}
+  const i=hd.i;if(i<0)return null;
+  if(g.phase==='pick'){const goats=[0,1,2].filter(d=>d!==i&&d!==car);Object.assign(g,{pick:i,open:goats[goats.length>1?Math.floor(hash(g.seq*5.3+2)*2):0],phase:'decide',at:st.t});return {};}
+  if(g.phase==='decide'&&i!==g.open){const k=i===g.pick?'stay':'swap';MONTY.score[k][1]++;if(i===car)MONTY.score[k][0]++;Object.assign(g,{final:i,phase:'done',at:st.t});return {};}
+  return null;}};
 
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
 // time, from 22 chances; but a match can be between any two people, and 23 people make 253 pairs. As people arrive
@@ -3114,6 +3284,13 @@ const ENGINES={
   measure:['Shadow angle in Alexandria',()=>ERA.show?(ERA.angle*180/Math.PI).toFixed(1)+'°':''],scale:'',
   disclosure:'Exact for parallel sunlight on a perfect sphere. As in the classic account, the two cities are treated as due north and south of each other, the Sun as exactly overhead at Syene, and the distance as 800 km.',
   try:'',aria:'Sunlight falls straight down on a stick in Syene, which casts no shadow, while a stick in Alexandria, 800 km away on the curved Earth, casts a short shadow at 7.2 degrees. Extended down, the two sticks meet at the Earth’s centre at the same 7.2 degrees, one fiftieth of a circle, so the Earth is 50 times 800 km around.'},
+ 'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
+  fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
+  // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.
+  effect:a=>Physics.montyWin(clamp(a))-1/3,
+  measure:['',()=>''],scale:'',
+  disclosure:'Exact for the standard rules: the car is placed at random, and the host always opens a door with a goat that you did not pick, choosing at random when he can, and always offers the switch. The 300 games are a fixed pseudo-random sample.',
+  try:'',aria:'Three doors hide a car and two goats. You pick door 1; the host, who knows where the car is, opens door 3 to show a goat and offers a switch. Three rows show the three equal cases: switching wins in two of them. Scored over 300 games, switching wins about twice as often. With 100 doors the host opens 98 goats and leaves one shut. Then letters pile up for the 1990 column that gave this answer.'},
  'birthdays':{draw:drawBirthdays,touch:BDAY_TOUCH,demo:false,tryAny:true,a:['People','how many people are in the room'],b:['Unused','',''],
   fa:a=>{const n=Math.max(1,Math.round(1+59*clamp(a)));return `${n} ${n===1?'person':'people'}`;},fb:b=>'',
   // The modelled effect for the render checks: the chance of a shared birthday for the chosen number of people.

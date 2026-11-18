@@ -100,11 +100,6 @@
           "id": "4.3",
           "question": "Why can't you pin down both where a particle is and how it moves?",
           "model": "wave-packet"
-        },
-        {
-          "id": "4.4",
-          "question": "How can a particle pass through a wall it cannot climb over?",
-          "model": "tunneling"
         }
       ]
     },
@@ -135,6 +130,18 @@
           "id": "6.2",
           "question": "How did Eratosthenes measure the Earth with a stick?",
           "model": "eratosthenes"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Chance and choices",
+      "engine": "doors, games and odds",
+      "items": [
+        {
+          "id": "7.1",
+          "question": "The Monty Hall problem: should you switch doors?",
+          "model": "monty-hall"
         }
       ]
     }

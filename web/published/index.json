@@ -1,12 +1,22 @@
 [
   {
+    "id": "20261118T190258-monty-hall",
+    "question": "The Monty Hall problem: should you switch doors?",
+    "topic": "monty-hall",
+    "created": "2026-11-18T19:02:58.382312+00:00",
+    "curriculum": "7.1",
+    "title": "The Monty Hall problem: should you switch doors?",
+    "theme": "mist"
+  },
+  {
     "id": "20261117T200743-eratosthenes",
     "question": "How did Eratosthenes measure the Earth with a stick?",
     "topic": "eratosthenes",
     "created": "2026-11-17T20:07:43.847428+00:00",
     "curriculum": "6.2",
     "title": "How did Eratosthenes measure the Earth with a stick?",
-    "theme": "lilac"
+    "theme": "lilac",
+    "updated": "2026-11-18T19:02:58Z"
   },
   {
     "id": "20261116T192404-two-slit-particles",

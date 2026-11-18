@@ -584,9 +584,36 @@
         'A smaller Earth leans the same stick further':this.earthAngle(800,3185)>this.earthAngle(800,6371),
       }).map(([name,pass])=>({name,pass}));
     },
+    // The Monty Hall problem: n doors, a car behind one at random. You pick door 0 (by symmetry any door); the host
+    // leaves one other door closed and opens the rest. A host who knows never opens the car's door, choosing at random
+    // when he can; a careless host picks at random, and games where he shows the car are not counted. Every case is
+    // weighed by its chance; returns the chances that staying and switching win.
+    montyGames(n = 3, knows = true) {
+      let stay = 0, swap = 0, shown = 0;
+      for (let car = 0; car < n; car++) for (let keep = 1; keep < n; keep++) {
+        let p = 1 / n;
+        if (knows) { if (car !== 0 && keep !== car) continue; if (car === 0) p /= n - 1; }
+        else { p /= n - 1; if (car !== 0 && car !== keep) continue; }
+        shown += p; if (car === 0) stay += p; if (car === keep) swap += p;
+      }
+      return {stay: stay / shown, swap: swap / shown};
+    },
+    // The chance of winning when you switch in a share a of games.
+    montyWin(a) { const g = this.montyGames(3); return (1 - a) * g.stay + a * g.swap; },
+    montyChecks() {
+      const near=(a,b)=>Math.abs(a-b)<1e-12, g=this.montyGames(3), careless=this.montyGames(3,false);
+      return Object.entries({
+        'Staying wins one game in three':near(g.stay,1/3),
+        'Switching wins two games in three':near(g.swap,2/3),
+        'With 100 doors, switching wins 99 games in 100':near(this.montyGames(100).swap,.99),
+        'If the host opens a door at random and shows a goat, switching gains nothing':near(careless.swap,.5)&&near(careless.stay,.5),
+        'Never switching keeps the one-in-three chance':near(this.montyWin(0),1/3),
+        'Always switching doubles the chance of winning':near(this.montyWin(1),2*this.montyWin(0)),
+      }).map(([name,pass])=>({name,pass}));
+    },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,
+        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

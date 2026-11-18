@@ -1,0 +1,389 @@
+{
+  "id": "20261118T190258-monty-hall",
+  "status": "reviewed",
+  "question": "The Monty Hall problem: should you switch doors?",
+  "topic": "monty-hall",
+  "created": "2026-11-18T19:02:58.382312+00:00",
+  "research": {
+    "claim": "In the standard Monty Hall problem (the car placed at random behind one of three doors; the host, who knows where it is, always opens a different door hiding a goat and always offers a switch), staying wins with probability 1/3 and switching with probability 2/3. With n doors and a host who opens all but one of the others, switching wins (n-1)/n. If the host instead opens a door at random and it happens to show a goat, staying and switching each win 1/2.",
+    "explanation": "Your first pick hides the car one time in three, whatever door you choose. In the other two cases out of three, the car is behind one of the two doors you did not pick; the host must open the other one, because he never reveals the car, so the door he leaves shut is the car's door, and switching wins. Counting the three equally likely places for the car with your pick fixed at door 1: car behind 1, switching loses; car behind 2, the host opens 3 and switching wins; car behind 3, the host opens 2 and switching wins. Over many games, staying wins about a third and switching about two thirds, and because each game is won by exactly one of the two strategies, their wins add up to every game. The two remaining doors are not alike: yours was chosen at random, while the other survived a host who knew where the car was. Marilyn vos Savant made the argument vivid with a million doors: after the host opens all but your door and one other, the other is almost certainly the car's. The host's knowledge matters: if he opened one of the other doors at random and it happened to show a goat, staying and switching would each win half of the games where that happens. The problem was first posed by Steve Selvin in letters to The American Statistician in 1975, based on the game show Let's Make a Deal and its host, Monty Hall. It became famous through Craig F. Whitaker's question in vos Savant's Ask Marilyn column in Parade magazine in 1990; she answered that switching wins two thirds of the time, and about 10,000 readers, nearly 1,000 of them with PhDs, wrote in, most saying she was wrong. Paul Erdős stayed unconvinced until he was shown a computer simulation.",
+    "assumptions": [
+      "The car is placed at random behind one of the three doors.",
+      "The host knows where the car is, always opens a door you did not pick that hides a goat, choosing at random when two such doors are available, and always offers the switch.",
+      "The 300 games in the picture are a fixed pseudo-random sample, so their counts are close to, not exactly, 100 and 200."
+    ],
+    "prediction": "Over many games played by these rules, switching wins about two thirds of the time and staying about one third.",
+    "falsifier": "If, over many games played by these rules, staying and switching each won about half the time, the analysis would be wrong.",
+    "limitations": [
+      "On the real show, Monty Hall controlled how the game went and did not always offer a switch, so the puzzle's answer depends on its stated rules.",
+      "With a host who opens doors at random, the answer changes to one half."
+    ],
+    "misconceptions": [
+      "Two doors left means fifty-fifty: the doors are not alike, because the host's choice was constrained by where the car is.",
+      "Switching changes your luck: it simply takes the door that wins whenever your first pick was wrong, which happens two times in three."
+    ],
+    "questions": [
+      "Why isn't it fifty-fifty with two doors left?",
+      "What if the host didn't know where the car was?",
+      "Does it matter which door you pick first?"
+    ],
+    "sources": [
+      {
+        "title": "Monty Hall problem (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Monty_Hall_problem",
+        "supports": "The standard assumptions (the host knows, always opens a goat door you did not pick, always offers the switch); switching wins 2/3 and staying 1/3; the three equally likely cases; the million-door argument; a host who opens at random gives 1/2; Steve Selvin's 1975 letters to The American Statistician based on Let's Make a Deal; Craig F. Whitaker's question in vos Savant's Ask Marilyn column in Parade in 1990; about 10,000 readers, nearly 1,000 with PhDs, most calling her wrong; Paul Erdős convinced only by a computer simulation; Monty Hall on how real play differed."
+      }
+    ]
+  },
+  "scene": {
+    "title": "The Monty Hall problem: should you switch doors?",
+    "subtitle": "You pick one of three doors, and the host opens another to show a goat. Should you stick with your door or switch?",
+    "why": "This famous puzzle fooled thousands of readers, including mathematicians. It shows how a hint from someone who knows can quietly change the odds.",
+    "opening": "Two doors are left. Is it really fifty-fifty?",
+    "beats": [
+      {
+        "title": "The game",
+        "body": "Imagine a game show with three doors: a car behind one, goats behind two. You pick door 1, then the host opens a goat door: he knows where the car is. Then he asks: do you want to switch to the other closed door?"
+      },
+      {
+        "title": "Fifty-fifty?",
+        "body": "Most people say it makes no difference: two doors left, so fifty-fifty. In fact, switching wins two games out of three. Here is why the odds are not equal."
+      },
+      {
+        "title": "Three equal cases",
+        "body": "Your first pick finds the car only one time in three. So two times in three, your first pick is a goat. Then the host must open the other goat, so switching finds the car."
+      },
+      {
+        "title": "Keep score",
+        "body": "Play the game 300 times and keep score. Staying with your first pick wins about 100 games. Switching wins about 200: twice as often."
+      },
+      {
+        "title": "A hundred doors",
+        "body": "Now imagine 100 doors, and you pick one. The host, who knows where the car is, opens 98 doors with goats. Would you keep your 1-in-100 pick, or take the door he left shut?"
+      },
+      {
+        "title": "Ten thousand letters",
+        "body": "In 1990, Marilyn vos Savant told Parade readers to switch. About 10,000 readers wrote in, most of them to say she was wrong. She was right: the host knows, so the door he leaves shut is a clue."
+      }
+    ],
+    "takeaway": "Your first pick is right only one time in three. The host, who knows, never opens the car's door, so switching wins the other two times in three.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "first",
+    "accent": "blue",
+    "kind": "monty-hall",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Why isn't it fifty-fifty with two doors left?",
+        "a": "The two doors are not alike. Yours was chosen at random from three; the other is the one the host had to leave shut while avoiding the car."
+      },
+      {
+        "q": "What if the host didn't know where the car was?",
+        "a": "If he opened a door at random and it happened to show a goat, staying and switching would each win half the time. His knowledge is what makes switching better."
+      },
+      {
+        "q": "Does it matter which door you pick first?",
+        "a": "No. Whichever door you pick hides the car one time in three, and switching wins the other two."
+      },
+      {
+        "q": "Who first posed the puzzle?",
+        "a": "Steve Selvin, in a 1975 letter to The American Statistician, based on the game show Let's Make a Deal and its host, Monty Hall."
+      },
+      {
+        "q": "Did everyone come round?",
+        "a": "Not all. Even after explanations and proofs, many still disagreed; Paul Erdős stayed unconvinced until he was shown a computer simulation."
+      }
+    ],
+    "theme": "mist"
+  },
+  "checks": [
+    {
+      "name": "Staying wins one game in three",
+      "pass": true
+    },
+    {
+      "name": "Switching wins two games in three",
+      "pass": true
+    },
+    {
+      "name": "With 100 doors, switching wins 99 games in 100",
+      "pass": true
+    },
+    {
+      "name": "If the host opens a door at random and shows a goat, switching gains nothing",
+      "pass": true
+    },
+    {
+      "name": "Never switching keeps the one-in-three chance",
+      "pass": true
+    },
+    {
+      "name": "Always switching doubles the chance of winning",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 76)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 3)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "The Monty Hall problem: should you switch doors?",
+        "subtitle": "You pick one of three doors, and the host opens another to show a goat. Should you stick with your door or switch?",
+        "why": "This famous puzzle fooled thousands of readers, including mathematicians. It shows how a hint from someone who knows can quietly change the odds.",
+        "opening": "Two doors are left. Is it really fifty-fifty?",
+        "beats": [
+          {
+            "title": "The game",
+            "body": "Imagine a game show with three doors: a car behind one, goats behind two. You pick door 1, then the host opens a goat door: he knows where the car is. Then he asks: do you want to switch to the other closed door?"
+          },
+          {
+            "title": "Fifty-fifty?",
+            "body": "Most people say it makes no difference: two doors left, so fifty-fifty. In fact, switching wins two games out of three. Here is why the odds are not equal."
+          },
+          {
+            "title": "Three equal cases",
+            "body": "Your first pick finds the car only one time in three. So two times in three, your first pick is a goat. Then the host must open the other goat, so switching finds the car."
+          },
+          {
+            "title": "Keep score",
+            "body": "Play the game 300 times and keep score. Staying with your first pick wins about 100 games. Switching wins about 200: twice as often."
+          },
+          {
+            "title": "A hundred doors",
+            "body": "Now imagine 100 doors, and you pick one. The host, who knows where the car is, opens 98 doors with goats. Would you keep your 1-in-100 pick, or take the door he left shut?"
+          },
+          {
+            "title": "Ten thousand letters",
+            "body": "In 1990, Marilyn vos Savant told Parade readers to switch. About 10,000 readers wrote in, most of them to say she was wrong. She was right: the host knows, so the door he leaves shut is a clue."
+          }
+        ],
+        "takeaway": "Your first pick is right only one time in three. The host, who knows, never opens the car's door, so switching wins the other two times in three.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "first",
+        "accent": "blue",
+        "kind": "monty-hall",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Why isn't it fifty-fifty with two doors left?",
+            "a": "The two doors are not alike. Yours was chosen at random from three; the other is the one the host had to leave shut while avoiding the car."
+          },
+          {
+            "q": "What if the host didn't know where the car was?",
+            "a": "If he opened a door at random and it happened to show a goat, staying and switching would each win half the time. His knowledge is what makes switching better."
+          },
+          {
+            "q": "Does it matter which door you pick first?",
+            "a": "No. Whichever door you pick hides the car one time in three, and switching wins the other two."
+          },
+          {
+            "q": "Who first posed the puzzle?",
+            "a": "Steve Selvin, in a 1975 letter to The American Statistician, based on the game show Let's Make a Deal and its host, Monty Hall."
+          },
+          {
+            "q": "Did everyone come round?",
+            "a": "Not all. Even after explanations and proofs, many still disagreed; Paul Erdős stayed unconvinced until he was shown a computer simulation."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Staying wins one game in three",
+          "pass": true
+        },
+        {
+          "name": "Switching wins two games in three",
+          "pass": true
+        },
+        {
+          "name": "With 100 doors, switching wins 99 games in 100",
+          "pass": true
+        },
+        {
+          "name": "If the host opens a door at random and shows a goat, switching gains nothing",
+          "pass": true
+        },
+        {
+          "name": "Never switching keeps the one-in-three chance",
+          "pass": true
+        },
+        {
+          "name": "Always switching doubles the chance of winning",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 76)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 3)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Every subtitle, the title, why, takeaway and FAQ match the retrieved Wikipedia page or fairly simplify it: Selvin's 1975 letter, Parade in 1990, about 10,000 letters with nearly 1,000 from PhDs and most calling her wrong, Erdős and the simulation, the host's rules, the million-door argument scaled to 100 doors, and the careless host giving one half. The pictures match: the case rows, the 300 games scored both ways (exactly 100 and 200), the 100-door grid, and a play-it-yourself game that follows the host's rules. Round 2 fixed the FAQ on the doubters and the bar scale.",
+        "changes": [
+          "Optional: the letters label sits on the pile."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The blocking issue is fixed: both bars share one track with third marks, stay filling one third and switch two thirds. The peek windows make hidden goats read as goats and the car as a car; the cases group is centred; the Parade text stays clear of the doors; '50/50?' sits clear of door 1. Leftovers are small overlaps.",
+        "changes": [
+          "Lift 'about 10,000 letters' above the pile.",
+          "Shorter pointer to 'left shut'.",
+          "'the other goat door' in chapter 3."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Explanation: your first pick is a goat two times in three; in those games the host has to open the other goat, so the closed door he leaves must hide the car, and switching wins. Round 2 closes the gap from round 1: chapter 3 gives the missing step aloud and the three-row picture shows it; chapter 6 says what she actually said; the bars now fill one third and two thirds. All 18 lines are under 80 characters, three per chapter, opening on 'Imagine', and read naturally aloud.",
+        "changes": [
+          "Optional: chapter 1 line 2 word order.",
+          "Optional: lift the letters label above the pile."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Blind reading matched all six chapters: the game-show choice with a goat revealed and a switch offered; bars on matching tracks in thirds (stay 1/3, switch 2/3); three cases with door 1 picked, switching winning in two; two 300-game grids, 100 and 200 wins; 100 doors with 98 open and one left shut; a 1990 Parade page with a pile of letters and 'she was right'. The point: switching wins two thirds of the time.",
+        "changes": [
+          "The exact 100/200 may look staged.",
+          "'She' is not named in the picture."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261118T190258-monty-hall/revision-1-0.png",
+        "published/20261118T190258-monty-hall/revision-1-1.png",
+        "published/20261118T190258-monty-hall/revision-1-2.png",
+        "published/20261118T190258-monty-hall/revision-1-3.png",
+        "published/20261118T190258-monty-hall/revision-1-4.png",
+        "published/20261118T190258-monty-hall/revision-1-5.png",
+        "published/20261118T190258-monty-hall/revision-1-6.png",
+        "published/20261118T190258-monty-hall/revision-1-7.png",
+        "published/20261118T190258-monty-hall/revision-1-8.png",
+        "published/20261118T190258-monty-hall/revision-1-9.png",
+        "published/20261118T190258-monty-hall/revision-1-10.png",
+        "published/20261118T190258-monty-hall/revision-1-11.png"
+      ]
+    }
+  ]
+}
