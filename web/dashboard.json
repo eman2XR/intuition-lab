@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-17T20:08:54.802703+00:00",
-    "outcome": "Nov 17: published How did Eratosthenes measure the Earth with a stick? (new curriculum 6.2, per issue #13) and revised the double-slit guide per issue #12; three review rounds, all reviews 8-9."
+    "at": "2026-11-18T19:04:18.636345+00:00",
+    "outcome": "Nov 18: published The Monty Hall problem: should you switch doors? (new chapter 7, per issue #15; tunnelling removed) and revised the Eratosthenes guide per issue #14; two review rounds, all reviews 8-9."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
