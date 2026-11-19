@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-18T19:04:18.636345+00:00",
-    "outcome": "Nov 18: published The Monty Hall problem: should you switch doors? (new chapter 7, per issue #15; tunnelling removed) and revised the Eratosthenes guide per issue #14; two review rounds, all reviews 8-9."
+    "at": "2026-11-19T21:30:58.725984+00:00",
+    "outcome": "Nov 19: published Simpson's paradox (curriculum 7.2); Monty Hall doors now show a tapping hand (issue #18); Syene scene (issue #17) waits for the reference images."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
