@@ -611,9 +611,29 @@
         'Always switching doubles the chance of winning':near(this.montyWin(1),2*this.montyWin(0)),
       }).map(([name,pass])=>({name,pass}));
     },
+    // Simpson's paradox in a real kidney-stone study: successes and patients for each treatment and stone size. A share
+    // f of a treatment's patients with large stones mixes its two group rates into its overall rate. The control a moves
+    // A's share of large stones from B's share (0) to the study's (1); simpsonGap is how far B then leads overall.
+    simpsonData: {A: {small: [81, 87], large: [192, 263]}, B: {small: [234, 270], large: [55, 80]}},
+    simpsonRate(g) { return g[0] / g[1]; },
+    simpsonOverall(t) { const d = this.simpsonData[t]; return (d.small[0] + d.large[0]) / (d.small[1] + d.large[1]); },
+    simpsonMix(t, f) { const d = this.simpsonData[t]; return (1 - f) * this.simpsonRate(d.small) + f * this.simpsonRate(d.large); },
+    simpsonGap(a) { const fB = 80 / 350, fA = fB + a * (263 / 350 - fB); return Math.max(0, this.simpsonMix('B', fB) - this.simpsonMix('A', fA)); },
+    simpsonChecks() {
+      const near=(a,b)=>Math.abs(a-b)<1e-12, d=this.simpsonData, r=g=>this.simpsonRate(g);
+      return Object.entries({
+        'A beats B on small stones':r(d.A.small)>r(d.B.small),
+        'A beats B on large stones':r(d.A.large)>r(d.B.large),
+        'Yet B beats A overall':this.simpsonOverall('B')>this.simpsonOverall('A'),
+        'The overall rates are 78% and 83%':Math.round(this.simpsonOverall('A')*100)===78&&Math.round(this.simpsonOverall('B')*100)===83,
+        'Each overall rate is its group rates mixed by how many large stones it treated':near(this.simpsonMix('A',263/350),this.simpsonOverall('A'))&&near(this.simpsonMix('B',80/350),this.simpsonOverall('B')),
+        'With the same mix of stones, A wins overall too':this.simpsonMix('A',80/350)>this.simpsonMix('B',80/350),
+        'The reversal needs the groups mixed differently':this.simpsonGap(0)===0&&this.simpsonGap(1)>0,
+      }).map(([name,pass])=>({name,pass}));
+    },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,
+        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

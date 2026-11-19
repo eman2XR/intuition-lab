@@ -1,0 +1,382 @@
+{
+  "id": "20261119T213007-simpson",
+  "status": "reviewed",
+  "question": "Simpson's paradox: how can a treatment win every test but lose overall?",
+  "topic": "simpson",
+  "created": "2026-11-19T21:30:07.351877+00:00",
+  "research": {
+    "claim": "In a 1986 kidney-stone study, treatment A (open surgery) succeeded more often than treatment B (a closed procedure) for small stones (81 of 87, 93%, against 234 of 270, 87%) and for large stones (192 of 263, 73%, against 55 of 80, 69%), yet B succeeded more often overall (289 of 350, 83%, against 273 of 350, 78%). This reversal, Simpson's paradox, happens because A was given mostly large stones, which are harder to treat, so its overall rate is weighted toward its lower large-stone rate.",
+    "explanation": "Each treatment's overall success rate is an average of its small-stone and large-stone rates, weighted by how many of its patients had each kind of stone. Large stones fail more often under either treatment. A treated 263 large stones and only 87 small ones, so its overall rate (78%) sits close to its large-stone rate (73%); B treated 270 small stones and only 80 large ones, so its overall rate (83%) sits close to its small-stone rate (87%). Comparing the totals therefore compares mostly hard cases for A with mostly easy cases for B. With the same mix of stones, A would win overall too. Stone size is the lurking, or confounding, variable: doctors tended to give the harder, large-stone cases the better treatment A. The same pattern appeared in Berkeley's graduate admissions for fall 1973: 44% of the men who applied were admitted against 35% of the women, but department by department the data showed a small but statistically significant bias in favour of women, because women tended to apply to more competitive departments. Edward H. Simpson described the phenomenon in 1951; Karl Pearson (1899) and Udny Yule (1903) had mentioned similar effects, and Colin R. Blyth named it Simpson's paradox in 1972.",
+    "assumptions": [
+      "The counts are those reported for the study; each tile in the picture is one patient.",
+      "Stone size is the only difference between the groups considered."
+    ],
+    "prediction": "Weighting each treatment's group success rates by its own mix of stone sizes reproduces its overall rate, and with equal mixes A's overall rate is higher.",
+    "falsifier": "If A's overall rate could not be written as its small and large rates weighted by its patient mix, the explanation would be wrong.",
+    "limitations": [
+      "Which treatment is better depends on how patients were assigned; the study was not randomized, so other differences may matter too.",
+      "Real decisions also weigh risks and costs, not only success rates."
+    ],
+    "misconceptions": [
+      "Overall numbers always tell the truth: a hidden difference in the groups can reverse them.",
+      "A treatment that wins in every group must win overall: not when the groups are mixed in different proportions."
+    ],
+    "questions": [
+      "So which treatment is better?",
+      "Was this a real study?",
+      "Where else does it happen?"
+    ],
+    "sources": [
+      {
+        "title": "Simpson's paradox (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
+        "supports": "The kidney-stone table (A open surgical, B closed surgical; small stones 81/87 and 234/270, large stones 192/263 and 55/80, overall 273/350 and 289/350); stone size as the lurking variable, with large stones given more often to A; the 1986 study by Charig and colleagues; Berkeley 1973 admissions (44% of men, 35% of women; per department a small but significant bias in favour of women, who applied to more competitive departments); Simpson 1951, Pearson 1899, Yule 1903, named by Blyth in 1972."
+      }
+    ]
+  },
+  "scene": {
+    "title": "Simpson's paradox: how can a treatment win every test but lose overall?",
+    "subtitle": "Treatment A beat treatment B for small kidney stones and for large ones. Yet overall, B came out ahead. How?",
+    "why": "Totals can point the wrong way. In a real kidney-stone study, one treatment did better for small stones and for large ones, and still looked worse overall.",
+    "opening": "Can a treatment be better for every patient and still worse overall?",
+    "beats": [
+      {
+        "title": "Overall",
+        "body": "Imagine two treatments for kidney stones, each tried on 350 patients. Treatment A worked for 78% of its patients, and treatment B for 83%. So B looks like the better treatment."
+      },
+      {
+        "title": "Small stones",
+        "body": "Now split the patients by the size of their stone. For small stones, A worked 93% of the time, and B only 87%. On small stones, A is the better treatment."
+      },
+      {
+        "title": "Large stones",
+        "body": "For large stones, A wins again: 73% against 69%. So A is better for small stones and for large ones. Yet B still wins overall, so how can both be true?"
+      },
+      {
+        "title": "Who got what",
+        "body": "Look at which patients got which treatment. Of A's 350 patients, 263 had large stones; of B's, only 80. Large stones are harder: both treatments work less often on them."
+      },
+      {
+        "title": "Simpson's paradox",
+        "body": "A's total is mostly hard cases, so it leans toward 73%; B's toward 87%. When adding groups together flips the winner, it's called Simpson's paradox. Before comparing totals, ask what else differs between the groups."
+      }
+    ],
+    "takeaway": "A treatment can win in every group and still lose overall when the groups are mixed in different proportions, so compare like with like.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "none",
+    "accent": "blue",
+    "kind": "simpson",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 50,
+    "questions": [
+      {
+        "q": "So which treatment is better?",
+        "a": "A, as far as this study shows: it did better on small stones and on large ones. B only looked better overall because it was given mostly the easier, small-stone cases. The patients were not assigned at random, so other differences could still matter."
+      },
+      {
+        "q": "Was this a real study?",
+        "a": "Yes. A 1986 study compared treatments for kidney stones; treatment A was open surgery and treatment B a closed procedure."
+      },
+      {
+        "q": "Why did A get the harder cases?",
+        "a": "Doctors tended to give the harder, large-stone cases to A, the treatment that did better, and the easier small stones to B."
+      },
+      {
+        "q": "Where else does it happen?",
+        "a": "In 1973 Berkeley admitted 44% of the men who applied and 35% of the women. Department by department the gap vanished, with a small bias in favour of women: women had mostly applied to departments that were harder to get into."
+      },
+      {
+        "q": "Why is it called Simpson's paradox?",
+        "a": "Edward Simpson described it in a 1951 paper; Karl Pearson and Udny Yule had noticed similar effects earlier, and Colin Blyth gave it the name in 1972."
+      }
+    ],
+    "theme": "sage"
+  },
+  "checks": [
+    {
+      "name": "A beats B on small stones",
+      "pass": true
+    },
+    {
+      "name": "A beats B on large stones",
+      "pass": true
+    },
+    {
+      "name": "Yet B beats A overall",
+      "pass": true
+    },
+    {
+      "name": "The overall rates are 78% and 83%",
+      "pass": true
+    },
+    {
+      "name": "Each overall rate is its group rates mixed by how many large stones it treated",
+      "pass": true
+    },
+    {
+      "name": "With the same mix of stones, A wins overall too",
+      "pass": true
+    },
+    {
+      "name": "The reversal needs the groups mixed differently",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 76)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 2)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Simpson's paradox: how can a treatment win every test but lose overall?",
+        "subtitle": "Treatment A beat treatment B for small kidney stones and for large ones. Yet overall, B came out ahead. How?",
+        "why": "Totals can point the wrong way. In a real kidney-stone study, one treatment did better for small stones and for large ones, and still looked worse overall.",
+        "opening": "Can a treatment be better for every patient and still worse overall?",
+        "beats": [
+          {
+            "title": "Overall",
+            "body": "Imagine two treatments for kidney stones, each tried on 350 patients. Treatment A worked for 78% of its patients, and treatment B for 83%. So B looks like the better treatment."
+          },
+          {
+            "title": "Small stones",
+            "body": "Now split the patients by the size of their stone. For small stones, A worked 93% of the time, and B only 87%. On small stones, A is the better treatment."
+          },
+          {
+            "title": "Large stones",
+            "body": "For large stones, A wins again: 73% against 69%. So A is better for small stones and for large ones. Yet B still wins overall, so how can both be true?"
+          },
+          {
+            "title": "Who got what",
+            "body": "Look at which patients got which treatment. Of A's 350 patients, 263 had large stones; of B's, only 80. Large stones are harder: both treatments work less often on them."
+          },
+          {
+            "title": "Simpson's paradox",
+            "body": "A's total is mostly hard cases, so it leans toward 73%; B's toward 87%. When adding groups together flips the winner, it's called Simpson's paradox. Before comparing totals, ask what else differs between the groups."
+          }
+        ],
+        "takeaway": "A treatment can win in every group and still lose overall when the groups are mixed in different proportions, so compare like with like.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "simpson",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 50,
+        "questions": [
+          {
+            "q": "So which treatment is better?",
+            "a": "A, as far as this study shows: it did better on small stones and on large ones. B only looked better overall because it was given mostly the easier, small-stone cases. The patients were not assigned at random, so other differences could still matter."
+          },
+          {
+            "q": "Was this a real study?",
+            "a": "Yes. A 1986 study compared treatments for kidney stones; treatment A was open surgery and treatment B a closed procedure."
+          },
+          {
+            "q": "Why did A get the harder cases?",
+            "a": "Doctors tended to give the harder, large-stone cases to A, the treatment that did better, and the easier small stones to B."
+          },
+          {
+            "q": "Where else does it happen?",
+            "a": "In 1973 Berkeley admitted 44% of the men who applied and 35% of the women. Department by department the gap vanished, with a small bias in favour of women: women had mostly applied to departments that were harder to get into."
+          },
+          {
+            "q": "Why is it called Simpson's paradox?",
+            "a": "Edward Simpson described it in a 1951 paper; Karl Pearson and Udny Yule had noticed similar effects earlier, and Colin Blyth gave it the name in 1972."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "A beats B on small stones",
+          "pass": true
+        },
+        {
+          "name": "A beats B on large stones",
+          "pass": true
+        },
+        {
+          "name": "Yet B beats A overall",
+          "pass": true
+        },
+        {
+          "name": "The overall rates are 78% and 83%",
+          "pass": true
+        },
+        {
+          "name": "Each overall rate is its group rates mixed by how many large stones it treated",
+          "pass": true
+        },
+        {
+          "name": "With the same mix of stones, A wins overall too",
+          "pass": true
+        },
+        {
+          "name": "The reversal needs the groups mixed differently",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 76)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 2)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Every number and historical fact matches the retrieved page: the kidney-stone counts and rates (81/87, 234/270, 192/263, 55/80; 273/350 and 289/350), A as open and B as closed surgery, the 1986 study, stone size as the lurking variable with large stones given to A, Berkeley 1973 (44% and 35%, with a small bias in favour of women by department), Simpson 1951, Pearson 1899, Yule 1903 and Blyth 1972. Tile counts in the frames match the data exactly. Round 2 fixed the overclaims: 'as far as this study shows', the not-at-random caveat, and the why line.",
+        "changes": [
+          "The new FAQ on why A got the harder cases should not guess at the doctors' reasons (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "All round-1 problems are fixed: in chapter 4 the shading and the 263 and 80 counts are on screen when the subtitle quotes them; the overall pills sit level on rules below both columns; the chapter 5 outlines make each combined total a visible whole. The reversal reads at a glance: A's column is mostly a large shaded block and B's mostly small stones. Labels are few and short and the phone layout works.",
+        "changes": [
+          "Optional: centre the picture vertically on desktop; larger pills on a phone."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Explanation: A beats B within each stone size, but 263 of A's 350 patients had the hard large stones and only 80 of B's did, so A's overall rate leans toward its 73% and B's toward its 87%; comparing the totals mostly compares a hard caseload with an easy one. Round 2 supplies the missing why: chapter 4 shows large stones are harder with the evidence, chapter 5 gives the mechanism, and the FAQ explains why A got the hard cases. Every line is at most 80 characters, three per chapter, and reads naturally aloud.",
+        "changes": [
+          "Optional: 'B's leans toward 87%'."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Blind reading matched all five chapters: two 350-square grids, A 78% and B 83%; each splits into small and large groups, A winning both (93 against 87, 73 against 69) yet losing overall; the large groups highlighted with 263 and 80 patients; and outlines gathering each treatment's groups into its total. The point: unequal group sizes can make an overall rate reverse the comparison inside every group. Square counts match the numbers.",
+        "changes": [
+          "Coloured squares meaning 'worked' is inferred, not labelled."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261119T213007-simpson/revision-1-0.png",
+        "published/20261119T213007-simpson/revision-1-1.png",
+        "published/20261119T213007-simpson/revision-1-2.png",
+        "published/20261119T213007-simpson/revision-1-3.png",
+        "published/20261119T213007-simpson/revision-1-4.png",
+        "published/20261119T213007-simpson/revision-1-5.png",
+        "published/20261119T213007-simpson/revision-1-6.png",
+        "published/20261119T213007-simpson/revision-1-7.png",
+        "published/20261119T213007-simpson/revision-1-8.png",
+        "published/20261119T213007-simpson/revision-1-9.png"
+      ]
+    }
+  ]
+}

@@ -142,6 +142,11 @@
           "id": "7.1",
           "question": "The Monty Hall problem: should you switch doors?",
           "model": "monty-hall"
+        },
+        {
+          "id": "7.2",
+          "question": "Simpson's paradox: how can a treatment win every test but lose overall?",
+          "model": "simpson"
         }
       ]
     }

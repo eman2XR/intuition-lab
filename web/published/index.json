@@ -1,5 +1,14 @@
 [
   {
+    "id": "20261119T213007-simpson",
+    "question": "Simpson's paradox: how can a treatment win every test but lose overall?",
+    "topic": "simpson",
+    "created": "2026-11-19T21:30:07.351877+00:00",
+    "curriculum": "7.2",
+    "title": "Simpson's paradox: how can a treatment win every test but lose overall?",
+    "theme": "sage"
+  },
+  {
     "id": "20261118T190258-monty-hall",
     "question": "The Monty Hall problem: should you switch doors?",
     "topic": "monty-hall",

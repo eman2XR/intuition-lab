@@ -2320,6 +2320,8 @@ function drawMonty(ctx,w,h,spec,st){
  const g=MONTY.game, car=montyCarAt(g.seq), now=plan.t, since=now-g.at;
  const doors=row(i=>g.phase==='done'?(i===g.open?1:smooth(since/.6)):i===g.open?smooth(since/.6):0,{pick:g.phase==='pick'?-1:g.pick,pickA:1,car,ghost:0});
  MONTY.doors=doors;
+ // Until the viewer's first tap, a bobbing hand shows that the doors are there to be tapped.
+ if(g.seq===0&&g.phase==='pick'&&MONTY.score.stay[1]+MONTY.score.swap[1]===0){const d=doors[1];montyHand(ctx,d.x+d.w*.5,d.y+d.h*.62,Math.min(d.w*.55,small?48:72),now);}
  const say=g.phase==='pick'?'pick a door':g.phase==='decide'?'stay or switch?':g.final===car?'a car!':'a goat';
  P(say,w/2,doors[0].y+doors[0].h+(small?22:30),{size:size+2,color:g.phase==='done'?(g.final===car?win:ink):accent});
  const sc=MONTY.score, y=doors[0].y+doors[0].h+(small?52:66);
@@ -2336,6 +2338,70 @@ const MONTY_TOUCH={hint:'pick a door, then stay or switch, and keep score over m
   if(g.phase==='pick'){const goats=[0,1,2].filter(d=>d!==i&&d!==car);Object.assign(g,{pick:i,open:goats[goats.length>1?Math.floor(hash(g.seq*5.3+2)*2):0],phase:'decide',at:st.t});return {};}
   if(g.phase==='decide'&&i!==g.open){const k=i===g.pick?'stay':'swap';MONTY.score[k][1]++;if(i===car)MONTY.score[k][0]++;Object.assign(g,{final:i,phase:'done',at:st.t});return {};}
   return null;}};
+
+// Simpson's paradox, in bold colour fields: every patient of a real kidney-stone study is one tile, coloured when the
+// treatment worked. Sorted by treatment, A worked for 78% and B for 83%; sorted by stone size as well, A wins for small
+// stones and for large ones, because A was given mostly the hard large-stone cases (Physics.simpsonData). Chapter
+// plan: the totals; the tiles slide into small and large stones; large stones; who got which treatment; the paradox.
+function simpsonPlan(st){
+ const c=st.chapters?.[st.stage], lines=c?.lines||[], c0=c?.start||0, at=i=>lines[i]?lines[i].start-c0:3+4*i, t=Math.max(0,st.since??0);
+ if(st.since===undefined||st.live)return {group:1,small:1,large:1,overall:1};
+ if(st.stage===0)return {group:0,overall:smooth((t-at(1)-.2)/.6)};
+ if(st.stage===1)return {group:smooth((t-at(0)-.3)/1.4),small:smooth((t-at(1)-.2)/.6)};
+ if(st.stage===2)return {group:1,small:1,large:smooth((t-at(0)-.2)/.6),overall:smooth((t-at(2)-.2)/.6)};
+ if(st.stage===3)return {group:1,small:1,large:1,hard:smooth((t-at(0)-.5)/.6),counts:smooth((t-at(0)-1.4)/.6)};
+ return {group:1,small:1,large:1,hard:1,overall:smooth((t-at(0)-.2)/.6),whole:smooth((t-at(0)-.2)/.6)};
+}
+function drawSimpson(ctx,w,h,spec,st){
+ const plan=simpsonPlan(st), small=w<520, D=Physics.simpsonData, labels=st.labels, ink='rgba(20,23,28,.82)', size=small?10:12;
+ const colour={A:'#e4572e',B:'#2f6fb6'}, failC='rgba(20,23,28,.1)';
+ const cols=25, ts=Math.min(w*(small?.4:.3)/cols,h*(small?.5:.66)/19), bw=cols*ts, gapX=small?w*.08:w*.1, top=h*(small?.2:.14), sectionGap=ts*1.6;
+ const P=(s,x,y,o={})=>labels&&pill(ctx,s,x,y,{align:'center',size,weight:700,color:ink,...o});
+ // Both blocks' large-stone parts start at the same height, so one pair of names serves both.
+ const maxSm=Math.max(...['A','B'].map(k=>Math.ceil(D[k].small[1]/cols))), maxLg=Math.max(...['A','B'].map(k=>Math.ceil(D[k].large[1]/cols)));
+ // Totals sit on one line under both columns, below a thin rule, so they read as whole-column totals.
+ const totalY=(g=>g>.5?top+(maxSm+maxLg)*ts+sectionGap:top+14*ts)(plan.group||0)+(small?22:30);
+ for(const [k,t] of [['A',0],['B',1]]){
+  const x0=w/2+(t?gapX/2:-gapX/2-bw), d=D[k], sm=d.small, lg=d.large, smRows=Math.ceil(sm[1]/cols);
+  // Every tile's place when sorted by treatment only (successes first) and by stone size as well.
+  const tiles=[];
+  for(const [g,[ok,n]] of [['small',sm],['large',lg]])for(let i=0;i<n;i++)tiles.push({g,ok:i<ok,gi:i});
+  const okAll=sm[0]+lg[0];let oi=0,fi=0;
+  for(const tl of tiles){const i=tl.ok?oi++:okAll+fi++, gy=tl.g==='small'?0:maxSm*ts+sectionGap;
+   tl.a=[x0+(i%cols)*ts,top+Math.floor(i/cols)*ts];tl.b=[x0+(tl.gi%cols)*ts,top+gy+Math.floor(tl.gi/cols)*ts];}
+  const lgTop=top+maxSm*ts+sectionGap, lgRows=Math.ceil(lg[1]/cols);
+  // The hard cases, shaded, once the guide points at them.
+  if(plan.hard>0){ctx.fillStyle=`rgba(20,23,28,${.07*plan.hard})`;ctx.fillRect(x0-6,lgTop-6,bw+12,lgRows*ts+12);}
+  const g=plan.group||0;
+  for(const tl of tiles){const x=tl.a[0]+(tl.b[0]-tl.a[0])*g, y=tl.a[1]+(tl.b[1]-tl.a[1])*g;ctx.fillStyle=tl.ok?colour[k]:failC;ctx.fillRect(x+.6,y+.6,ts-1.2,ts-1.2);}
+  if(labels)text(ctx,k,x0+bw/2,top-(small?20:20),{align:'center',size:size+6,weight:800,color:colour[k]});
+  const pct=v=>Math.round(v*100)+'%';
+  if(plan.small>0){ctx.save();ctx.globalAlpha=plan.small;P(pct(sm[0]/sm[1]),x0+bw/2,top+Math.min(smRows,maxSm)*ts/2,{color:colour[k]});ctx.restore();}
+  if(plan.large>0){ctx.save();ctx.globalAlpha=plan.large;P(pct(lg[0]/lg[1]),x0+bw/2,lgTop+lgRows*ts/2,{color:colour[k]});ctx.restore();}
+  if(plan.counts>0){ctx.save();ctx.globalAlpha=plan.counts;P(`${lg[1]} patients`,x0+bw/2,lgTop+lgRows*ts+(small?12:16));ctx.restore();}
+  const ov=plan.overall||0;
+  if(plan.whole>0){ctx.save();ctx.globalAlpha=plan.whole;ctx.strokeStyle=colour[k];ctx.lineWidth=2;ctx.strokeRect(x0-9,top-9,bw+18,totalY-top-(small?8:12));ctx.restore();}
+  if(ov>0&&!(plan.counts>0)){ctx.save();ctx.globalAlpha=ov;trace(ctx,[[x0,totalY-(small?12:16)],[x0+bw,totalY-(small?12:16)]]);ctx.strokeStyle='rgba(20,23,28,.3)';ctx.lineWidth=1;ctx.stroke();
+   P(`overall ${pct(Physics.simpsonOverall(k))}`,x0+bw/2,totalY,{size:size+1});ctx.restore();}
+  // Stone sizes named beside the first block.
+  // Stone sizes named for each block: beside it on a wide stage, just above each part on a phone.
+  if(labels&&g>.5&&!t){const ga=Math.min(1,(g-.5)*2);ctx.save();ctx.globalAlpha=ga;
+   if(small){pill(ctx,'small stones',x0+4,top-9,{size,weight:700,color:ink});pill(ctx,'large stones',x0+4,lgTop-9,{size,weight:700,color:ink});}
+   else{text(ctx,'small',x0-14,top+smRows*ts/2,{align:'right',size,weight:700,color:ink});text(ctx,'large',x0-14,lgTop+lgRows*ts/2,{align:'right',size,weight:700,color:ink});}
+   ctx.restore();}
+ }
+}
+// A hand with its index finger pointing down at a door, tapping, to show that the doors can be tapped.
+function montyHand(ctx,x,y,s,t){
+ const ph=t%1, press=Math.max(0,Math.sin(ph*Math.PI*2))*s*.12, skin='#f2c9a5', edge='rgba(110,62,35,.75)';
+ // A ring spreads from the fingertip at each tap.
+ if(ph<.5){ctx.beginPath();ctx.arc(x,y,s*(.12+ph*.7),0,TAU);ctx.strokeStyle=`rgba(255,255,255,${.85*(1-ph*2)})`;ctx.lineWidth=2.5;ctx.stroke();}
+ ctx.save();ctx.translate(x,y-s*.06-press);ctx.fillStyle=skin;ctx.strokeStyle=edge;ctx.lineWidth=1.5;ctx.lineJoin='round';
+ ctx.beginPath();ctx.roundRect(-s*.11,-s*.62,s*.22,s*.62,s*.11);ctx.fill();ctx.stroke();
+ ctx.beginPath();ctx.roundRect(-s*.2,-s*1.1,s*.62,s*.56,s*.18);ctx.fill();ctx.stroke();
+ ctx.beginPath();ctx.ellipse(-s*.22,-s*.78,s*.1,s*.2,.5,0,TAU);ctx.fill();ctx.stroke();
+ for(const k of [1,2])ctx.beginPath(),ctx.moveTo(-s*.2+s*.2*k,-s*.56),ctx.lineTo(-s*.2+s*.2*k,-s*.7),ctx.stroke();
+ ctx.restore();}
 
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
 // time, from 22 chances; but a match can be between any two people, and 23 people make 253 pairs. As people arrive
@@ -3291,6 +3357,13 @@ const ENGINES={
   measure:['',()=>''],scale:'',
   disclosure:'Exact for the standard rules: the car is placed at random, and the host always opens a door with a goat that you did not pick, choosing at random when he can, and always offers the switch. The 300 games are a fixed pseudo-random sample.',
   try:'',aria:'Three doors hide a car and two goats. You pick door 1; the host, who knows where the car is, opens door 3 to show a goat and offers a switch. Three rows show the three equal cases: switching wins in two of them. Scored over 300 games, switching wins about twice as often. With 100 doors the host opens 98 goats and leaves one shut. Then letters pile up for the 1990 column that gave this answer.'},
+ 'simpson':{draw:drawSimpson,demo:false,a:['Case mix','how lopsided the stone sizes are between treatments'],b:['Unused','',''],
+  fa:a=>Math.round(clamp(a)*100)+'%',fb:b=>'',
+  // The modelled effect for the render checks: how far B leads overall as A takes more of the large stones.
+  effect:a=>Physics.simpsonGap(clamp(a)),
+  measure:['',()=>''],scale:'',
+  disclosure:'Every tile is one patient of a 1986 kidney-stone study, coloured when the treatment worked; A was open surgery and B a closed procedure. Counts as reported: small stones A 81 of 87, B 234 of 270; large stones A 192 of 263, B 55 of 80.',
+  try:'',aria:'Two blocks of 350 tiles, one per patient, coloured where the treatment worked: treatment A 78%, treatment B 83%. The tiles slide into small and large stones: A wins both, 93% to 87% and 73% to 69%. A treated 263 large stones, B only 80, and large stones fail more often, which drags A’s total down.'},
  'birthdays':{draw:drawBirthdays,touch:BDAY_TOUCH,demo:false,tryAny:true,a:['People','how many people are in the room'],b:['Unused','',''],
   fa:a=>{const n=Math.max(1,Math.round(1+59*clamp(a)));return `${n} ${n===1?'person':'people'}`;},fb:b=>'',
   // The modelled effect for the render checks: the chance of a shared birthday for the chosen number of people.
