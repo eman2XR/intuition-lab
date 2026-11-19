@@ -6,7 +6,8 @@
     "created": "2026-11-19T21:30:07.351877+00:00",
     "curriculum": "7.2",
     "title": "Simpson's paradox: how can a treatment win every test but lose overall?",
-    "theme": "sage"
+    "theme": "sage",
+    "archived": true
   },
   {
     "id": "20261118T190258-monty-hall",
