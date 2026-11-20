@@ -66,12 +66,12 @@
   "scene": {
     "title": "Wave–particle duality: the double-slit experiment",
     "subtitle": "Send light through two slits, one photon at a time. Each lands as a single dot, yet thousands of dots build up stripes. Is light a particle or a wave?",
-    "why": "For centuries, people argued over whether light is made of particles or waves. With light so dim it lands one dot at a time, this experiment shows it behaves as both.",
+    "why": "For centuries, people argued over whether light is made of particles or waves. Send it through two slits one photon at a time, and it behaves like both.",
     "opening": "Is light made of tiny particles, or is it a wave?",
     "beats": [
       {
         "title": "Particles of light",
-        "body": "Imagine a lamp so dim its light lands on a screen one dot at a time. Each dot is a photon, one tiny lump of light that got through the slit. Isaac Newton thought light was just that: a spray of tiny particles."
+        "body": "Imagine a laser so dim its light lands on a screen one dot at a time. Each dot is a photon, one tiny lump of light that got through the slit. Isaac Newton thought light was just that: a spray of tiny particles."
       },
       {
         "title": "One slit, thousands of dots",
@@ -79,7 +79,7 @@
       },
       {
         "title": "Open the second slit",
-        "body": "Now slide the cover off the second slit. Again, each photon lands as one dot. At first, the dots look scattered at random."
+        "body": "Now slide the cover off the second slit. Something faint spreads from both slits, yet each lands as one dot. At first, the dots look scattered at random."
       },
       {
         "title": "Stripes appear",
@@ -96,6 +96,10 @@
       {
         "title": "Watching the slits",
         "body": "Open both slits, and imagine a sensor at one that clicks as a photon passes. Clicked photons, in purple, took that slit; the rest took the other. Once the path is known, the two ripples can no longer add and cancel."
+      },
+      {
+        "title": "Why watching matters",
+        "body": "A record of the path is enough; the sensor needn't push the photon. The record marks one slit's ripples, purple here, so they can't cancel. Why each photon lands at just one spot is still debated today."
       }
     ],
     "takeaway": "Light travels like a wave, through both slits at once, but always lands as a single dot, like a particle. Learn which slit it took, and the stripes vanish.",
@@ -115,11 +119,15 @@
       },
       {
         "q": "Can you really put a sensor on a slit?",
-        "a": "For light, a sensor that caught the photon would stop it, so this is a thought experiment. A simple real version marks the path instead, with a polarizing filter over each slit, their axes at right angles. The stripes vanish just the same."
+        "a": "For light, a sensor that caught the photon would stop it, so this is a thought experiment. A simple real version puts a polarizing filter, like the lens of polarized sunglasses, over each slit: one passes light that shakes up and down, the other side to side. Light shaking in different directions can't cancel, so the stripes vanish, though the filters don't push the photons aside."
       },
       {
         "q": "Does someone have to look at the sensor?",
         "a": "No. The stripes vanish whenever the path is recorded, even if nobody reads it. The dots then land as the two slits' single-slit patterns added together."
+      },
+      {
+        "q": "Is it still a mystery?",
+        "a": "Partly. Why the stripes vanish is well understood: once the two paths can be told apart, their waves no longer add and cancel, and the clearer the record, the fainter the stripes. Why each photon lands at one definite spot is the measurement problem, and it is still debated."
       },
       {
         "q": "Does each photon split in two?",
@@ -135,7 +143,7 @@
       }
     ],
     "theme": "rose",
-    "source_label": "LAMP",
+    "source_label": "LASER",
     "count_noun": "photon"
   },
   "checks": [
@@ -240,7 +248,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the guide for the lab’s two-slit picture from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review. On 2026-11-17 it was revised in a coding session at the owner’s request (issue #12): a new title naming wave–particle duality, the story of light as particle and wave (Newton, Young, photons), and no controls at the end; the revision passed the same checks and the four reviews again, and the reviews below are from that review. On 2026-11-19, at the owner’s request, it was redrawn in a coding session in perspective after a reference the owner gave (a lamp, a barrier with two upright slits and a screen), and a last chapter adds a sensor at one slit: once the path is known, the stripes give way to one soft patch. The revision passed the checks and four reviews again."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent wrote the guide for the lab’s two-slit picture from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review. On 2026-11-17 it was revised in a coding session at the owner’s request (issue #12): a new title naming wave–particle duality, the story of light as particle and wave (Newton, Young, photons), and no controls at the end; the revision passed the same checks and the four reviews again, and the reviews below are from that review. On 2026-11-19, at the owner’s request, it was redrawn in a coding session in perspective after a reference the owner gave (a lamp, a barrier with two upright slits and a screen), and a last chapter adds a sensor at one slit: once the path is known, the stripes give way to one soft patch. The revision passed the checks and four reviews again. Later that day the owner asked for a laser instead of a lamp, a photon shown in flight and an explanation of why the sensor removes the stripes: the photon’s path is drawn only where it is known, and a last chapter says a record of the path is enough and that why each photon lands at one spot is still debated. Reviewed again."
   },
   "revisions": [
     {
@@ -673,7 +681,7 @@
       "scene": {
         "title": "Wave–particle duality: the double-slit experiment",
         "subtitle": "Send light through two slits, one photon at a time. Each lands as a single dot, yet thousands of dots build up stripes. Is light a particle or a wave?",
-        "why": "For centuries, people argued over whether light is made of particles or waves. With light so dim it lands one dot at a time, this experiment shows it behaves as both.",
+        "why": "People argued for centuries about whether light is made of waves or particles. Send it through two slits one photon at a time, and it behaves like both.",
         "opening": "Is light made of tiny particles, or is it a wave?",
         "beats": [
           {
@@ -908,7 +916,262 @@
         "published/20261116T192404-two-slit-particles/revision-3-12.png",
         "published/20261116T192404-two-slit-particles/revision-3-13.png"
       ]
+    },
+    {
+      "number": 4,
+      "scene": {
+        "title": "Wave–particle duality: the double-slit experiment",
+        "subtitle": "Send light through two slits, one photon at a time. Each lands as a single dot, yet thousands of dots build up stripes. Is light a particle or a wave?",
+        "why": "For centuries, people argued over whether light is made of particles or waves. Send it through two slits one photon at a time, and it behaves like both.",
+        "opening": "Is light made of tiny particles, or is it a wave?",
+        "beats": [
+          {
+            "title": "Particles of light",
+            "body": "Imagine a laser so dim its light lands on a screen one dot at a time. Each dot is a photon, one tiny lump of light that got through the slit. Isaac Newton thought light was just that: a spray of tiny particles."
+          },
+          {
+            "title": "One slit, thousands of dots",
+            "body": "Now let thousands of photons through. With one slit open, they pile up in one soft patch. Just what a spray of tiny particles would do."
+          },
+          {
+            "title": "Open the second slit",
+            "body": "Now slide the cover off the second slit. Something faint spreads from both slits, yet each lands as one dot. At first, the dots look scattered at random."
+          },
+          {
+            "title": "Stripes appear",
+            "body": "After thousands more dots, stripes appear. Between the stripes are gaps where almost none land. One slit alone sends dots there, but opening the second takes them away."
+          },
+          {
+            "title": "Light acts like a wave",
+            "body": "In 1803, Thomas Young saw such stripes in sunlight: light acts like a wave. Like two pebbles in a pond, both slits send out ripples that cross. Where two tops meet, dots pile up; where a top meets a dip, the ripples cancel."
+          },
+          {
+            "title": "Both at once",
+            "body": "Cover one slit and start again: with one set of ripples, no stripes form. So light travels like a wave, yet lands like a particle. This is wave–particle duality, and electrons and atoms show it too."
+          },
+          {
+            "title": "Watching the slits",
+            "body": "Open both slits, and imagine a sensor at one that clicks as a photon passes. Clicked photons, in purple, took that slit; the rest took the other. Once the path is known, the two ripples can no longer add and cancel."
+          },
+          {
+            "title": "Why watching matters",
+            "body": "A record of the path is enough; the sensor needn't push the photon. The record marks one slit's ripples, purple here, so they can't cancel. Why each photon lands at just one spot is still debated today."
+          }
+        ],
+        "takeaway": "Light travels like a wave, through both slits at once, but always lands as a single dot, like a particle. Learn which slit it took, and the stripes vanish.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "two-slit-particles",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "So is light a wave or a particle?",
+            "a": "Both, in a sense: it travels as a wave that passes through both slits, and it is detected as single photons, one dot at a time. Neither picture alone explains the experiment."
+          },
+          {
+            "q": "Can you really put a sensor on a slit?",
+            "a": "For light, a sensor that caught the photon would stop it, so this is a thought experiment. A simple real version puts a polarizing filter, like the lens of polarized sunglasses, over each slit: one passes light that shakes up and down, the other side to side. Light shaking in different directions can't cancel, so the stripes vanish, though the filters don't push the photons aside."
+          },
+          {
+            "q": "Does someone have to look at the sensor?",
+            "a": "No. The stripes vanish whenever the path is recorded, even if nobody reads it. The dots then land as the two slits' single-slit patterns added together."
+          },
+          {
+            "q": "Is it still a mystery?",
+            "a": "Partly. Why the stripes vanish is well understood: once the two paths can be told apart, their waves no longer add and cancel, and the clearer the record, the fainter the stripes. Why each photon lands at one definite spot is the measurement problem, and it is still debated."
+          },
+          {
+            "q": "Does each photon split in two?",
+            "a": "No. Each one is always found as one whole dot on the screen. What passes through both slits is the wave that sets where it may land."
+          },
+          {
+            "q": "Why do the dots look random at first?",
+            "a": "Each landing spot is a matter of chance. Only the odds are fixed, and the odds show up once thousands of dots have landed."
+          },
+          {
+            "q": "Has this really been done one photon at a time?",
+            "a": "Yes. G. I. Taylor first saw stripes like these in very dim light in 1909, and single-particle interference has since been seen with single photons, electrons, atoms and molecules of about 2,000 atoms."
+          }
+        ],
+        "source_label": "LASER",
+        "count_noun": "photon"
+      },
+      "checks": [
+        {
+          "name": "One source gives no stripes",
+          "pass": true
+        },
+        {
+          "name": "Equal sources give full-contrast stripes",
+          "pass": true
+        },
+        {
+          "name": "Equal path lengths give a bright stripe",
+          "pass": true
+        },
+        {
+          "name": "Half-wavelength path difference cancels equal waves",
+          "pass": true
+        },
+        {
+          "name": "Unequal sources leave dark stripes partly lit",
+          "pass": true
+        },
+        {
+          "name": "Opening a second slit leaves some spots darker than one slit alone",
+          "pass": true
+        },
+        {
+          "name": "Two equal sources make bright stripes four times one source",
+          "pass": true
+        },
+        {
+          "name": "Wider separation packs stripes closer",
+          "pass": true
+        },
+        {
+          "name": "Knowing which slit each one took removes the stripes",
+          "pass": true
+        },
+        {
+          "name": "With the path known, each spot gets the average of the stripes",
+          "pass": true
+        },
+        {
+          "name": "With the path known, no spot is darker than one slit alone gives",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 79)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 8)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 3)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Sound, no blocking errors. Paths are drawn only where the setup pins them down: through the only open slit in chapter 1, and through the sensed slit or the other in chapter 7, with clicked photons chosen by an even coin flip from the known-path pattern, right for two equal slits. The chapter 3 pulse from both slits ending in one dot is an honest picture of amplitude through both slits and detection at one place. Chapter 8 checks out: which-way marking needs no push (Scully-Englert-Walther; crossed polarizers), a record is enough, distinguishable paths cannot interfere (the clearer the record, the fainter the stripes, D^2+V^2<=1), and why there is one definite result is still debated (measurement problem). Flat wavefronts suit a collimated laser. All model and render checks pass; the history is unchanged and right.",
+        "changes": [
+          "Chapter 3: fade the photon as it nears the barrier (applied).",
+          "Chapter 8: 'Why each photon lands at just one spot', without 'then' (applied).",
+          "Update stale notes: paths drawn only when known, a laser (applied).",
+          "Optional: violet could read as a colour of light; the subtitle says 'purple here' for the record.",
+          "Remove the previous dot's glow while the next photon flies (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Calm and easy to read. The laser reads as a laser on desktop and, by its red glow, on the phone. The flying photon in chapter 1 crosses the gap, goes through the open slit and lands as a dot. Stripes, the chapter 4 comparison, the ripples, the sensor and its click all work. Chapter 8 mostly works: violet ripples share the sensor's colour and the screen shows no stripes. The weakest element is the chapter 3 pulse, which appears from behind the barrier's edge and is not explained by a subtitle.",
+        "changes": [
+          "Chapter 3: a subtitle for the pulse (applied) and arcs that start at the slits (applied).",
+          "Chapter 8: name the colour in a subtitle (applied).",
+          "Chapter 7: the photon leaving the sensed slit turns purple (applied).",
+          "Phone: a longer laser box (applied).",
+          "Phone header showed another guide's title in captures (capture page only)."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 7,
+        "summary": "A very dim laser sends one photon at a time and each lands as one dot. One slit gives a broad patch; two slits build stripes and empty some spots one slit filled, which only makes sense if each photon travels like ripples through both slits that add and cancel, yet lands as one dot. If anything records which slit it took, even without pushing it, the ripples can no longer cancel and the stripes vanish; why it then lands at one spot is still argued about. The guide is honest about what is unknown. One leap: why a 'different' ripple can't cancel.",
+        "changes": [
+          "Chapter 8: to cancel, a top must meet a matching dip; marked ripples no longer match (applied).",
+          "Point to the purple and blue ripples in a subtitle (applied).",
+          "Keep the words 'add and cancel' (applied).",
+          "Explain polarizing filters in plain words (applied).",
+          "Chapter 4 rings hard to read.",
+          "Chapter 3 pulse unexplained."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 7,
+        "summary": "The dark box is a small laser with a red glowing opening; the glowing ball is one photon, first between the laser and the barrier, then past it heading for the screen. The grey panel is a barrier with two slits, one covered at first; the dark panel is the screen where each photon leaves a dot. One slit gives one broad patch, two slits give stripes with faint rings in the gaps, blue waves are flat before the barrier and overlapping ripples after it, one slit covered gives a smooth patch again, and a violet sensor around the left slit glows with a click as a photon passes and that photon lands purple; with the sensor the patch is smooth even with both slits open. In the last picture purple and blue ripples are drawn together.",
+        "changes": [
+          "The chapter 3 pulse reads as a loose loop at the barrier's edge.",
+          "Chapter 4 rings tiny and busy.",
+          "Cover strip is close in colour to the photon dots.",
+          "Chapter 8 purple and blue ripples overlap heavily.",
+          "Chapter 6 ripples seem to spread from the middle."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261116T192404-two-slit-particles/revision-4-0.png",
+        "published/20261116T192404-two-slit-particles/revision-4-1.png",
+        "published/20261116T192404-two-slit-particles/revision-4-2.png",
+        "published/20261116T192404-two-slit-particles/revision-4-3.png",
+        "published/20261116T192404-two-slit-particles/revision-4-4.png",
+        "published/20261116T192404-two-slit-particles/revision-4-5.png",
+        "published/20261116T192404-two-slit-particles/revision-4-6.png",
+        "published/20261116T192404-two-slit-particles/revision-4-7.png",
+        "published/20261116T192404-two-slit-particles/revision-4-8.png",
+        "published/20261116T192404-two-slit-particles/revision-4-9.png",
+        "published/20261116T192404-two-slit-particles/revision-4-10.png",
+        "published/20261116T192404-two-slit-particles/revision-4-11.png",
+        "published/20261116T192404-two-slit-particles/revision-4-12.png",
+        "published/20261116T192404-two-slit-particles/revision-4-13.png",
+        "published/20261116T192404-two-slit-particles/revision-4-14.png",
+        "published/20261116T192404-two-slit-particles/revision-4-15.png"
+      ]
     }
   ],
-  "updated": "2026-11-20T03:11:42Z"
+  "updated": "2026-11-20T03:44:41Z"
 }
