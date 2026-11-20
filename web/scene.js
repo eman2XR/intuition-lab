@@ -285,30 +285,24 @@ const PARTICLES={A:null,from:-1e9,geo:null};
 const PARTICLES_TOUCH={hint:'tap the second slit to cover or uncover it.',
  grab(w,h,spec,st,x,y){const g=PARTICLES.geo;return g&&Math.abs(x-g.wallX)<g.slab/2+16&&Math.abs(y-g.y2)<g.slit+16?{cursor:'pointer'}:null;},
  release(w,h,spec,st,x,y,hd,moved){return moved?null:{mass:st.target>.5?0:1};}};
-function drawParticles(ctx,w,h,spec,st){
- const small=w<520, preview=st.since===undefined, live=!!st.live, CLEAR=5, SENSE=6, WHY=7;
+// The double-slit bench as plain state in bench coordinates: x along the beam (laser at 0, barrier at XB, screen at
+// XS), y across (the slits sit side by side), z up; panels are 2 across and 2 high. drawParticles projects it, and
+// other renderers (the visionOS app runs this file in JavaScriptCore) read it through CouncilBench. `small` is the
+// phone layout, which draws a slightly shorter wavelength.
+function particlesBench(spec,st,small=false){
+ const preview=st.since===undefined, live=!!st.live, CLEAR=5, SENSE=6, WHY=7;
  const stage=preview?3:live?WHY:Math.min(st.stage,WHY), since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage];
  const at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+4*i, dur=ch?Math.max(1,ch.end-ch.start):20, pT=since/dur;
  // In chapter 3 the cover slides off the second slit with its first sentence; in chapter 6 the screen is cleared,
  // then the second slit is covered, then the dots land again.
  const A=stage<=1?0:stage===2&&!preview?smooth((since-.4)/1.2):stage===CLEAR?1-smooth((pT-.07)/.08):1;
  const known=stage>=SENSE, sep=Physics.separation(spec.distance);
- const barC='#7d8796', barEdge='#3c4350', shutter='#f2b134', screenC='#141d2b', dot='#ffb46b', lampC='#e5533d', wave='#4c9be8', violet='#7a3fb2', hole='#fdf6f3';
- // Bench coordinates: x along the beam (lamp at 0, barrier at XB, screen at XS), y across (the slits sit side by
- // side), z up. Panels are 2 across and 2 high. The view is a fixed oblique projection.
- const XB=1.3, L=1.5, XS=XB+L, cz=Math.min(h*.3,w*(small?.27:.25)), bx=cz*(small?.38:.62), by=cz*.36;
- const ox=w*(small?.12:.1), oy=h*(small?.5:.52), ax=(w*.96-ox-bx)/XS;
- const P=(x,y,z)=>[ox+x*ax+y*bx,oy+y*by-z*cz];
- const poly=(pts,fill,stroke,lw=1.2)=>{trace(ctx,pts);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}};
- const panel=(x,y0,y1,z0,z1)=>[P(x,y0,z0),P(x,y1,z0),P(x,y1,z1),P(x,y0,z1)];
- const sub=pts=>{pts.forEach(([a,b],k)=>k?ctx.lineTo(a,b):ctx.moveTo(a,b));ctx.closePath();};
- const yc=.25*sep, sw=.04, zs=.34, lam=(small?.25:.3)*2*yc/L, geo={L,d:2*yc,span:1,lam};
+ const XB=1.3, L=1.5, XS=XB+L, yc=.25*sep, sw=.04, zs=.34, lam=(small?.25:.3)*2*yc/L, geo={L,d:2*yc,span:1,lam};
  const bins=60, pat=slitPattern(A,geo,bins,known);
  // Particles that pass the sensor's slit (chapters 7 and 8): about half, as for two equal slits.
  const clicked=i=>stage>=SENSE&&hash(i+11.7)<.5;
  const spot=(i,p)=>{const u=hash(i+1);let lo=0,hi=bins-1;while(lo<hi){const m=(lo+hi)>>1;if(p.cdf[m]<u)lo=m+1;else hi=m;}
   return [lo,-1+(lo+hash(i+7.3))/bins*2,(hash(i+3.1)*2-1)*.62];};
- PARTICLES.geo={wallX:P(XB,yc,0)[0],slab:bx*.25,y2:P(XB,yc,0)[1],slit:zs*cz};
  // How many have landed so far in this chapter; chapters 2 and 4 carry on from the dots already there.
  const t1=at(1), t2=at(2);
  const n=preview||live?2400:Math.floor(stage===0?Math.min(14,Math.max(0,since-1)/1.1):stage===1?14+2386*smooth((since-.3)/8):
@@ -316,7 +310,6 @@ function drawParticles(ctx,w,h,spec,st){
   stage===CLEAR?(pT<.05?2400:pT<.16?0:2400*smooth((pT-.16)/.5)):stage===WHY?2400:since<t1?0:since<t2?Math.min(12,1+(since-t1)/.75):12+2388*smooth((since-t2)/4));
  const slow=stage===0||stage===2||stage===SENSE&&n<=12, rate=stage===0?1.1:stage===2?.45:.75;
  const fire=slow?(stage===SENSE?(since-t1)%rate:(since-1)%rate):9, flash=fire>=0&&fire<.25?1-fire/.25:0;
- const [lx,ly]=P(0,0,0), lr=cz*(small?.13:.12);
  // The photon in flight during the one-at-a-time stretches: it leaves the laser as the laser flashes and lands as the
  // next dot. Its path is drawn only where it is known: through the open slit when one is covered, and through the
  // sensor's slit or the other when the sensor is there.
@@ -326,12 +319,11 @@ function drawParticles(ctx,w,h,spec,st){
  // meet at the screen, the stripes are bright. In chapter 6 they hold still and dim; in chapter 8 the ripples from
  // the slit with the sensor are violet, marked by its record, so they no longer match the other slit's.
  const waves=stage===4||stage===CLEAR||stage===WHY, still=stage===CLEAR, ph=still?0:(since*.8)%1, dimW=still?.55:1;
- const ripple=(cx,cy,r,x0,x1,alpha,ymax=1,col=wave)=>{ctx.strokeStyle=rgba(col,alpha);let seg=[];
-  const flush=()=>{if(seg.length>1){trace(ctx,seg);ctx.stroke();}seg=[];};
-  for(let k=0;k<=64;k++){const a=-Math.PI/2+Math.PI*k/64, x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
-   if(x>x0&&x<x1&&Math.abs(y)<=ymax)seg.push(P(x,y,0));else flush();}flush();};
- ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
- if(waves){ctx.lineWidth=small?2:2.6;const nS=Math.ceil(XB/lam);for(let r=0;r<nS;r++){const x=(r+ph)*lam+.06;if(x>XB-.02)continue;ctx.strokeStyle=rgba(wave,.26*dimW);trace(ctx,[P(x,-.62,0),P(x,.62,0)]);ctx.stroke();}}
+ const fronts=[], arcs=[];
+ if(waves){const nS=Math.ceil(XB/lam);for(let r=0;r<nS;r++){const x=(r+ph)*lam+.06;if(x<=XB-.02)fronts.push(x);}
+  const nW=Math.ceil(L/lam);
+  for(const [y,on] of [[-yc,1],[yc,A]]){if(on<.01)continue;for(let r=0;r<nW;r++){const rad=(r+ph)*lam;if(rad<.03)continue;
+   const marked=stage===WHY&&y<0;arcs.push({y,r:rad,alpha:(marked?.55:.4)*dimW*on*(1-.45*r/nW),marked});}}}
  // Where the photon in flight is: from the laser to the slit it takes, then from that slit to its dot. With both
  // slits open and no sensor it is not known which slit it takes, so it fades out as it nears the barrier and is next
  // seen as its dot. Each point carries the position a moment earlier, for a short fading trail.
@@ -340,6 +332,51 @@ function drawParticles(ctx,w,h,spec,st){
   const k=.45, go=(a,b,f)=>a.map((v,j)=>v+(b[j]-v)*clamp(f)), src=[0,0,0], slit=[XB,ys??0,zb], land=[XS,yl,zl];
   if(fly.u<k){const f=fly.u/k, to=ys===null?[XB*.9,0,zb*.9]:slit;leg={pos:go(src,to,f),prev:go(src,to,f-.18),a:ys===null?1-smooth((f-.45)/.5):1,c:'#ffb46b'};}
   else if(ys!==null){const f=(fly.u-k)/(1-k);leg={pos:go(slit,land,f),prev:f<.12?slit:go(slit,land,f-.12),a:1,c:clicked(fly.i)?'#c79cff':'#ffb46b'};}}
+ // The sensor at the first slit (chapters 7 and 8) drops in from above in chapter 7; it glows each time a particle
+ // passes that slit.
+ const sensor=stage>=SENSE, up=sensor?(stage===SENSE?1-smooth((since-.3)/1):0)*1.6:0;
+ const click=sensor&&fly&&clicked(fly.i)&&fly.u>=.45?Math.max(0,1-(fly.u-.45)/.5):0;
+ // For comparison in chapter 4, the dots one slit alone sent into what are now the dark gaps.
+ const compare=stage===3&&since>=at(2)-.2, dimD=compare?1-.55*smooth((since-at(2)+.2)/.8):1, fade=compare?smooth((since-at(2)+.2)/.8):0, rings=[];
+ let gapY=null;
+ if(compare){const one=slitPattern(0,geo,bins), two=slitPattern(1,geo,bins);
+  for(let i=0;i<2400;i+=small?4:3){const [lo,y,z]=spot(i,one);if(two.p[lo]>.15*one.p[lo])continue;if(gapY===null&&y>.12)gapY=y;rings.push([y,z]);}
+  slitPattern(A,geo,bins,known);}
+ return {stage,since,A,known,XB,L,XS,yc,sw,zs,lam,n,slow,fly,flash,fronts,frontAlpha:.26*dimW,arcs,leg,sensor,up,click,compare,dimD,fade,rings,gapY,
+  dot:i=>{const [,y,z]=spot(i,pat);return [y,z,clicked(i)];}};
+}
+// Labels for renderers that place their own text: the words the 2D picture shows, each at a point on the bench.
+function particlesLabels(spec,st,b){
+ if(!st.labels)return [];
+ const out=[], add=(id,text,at,tone='ink')=>out.push({id,text,at,tone});
+ if(b.stage===0)add('source',spec.source_label||'SOURCE',[-.11,0,.34]);
+ add('screen','SCREEN',[b.XS-.06,0,1.16]);
+ add('barrier',b.A<.5?'ONE SLIT OPEN':'TWO SLITS',[b.XB-.18,0,-1.18]);
+ add('count',`${b.n.toLocaleString('en-US')} ${spec.count_noun||'particle'}${b.n===1?'':'s'}`,[b.XS-.12,0,-1.18],'accent');
+ if(b.compare&&b.gapY!==null)add('compare','one slit',[b.XS-.05,b.gapY,.82],'pill');
+ if(b.A<.5)add('covered','COVERED',[b.XB-.12,b.yc+b.sw+.2,b.zs*.4],'pill');
+ if(b.sensor){add('sensor','SENSOR',[b.XB-.32,-b.yc,1.12+b.up],'violet');if(b.click>.15)add('click','click',[b.XB-.12,-b.yc-b.sw-.22,-b.zs*.2],'violet');}
+ return out;
+}
+function drawParticles(ctx,w,h,spec,st){
+ const small=w<520, b=particlesBench(spec,st,small);
+ const {stage,since,A,XB,L,XS,yc,sw,zs,n,slow,fly,flash,leg,click,compare,dimD,gapY}=b;
+ const barC='#7d8796', barEdge='#3c4350', shutter='#f2b134', screenC='#141d2b', dot='#ffb46b', wave='#4c9be8', violet='#7a3fb2', hole='#fdf6f3';
+ // The view is a fixed oblique projection of the bench.
+ const cz=Math.min(h*.3,w*(small?.27:.25)), bx=cz*(small?.38:.62), by=cz*.36;
+ const ox=w*(small?.12:.1), oy=h*(small?.5:.52), ax=(w*.96-ox-bx)/XS;
+ const P=(x,y,z)=>[ox+x*ax+y*bx,oy+y*by-z*cz];
+ const poly=(pts,fill,stroke,lw=1.2)=>{trace(ctx,pts);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}};
+ const panel=(x,y0,y1,z0,z1)=>[P(x,y0,z0),P(x,y1,z0),P(x,y1,z1),P(x,y0,z1)];
+ const sub=pts=>{pts.forEach(([a,c],k)=>k?ctx.lineTo(a,c):ctx.moveTo(a,c));ctx.closePath();};
+ PARTICLES.geo={wallX:P(XB,yc,0)[0],slab:bx*.25,y2:P(XB,yc,0)[1],slit:zs*cz};
+ const [lx,ly]=P(0,0,0), lr=cz*(small?.13:.12);
+ const ripple=(cx,cy,r,x0,x1,alpha,ymax=1,col=wave)=>{ctx.strokeStyle=rgba(col,alpha);let seg=[];
+  const flush=()=>{if(seg.length>1){trace(ctx,seg);ctx.stroke();}seg=[];};
+  for(let k=0;k<=64;k++){const a=-Math.PI/2+Math.PI*k/64, x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+   if(x>x0&&x<x1&&Math.abs(y)<=ymax)seg.push(P(x,y,0));else flush();}flush();};
+ ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+ if(b.fronts.length||b.arcs.length){ctx.lineWidth=small?2:2.6;for(const x of b.fronts){ctx.strokeStyle=rgba(wave,b.frontAlpha);trace(ctx,[P(x,-.62,0),P(x,.62,0)]);ctx.stroke();}}
  const photon=({pos,prev,a,c})=>{if(a<.02)return;const [px,py]=P(...pos), [qx,qy]=P(...prev), core=c==='#ffb46b'?'#ffe0b0':'#e3ccff';
   const tr=ctx.createLinearGradient(qx,qy,px,py);tr.addColorStop(0,rgba(c,0));tr.addColorStop(1,rgba(c,.7*a));
   ctx.strokeStyle=tr;ctx.lineWidth=small?2.4:3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(qx,qy);ctx.lineTo(px,py);ctx.stroke();
@@ -349,13 +386,10 @@ function drawParticles(ctx,w,h,spec,st){
  poly(panel(XB,-1,1,-1,1),barC,barEdge,1.4);
  for(const [y,open] of [[-yc,1],[yc,A]]){poly(panel(XB,y-sw,y+sw,-zs,zs),hole,barEdge,1.2);
   if(open<.999)poly(panel(XB,y-sw-.02,y+sw+.02,-zs-.03,zs+.03),rgba(shutter,1-open),rgba('#9a6b10',.8*(1-open)),1.2);}
- if(waves){ctx.save();ctx.beginPath();ctx.rect(0,0,w,h);sub(panel(XB,-1,1,-1,1));ctx.clip('evenodd');ctx.lineWidth=small?2:2.6;const nW=Math.ceil(L/lam);
-  for(const [y,on] of [[-yc,1],[yc,A]]){if(on<.01)continue;for(let r=0;r<nW;r++){const rad=(r+ph)*lam;if(rad<.03)continue;ripple(XB,y,rad,XB+.005,XS-.01,(stage===WHY&&y<0?.55:.4)*dimW*on*(1-.45*r/nW),1,stage===WHY&&y<0?violet:wave);}}ctx.restore();}
- // The sensor at the first slit (chapter 7): a violet frame around the slit, which stays open, on a stem rising
- // above the barrier; it glows each time a particle passes that slit. Particles that clicked land as violet dots.
- let click=0;
- if(stage>=SENSE){const drop=stage===SENSE?1-smooth((since-.3)/1):0, up=drop*1.6, f=.035;
-  if(fly&&clicked(fly.i)&&fly.u>=.45)click=Math.max(0,1-(fly.u-.45)/.5);
+ if(b.fronts.length||b.arcs.length){ctx.save();ctx.beginPath();ctx.rect(0,0,w,h);sub(panel(XB,-1,1,-1,1));ctx.clip('evenodd');ctx.lineWidth=small?2:2.6;
+  for(const arc of b.arcs)ripple(XB,arc.y,arc.r,XB+.005,XS-.01,arc.alpha,1,arc.marked?violet:wave);ctx.restore();}
+ // The sensor: a violet frame around the slit, which stays open, on a stem rising above the barrier.
+ if(b.sensor){const up=b.up, f=.035;
   if(click){const [gx,gy]=P(XB,-yc,0), g=ctx.createRadialGradient(gx,gy,0,gx,gy,cz*.55);g.addColorStop(0,rgba('#c89bff',.8*click));g.addColorStop(1,rgba('#c89bff',0));ctx.fillStyle=g;ctx.fillRect(gx-cz*.55,gy-cz*.55,cz*1.1,cz*1.1);}
   poly(panel(XB-.01,-yc-.012,-yc+.012,zs+f+up,1.3+up),violet,'#3f1d63',1);
   const out=panel(XB-.01,-yc-sw-f,-yc+sw+f,-zs-f+up,zs+f+up), inn=panel(XB-.01,-yc-sw,-yc+sw,-zs+up,zs+up);
@@ -370,18 +404,14 @@ function drawParticles(ctx,w,h,spec,st){
   ctx.beginPath();ctx.arc(lx,ly,Math.max(2.5,lr*.22),0,TAU);ctx.fillStyle='#ff6b5a';ctx.fill();}
  // The screen and the landings, one glowing dot each; the latest is larger.
  poly(panel(XS,-1,1,-1,1),screenC,'#06090f',1.4);
- const compare=stage===3&&since>=at(2)-.2, dimD=compare?1-.55*smooth((since-at(2)+.2)/.8):1;
- for(let i=0;i<n;i++){const [,y,z]=spot(i,pat), [x,yy]=P(XS,y,z), fresh=slow&&!fly&&i>=n-1, c=clicked(i)?'#c79cff':dot;
+ for(let i=0;i<n;i++){const [y,z,isClicked]=b.dot(i), [x,yy]=P(XS,y,z), fresh=slow&&!fly&&i>=n-1, c=isClicked?'#c79cff':dot;
   if(fresh){const g=ctx.createRadialGradient(x,yy,0,x,yy,12);g.addColorStop(0,rgba(c,.95));g.addColorStop(1,rgba(c,0));ctx.fillStyle=g;ctx.fillRect(x-12,yy-12,24,24);}
   ctx.beginPath();ctx.arc(x,yy,fresh?3.4:n>200?(small?1:1.25):2.4,0,TAU);ctx.fillStyle=fresh?'#fff6e8':rgba(c,(n>200?.75:.95)*dimD);ctx.fill();}
  // The photon in flight, drawn over everything so it is seen entering the slit and landing on the screen.
  if(leg)photon(leg);
- // For comparison, the dots one slit alone sent into what are now the dark gaps, as faint rings.
- let gapY=null;
- if(compare){const one=slitPattern(0,geo,bins), two=slitPattern(1,geo,bins), fade=smooth((since-at(2)+.2)/.8);
-  ctx.strokeStyle=rgba('#d6dde8',.6*fade);ctx.lineWidth=1.1;
-  for(let i=0;i<2400;i+=small?4:3){const [lo,y,z]=spot(i,one);if(two.p[lo]>.15*one.p[lo])continue;if(gapY===null&&y>.12)gapY=y;const [x,yy]=P(XS,y,z);ctx.beginPath();ctx.arc(x,yy,small?1.3:1.7,0,TAU);ctx.stroke();}
-  slitPattern(A,geo,bins,known);}
+ // The dots one slit alone sent into what are now the dark gaps, as faint rings.
+ if(compare){ctx.strokeStyle=rgba('#d6dde8',.6*b.fade);ctx.lineWidth=1.1;
+  for(const [y,z] of b.rings){const [x,yy]=P(XS,y,z);ctx.beginPath();ctx.arc(x,yy,small?1.3:1.7,0,TAU);ctx.stroke();}}
  ctx.restore();
  if(!st.labels)return;
  const size=small?10:12, label=(s,x,y,o={})=>text(ctx,s,x,y,{size,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.75)',...o});
@@ -392,7 +422,7 @@ function drawParticles(ctx,w,h,spec,st){
  const [cx,cy]=below(XS);text(ctx,`${n.toLocaleString('en-US')} ${spec.count_noun||'particle'}${n===1?'':'s'}`,cx,cy,{align:'center',size,weight:700,color:'#c2410c'});
  if(compare&&gapY!==null){const [gx,gy]=P(XS,gapY,1);pill(ctx,'one slit',gx,gy-14,{align:'center',size:small?10:11,weight:600,color:'rgba(20,23,28,.8)'});}
  if(A<.5){const [px,py]=P(XB,yc+sw+.06,zs*.4);pill(ctx,'COVERED',px+8,py,{size:small?9:10,weight:700,spacing:'1.2px',color:'rgba(20,23,28,.75)'});}
- if(stage>=SENSE){const [sx,sy]=P(XB,-yc,1.32);label('SENSOR',sx,sy-12,{align:'center',color:violet});
+ if(b.sensor){const [sx,sy]=P(XB,-yc,1.32);label('SENSOR',sx,sy-12,{align:'center',color:violet});
   if(click>.15){const [kx,ky]=P(XB,-yc-sw-.06,-zs*.2);pill(ctx,'click',kx-6,ky,{align:'right',size:small?10:11,weight:700,color:violet});}}
 }
 
@@ -3496,17 +3526,10 @@ function themeOf(spec){const t=THEMES[spec?.theme];return t&&(!t.dark||DARK_READ
 function draw(ctx,w,h,spec,state){engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
 window.CouncilDraw={draw,accent:spec=>ACCENT[spec.accent]||ACCENT.mint,disclosure:spec=>engineOf(spec).disclosure||'',theme:themeOf,themes:()=>Object.keys(THEMES),darkReady:kind=>DARK_READY.has(kind)};
 window.CouncilLab={draw:drawLab,hit:labHit,view:()=>labXf};
-
-const $=id=>document.getElementById(id);
-const canvas=$('universe');
-let timeline=null;
-if(!canvas)return;
-const ctx=canvas.getContext('2d');
-let spec=null, time=0, mass=.7, distance=1.25, stage=2, mode='live', last=0, shown=0, started=false, ended=false, captionKey='';
-const listeners=new Set(), emit=type=>listeners.forEach(fn=>fn(type));
 // Subtitle pacing: comfortable reading speed, a minimum time on screen, and a pause between sentences.
 const READING={cps:14,minimum:2.8,pause:.9,lead:.8,tail:.8};
-function buildTimeline(){
+// A guide's timeline from its text alone: chapter and sentence start and end times, in seconds.
+function timelineOf(spec){
  let t=0;
  const chapters=spec.beats.map(beat=>{
   const start=t;t+=READING.lead;
@@ -3516,8 +3539,27 @@ function buildTimeline(){
  // A scene may ask for a longer duration than reading needs; stretch evenly, never compress.
  const stretch=Math.max(1,spec.duration/t);
  for(const c of chapters){c.start*=stretch;c.end*=stretch;for(const l of c.lines){l.start*=stretch;l.end*=stretch;}}
- timeline={chapters,total:t*stretch};
+ return {chapters,total:t*stretch};
 }
+// Pictures that other renderers can draw from plain state: the state at a moment, the landed dots for that state,
+// and the timeline. Used by the visionOS app, which runs this file in JavaScriptCore.
+const BENCHES={'two-slit-particles':{
+ state(spec,st){const b=particlesBench(spec,st);return {stage:b.stage,A:b.A,known:b.known,n:b.n,
+  geometry:{XB:b.XB,XS:b.XS,L:b.L,yc:b.yc,sw:b.sw,zs:b.zs,lam:b.lam},dots:`${b.A.toFixed(3)}|${b.known}|${b.stage>=6}`,
+  fresh:b.slow&&!b.fly&&b.n>0,flash:b.flash,fronts:b.fronts,frontAlpha:b.frontAlpha,arcs:b.arcs,photon:b.leg&&b.leg.a>=.02?b.leg:null,
+  sensor:b.sensor,up:b.up,click:b.click,dim:b.dimD,rings:b.compare?{fade:b.fade,points:b.rings}:null,labels:particlesLabels(spec,st,b)};},
+ dots(spec,st,count){const b=particlesBench(spec,st);return Array.from({length:Math.max(0,Math.min(count,2400))},(_,i)=>b.dot(i));}}};
+window.CouncilBench={kinds:()=>Object.keys(BENCHES),timeline:spec=>timelineOf(spec),
+ state:(kind,spec,st)=>BENCHES[kind]?BENCHES[kind].state(spec,st):null,dots:(kind,spec,st,count)=>BENCHES[kind]?BENCHES[kind].dots(spec,st,count):[]};
+
+const $=id=>document.getElementById(id);
+const canvas=$('universe');
+let timeline=null;
+if(!canvas)return;
+const ctx=canvas.getContext('2d');
+let spec=null, time=0, mass=.7, distance=1.25, stage=2, mode='live', last=0, shown=0, started=false, ended=false, captionKey='';
+const listeners=new Set(), emit=type=>listeners.forEach(fn=>fn(type));
+function buildTimeline(){timeline=timelineOf(spec);}
 const chapterAt=t=>{const i=timeline.chapters.findIndex(c=>t<c.end);return i<0?timeline.chapters.length-1:i;};
 const target=()=>stage===0?0:mass;
 const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
