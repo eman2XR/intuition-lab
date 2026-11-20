@@ -2040,9 +2040,9 @@ function eraPlan(st){
  if(st.since===undefined)return {z:1,k:1,t:2,centre:1,inset:1,thumb:true,pulse:0};
  if(st.live||st.stage>=5)return {z:1,k:Physics.earthCurvature(st.mass),t:st.live?st.t||0:t,centre:1,inset:1,last:true,pulse:0};
  // 1: Syene alone; with the second sentence, no shadow; with the third, light reaches the water in the well.
- if(st.stage===0)return {z:0,focus:0,k:1,t,syene:true,none:smooth((t-at(1)-.3)/.6),well:smooth((t-at(2)-.1)/1.2),pulse:1};
+ if(st.stage===0)return {z:0,focus:0,k:1,t,map:smooth(t/.8),town:1,syene:true,none:smooth((t-at(1)-.3)/.6),well:smooth((t-at(2)-.1)/1.2),pulse:1};
  // 2: the view slides over to show Alexandria too; with the first sentence's end the distance, with the second the angle.
- if(st.stage===1)return {z:0,focus:smooth((t-.3)/1.8),k:1,t,dist:smooth((t-at(0)-1.8)/.6),angle:smooth((t-at(1)-.5)/.6),shadow:smooth((t-at(0)-2)/.6),none:1,pulse:0};
+ if(st.stage===1)return {z:0,focus:smooth((t-.3)/1.8),k:1,t,map:1,route:smooth((t-at(0)-.4)/1),town:1,dist:smooth((t-at(0)-1.8)/.6),angle:smooth((t-at(1)-.5)/.6),shadow:smooth((t-at(0)-2)/.6),none:1,pulse:0};
  // 3: the rays glow with the first sentence; the ground flattens with the second and curves again with the third.
  if(st.stage===2){const flat=smooth((t-at(1)+.4)/1.2)-smooth((t-at(2)-.2)/1.8);
   const glow=smooth(t/.8)*(1-smooth((t-at(1))/.8));
@@ -2054,6 +2054,27 @@ function eraPlan(st){
  // The wedge from chapter 4 stays while the first sentence counts slices of the circle.
  return {z:1,k:1,t,centre:1-smooth((t-at(1))/.6),slices:smooth((t-at(0)-.6)/1.2)*(1-.6*smooth((t-at(1))/.8)),arc:smooth((t-at(0)-.3)/.6),ring:clamp((t-at(1)-.2)/5.5),total:smooth((t-at(2)-.2)/.6),pulse:0};
 }
+// A small map of Egypt (a simplified outline and the Nile, from well-known coordinates), marking Syene and, with route,
+// Alexandria and the way between them, so the close-up reads as a real place.
+const ERA_EGYPT=[[25,31.6],[27.3,31.4],[29.9,31.2],[31.3,31.55],[32.3,31.3],[34.2,31.3],[34.9,29.5],[34.25,27.75],[33.5,28.6],[32.55,29.95],[32.65,29.2],[33.9,27.2],[35.6,23.9],[36.9,22],[25,22]];
+const ERA_NILE=[[32.9,22],[32.9,24.09],[32.64,25.69],[32.72,26.16],[31.18,27.18],[30.75,28.1],[31.24,30.04],[30.6,30.7],[30.4,31.45]];
+function eraMap(ctx,x,y,w,h,{route=0,alpha=1,labels,small}){
+ ctx.save();ctx.globalAlpha=alpha;
+ ctx.fillStyle='#bcd8ee';ctx.beginPath();ctx.roundRect(x,y,w,h,10);ctx.fill();ctx.strokeStyle='rgba(20,23,28,.2)';ctx.lineWidth=1;ctx.stroke();
+ ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,10);ctx.clip();
+ const P=([lo,la])=>[x+w*(lo-24.2)/(37.6-24.2),y+h*(1-(la-21.3)/(32.3-21.3))];
+ trace(ctx,ERA_EGYPT.map(P));ctx.closePath();ctx.fillStyle='#e9cf94';ctx.fill();ctx.strokeStyle='rgba(120,84,40,.55)';ctx.stroke();
+ trace(ctx,ERA_NILE.map(P));ctx.strokeStyle='#3d7fc4';ctx.lineWidth=small?1.6:2.2;ctx.lineJoin='round';ctx.stroke();
+ const sy=P([32.9,24.09]), al=P([29.92,31.2]), fs=small?9:11;
+ if(route>0){ctx.save();ctx.globalAlpha=alpha*route;trace(ctx,[al,sy]);ctx.setLineDash([3,3]);ctx.strokeStyle='#c2410c';ctx.lineWidth=1.6;ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(al[0],al[1],small?3:4,0,TAU);ctx.fillStyle='#c2410c';ctx.fill();if(labels)text(ctx,'Alexandria',al[0]+6,Math.max(al[1]-8,y+fs+3),{size:fs,weight:700,color:'rgba(20,23,28,.85)'});ctx.restore();}
+ ctx.beginPath();ctx.arc(sy[0],sy[1],small?3:4,0,TAU);ctx.fillStyle='#c2410c';ctx.fill();
+ if(labels){text(ctx,'Syene',sy[0]+7,sy[1]+3,{size:fs,weight:700,color:'rgba(20,23,28,.85)'});if(route<.5)text(ctx,'EGYPT',x+w*.32,y+h*.42,{align:'center',size:fs,weight:800,spacing:'1.5px',color:'rgba(120,84,40,.6)'});}
+ ctx.restore();ctx.restore();}
+function eraHouse(ctx,x,y,s){ctx.fillStyle='#d9b77e';ctx.strokeStyle='rgba(110,75,35,.7)';ctx.lineWidth=1.2;ctx.fillRect(x-s*.5,y-s*.62,s,s*.62);ctx.strokeRect(x-s*.5,y-s*.62,s,s*.62);
+ ctx.fillStyle='#c9a46a';ctx.fillRect(x-s*.56,y-s*.68,s*1.12,s*.08);ctx.fillStyle='rgba(60,40,20,.75)';ctx.fillRect(x-s*.1,y-s*.3,s*.2,s*.3);ctx.fillRect(x-s*.36,y-s*.48,s*.14,s*.12);ctx.fillRect(x+s*.22,y-s*.48,s*.14,s*.12);}
+function eraPalm(ctx,x,y,s){ctx.strokeStyle='#8a6a45';ctx.lineWidth=Math.max(2,s*.06);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+s*.12,y-s*.5,x+s*.05,y-s);ctx.stroke();
+ ctx.strokeStyle='#5f8f4e';ctx.lineWidth=Math.max(2,s*.07);for(const a of [-2.6,-2,-1.3,-.7,-.2]){ctx.beginPath();ctx.moveTo(x+s*.05,y-s);ctx.quadraticCurveTo(x+s*.05+Math.cos(a)*s*.3,y-s+Math.sin(a)*s*.3-s*.06,x+s*.05+Math.cos(a)*s*.45,y-s+Math.sin(a)*s*.2+s*.1);ctx.stroke();}}
 function drawEratosthenes(ctx,w,h,spec,st){
  const plan=eraPlan(st), small=w<520, accent=ACCENT[spec.accent]||ACCENT.blue, gold='#e8a33a', ink='rgba(20,23,28,.8)', size=small?10:12;
  const k=Math.max(0,plan.k), D=ERA_U, theta=k*D, deg=(theta*180/Math.PI).toFixed(1), labels=st.labels;
@@ -2100,13 +2121,30 @@ function drawEratosthenes(ctx,w,h,spec,st){
   ctx.beginPath();ctx.arc(gx,gy,rpx,0,TAU);ctx.fillStyle=night;ctx.fill();
   ctx.beginPath();ctx.arc(gx,gy,rpx+1.5,0,TAU);ctx.strokeStyle='rgba(150,200,255,.55)';ctx.lineWidth=3;ctx.stroke();
  }
- // The well at Syene, cut open: sunlight goes straight down it onto the water.
- if(plan.syene){const [bx,by]=X(ground(-(small?.2:.11)*D)), ww=small?16:22, wd=small?h*.2:h*.24, lit=plan.well;
+ // Syene as a town on the Nile: houses, palms and the river, with a person by the stick. At noon on this day nothing
+ // there casts a shadow.
+ if(plan.town&&plan.z<.5){const at=u=>X(ground(u)), Lt=h*(small?.28:.4);
+  const [n0,ny]=at(-(small?.46:.56)*D), [n1]=at(-(small?.62:.74)*D), nx=Math.min(n0,n1), nw=Math.min(Math.abs(n1-n0),w-8-nx);
+  if(nx<w){ctx.fillStyle='#3d7fc4';ctx.beginPath();ctx.roundRect(nx,ny-2,nw,small?9:13,4);ctx.fill();ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillRect(nx+4,ny,nw-8,2);
+   ctx.strokeStyle='#5f8f4e';ctx.lineWidth=1.6;ctx.lineCap='round';for(const ex of [nx-2,nx+nw+2])for(let k=-2;k<=2;k++){ctx.beginPath();ctx.moveTo(ex+k*3,ny);ctx.lineTo(ex+k*3+(k%2)*2,ny-(small?9:14)+Math.abs(k)*2);ctx.stroke();}
+   if(labels&&plan.syene)text(ctx,'Nile',nx+nw/2,ny+(small?24:30),{align:'center',size,weight:700,color:'#2f6aa8'});}
+  const pieces=small?[[.44,'house',.48],[.62,'palm',.7],[-.44,'house',.48]]:[[.3,'house',.5],[.42,'palm',.8],[-.33,'house',.42],[-.42,'house',.55],[-.5,'palm',.9]];
+  for(const [u,kind,f] of pieces){const [hx,hy]=at(u*D);if(hx<-60||hx>w+60)continue;kind==='house'?eraHouse(ctx,hx,hy,Lt*f):eraPalm(ctx,hx,hy,Lt*f);}
+  const [px,py]=at(-.055*D);drawPerson(ctx,px,py,Lt*(small?.075:.07),'#2b2f36');}
+ // The well at Syene: a round stone rim with a rope and bucket above the ground, cut open below it, where sunlight
+ // goes straight down onto the water.
+ if(plan.town&&plan.z<.5){const [bx,by]=X(ground(-(small?.18:.16)*D)), ww=small?20:28, wd=small?h*.2:h*.24, lit=plan.well??1;
+  const rim=small?14:20, rw=ww+(small?18:26), post=small?34:50;
+  ctx.fillStyle='#b39c82';ctx.beginPath();ctx.roundRect(bx-rw/2,by-rim,rw,rim,[5,5,0,0]);ctx.fill();ctx.strokeStyle='rgba(70,50,30,.75)';ctx.lineWidth=1.2;ctx.stroke();
+  for(let k=1;k<4;k++){trace(ctx,[[bx-rw/2+rw*k/4,by-rim],[bx-rw/2+rw*k/4,by]]);ctx.stroke();}trace(ctx,[[bx-rw/2,by-rim/2],[bx+rw/2,by-rim/2]]);ctx.stroke();
+  ctx.strokeStyle='#6b4f32';ctx.lineWidth=small?2.5:3.5;ctx.lineCap='round';trace(ctx,[[bx-rw/2+4,by-rim],[bx-rw/2+4,by-rim-post]]);ctx.stroke();trace(ctx,[[bx+rw/2-4,by-rim],[bx+rw/2-4,by-rim-post]]);ctx.stroke();
+  trace(ctx,[[bx-rw/2,by-rim-post],[bx+rw/2,by-rim-post]]);ctx.stroke();ctx.lineWidth=1.3;trace(ctx,[[bx+ww*.2,by-rim-post],[bx+ww*.2,by-rim-post*.42]]);ctx.stroke();
+  ctx.fillStyle='#7a5a3a';ctx.beginPath();ctx.moveTo(bx+ww*.2-(small?6:8),by-rim-post*.42);ctx.lineTo(bx+ww*.2+(small?6:8),by-rim-post*.42);ctx.lineTo(bx+ww*.2+(small?4:6),by-rim-post*.42+(small?9:12));ctx.lineTo(bx+ww*.2-(small?4:6),by-rim-post*.42+(small?9:12));ctx.closePath();ctx.fill();
   ctx.fillStyle='#8a6a45';ctx.fillRect(bx-ww/2-4,by,ww+8,wd+5);
   const shaft=ctx.createLinearGradient(0,by,0,by+wd);shaft.addColorStop(0,'#3a2a1b');shaft.addColorStop(1,'#140d07');ctx.fillStyle=shaft;ctx.fillRect(bx-ww/2,by,ww,wd);
   trace(ctx,[[bx,0],[bx,by+wd-4]]);ctx.strokeStyle=`rgba(255,214,140,${.25+.65*lit})`;ctx.lineWidth=2;ctx.stroke();
   ctx.beginPath();ctx.ellipse(bx,by+wd-3,ww/2-2,3.5,0,0,TAU);ctx.fillStyle=lit>.05?`rgba(255,240,190,${.35+.6*lit})`:'#2f5d7c';ctx.fill();
-  if(labels&&lit>.5)text(ctx,'well',bx+ww/2+10,by+wd*.55,{size,weight:600,color:ink});}
+  if(labels&&plan.syene&&lit>.5)text(ctx,'well',bx+ww/2+10,by+wd*.55,{size,weight:600,color:ink});}
  // A stick at ground distance u: standing straight up from the ground there; its shadow lies along the ground, as long
  // as the stick times the tangent of its lean.
  const Lc=h*(small?.28:.4), Ls=Lc+((small?18:26)-Lc)*ws;
@@ -2126,7 +2164,7 @@ function drawEratosthenes(ctx,w,h,spec,st){
  if(labels&&plan.z<.5){
   if(onStage(syene.base))text(ctx,'SYENE',syene.base[0],syene.base[1]+(small?20:26),{align:'center',size,weight:700,spacing:'1.2px',color:ink});
   if(onStage(alex.base))text(ctx,'ALEXANDRIA',alex.base[0],alex.base[1]+(small?20:26),{align:'center',size,weight:700,spacing:'1.2px',color:ink});
-  if(plan.none>.5&&onStage(syene.base))pill(ctx,'no shadow',syene.base[0]-14,syene.base[1]-14,{align:'right',size,weight:600,color:ink});
+  if(plan.none>.5&&onStage(syene.base))pill(ctx,'no shadow',syene.base[0]-12,syene.base[1]-(small?Lc*.45:14),{align:'right',size,weight:600,color:ink});
   if(plan.shadow>.5&&onStage(alex.end))pill(ctx,'shadow',alex.end[0]-12,alex.end[1]-12,{align:'right',size,weight:600,color:ink});
   if(plan.tag)pill(ctx,plan.tag,w*.5,plan.tag==='round Earth'?Math.min(h-14,hitY(w*.5)+(small?20:24)):hitY(w*.5)-(small?16:20),{align:'center',size:size+1,weight:700,color:ink});}
  // After the ground curves again, the flat ground stays as a faint dashed line, with Alexandria's stick as it would stand.
@@ -2135,6 +2173,7 @@ function drawEratosthenes(ctx,w,h,spec,st){
   trace(ctx,[[fx,fy],[fx,fy-Ls]]);ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
   ctx.restore();if(labels&&plan.ghost>.5)pill(ctx,'flat',small?10:16,syene.base[1]-(small?12:14),{size,weight:700,color:ink});}
  // The distance between the cities, below the ground.
+ if(plan.map>0&&plan.z<.5){const [mx,my,mw,mh]=small?[w*.66,h*.03,w*.31,h*.2]:[w*.02,h*.05,w*.17,h*.34];eraMap(ctx,mx,my,mw,mh,{route:plan.route||0,alpha:plan.map,labels,small});}
  if(plan.dist>0&&plan.z<.5){const y=Math.max(syene.base[1],alex.base[1])+(small?40:50);ctx.save();ctx.globalAlpha=plan.dist;
   trace(ctx,[[alex.base[0],y],[syene.base[0],y]]);ctx.strokeStyle=ink;ctx.lineWidth=1.4;ctx.stroke();
   for(const x of [alex.base[0],syene.base[0]]){trace(ctx,[[x,y-6],[x,y+6]]);ctx.stroke();}

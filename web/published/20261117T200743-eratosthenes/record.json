@@ -70,11 +70,11 @@
     "beats": [
       {
         "title": "Noon in Syene",
-        "body": "Imagine noon in Syene, Egypt, on the longest day of the year. The Sun is straight overhead, so an upright stick casts no shadow. Sunlight even reaches the water at the bottom of a deep well."
+        "body": "Imagine noon in Syene, Egypt, on the longest day of the year. The Sun is straight overhead, so an upright stick casts no shadow. Its light reaches the bottom of a deep well, which only an overhead Sun can do."
       },
       {
         "title": "A shadow in Alexandria",
-        "body": "At that moment in Alexandria, 800 kilometres north, a stick casts a shadow. Its shadow shows the Sun is 7.2 degrees from straight overhead. Over 2,200 years ago, the scholar Eratosthenes used this to measure the Earth."
+        "body": "At that moment in Alexandria, 800 kilometres north, a stick casts a shadow. Its shadow shows the Sun is 7.2 degrees from straight overhead. Over 2,200 years ago, Eratosthenes used these shadows to measure the Earth."
       },
       {
         "title": "Why the shadows differ",
@@ -213,7 +213,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review. On 2026-11-18 it was revised in a coding session at the owner’s request (issue #14): the line under the title now says the size of the Earth was worked out using sticks and shadows, the globe shows the real continents (Natural Earth outlines), and the Sun is drawn in every chapter; the revision passed the same checks and four reviews again, and the reviews below are from that review."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The reviews below are from that session’s final review. On 2026-11-18 it was revised in a coding session at the owner’s request (issue #14): the line under the title now says the size of the Earth was worked out using sticks and shadows, the globe shows the real continents (Natural Earth outlines), and the Sun is drawn in every chapter; the revision passed the same checks and four reviews again, and the reviews below are from that review. On 2026-11-19 the opening was redrawn at the owner’s request (issue #17): Syene is now a town on the Nile with houses, palms and a person by the stick, the well has a stone rim, posts and a bucket, and a small map of Egypt marks Syene and, in chapter 2, Alexandria; two subtitles say why the well matters and that Eratosthenes used these shadows. The revision passed the checks and four reviews again."
   },
   "revisions": [
     {
@@ -626,7 +626,225 @@
         "published/20261117T200743-eratosthenes/revision-2-10.png",
         "published/20261117T200743-eratosthenes/revision-2-11.png"
       ]
+    },
+    {
+      "number": 3,
+      "scene": {
+        "title": "How did Eratosthenes measure the Earth with a stick?",
+        "subtitle": "At noon on the longest day, a stick in one Egyptian city casts no shadow, while a stick 800 km north does. How did that reveal the size of the Earth?",
+        "why": "More than 2,200 years ago, a scholar in Egypt worked out the size of the Earth using sticks and shadows.",
+        "opening": "How could anyone measure the whole Earth without travelling around it?",
+        "beats": [
+          {
+            "title": "Noon in Syene",
+            "body": "Imagine noon in Syene, Egypt, on the longest day of the year. The Sun is straight overhead, so an upright stick casts no shadow. Its light reaches the bottom of a deep well, which only an overhead Sun can do."
+          },
+          {
+            "title": "A shadow in Alexandria",
+            "body": "At that moment in Alexandria, 800 kilometres north, a stick casts a shadow. Its shadow shows the Sun is 7.2 degrees from straight overhead. Over 2,200 years ago, Eratosthenes used these shadows to measure the Earth."
+          },
+          {
+            "title": "Why the shadows differ",
+            "body": "The Sun is so far away that its rays all arrive parallel. So on flat ground, neither stick would cast a shadow. Different shadows mean the ground between the cities must curve."
+          },
+          {
+            "title": "The angle at the centre",
+            "body": "On a round Earth, the two sticks lean apart by a small angle. Extend both sticks down and they meet at the centre, 7.2 degrees apart. Syene's stick points at the Sun, so Alexandria's is off by the same 7.2 degrees."
+          },
+          {
+            "title": "Fifty times around",
+            "body": "A full circle is 360 degrees, which is fifty slices of 7.2 degrees. So the 800 kilometres between the cities fits fifty times around the Earth. Fifty times 800 is 40,000 kilometres, about what we measure today."
+          },
+          {
+            "title": "Why one shadow is enough",
+            "body": "On a smaller Earth, the same 800 kilometres would curve more. Alexandria's stick would lean further, so its shadow would grow longer. So one shadow and one distance were enough to measure the planet."
+          }
+        ],
+        "takeaway": "Because sunlight arrives parallel, the shadow's angle equals the angle between the two cities at the Earth's centre, so one shadow and one distance give the size of the whole Earth.",
+        "mass": 0.5,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "eratosthenes",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Why must the Sun's rays arrive parallel?",
+            "a": "The Sun is about 150 million kilometres away, so rays reaching two cities 800 km apart differ in direction by less than a thousandth of a degree."
+          },
+          {
+            "q": "Was the Sun really straight overhead at Syene?",
+            "a": "Almost. Syene lies less than a degree north of the tropic, the farthest-north line where the Sun can stand straight overhead, so a stick there casts a very short shadow; the classic account treats it as none."
+          },
+          {
+            "q": "How close was his answer?",
+            "a": "He found about 250,000 stadia. A stadion was a Greek unit of length, and how long his was is still debated: his answer was within a few per cent of the true size, or 10 to 15% too big if he used a longer stadion."
+          },
+          {
+            "q": "Does the Sun have to be overhead in one city?",
+            "a": "No. For two cities due north and south of each other, measure both shadows at the same moment: the difference between their angles (or their sum, if the shadows point opposite ways) is the angle at the centre."
+          },
+          {
+            "q": "How did he know the distance?",
+            "a": "It was reported as about 5,000 stadia, measured by bematists, the professional surveyors who worked out distances across Egypt."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "A stick under the overhead Sun casts no shadow",
+          "pass": true
+        },
+        {
+          "name": "On flat ground, parallel light gives every stick the same shadow",
+          "pass": true
+        },
+        {
+          "name": "The shadow comes in at the angle the two sticks make at the centre",
+          "pass": true
+        },
+        {
+          "name": "One fiftieth of a circle means fifty times the distance around",
+          "pass": true
+        },
+        {
+          "name": "Fifty times 800 km is within 1% of the real Earth",
+          "pass": true
+        },
+        {
+          "name": "The real Earth leans a stick 800 km away by about 7 degrees",
+          "pass": true
+        },
+        {
+          "name": "A smaller Earth leans the same stick further",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 80)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 11)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 3)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The science and history hold up. The map's coastline and Nile points are real places and the projection is not stretched; Syene sits at Aswan and Alexandria on the coast. 800 km is a fair round figure for 5,000 stadia (Alexandria and Aswan are about 790 km apart north to south), 7.2 degrees is 1/50 of a circle, and 50 x 800 = 40,000 km against the modern 40,008 km. 'Over 2,200 years ago' is right (about 240 BC), the sunlit well at Syene is attested by Strabo and Pliny, and the FAQ's 'Almost' covers the nearly-overhead Sun. Everything drawn is correct: shadows point north, the wedge and the centre angle are both 7.2 degrees, and a smaller Earth gives a larger angle.",
+        "changes": [
+          "End the drawn Nile at the Rosetta mouth rather than at Alexandria (applied).",
+          "Optional: 'which only a Sun almost straight overhead can do'.",
+          "Optional: say the 5,000 stadia were said to have been measured by bematists.",
+          "Optional: land outside Egypt in a neutral tone."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The opening now clearly reads as a sunny desert town at noon on the Nile: flat-roofed houses, palms, a person by an upright stick, a Nile strip and a small map of Egypt with Syene. The well is clearly a well (stone curb, posts, crossbar, rope, bucket, cut-away shaft), and a pale beam lights the water. Labels are short and clear on desktop and phone. In chapter 2 the map gains Alexandria and a route, the beam is pale yellow, and the shadow, 7.2 degree wedge and 800 km read well. Chapters 3 to 6 still read.",
+        "changes": [
+          "Phone, chapter 2: the map's Alexandria label touches the map's top edge.",
+          "Phone, chapter 2: the shadow-angle pill covers the lower Sun.",
+          "Desktop, chapters 2-3: the Sun stays mid-frame while Syene moves right.",
+          "A wider soft sunbeam in the well would read faster.",
+          "The Nile bar looks like a pool; make it longer.",
+          "Optional: keep a city tag on the phone globe in chapter 6."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "At noon on the longest day the Sun is straight above Syene: a stick casts no shadow and sunlight reaches the water at the bottom of a deep well. At the same moment a stick in Alexandria, 800 km north, casts a shadow putting the Sun 7.2 degrees from overhead. Parallel rays mean the ground must curve, and 7.2 degrees is also the angle at the centre, so the circumference is 50 x 800 = 40,000 km. The well, the beam and the inset map were easy to follow.",
+        "changes": [
+          "Say Alexandria's stick stands straight up from its own tilted patch of ground.",
+          "Explain how a shadow gives an angle.",
+          "Make Alexandria's shadow easier to see.",
+          "Say why the walls matter for the well and why the longest day.",
+          "Define parallel in plain words.",
+          "Say an upright stick points away from the centre before extending the sticks.",
+          "Add a north cue in the ground scene.",
+          "The globe's continents are hard to recognise."
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Reads as a small desert town at midday: sun high, flat-roofed houses, palms, a person, an upright pole labelled no shadow, a Nile strip, and a well with stone rim, frame and bucket whose shaft goes deep into the sand; from frame 2 a bright line drops from the sun down the shaft to a glowing spot on the water. The inset is a map of Egypt with Syene, then Alexandria on the coast and a dashed route. Argument: the same sun is overhead in one town and at an angle 800 km north, so the ground curves, and 7.2 degrees over 800 km gives the Earth's size.",
+        "changes": [
+          "Faint sky stripes and dashes read a little like rain or wallpaper.",
+          "The Nile strip reads like a pool rather than a river.",
+          "Alexandria's leaning stick may first read as crooked; its shadow is a short stub.",
+          "The Syene pole is much taller than the houses."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261117T200743-eratosthenes/revision-3-0.png",
+        "published/20261117T200743-eratosthenes/revision-3-1.png",
+        "published/20261117T200743-eratosthenes/revision-3-2.png",
+        "published/20261117T200743-eratosthenes/revision-3-3.png",
+        "published/20261117T200743-eratosthenes/revision-3-4.png",
+        "published/20261117T200743-eratosthenes/revision-3-5.png",
+        "published/20261117T200743-eratosthenes/revision-3-6.png",
+        "published/20261117T200743-eratosthenes/revision-3-7.png",
+        "published/20261117T200743-eratosthenes/revision-3-8.png",
+        "published/20261117T200743-eratosthenes/revision-3-9.png",
+        "published/20261117T200743-eratosthenes/revision-3-10.png",
+        "published/20261117T200743-eratosthenes/revision-3-11.png"
+      ]
     }
   ],
-  "updated": "2026-11-18T19:02:58Z"
+  "updated": "2026-11-20T01:53:04Z"
 }
