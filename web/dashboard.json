@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-20T01:54:00.654836+00:00",
-    "outcome": "Redrew the Eratosthenes opening as a town on the Nile with a clear well (issue #17)"
+    "at": "2026-11-20T03:13:17.766345+00:00",
+    "outcome": "Redrew the double-slit guide in perspective and added a sensor at one slit (owner request)"
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
