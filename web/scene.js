@@ -319,8 +319,7 @@ function drawParticles(ctx,w,h,spec,st){
  const [lx,ly]=P(0,0,0), lr=cz*(small?.13:.12);
  // The photon in flight during the one-at-a-time stretches: it leaves the laser as the laser flashes and lands as the
  // next dot. Its path is drawn only where it is known: through the open slit when one is covered, and through the
- // sensor's slit or the other when the sensor is there. With both slits open and no sensor it reaches the barrier,
- // and a faint wave pulse spreads from both slits to the screen, landing as the dot.
+ // sensor's slit or the other when the sensor is there.
  const fly=slow&&(stage===0?n<14&&since>=1:stage===2?n<18&&since>=1.9:n<12&&since>=t1)?{i:n,u:clamp(fire/rate)}:null;
  // Waves (chapters 5, 6 and 8), one drawn wavelength apart on the level plane through the slits' middle: the laser's
  // light arrives with flat fronts, and each open slit sends out ripples to the screen. Where tops from the two slits
@@ -333,13 +332,19 @@ function drawParticles(ctx,w,h,spec,st){
    if(x>x0&&x<x1&&Math.abs(y)<=ymax)seg.push(P(x,y,0));else flush();}flush();};
  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
  if(waves){ctx.lineWidth=small?2:2.6;const nS=Math.ceil(XB/lam);for(let r=0;r<nS;r++){const x=(r+ph)*lam+.06;if(x>XB-.02)continue;ctx.strokeStyle=rgba(wave,.26*dimW);trace(ctx,[P(x,-.62,0),P(x,.62,0)]);ctx.stroke();}}
+ // Where the photon in flight is: from the laser to the slit it takes, then from that slit to its dot. With both
+ // slits open and no sensor it is not known which slit it takes, so it fades out as it nears the barrier and is next
+ // seen as its dot. Each point carries the position a moment earlier, for a short fading trail.
  let leg=null;
  if(fly){const [,yl,zl]=spot(fly.i,pat), ys=stage===0?-yc:stage===SENSE?(clicked(fly.i)?-yc:yc):null, zb=clamp(zl*XB/XS,-zs*.85,zs*.85);
-  const k=.45, at1=[XB,ys??0,zb], go=(a,b,f)=>a.map((v,j)=>v+(b[j]-v)*f);
-  leg=fly.u<k?{one:true,pos:go([0,0,0],at1,fly.u/k)}:{one:false,f:(fly.u-k)/(1-k),pos:ys===null?null:go([XB,ys,zb],[XS,yl,zl],(fly.u-k)/(1-k))};}
- const photon=([x,y,z],a=1,c='#ffb46b')=>{if(a<.02)return;const [px,py]=P(x,y,z), g=ctx.createRadialGradient(px,py,0,px,py,small?9:12);g.addColorStop(0,rgba(c==='#ffb46b'?'#ffe0b0':'#e3ccff',.95*a));g.addColorStop(1,rgba(c,0));
+  const k=.45, go=(a,b,f)=>a.map((v,j)=>v+(b[j]-v)*clamp(f)), src=[0,0,0], slit=[XB,ys??0,zb], land=[XS,yl,zl];
+  if(fly.u<k){const f=fly.u/k, to=ys===null?[XB*.9,0,zb*.9]:slit;leg={pos:go(src,to,f),prev:go(src,to,f-.18),a:ys===null?1-smooth((f-.45)/.5):1,c:'#ffb46b'};}
+  else if(ys!==null){const f=(fly.u-k)/(1-k);leg={pos:go(slit,land,f),prev:f<.12?slit:go(slit,land,f-.12),a:1,c:clicked(fly.i)?'#c79cff':'#ffb46b'};}}
+ const photon=({pos,prev,a,c})=>{if(a<.02)return;const [px,py]=P(...pos), [qx,qy]=P(...prev), core=c==='#ffb46b'?'#ffe0b0':'#e3ccff';
+  const tr=ctx.createLinearGradient(qx,qy,px,py);tr.addColorStop(0,rgba(c,0));tr.addColorStop(1,rgba(c,.7*a));
+  ctx.strokeStyle=tr;ctx.lineWidth=small?2.4:3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(qx,qy);ctx.lineTo(px,py);ctx.stroke();
+  const g=ctx.createRadialGradient(px,py,0,px,py,small?9:12);g.addColorStop(0,rgba(core,.95*a));g.addColorStop(1,rgba(c,0));
   ctx.fillStyle=g;ctx.fillRect(px-12,py-12,24,24);ctx.beginPath();ctx.arc(px,py,small?2.6:3.2,0,TAU);ctx.fillStyle=rgba('#fff6e8',a);ctx.fill();};
- if(leg?.one)photon(leg.pos,stage===2?1-smooth((fly.u/.45-.35)/.6):1);
  // The barrier, with its two slits cut through it.
  poly(panel(XB,-1,1,-1,1),barC,barEdge,1.4);
  for(const [y,open] of [[-yc,1],[yc,A]]){poly(panel(XB,y-sw,y+sw,-zs,zs),hole,barEdge,1.2);
@@ -369,9 +374,8 @@ function drawParticles(ctx,w,h,spec,st){
  for(let i=0;i<n;i++){const [,y,z]=spot(i,pat), [x,yy]=P(XS,y,z), fresh=slow&&!fly&&i>=n-1, c=clicked(i)?'#c79cff':dot;
   if(fresh){const g=ctx.createRadialGradient(x,yy,0,x,yy,12);g.addColorStop(0,rgba(c,.95));g.addColorStop(1,rgba(c,0));ctx.fillStyle=g;ctx.fillRect(x-12,yy-12,24,24);}
   ctx.beginPath();ctx.arc(x,yy,fresh?3.4:n>200?(small?1:1.25):2.4,0,TAU);ctx.fillStyle=fresh?'#fff6e8':rgba(c,(n>200?.75:.95)*dimD);ctx.fill();}
- if(leg&&!leg.one){if(leg.pos)photon(leg.pos,1,clicked(fly.i)?'#c79cff':'#ffb46b');
-  else{ctx.save();ctx.lineWidth=small?2.6:2.5;
-   for(const y of [-yc,yc])ripple(XB,y,.03+leg.f*(L-.04),XB+.005,XS-.01,.75*(1-.45*leg.f),1,'#ffb46b');ctx.restore();}}
+ // The photon in flight, drawn over everything so it is seen entering the slit and landing on the screen.
+ if(leg)photon(leg);
  // For comparison, the dots one slit alone sent into what are now the dark gaps, as faint rings.
  let gapY=null;
  if(compare){const one=slitPattern(0,geo,bins), two=slitPattern(1,geo,bins), fade=smooth((since-at(2)+.2)/.8);
