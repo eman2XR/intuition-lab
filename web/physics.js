@@ -46,6 +46,8 @@
     // Absolute brightness relative to two equal in-phase sources at a bright stripe (maximum 1).
     brightness(a, phase) { return (1 + a * a + 2 * a * Math.cos(phase)) / 4; },
     intensity(a, phase) { return (1 + a * a + 2 * a * Math.cos(phase)) / ((1 + a) * (1 + a) || 1); },
+    // The same, when something records which slit each particle took: the two slits' shares add with no stripes.
+    knownPath(a, phase) { return (1 + a * a) / ((1 + a) * (1 + a) || 1); },
     // A rope shaken at one end and tied to a wall: the damped wave equation, rope length 1, waves at speed 2, so the
     // slowest in-step shaking is one shake a second (drawn slowed down). Friction gamma sets how big an in-step swing
     // grows (about 6 times the hand) and how fast it builds (a few seconds).
@@ -781,6 +783,9 @@
         'Opening a second slit leaves some spots darker than one slit alone':near(this.intensity(1,Math.PI),0)&&this.intensity(0,Math.PI)>0,
         'Two equal sources make bright stripes four times one source':near(this.brightness(1,0),4*this.brightness(0,0)),
         'Wider separation packs stripes closer':firstDark(2.5)<firstDark(1),
+        'Knowing which slit each one took removes the stripes':near(this.knownPath(1,0),this.knownPath(1,Math.PI))&&this.intensity(1,0)-this.intensity(1,Math.PI)>.9,
+        'With the path known, each spot gets the average of the stripes':near(Array.from({length:360},(_,i)=>this.intensity(1,i*Math.PI/180)).reduce((u,v)=>u+v)/360,this.knownPath(1,0)),
+        'With the path known, no spot is darker than one slit alone gives':[0,1,2,3].every(k=>this.knownPath(1,k)*4>=this.knownPath(0,k)-1e-12),
       }).map(([name,pass])=>({name,pass}));
     },
     ropeChecks() {
