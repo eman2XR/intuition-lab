@@ -2430,16 +2430,22 @@ function drawSimpson(ctx,w,h,spec,st){
    ctx.restore();}
  }
 }
-// A hand with its index finger pointing down at a door, tapping, to show that the doors can be tapped.
+// A hand seen from the back, its index finger pointing down at a door and tapping, to show that the doors can be
+// tapped: a sleeve and cuff, the back of the hand, three curled fingers, the thumb along the side and the pointing
+// finger with its nail.
 function montyHand(ctx,x,y,s,t){
- const ph=t%1, press=Math.max(0,Math.sin(ph*Math.PI*2))*s*.12, skin='#f2c9a5', edge='rgba(110,62,35,.75)';
+ const ph=t%1, press=Math.max(0,Math.sin(ph*Math.PI*2))*s*.12, skin='#f2c9a5', edge='rgba(110,62,35,.8)';
  // A ring spreads from the fingertip at each tap.
- if(ph<.5){ctx.beginPath();ctx.arc(x,y,s*(.12+ph*.7),0,TAU);ctx.strokeStyle=`rgba(255,255,255,${.85*(1-ph*2)})`;ctx.lineWidth=2.5;ctx.stroke();}
- ctx.save();ctx.translate(x,y-s*.06-press);ctx.fillStyle=skin;ctx.strokeStyle=edge;ctx.lineWidth=1.5;ctx.lineJoin='round';
- ctx.beginPath();ctx.roundRect(-s*.11,-s*.62,s*.22,s*.62,s*.11);ctx.fill();ctx.stroke();
- ctx.beginPath();ctx.roundRect(-s*.2,-s*1.1,s*.62,s*.56,s*.18);ctx.fill();ctx.stroke();
- ctx.beginPath();ctx.ellipse(-s*.22,-s*.78,s*.1,s*.2,.5,0,TAU);ctx.fill();ctx.stroke();
- for(const k of [1,2])ctx.beginPath(),ctx.moveTo(-s*.2+s*.2*k,-s*.56),ctx.lineTo(-s*.2+s*.2*k,-s*.7),ctx.stroke();
+ if(ph<.5){ctx.beginPath();ctx.arc(x,y,s*(.12+ph*.7),0,TAU);ctx.strokeStyle=`rgba(255,255,255,${(1-ph*2)})`;ctx.lineWidth=Math.max(2.5,s*.045);ctx.stroke();}
+ ctx.save();ctx.translate(x,y-press);ctx.lineWidth=Math.max(1.2,s*.022);ctx.lineJoin='round';ctx.strokeStyle=edge;
+ const box=(x0,y0,w,h,r,fill)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(s*x0,s*y0,s*w,s*h,s*r);ctx.fill();ctx.stroke();};
+ box(-.1,-1.42,.66,.36,.12,'#3a4352');box(-.13,-1.1,.72,.12,.04,'#f4f1ea');
+ box(-.12,-1.02,.68,.56,.2,skin);
+ ctx.save();ctx.translate(-s*.12,-s*.8);ctx.rotate(.32);box(-.08,0,.17,.42,.085,skin);ctx.restore();
+ for(const [x0,y0,w,h] of [[.42,-.6,.15,.21],[.27,-.6,.16,.25],[.11,-.6,.17,.27]])box(x0,y0,w,h,.075,skin);
+ box(-.09,-.62,.2,.62,.1,skin);
+ box(-.055,-.17,.13,.13,.05,'#fbe3d0');
+ ctx.beginPath();ctx.moveTo(-s*.05,-s*.36);ctx.lineTo(s*.07,-s*.36);ctx.stroke();
  ctx.restore();}
 
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
