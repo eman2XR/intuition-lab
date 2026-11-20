@@ -602,6 +602,41 @@
     },
     // The chance of winning when you switch in a share a of games.
     montyWin(a) { const g = this.montyGames(3); return (1 - a) * g.stay + a * g.swap; },
+    // Seasons. Earth's axis leans seasonTilt degrees and keeps pointing the same way in space, so the Sun's declination
+    // (how far north of the equator it stands overhead) is +tilt at the June solstice and -tilt at the December one.
+    // Latitudes and declinations in degrees; distance in astronomical units. Sunlight is at the top of the air.
+    seasonTilt: 23.44,
+    seasonLat: 48.86,
+    sunDistanceKm: { january: 147.1e6, july: 152.087e6 },
+    // Height of the noon Sun above the horizon.
+    noonSun(lat, dec) { return 90 - Math.abs(lat - dec); },
+    // Ground covered by a beam of unit width arriving at this height above the horizon.
+    beamSpread(elev) { return 1 / Math.sin(elev * Math.PI / 180); },
+    // Hours between sunrise and sunset: cos(h0) = -tan(lat) tan(dec).
+    dayHours(lat, dec) {
+      const r = Math.PI / 180, c = -Math.tan(lat * r) * Math.tan(dec * r);
+      return c <= -1 ? 24 : c >= 1 ? 0 : 2 * Math.acos(c) / r / 15;
+    },
+    // Sunlight a day on level ground, relative to the Sun overhead all day at 1 AU: (h0 sin lat sin dec + cos lat cos dec sin h0) / (pi d^2).
+    dailySun(lat, dec, dist = 1) {
+      const r = Math.PI / 180, c = -Math.tan(lat * r) * Math.tan(dec * r), h0 = c <= -1 ? Math.PI : c >= 1 ? 0 : Math.acos(c);
+      return (h0 * Math.sin(lat * r) * Math.sin(dec * r) + Math.cos(lat * r) * Math.cos(dec * r) * Math.sin(h0)) / (Math.PI * dist * dist);
+    },
+    seasonChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, T = this.seasonTilt, lat = this.seasonLat;
+      const june = this.noonSun(lat, T), dec = this.noonSun(lat, -T), d = this.sunDistanceKm;
+      const sunRatio = this.dailySun(lat, T, 1.0167) / this.dailySun(lat, -T, 0.9837);
+      return Object.entries({
+        'In Paris the June noon Sun is about 65 degrees high and the December one about 18': near(june, 64.58, .01) && near(dec, 17.70, .01),
+        'A beam from the low December Sun covers about three times the ground': near(this.beamSpread(dec) / this.beamSpread(june), 2.97, .03),
+        'A beam straight from overhead covers the least ground': this.beamSpread(90) === 1 && this.beamSpread(30) > 1.99 && this.beamSpread(30) < 2.01,
+        'Paris has about 16 hours of daylight in June and 8 in December': near(this.dayHours(lat, T), 15.97, .02) && near(this.dayHours(lat, -T), 8.03, .02),
+        'The equator has 12 hours of daylight all year': near(this.dayHours(0, T), 12, 1e-9) && near(this.dayHours(0, -T), 12, 1e-9),
+        'Paris gets about five times the sunlight a day in June as in December, distance included': sunRatio > 4.9 && sunRatio < 5.3,
+        'Being nearest the Sun in January adds only about 7 percent more sunlight': near((d.july / d.january) ** 2, 1.069, .002),
+        'Seasons in the south are the mirror of the north': this.noonSun(-lat, -T) === june && this.dayHours(-lat, -T) === this.dayHours(lat, T),
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     montyChecks() {
       const near=(a,b)=>Math.abs(a-b)<1e-12, g=this.montyGames(3), careless=this.montyGames(3,false);
       return Object.entries({
@@ -635,7 +670,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

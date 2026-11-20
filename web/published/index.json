@@ -1,5 +1,14 @@
 [
   {
+    "id": "20261120T235402-seasons",
+    "question": "Why is summer warmer than winter?",
+    "topic": "seasons",
+    "created": "2026-11-20T23:54:02.311345+00:00",
+    "curriculum": "6.3",
+    "title": "Why is summer warmer than winter?",
+    "theme": "sage"
+  },
+  {
     "id": "20261119T213007-simpson",
     "question": "Simpson's paradox: how can a treatment win every test but lose overall?",
     "topic": "simpson",

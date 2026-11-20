@@ -130,6 +130,11 @@
           "id": "6.2",
           "question": "How did Eratosthenes measure the Earth with a stick?",
           "model": "eratosthenes"
+        },
+        {
+          "id": "6.3",
+          "question": "Why is summer warmer than winter?",
+          "model": "seasons"
         }
       ]
     },

@@ -1,0 +1,454 @@
+{
+  "id": "20261120T235402-seasons",
+  "status": "reviewed",
+  "question": "Why is summer warmer than winter?",
+  "topic": "seasons",
+  "created": "2026-11-20T23:54:02.311345+00:00",
+  "research": {
+    "claim": "Summer is warmer than winter because Earth's axis is tilted by about 23.44 degrees and keeps pointing the same way as Earth orbits the Sun. When a hemisphere leans toward the Sun, the noon Sun stands higher, so each beam of sunlight is spread over less ground, and the days are longer. In Paris (48.86 degrees north) the noon Sun is about 64.6 degrees high at the June solstice and 17.7 degrees at the December solstice, so a beam covers about 2.97 times as much ground in December; days last about 16.0 and 8.0 hours, and the daily sunlight at the top of the atmosphere is about 5.2 times larger in June, distance included. Earth is nearest the Sun in early January, which changes sunlight by only about 7 percent and works against the northern seasons.",
+    "explanation": "The noon Sun's height above the horizon is 90 degrees minus the difference between the latitude and the Sun's declination, which is +23.44 degrees at the June solstice and -23.44 at the December one. A beam of fixed width arriving at height e covers ground in proportion to 1/sin(e), so the same sunlight is spread thinner when the Sun is low. Day length follows from the sunrise hour angle h0, with cos h0 = -tan(latitude) tan(declination), and the daily total on level ground at the top of the atmosphere is proportional to (h0 sin(latitude) sin(declination) + cos(latitude) cos(declination) sin(h0)) divided by the square of the Earth-Sun distance. Earth's distance ranges from about 147.1 million km in early January to 152.1 million km in early July, a ratio whose square is about 1.069, so distance changes sunlight by about 7 percent, far less than the tilt does.",
+    "assumptions": [
+      "Paris at 48.86 degrees north, at the solstices.",
+      "Sunlight at the top of the atmosphere, before air and clouds dim it.",
+      "Earth-Sun distance at the solstices about 1.0167 AU in June and 0.9837 AU in December."
+    ],
+    "prediction": "At 48.86 degrees north the June noon Sun is 64.6 degrees high and the December one 17.7 degrees; daily sunlight is about five times larger in June.",
+    "falsifier": "If seasons came from distance, both hemispheres would have summer together, in January, which they do not.",
+    "limitations": [
+      "Air, clouds and seasonal lag change the temperatures actually felt; the model covers sunlight only.",
+      "The orbit is drawn as nearly round, as it is; its slight oval shape is not visible at this size."
+    ],
+    "misconceptions": [
+      "Summer happens because Earth is closer to the Sun.",
+      "The tilt makes one hemisphere physically closer to the Sun, and that is what warms it."
+    ],
+    "questions": [
+      "Then why is July hotter than June?",
+      "Does Earth's distance matter at all?",
+      "Does the axis ever move?",
+      "What about places near the equator?",
+      "Are these sunlight numbers measured on the ground?"
+    ],
+    "sources": [
+      {
+        "title": "Season (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Season",
+        "supports": "Seasons come from Earth's tilted axis, not its distance from the Sun; the low winter Sun spreads its rays over a larger area; Earth is nearest in January and farthest in July, opposing northern seasons; the distance effect is about a 7% variation in sunlight; seasonal lag makes June to August the warmest northern months; southern seasons are opposite."
+      },
+      {
+        "title": "Axial tilt (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Axial_tilt",
+        "supports": "Earth's axial tilt is about 23.44 degrees, and over an orbit the axis keeps the same orientation relative to the background stars; it moves slowly through axial precession."
+      },
+      {
+        "title": "Apsis (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Apsis",
+        "supports": "Earth reaches perihelion in early January, about 14 days after the December solstice, at about 147,100,000 km, and aphelion in early July at about 152,087,000 km."
+      },
+      {
+        "title": "Daytime (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Daytime",
+        "supports": "Day length varies with latitude and season because of the axial tilt; at the equator it stays about 12 hours in every season; summer days are longer than 12 hours and winter days shorter."
+      },
+      {
+        "title": "Solar irradiance (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Solar_irradiance",
+        "supports": "Sunlight on a level surface at the top of the atmosphere scales with the cosine of the Sun's zenith angle and the inverse square of distance; the sunrise hour angle obeys cos h0 = -tan(latitude) tan(declination); the daily total is proportional to h0 sin(latitude) sin(declination) + cos(latitude) cos(declination) sin(h0); losses in the air depend on the Sun's elevation."
+      },
+      {
+        "title": "Paris (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Paris",
+        "supports": "Paris lies at about 48.86 degrees north."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "Why is summer warmer than winter?",
+    "subtitle": "Earth is nearest the Sun in early January, in the north's winter. So what really makes summer warm?",
+    "why": "Most people guess summer comes when Earth is nearest the Sun. But Earth is nearest in January, so something else must warm the summer.",
+    "opening": "Why is summer warmer than winter?",
+    "beats": [
+      {
+        "title": "Nearest in January",
+        "body": "Imagine Earth on its yearly trip around the Sun. Many people think summer comes when Earth is nearest the Sun. But Earth is nearest in early January, mid-winter in Europe and North America."
+      },
+      {
+        "title": "A tilted Earth",
+        "body": "Earth spins like a top around a line, its axis, which leans 23 degrees. All year, the lean keeps pointing the same way in space. So in June the northern half leans toward the Sun, and in December away."
+      },
+      {
+        "title": "A higher Sun",
+        "body": "Imagine noon in Paris on the longest day of the year. Paris leans toward the Sun, so the noon Sun stands 65 degrees high. In December, leaning away, the noon Sun climbs only 18 degrees."
+      },
+      {
+        "title": "Spread-out light",
+        "body": "Shine a torch straight down, then at a slant: its spot grows and dims. Here the sunbeam keeps the same width; only its slant changes. Low in December, it covers three times June's patch, a third as bright."
+      },
+      {
+        "title": "Longer days",
+        "body": "Each bar is one whole day: yellow while the Sun is up, dark at night. Leaning in keeps Paris sunlit for more of each spin: 16 hours, not 8. Higher and longer together: June gets about five times December's sunlight."
+      },
+      {
+        "title": "Opposite seasons",
+        "body": "In December the north leans away from the Sun, and the south leans toward it. So in December, Australia has summer while Paris has winter. Nearest in January, Earth gets only about 7 percent more sunlight than in July."
+      }
+    ],
+    "takeaway": "Summer is warm because your half of Earth leans toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Distance changes sunlight by only about 7 percent.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "none",
+    "accent": "gold",
+    "kind": "seasons",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Then why is July hotter than June?",
+        "a": "Land and sea take weeks to warm up, so the warmest months come after the longest day. This delay is called seasonal lag."
+      },
+      {
+        "q": "Does Earth's distance matter at all?",
+        "a": "A little. Earth's orbit is almost a circle: its distance from the Sun changes by only about 3%, so its sunlight changes by about 7%. Being nearest in January works against the north's seasons, not with them."
+      },
+      {
+        "q": "Why five times, and not three times two?",
+        "a": "Three times holds only at noon. June's extra hours come early and late, when the Sun is low, so they add less. And in June Earth is near its farthest from the Sun, which takes off about 7 percent. Together that makes about five times."
+      },
+      {
+        "q": "Does the axis ever move?",
+        "a": "Over a year, hardly at all: it keeps pointing toward the same stars. Over very long times it slowly swings round, a motion called axial precession."
+      },
+      {
+        "q": "What about places near the equator?",
+        "a": "There the noon Sun is high all year and days last about 12 hours in every season, so the seasons are mild."
+      },
+      {
+        "q": "Are these sunlight numbers measured on the ground?",
+        "a": "They count sunlight at the top of the air. Air and clouds dim it on the way down, and more so for a low Sun, which makes winter's share smaller still."
+      }
+    ],
+    "theme": "sage"
+  },
+  "checks": [
+    {
+      "name": "In Paris the June noon Sun is about 65 degrees high and the December one about 18",
+      "pass": true
+    },
+    {
+      "name": "A beam from the low December Sun covers about three times the ground",
+      "pass": true
+    },
+    {
+      "name": "A beam straight from overhead covers the least ground",
+      "pass": true
+    },
+    {
+      "name": "Paris has about 16 hours of daylight in June and 8 in December",
+      "pass": true
+    },
+    {
+      "name": "The equator has 12 hours of daylight all year",
+      "pass": true
+    },
+    {
+      "name": "Paris gets about five times the sunlight a day in June as in December, distance included",
+      "pass": true
+    },
+    {
+      "name": "Being nearest the Sun in January adds only about 7 percent more sunlight",
+      "pass": true
+    },
+    {
+      "name": "Seasons in the south are the mirror of the north",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 79)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 10)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 5)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The owner approved publishing guides made this way. The reviews below are from that session’s final review."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Why is summer warmer than winter?",
+        "subtitle": "Earth is nearest the Sun in early January, in the north's winter. So what really makes summer warm?",
+        "why": "Most people guess summer comes when Earth is nearest the Sun. But Earth is nearest in January, so something else must warm the summer.",
+        "opening": "Why is summer warmer than winter?",
+        "beats": [
+          {
+            "title": "Nearest in January",
+            "body": "Imagine Earth on its yearly trip around the Sun. Many people think summer comes when Earth is nearest the Sun. But Earth is nearest in early January, mid-winter in Europe and North America."
+          },
+          {
+            "title": "A tilted Earth",
+            "body": "Earth spins like a top around a line, its axis, which leans 23 degrees. All year, the lean keeps pointing the same way in space. So in June the northern half leans toward the Sun, and in December away."
+          },
+          {
+            "title": "A higher Sun",
+            "body": "Imagine noon in Paris on the longest day of the year. Paris leans toward the Sun, so the noon Sun stands 65 degrees high. In December, leaning away, the noon Sun climbs only 18 degrees."
+          },
+          {
+            "title": "Spread-out light",
+            "body": "Shine a torch straight down, then at a slant: its spot grows and dims. Here the sunbeam keeps the same width; only its slant changes. Low in December, it covers three times June's patch, a third as bright."
+          },
+          {
+            "title": "Longer days",
+            "body": "Each bar is one whole day: yellow while the Sun is up, dark at night. Leaning in keeps Paris sunlit for more of each spin: 16 hours, not 8. Higher and longer together: June gets about five times December's sunlight."
+          },
+          {
+            "title": "Opposite seasons",
+            "body": "In December the north leans away from the Sun, and the south leans toward it. So in December, Australia has summer while Paris has winter. Nearest in January, Earth gets only about 7 percent more sunlight than in July."
+          }
+        ],
+        "takeaway": "Summer is warm because your half of Earth leans toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Distance changes sunlight by only about 7 percent.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "gold",
+        "kind": "seasons",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Then why is July hotter than June?",
+            "a": "Land and sea take weeks to warm up, so the warmest months come after the longest day. This delay is called seasonal lag."
+          },
+          {
+            "q": "Does Earth's distance matter at all?",
+            "a": "A little. Earth's orbit is almost a circle: its distance from the Sun changes by only about 3%, so its sunlight changes by about 7%. Being nearest in January works against the north's seasons, not with them."
+          },
+          {
+            "q": "Why five times, and not three times two?",
+            "a": "Three times holds only at noon. June's extra hours come early and late, when the Sun is low, so they add less. And in June Earth is near its farthest from the Sun, which takes off about 7 percent. Together that makes about five times."
+          },
+          {
+            "q": "Does the axis ever move?",
+            "a": "Over a year, hardly at all: it keeps pointing toward the same stars. Over very long times it slowly swings round, a motion called axial precession."
+          },
+          {
+            "q": "What about places near the equator?",
+            "a": "There the noon Sun is high all year and days last about 12 hours in every season, so the seasons are mild."
+          },
+          {
+            "q": "Are these sunlight numbers measured on the ground?",
+            "a": "They count sunlight at the top of the air. Air and clouds dim it on the way down, and more so for a low Sun, which makes winter's share smaller still."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "In Paris the June noon Sun is about 65 degrees high and the December one about 18",
+          "pass": true
+        },
+        {
+          "name": "A beam from the low December Sun covers about three times the ground",
+          "pass": true
+        },
+        {
+          "name": "A beam straight from overhead covers the least ground",
+          "pass": true
+        },
+        {
+          "name": "Paris has about 16 hours of daylight in June and 8 in December",
+          "pass": true
+        },
+        {
+          "name": "The equator has 12 hours of daylight all year",
+          "pass": true
+        },
+        {
+          "name": "Paris gets about five times the sunlight a day in June as in December, distance included",
+          "pass": true
+        },
+        {
+          "name": "Being nearest the Sun in January adds only about 7 percent more sunlight",
+          "pass": true
+        },
+        {
+          "name": "Seasons in the south are the mirror of the north",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 79)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 10)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Round 3: the five-times answer now gives the right reasons (threefold spread only at noon, June's extra hours with a low Sun, and June near aphelion: 5.91, 5.50, 5.15, recomputed from the model). Every number and drawn fact checks out against the sources and the model: 23.44 degree tilt keeping its direction; perihelion in early January at 147.1 million km and aphelion in early July at 152.087 million km; Paris 48.86 N; noon Sun 64.6 and 17.7 degrees; 2.97 times the ground; 16.0 and 8.0 hours; 5.15 times the daily sunlight; the 7% distance effect; opposite southern seasons; seasonal lag, precession, the equator and top-of-air dimming in the FAQ. In the frames the beams, patches and bars measure true, the axis keeps one direction, and Paris and Australia sit either side of the equator on the sunlit half.",
+        "changes": [
+          "Optional: 'takes off about 7 percent' is about 6.5 percent.",
+          "Chapter 3 line 2 ambiguity (applied: 'the noon Sun stands 65 degrees high')."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 7,
+        "summary": "Each chapter's main idea reads at a glance on desktop: near and far points with distances; the axis keeping its direction while June leans in and December leans away; the 65 and 18 degree noon Sun over Paris; the same-width beam covering about three times the ground; day bars and roughly 5:1 sunlight bars; Paris and Australia on the sunlit half with the 7% note near Earth. Labels stay few and unclipped. Partly done: desktop chapter 6 labels sit across the axis from their dots; phone labels above and below their dots; phone January label touches the Sun; orbit still about 1.4:1.",
+        "changes": [
+          "Phone chapter 1 January label off the Sun.",
+          "Chapter 6 labels on the dots' side.",
+          "Phone chapter 6 labels closer to their dots, margin from the edge.",
+          "Rounder orbit.",
+          "Centre the hour labels in the bars."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Earth's spin axis leans and points the same way all year, so in June the northern half tips toward the Sun and in December away. When your half tips toward the Sun, the noon Sun is higher, so a beam lands on a smaller patch and heats it more strongly, and the Sun stays up longer (16 hours against 8 in Paris), so June gets about five times December's sunlight. Distance hardly matters: being nearest in January adds only about 7 percent, and the south has summer when the north has winter. The torch and the day bars made it easy.",
+        "changes": [
+          "Chapter 6 dots on the night half (applied).",
+          "Chapter 6 7% label next to Earth (applied).",
+          "Chapter 4 December patch visibly paler; '3 times wider' (applied).",
+          "Chapter 5: show why leaning makes days longer.",
+          "Chapter 3: say the angle is measured from the ground (applied).",
+          "'The north' before it is explained (applied).",
+          "'Torch' for American readers (applied: torch or flashlight)."
+        ],
+        "subtitle_edits": [],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 7,
+        "summary": "Orbit with the Sun, Earth at January 147 million km and a dashed July spot at 152 million km; two Earths with parallel tilted axes, north toward the Sun in June and away in December; Paris with an Eiffel tower silhouette and an 18 degree noon Sun in December; a wide pale beam from a low Sun landing on a long December patch with the small June patch inside, 3 times the ground; 24-hour bars with 16 and 8 hours of daylight and orange sunlight-per-day bars about five to one; Earth at the near side with Paris in winter and Australia in summer, only 7% more. Calm, one change per chapter.",
+        "changes": [
+          "Chapter 6: 7% tag far from Earth; no July marker to compare.",
+          "Chapter 6: dots on the night half.",
+          "Chapter 6 phone: tags between Earth and the Sun.",
+          "Chapter 4: three tags stacked; December strip not visibly dimmer; no June beam.",
+          "Chapter 5: two kinds of sunlight bars.",
+          "Chapter 4: whether it is still Paris in December."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261120T235402-seasons/revision-1-0.png",
+        "published/20261120T235402-seasons/revision-1-1.png",
+        "published/20261120T235402-seasons/revision-1-2.png",
+        "published/20261120T235402-seasons/revision-1-3.png",
+        "published/20261120T235402-seasons/revision-1-4.png",
+        "published/20261120T235402-seasons/revision-1-5.png",
+        "published/20261120T235402-seasons/revision-1-6.png",
+        "published/20261120T235402-seasons/revision-1-7.png",
+        "published/20261120T235402-seasons/revision-1-8.png",
+        "published/20261120T235402-seasons/revision-1-9.png",
+        "published/20261120T235402-seasons/revision-1-10.png",
+        "published/20261120T235402-seasons/revision-1-11.png"
+      ]
+    }
+  ]
+}
