@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-19T21:30:58.725984+00:00",
-    "outcome": "Nov 19: published Simpson's paradox (curriculum 7.2); Monty Hall doors now show a tapping hand (issue #18); Syene scene (issue #17) waits for the reference images."
+    "at": "2026-11-20T01:54:00.654836+00:00",
+    "outcome": "Redrew the Eratosthenes opening as a town on the Nile with a clear well (issue #17)"
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
