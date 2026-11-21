@@ -1,5 +1,6 @@
 """Render the actual webpage at deterministic times for agent image review."""
 import base64
+import json
 import re
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -78,6 +79,30 @@ def label_checks(frames):
     longest = max((label_words(x) for labels in frames for x in labels), default=0)
     return [{'name': f'At most {LABEL_WORDS_AT_ONCE} words of labels on the stage at once (most: {most})', 'pass': most <= LABEL_WORDS_AT_ONCE},
             {'name': f'Every stage label is at most {LABEL_WORDS_EACH} words (longest: {longest})', 'pass': longest <= LABEL_WORDS_EACH}]
+
+
+def layout_check(scene, web):
+    """Labels inside the picture and clear of each other at ten stage sizes from phones to wide screens, through every
+    chapter, after playback and as a card preview, drawn with a recording canvas in Node (lab/layout_check.js). It runs
+    before any review, so layout faults a script can find never reach a reviewer. A check that cannot run fails."""
+    import shutil, subprocess, tempfile
+    title = 'Labels stay inside the picture and clear of each other at every stage size'
+    node = shutil.which('node')
+    if not node:
+        return {'name': title + ' (not checked: Node is missing)', 'pass': False}
+    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as handle:
+        json.dump(scene, handle)
+    try:
+        run = subprocess.run([node, str(Path(__file__).with_name('layout_check.js')), str(web), handle.name],
+                             capture_output=True, text=True, timeout=600)
+    finally:
+        Path(handle.name).unlink(missing_ok=True)
+    if run.returncode or not run.stdout.strip():
+        return {'name': title + f' (not checked: {(run.stderr or "no output").strip()[:160]})', 'pass': False}
+    result = json.loads(run.stdout.strip().splitlines()[-1])
+    if not result['count']:
+        return {'name': f"{title} ({result['sizes']} sizes, {result['frames']} moments)", 'pass': True}
+    return {'name': f"{title}: {result['count']} problems, for example {result['problems'][0]}", 'pass': False}
 
 
 def capture(scene, directory, research=None, provider='fixture', root=None):
@@ -170,6 +195,7 @@ def capture(scene, directory, research=None, provider='fixture', root=None):
             # The end card is text a viewer reads: it must never show code, such as a readout label left uncalled.
             hint = page.evaluate('CouncilScene.endHint?CouncilScene.endHint():""')
             checks.append({'name':'The end card hint is plain text', 'pass': not any(s in hint for s in ('=>', 'function', '${', 'undefined'))})
+            checks.append(layout_check(scene, (root or ROOT) / 'web'))
             checks.append({'name':'Renderer has no JavaScript errors', 'pass':not errors})
             if errors:
                 raise RuntimeError('Renderer errors: '+ '; '.join(errors))
