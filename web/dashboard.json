@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-20T23:56:00.755257+00:00",
-    "outcome": "Published \u201cWhy is summer warmer than winter?\u201d (new curriculum item 6.3; three review rounds, all passed)"
+    "at": "2026-11-21T22:26:43.547044+00:00",
+    "outcome": "Seasons guide rebuilt around the tilt and republished. New guide on why a passing siren drops in pitch kept as a draft: its final accuracy review found a play-mode plot bug, now fixed, for re-review in the next round."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
