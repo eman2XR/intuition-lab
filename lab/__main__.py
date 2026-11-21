@@ -13,7 +13,7 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','feature','checkin'])
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','feature','checkin','poster'])
     parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--topic',choices=list(TOPICS),default='light-bending')
     parser.add_argument('--question',help='Optional question for a single run; defaults to the topic question.')
     args=parser.parse_args()
-    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive','feature','checkin'):
+    if args.push_args and args.command not in ('push','approve-engine','archive','unarchive','feature','checkin','poster'):
         parser.error('unexpected arguments: '+' '.join(args.push_args))
     if not 1<=args.rounds<=4:
         parser.error('--rounds must be 1–4')
@@ -80,6 +80,20 @@ def main():
             print(f'Merged candidate into main at {approve_engine(ROOT,args.push_args[0])}.')
         except ValueError as error:
             parser.exit(2,f'Cannot approve this engine: {error}\n')
+        return
+    if args.command=='poster':
+        # Redraw the still picture a guide's card and stage show before playback, after a hand revision or for every
+        # published guide ('all'), and record it in the index.
+        from .render import poster
+        public=ROOT/'web'/'published';index_path=public/'index.json';index=json.loads(index_path.read_text())
+        ids=[e['id'] for e in index] if args.push_args==['all'] else args.push_args
+        if not ids:parser.error("poster needs guide ids, or 'all'")
+        for gid in ids:
+            entry=next((e for e in index if e['id']==gid),None)
+            if entry is None:parser.error(f'no published guide {gid}')
+            record=json.loads((public/gid/'record.json').read_text())
+            poster(record['scene'],public/gid/'poster.jpg');entry['poster']=f'published/{gid}/poster.jpg';print('poster',gid)
+        index_path.write_text(json.dumps(index,indent=2)+'\n')
         return
     if args.command=='checkin':
         # A daily run done by hand in a session (the session loop) records its one-line outcome on the site's lab panel,

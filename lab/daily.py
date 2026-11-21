@@ -159,6 +159,14 @@ def export_accepted(state, root=ROOT):
         for source,filename in copies:
             shutil.copyfile(source,staging/filename)
         write_json(staging/'record.json',record)
+        # The still picture its card and stage show before playback; only where the site's code is present to draw it.
+        if (root/'web'/'scene.js').exists():
+            try:
+                from .render import poster
+                poster(record['scene'],staging/'poster.jpg',root)
+                entry['poster']=f'published/{run_id}/poster.jpg'
+            except Exception as error:
+                print(f'Poster not drawn for {run_id} ({type(error).__name__}); the card falls back to a live preview.')
         if target.exists() or target.is_symlink():
             target.rename(retired)
         staging.rename(target)

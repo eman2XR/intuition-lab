@@ -1,4 +1,5 @@
 """Render the actual webpage at deterministic times for agent image review."""
+import base64
 import re
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -301,3 +302,29 @@ def gate_probe(scene, root, kind, wait_ms=1000):
                     'pageerrors': list(errors), 'network': list(network), 'ready': ready}
         finally:
             browser.close()
+
+
+POSTER_SIZE = (800, 450)
+
+
+def poster(scene, path, root=None, size=POSTER_SIZE, scale=2):
+    """A guide's still picture for its card and for its stage before playback: the moment the home page previews,
+    drawn once at a fixed size in the guide's theme colours, so it looks the same on every screen."""
+    from playwright.sync_api import sync_playwright
+    root = Path(root or ROOT)
+    with sync_playwright() as p:
+        browser = launch(p)
+        try:
+            page = browser.new_page(viewport={'width': size[0], 'height': size[1]})
+            route_files(page, root / 'web')
+            page.goto(ORIGIN + '/?guide=capture', wait_until='networkidle')
+            page.wait_for_function('()=>!!window.CouncilDraw')
+            data = page.evaluate("""([s,w,h,k])=>{const c=document.createElement('canvas');c.width=w*k;c.height=h*k;
+              const x=c.getContext('2d');x.scale(k,k);const th=CouncilDraw.theme(s), g=x.createLinearGradient(0,0,0,h);
+              g.addColorStop(0,th.top);g.addColorStop(1,th.bottom);x.fillStyle=g;x.fillRect(0,0,w,h);
+              CouncilDraw.draw(x,w,h,s,{t:s.duration*.3,stage:2,mass:s.mass,distance:s.distance,labels:false});
+              return c.toDataURL('image/jpeg',.88);}""", [scene, size[0], size[1], scale])
+        finally:
+            browser.close()
+    Path(path).write_bytes(base64.b64decode(data.split(',', 1)[1]))
+    return Path(path)

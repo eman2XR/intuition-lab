@@ -31,12 +31,19 @@ def main():
                     assert page.locator(f'#gallery a[data-guide="{lead}"]').count()==0, 'Featured investigation repeated in the grid'
                 assert page.locator('#gallery > .thumbs a[data-guide]').count()==max(0,len(shown)-1), 'Grid does not list every other investigation once'
                 assert page.locator('#gallery .archived-shelf a[data-guide]').count()==len(archived), 'Archived investigations are not in the Archived section'
+                # Every listed guide has its baked poster, and every card picture has loaded.
+                missing=[e['id'] for e in entries if not e.get('poster') or not (ROOT/'web'/e['poster']).exists()]
+                assert not missing, f'Guides without a poster: {missing}'
+                page.evaluate('()=>Promise.all([...document.querySelectorAll("img.thumb")].map(i=>{i.loading="eager";return i.decode().catch(()=>{});}))')
+                assert page.evaluate('[...document.querySelectorAll("img.thumb")].every(i=>i.complete&&i.naturalWidth>0)'), 'A card poster did not load'
             for entry in entries or [{'id':'example'}]:
                 page.goto(url+'?guide='+entry['id'],wait_until='networkidle')
                 page.wait_for_function('(id)=>{const r=document.getElementById("record").textContent;return r&&(id==="example"||JSON.parse(r).id===id)}',arg=entry['id'])
                 assert page.locator('#run').count()==0, 'Static site must not expose a live run button'
                 assert page.evaluate('Array.from(document.querySelectorAll(".revision img")).every(i=>i.complete && i.naturalWidth>0)'), 'Revision images must resolve under a subpath'
                 assert page.locator(f'#more-list a[href="?guide={entry["id"]}"]').count()==0, 'An investigation lists itself under More'
+                if entry.get('poster'):
+                    page.wait_for_function('()=>{const i=document.getElementById("stage-poster");return i&&i.complete&&i.naturalWidth>0}')
             page.goto(url,wait_until='networkidle')
             path=Path(tempfile.gettempdir())/'council-dashboard-desktop.png'
             page.screenshot(path=str(path))

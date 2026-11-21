@@ -57,10 +57,15 @@ function applyTheme(scene){
 // A card shows its guide's stage colours behind the preview.
 function themed(media,entry,record){const th=CouncilDraw.theme(record?.scene||{theme:entry.theme,kind:entry.topic||entry.kind});
  media.style.setProperty('--card-top',th.top);media.style.setProperty('--card-bottom',th.bottom);return media;}
+// Before playback the stage shows the same baked poster as the guide's card.
+function stagePoster(data){const img=$('stage-poster');if(!img)return;delete img.dataset.ready;img.classList.add('gone');
+ const entry=entries.find(e=>e.id===data.id), src=data.provider==='draft'||data.provider==='fixture'?'':(entry?.poster||(data.id?`published/${data.id}/poster.jpg`:''));
+ if(!src){img.removeAttribute('src');return;}
+ img.onload=()=>{img.dataset.ready='1';if(!CouncilScene.getState?.().started)img.classList.remove('gone');};img.onerror=()=>{delete img.dataset.ready;img.classList.add('gone');};img.src=src;}
 function show(data){
  current=data;if(VIEW==='article')applyTheme(data.scene);const scene=data.scene, fixture=data.provider==='fixture', draft=data.provider==='draft';
  document.body.dataset.draft=draft?'yes':'';delete document.body.dataset.pending;
- if(scene){heading(scene);CouncilScene.load(scene);}
+ if(scene){heading(scene);CouncilScene.load(scene);stagePoster(data);}
  const title=(scene?.title||'').replace(/\n/g,' ');
  put('hero-topic',topicOf(data));put('readbar-title',title);
  if(title)document.title=`${title} · Intuition Lab`;
@@ -96,7 +101,7 @@ function renderBehind(data){
   const verdict=rev.accepted?(fixture?'Fixture passed':'Passed review'):'Changes requested';
   const notes=[rev.visual_review?.summary,rev.physics_review?.summary,rev.learner_review?.summary].filter(Boolean).join(' ');
   const view=el('button',{type:'button',className:'pill',textContent:'View this draft'});
-  view.onclick=()=>{CouncilScene.load(rev.scene);heading(rev.scene);
+  view.onclick=()=>{CouncilScene.load(rev.scene);heading(rev.scene);{const img=$('stage-poster');if(img){delete img.dataset.ready;img.classList.add('gone');}}
    put('run-banner',`Draft ${i+1} · ${verdict.toLowerCase()}`);scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});};
   box.append(el('div',{},el('h4',{textContent:`Draft ${i+1} · ${verdict}`}),el('p',{textContent:notes||'Waiting for review'}),view));
   return box;
@@ -118,7 +123,10 @@ const visible=new IntersectionObserver(items=>items.forEach(({target,isIntersect
  }).catch(()=>{});
 }),{rootMargin:'300px'});
 function keyOf(entry){return (entry.draft?'draft:':'')+entry.id;}
-function preview(key,record){
+// A published guide's card shows its baked poster, the same picture on every screen; drafts and guides without one
+// draw a live preview instead.
+function preview(key,record,entry){
+ if(entry?.poster)return el('img',{className:'thumb',src:entry.poster,alt:'',ariaHidden:'true',loading:'lazy',decoding:'async'});
  const canvas=el('canvas',{className:'thumb',ariaHidden:'true'});
  if(record?.scene)canvas.scene=record.scene;else if(key)canvas.dataset.key=key;
  thumbs.add(canvas);visible.observe(canvas);return canvas;
@@ -132,7 +140,7 @@ function card(entry,record){
  const isExample=entry.id==='example', id=entry.id;
  const link=el('a',{href:isExample?'?guide=example':(entry.draft?'?draft=':'?guide=')+encodeURIComponent(id),className:'card'});
  if(!isExample)link.dataset.guide=id;
- const media=themed(el('div',{className:'card-media'},preview(!isExample&&keyOf(entry),record),el('span',{className:'mini-play',ariaHidden:'true'})),entry,record);
+ const media=themed(el('div',{className:'card-media'},preview(!isExample&&keyOf(entry),record,!isExample&&entry),el('span',{className:'mini-play',ariaHidden:'true'})),entry,record);
  const badge=el('span',{className:'badge'});
  if(current&&(current.id===id||(isExample&&current.provider==='fixture'))){badge.textContent='Now showing';badge.dataset.kind='now';}
  else if(!isExample&&revisedAt(entry,record)){badge.textContent='Updated';badge.dataset.kind='updated';}
@@ -146,7 +154,7 @@ function card(entry,record){
 function thumbCard(entry,record){
  const link=el('a',{href:(entry.draft?'?draft=':'?guide=')+encodeURIComponent(entry.id),className:'thumb-card'});
  if(!entry.draft)link.dataset.guide=entry.id;
- const media=themed(el('div',{className:'card-media'},preview(keyOf(entry),record)),entry,record);
+ const media=themed(el('div',{className:'card-media'},preview(keyOf(entry),record,entry)),entry,record);
  if(!entry.draft&&revisedAt(entry,record))media.append(el('span',{className:'thumb-updated',textContent:'Updated'}));
  link.append(media,
   el('span',{className:'card-cat',textContent:topicOf(record||entry)}),el('h3',{textContent:(entry.title||entry.question||'').replace(/\n/g,' ')}));

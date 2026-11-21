@@ -2587,13 +2587,39 @@ function seasonSun(ctx,x,y,r){
  const g=ctx.createRadialGradient(x,y,r*.9,x,y,r*1.9);g.addColorStop(0,'rgba(255,200,70,.45)');g.addColorStop(1,'rgba(255,200,70,0)');
  ctx.fillStyle=g;ctx.fillRect(x-r*2,y-r*2,r*4,r*4);ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle='#ffc23d';ctx.fill();
 }
+// The Eiffel Tower in silhouette, from its real proportions: 330 m tall on a 125 m base, platforms at 58, 116 and
+// 276 m, concave legs, the great arch between the legs, the opening below the second platform and a faint lattice.
+function eiffelTower(ctx,x,gy,H){
+ const prof=[[0,.19],[.06,.155],[.12,.128],[.175,.106],[.26,.082],[.35,.062],[.46,.046],[.6,.033],[.74,.024],[.835,.019],[.9,.011],[.96,.006]];
+ const L=prof.map(([f,hw])=>[x-hw*H,gy-f*H]), Rr=prof.map(([f,hw])=>[x+hw*H,gy-f*H]).reverse();
+ const outline=()=>{ctx.moveTo(L[0][0],L[0][1]);
+  for(let i=1;i<L.length-1;i++){const mx=(L[i][0]+L[i+1][0])/2, my=(L[i][1]+L[i+1][1])/2;ctx.quadraticCurveTo(L[i][0],L[i][1],mx,my);}
+  ctx.lineTo(L.at(-1)[0],L.at(-1)[1]);ctx.lineTo(Rr[0][0],Rr[0][1]);
+  for(let i=1;i<Rr.length-1;i++){const mx=(Rr[i][0]+Rr[i+1][0])/2, my=(Rr[i][1]+Rr[i+1][1])/2;ctx.quadraticCurveTo(Rr[i][0],Rr[i][1],mx,my);}
+  ctx.lineTo(Rr.at(-1)[0],Rr.at(-1)[1]);ctx.closePath();};
+ const holes=()=>{
+  // The great arch between the legs, up to just under the first platform.
+  ctx.moveTo(x-.118*H,gy);ctx.bezierCurveTo(x-.112*H,gy-.1*H,x-.06*H,gy-.148*H,x,gy-.148*H);
+  ctx.bezierCurveTo(x+.06*H,gy-.148*H,x+.112*H,gy-.1*H,x+.118*H,gy);ctx.closePath();
+  // Between the first and second platforms the legs lean in and leave a tall pointed opening.
+  ctx.moveTo(x-.068*H,gy-.195*H);ctx.quadraticCurveTo(x-.03*H,gy-.27*H,x,gy-.33*H);ctx.quadraticCurveTo(x+.03*H,gy-.27*H,x+.068*H,gy-.195*H);ctx.closePath();};
+ ctx.save();ctx.beginPath();outline();holes();ctx.fillStyle='#3a3f4b';ctx.fill('evenodd');
+ // A faint criss-cross lattice of ironwork, inside the silhouette.
+ ctx.clip('evenodd');ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=Math.max(.6,H*.006);
+ const step=H*.045;for(let k=-12;k<=12;k++){trace(ctx,[[x+k*step-H*.3,gy],[x+k*step+H*.3,gy-H]]);ctx.stroke();trace(ctx,[[x+k*step+H*.3,gy],[x+k*step-H*.3,gy-H]]);ctx.stroke();}
+ ctx.restore();
+ // The three platforms, a little wider than the tower, and the mast on top.
+ ctx.fillStyle='#2c3039';
+ for(const [f,hw,t] of [[.175,.122,.026],[.35,.074,.018],[.835,.03,.014]])ctx.fillRect(x-hw*H,gy-f*H-t*H*.5,hw*2*H,t*H);
+ trace(ctx,[[x,gy-.96*H],[x,gy-H]]);ctx.strokeStyle='#2c3039';ctx.lineWidth=Math.max(1.2,H*.008);ctx.stroke();
+}
 // After playback, dragging Earth moves it around its orbit, which sets the time of year.
 const SEASONS_TOUCH={hint:'drag Earth around the Sun to change the season.',
  grab(w,h,spec,st,x,y){const g=SEASONS.geo;return g&&g.live&&Math.hypot(x-g.ex,y-g.ey)<g.er+18?{cursor:'grab'}:null;},
  move(w,h,spec,st,x,y){const g=SEASONS.geo;if(!g)return null;const f=(Math.atan2(-(y-g.cy)/g.ry,(x-g.cx)/g.rx)+TAU)%TAU;return {distance:1+1.5*f/TAU};}};
 function drawSeasons(ctx,w,h,spec,st){
  const P=Physics, small=w<520, preview=st.since===undefined, last=(st.chapters?.length||6)-1;
- const stage=preview?3:Math.min(st.live?last:st.stage,last), since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage];
+ const stage=preview?4:Math.min(st.live?last:st.stage,last), since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage];
  const at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+4*i, labels=st.labels, size=small?11:13;
  const T=P.seasonTilt, lat=P.seasonLat, eJ=P.noonSun(lat,T), eD=P.noonSun(lat,-T);
  const ink='rgba(20,23,28,.82)', white='#ffffff';
@@ -2660,9 +2686,8 @@ function drawSeasons(ctx,w,h,spec,st){
   const mix=(a,b)=>{const p=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16)), A=p(a), B=p(b);return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*turn)).join(',')})`;};
   ctx.fillStyle=mix(...sky);ctx.fillRect(0,0,w,gy);ctx.fillStyle=mix(...ground);ctx.fillRect(0,gy,w,h-gy);
   const ox=w*(small?.2:.24), sr=Math.min(w,h)*(small?.06:.055);
-  // A flat Eiffel Tower marks Paris.
-  {const th=h*(small?.2:.22), tw=th*.36;ctx.fillStyle='#3b3f4a';ctx.beginPath();ctx.moveTo(ox-tw/2,gy);ctx.lineTo(ox-tw*.06,gy-th);ctx.lineTo(ox+tw*.06,gy-th);ctx.lineTo(ox+tw/2,gy);
-   ctx.lineTo(ox+tw*.2,gy);ctx.quadraticCurveTo(ox,gy-th*.3,ox-tw*.2,gy);ctx.closePath();ctx.fill();ctx.fillRect(ox-tw*.3,gy-th*.36,tw*.6,th*.03);}
+  // The Eiffel Tower marks Paris.
+  eiffelTower(ctx,ox,gy,h*(small?.24:.27));
   if(stage===2){
    const R=Math.min(w*(small?.62:.5),(gy-sr-20)/Math.sin(eJ*Math.PI/180)), sx=ox+R*Math.cos(rad), sy=gy-R*Math.sin(rad);
    trace(ctx,[[ox,gy],[sx,sy]]);ctx.setLineDash([6,6]);ctx.strokeStyle='rgba(255,236,170,.95)';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
@@ -3788,6 +3813,7 @@ function voice(){
 // A hidden tab freezes the picture, so its sound pauses too.
 document.addEventListener('visibilitychange',()=>{if(!SOUND.ctx)return;if(document.hidden)SOUND.ctx.suspend?.();else SOUND.ctx.resume?.();});
 function paint(){
+ const poster=$('stage-poster');if(poster)poster.classList.toggle('gone',started||!poster.dataset.ready);
  if(!spec)return;
  const box=canvas.getBoundingClientRect(), w=box.width, h=box.height, dpr=window.devicePixelRatio||1;
  if(!w||!h)return;
@@ -3954,7 +3980,7 @@ function input(id,value){
 }
 
 window.CouncilScene={load,seek,play,pause,toggle,chapter,render:t=>{time=t;paint();},labels:()=>lastLabels.slice(),
- getState:()=>({time,mass,distance,stage,mode,ended}),
+ getState:()=>({time,mass,distance,stage,mode,ended,started}),
  sound:()=>({on:SOUND.on,state:SOUND.ctx?.state||null,plucked:GUITAR.plucked.slice(),rope:{rate:ROPE.rate,size:+ROPE.size.toFixed(2)}}),
  timeline:()=>timeline&&JSON.parse(JSON.stringify(timeline)),endHint:()=>spec?endHint():'',on:fn=>listeners.add(fn),
  checks:()=>Physics.checksFor(spec?.kind)};
