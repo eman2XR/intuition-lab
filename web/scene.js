@@ -2576,10 +2576,10 @@ function drawSeasons(ctx,w,h,spec,st){
      ctx.beginPath();ctx.arc(lx,ly,er*.7,0,TAU);ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
      pill(ctx,'January: 147 million km',Math.min(jx+er+10,w-12),jy+(small?er+30:4),{align:small?'right':'left',size,weight:700,color:ink});
      pill(ctx,'July: 152 million km',Math.max(lx-er-10,12),ly-(small?er+18:0),{align:small?'left':'right',size,weight:600,color:ink});}}
-   if(stage===1){if(since>=at(0)+.4&&since<at(2))pill(ctx,'leans 23 degrees',ex,ey-er*1.5-26,{align:'center',size,weight:700,color:ink});
+   if(stage===1){if(since>=at(0)+.4&&since<at(2))pill(ctx,'tilted 23 degrees',ex,ey-er*1.5-26,{align:'center',size,weight:700,color:ink});
     if(since>=at(2)-.1){const [dx,dy]=pos(SEASON_AT.december), [jx,jy]=pos(SEASON_AT.june);
-     pill(ctx,'June: north leans in',jx,jy+er*1.6+24,{align:'center',size,weight:700,color:ink});
-     pill(ctx,'December: north leans away',dx,dy+er*1.6+24,{align:'center',size,weight:700,color:ink});}}
+     pill(ctx,'June: north tilts toward Sun',jx,jy+er*1.6+24,{align:'center',size,weight:700,color:ink});
+     pill(ctx,'December: north tilts away',dx,dy+er*1.6+24,{align:'center',size,weight:700,color:ink});}}
    if(stage===5){const r=er, t=T*Math.PI/180, nx=Math.sin(t), ny=-Math.cos(t);
     const qx=Math.cos(t), qy=Math.sin(t), paris=[ex+nx*r*.62-qx*r*.34,ey+ny*r*.62-qy*r*.34], oz=[ex-nx*r*.45-qx*r*.36,ey-ny*r*.45-qy*r*.36], ready=since>=at(1)-.2;
     if(ready){for(const [px,py] of [paris,oz]){ctx.beginPath();ctx.arc(px,py,3.5,0,TAU);ctx.fillStyle='#ffde59';ctx.fill();}
@@ -3594,7 +3594,7 @@ const ENGINES={
   effect:a=>Physics.noonSun(Physics.seasonLat,clamp(a)*Physics.seasonTilt)-Physics.noonSun(Physics.seasonLat,-clamp(a)*Physics.seasonTilt),
   measure:['Noon Sun in Paris',()=>SEASONS.show?Math.round(SEASONS.angle)+'°':''],scale:'',
   disclosure:'Paris at 48.86° north, at the June and December solstices, with Earth’s tilt of 23.44°. Sunlight is counted as it arrives at the top of the air, before air and clouds dim it, and the daily totals include Earth’s distance from the Sun.',
-  try:'',aria:'Earth travels around the Sun on a nearly round orbit and is nearest in early January. Its axis leans 23 degrees and keeps pointing the same way, so the north leans toward the Sun in June and away in December. At noon in Paris the Sun stands 65 degrees high in June and 18 degrees in December, so the same beam of sunlight covers about three times the ground in December. June days last about 16 hours and December days about 8, so Paris gets about five times the sunlight a day in June.'},
+  try:'',aria:'Earth travels around the Sun on a nearly round orbit and is nearest in early January. Its axis is tilted 23 degrees and keeps pointing the same way, so the north tilts toward the Sun in June and away in December. At noon in Paris the Sun stands 65 degrees high in June and 18 degrees in December, so the same beam of sunlight covers about three times the ground in December. June days last about 16 hours and December days about 8, so Paris gets about five times the sunlight a day in June.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.
