@@ -1,0 +1,55 @@
+name: IntuitionLab
+options:
+  bundleIdPrefix: org.intuitionlab
+  deploymentTarget:
+    visionOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  IntuitionLab:
+    type: application
+    platform: visionOS
+    sources:
+      - path: IntuitionLab
+      # The website's own engine and the guide's text, used as they are (no copies to keep in sync).
+      - path: ../../web/physics.js
+        buildPhase: resources
+        group: Web
+      - path: ../../web/scene.js
+        buildPhase: resources
+        group: Web
+    postCompileScripts:
+      - name: Bundle guides
+        script: |
+          dest="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/guides"
+          mkdir -p "$dest"
+          cp "${SRCROOT}/../../web/published/20261116T192404-two-slit-particles/record.json" "$dest/two-slit-particles.json"
+          cp "${SRCROOT}/../../web/published/20261120T235402-seasons/record.json" "$dest/seasons.json"
+          cp "${SRCROOT}/../../web/published/20261027T160931-173edbbc/record.json" "$dest/standing-waves.json"
+        inputFiles:
+          - $(SRCROOT)/../../web/published/20261116T192404-two-slit-particles/record.json
+          - $(SRCROOT)/../../web/published/20261120T235402-seasons/record.json
+          - $(SRCROOT)/../../web/published/20261027T160931-173edbbc/record.json
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/guides/two-slit-particles.json
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/guides/seasons.json
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/guides/standing-waves.json
+    info:
+      path: IntuitionLab/Info.plist
+      properties:
+        CFBundleDisplayName: Intuition Lab
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UIApplicationPreferredDefaultSceneSessionRole: UIWindowSceneSessionRoleVolumetricApplication
+          UISceneConfigurations: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.intuitionlab.vision
+        # Sign to Run Locally: an ad hoc signature, no team or provisioning profile.
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        AD_HOC_CODE_SIGNING_ALLOWED: YES
+        TARGETED_DEVICE_FAMILY: "7"
