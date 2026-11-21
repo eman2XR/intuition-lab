@@ -66,35 +66,35 @@
   "scene": {
     "title": "Why is summer warmer than winter?",
     "subtitle": "Earth is nearest the Sun in early January, in the north's winter. So what really makes summer warm?",
-    "why": "Most people guess summer comes when Earth is nearest the Sun. But Earth is nearest in January, so something else must warm the summer.",
+    "why": "Many people guess summer comes when Earth is nearest the Sun. But Earth is nearest in January, so something else must make summer warm.",
     "opening": "Why is summer warmer than winter?",
     "beats": [
       {
         "title": "Nearest in January",
-        "body": "Imagine Earth on its yearly trip around the Sun. Many people think summer comes when Earth is nearest the Sun. But Earth is nearest in early January, mid-winter in Europe and North America."
+        "body": "Imagine Earth on its yearly trip around the Sun, on a nearly round path. Many people think summer comes when Earth is nearest the Sun. But Earth is nearest in early January, midwinter in Europe and North America."
       },
       {
-        "title": "A tilted Earth",
-        "body": "Earth spins like a top around a line, its axis, which is tilted 23 degrees. All year, the tilt keeps pointing the same way in space. So in June the northern half tilts toward the Sun, and in December away."
+        "title": "A world with no tilt",
+        "body": "Imagine Earth spinning like a top, round an upright line called its axis. Each day's spin carries Paris round this circle: half in light, half in shadow. All year, Paris would get 12 hours of light a day: almost no seasons."
+      },
+      {
+        "title": "Tilt it",
+        "body": "Now tilt the axis 23 degrees, as Earth's axis really is. In June the north tilts toward the Sun, so more of the circle is lit: 16 hours. Half a year later, across the Sun, the same tilt points the north away: 8 hours."
       },
       {
         "title": "A higher Sun",
-        "body": "Imagine noon in Paris on the longest day of the year. In June, Paris's half tilts toward the Sun: the noon Sun stands 65 degrees high. In December, tilted away, the noon Sun climbs only 18 degrees."
+        "body": "Imagine noon in Paris: a Sun straight overhead would stand 90 degrees high. In June the north tilts toward the Sun, so the noon Sun stands 65 degrees high. In December, with the north tilted away, the noon Sun climbs only 18 degrees."
       },
       {
         "title": "Spread-out light",
-        "body": "Shine a torch straight down, then at a slant: its spot grows and dims. Here the sunbeam keeps the same width; only its slant changes. Low in December, it covers three times June's patch, a third as bright."
-      },
-      {
-        "title": "Longer days",
-        "body": "Each day, the spin carries Paris round this circle: facing the Sun, then away. The tilt sets how much of the circle is lit: 16 hours in June, 8 in December. Higher and longer together: June gets about five times December's sunlight."
+        "body": "Shine a torch straight down, then at a slant: its spot grows and dims. Low in December, the same beam spreads over three times the ground. Spread-out light and shorter days leave Paris only a fifth of June's sunlight."
       },
       {
         "title": "Opposite seasons",
-        "body": "In December the north tilts away from the Sun, and the south tilts toward it. So in December, Australia has summer while Paris has winter. Nearest in January, Earth gets only about 7 percent more sunlight than in July."
+        "body": "In December the north tilts away from the Sun, and the south tilts toward it. So in December, Australia has summer while Paris has winter. Nearest in January, Earth gets 7 percent more sunlight: tiny next to the tilt."
       }
     ],
-    "takeaway": "Summer is warm because your half of Earth is tilted toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Distance changes sunlight by only about 7 percent.",
+    "takeaway": "Summer is warm because your half of Earth is tilted toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Without the tilt, there would be almost no seasons.",
     "mass": 1,
     "distance": 1,
     "controls": "both",
@@ -115,15 +115,19 @@
       },
       {
         "q": "Does Earth's distance matter at all?",
-        "a": "A little. Earth's orbit is almost a circle: its distance from the Sun changes by only about 3%, so its sunlight changes by about 7%. Being nearest in January works against the north's seasons, not with them."
+        "a": "A little. Earth's orbit is almost a circle: its distance from the Sun changes by only about 3 percent, so its sunlight changes by about 7 percent. Being nearest in January works against the north's seasons, not with them."
       },
       {
-        "q": "Why five times, and not three times two?",
-        "a": "Three times holds only at noon. June's extra hours come early and late, when the Sun is low, so they add less. And in June Earth is near its farthest from the Sun, which takes off about 7 percent. Together that makes about five times."
+        "q": "What would a world with no tilt be like?",
+        "a": "Paris would get 12 hours of daylight every day, and the noon Sun would stand about 41 degrees high all year. Only the 7 percent change in sunlight from Earth's distance would remain, warming the whole Earth a little in January, both halves at once."
+      },
+      {
+        "q": "Why a fifth, and not a sixth?",
+        "a": "Three times is the noon figure, and twice the hours counts every June hour as if the Sun were as high as at noon. But June's extra hours come early and late, when the Sun is low, so they add less. And Earth is nearer the Sun in December, which gives December about 7 percent more. So December gets about a fifth of June's sunlight, not a sixth."
       },
       {
         "q": "Does the axis ever move?",
-        "a": "Over a year, hardly at all: it keeps pointing toward the same stars. Over very long times it slowly swings round, a motion called axial precession."
+        "a": "Over a year, hardly at all. A spinning Earth keeps its axis pointing one way, as a spinning wheel or gyroscope does, so the axis stays aimed at the same stars. Over very long times it slowly swings round, a motion called axial precession."
       },
       {
         "q": "What about places near the equator?",
@@ -158,6 +162,10 @@
       "pass": true
     },
     {
+      "name": "With no tilt, every day in Paris lasts 12 hours and the noon Sun keeps one height",
+      "pass": true
+    },
+    {
       "name": "Paris gets about five times the sunlight a day in June as in December, distance included",
       "pass": true
     },
@@ -178,7 +186,7 @@
       "pass": true
     },
     {
-      "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+      "name": "Each subtitle stays up at least 4.0 s (minimum 2.5)",
       "pass": true
     },
     {
@@ -202,7 +210,7 @@
       "pass": true
     },
     {
-      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "name": "At most 12 words of labels on the stage at once (most: 10)",
       "pass": true
     },
     {
@@ -226,7 +234,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The owner approved publishing guides made this way. The reviews below are from that session’s final review. Later that day, at the owner’s request, “leans” became “tilted” throughout, and the guide now explains the difference between facing the Sun (day and night) and being tilted toward it (the seasons), in chapter 5 and a new first question. That revision was checked again by an accuracy review and a first-time-reader test. Then, at the owner’s request, the tilt was drawn more intuitively: Earth became a globe drawn from 3D geometry with its axis as a rod, chapter 5 shows Paris’s daily circle lit for 16 hours in June and 8 in December, and after playback the viewer can drag Earth around the Sun or change the tilt. That revision passed the checks and four reviews again."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The owner approved publishing guides made this way. The reviews below are from that session’s final review. Later that day, at the owner’s request, “leans” became “tilted” throughout, and the guide now explains the difference between facing the Sun (day and night) and being tilted toward it (the seasons), in chapter 5 and a new first question. That revision was checked again by an accuracy review and a first-time-reader test. Then, at the owner’s request, the tilt was drawn more intuitively: Earth became a globe drawn from 3D geometry with its axis as a rod, chapter 5 shows Paris’s daily circle lit for 16 hours in June and 8 in December, and after playback the viewer can drag Earth around the Sun or change the tilt. That revision passed the checks and four reviews again. Later, at the owner’s request, the guide was rebuilt in a coding session around the tilt: chapter 2 shows an upright Earth, where Paris gets 12 hours of daylight all year, and chapter 3 tilts the axis 23 degrees, so Paris’s daylight grows to 16 hours in June and shrinks to 8 in December. After playback the viewer tilts the axis by a knob on its north end and drags Earth around the Sun. The pictures were also laid out afresh for every screen size. The rebuild passed the render checks and, after three review rounds, all four reviews; the final reviewers’ copy edits were then applied to the text."
   },
   "revisions": [
     {
@@ -901,7 +909,264 @@
         "published/20261120T235402-seasons/revision-3-10.png",
         "published/20261120T235402-seasons/revision-3-11.png"
       ]
+    },
+    {
+      "number": 4,
+      "scene": {
+        "title": "Why is summer warmer than winter?",
+        "subtitle": "Earth is nearest the Sun in early January, in the north's winter. So what really makes summer warm?",
+        "why": "Many people guess summer comes when Earth is nearest the Sun. But Earth is nearest in January, so something else must make summer warm.",
+        "opening": "Why is summer warmer than winter?",
+        "beats": [
+          {
+            "title": "Nearest in January",
+            "body": "Imagine Earth on its yearly trip around the Sun, on a nearly round path. Many people think summer comes when Earth is nearest the Sun. But Earth is nearest in early January, midwinter in Europe and North America."
+          },
+          {
+            "title": "A world with no tilt",
+            "body": "Imagine Earth spinning like a top, round an upright line called its axis. Each day's spin carries Paris round this circle: half in light, half in shadow. All year, Paris would get 12 hours of light a day: almost no seasons."
+          },
+          {
+            "title": "Tilt it",
+            "body": "Now tilt the axis 23 degrees, as Earth's axis really is. In June the north tilts toward the Sun, so more of the circle is lit: 16 hours. Half a year later, across the Sun, the same tilt points the north away: 8 hours."
+          },
+          {
+            "title": "A higher Sun",
+            "body": "Imagine noon in Paris: a Sun straight overhead would stand 90 degrees high. In June the north tilts toward the Sun, so the noon Sun stands 65 degrees high. In December, with the north tilted away, the noon Sun climbs only 18 degrees."
+          },
+          {
+            "title": "Spread-out light",
+            "body": "Shine a torch straight down, then at a slant: its spot grows and dims. Low in December, the same beam spreads over three times the ground. Spread-out light and shorter days leave Paris only a fifth of June's sunlight."
+          },
+          {
+            "title": "Opposite seasons",
+            "body": "In December the north tilts away from the Sun, and the south tilts toward it. So in December, Australia has summer while Paris has winter. Nearest in January, Earth gets 7 percent more sunlight: tiny next to the tilt."
+          }
+        ],
+        "takeaway": "Summer is warm because your half of Earth is tilted toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Without the tilt, there would be almost no seasons.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "both",
+        "accent": "gold",
+        "kind": "seasons",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Isn't tilted toward the Sun the same as facing it?",
+            "a": "No. Facing the Sun is day and night: as Earth spins, a place like Paris turns to face the Sun once a day, in summer and winter alike. Tilted toward the Sun lasts for months: the whole northern half stays tipped toward it, so its noon Sun is higher and its days are longer. Near the North Pole, the tilt even keeps it facing the Sun all day in June, and turned away all day in December."
+          },
+          {
+            "q": "Then why is July hotter than June?",
+            "a": "Land and sea take weeks to warm up, so the warmest months come after the longest day. This delay is called seasonal lag."
+          },
+          {
+            "q": "Does Earth's distance matter at all?",
+            "a": "A little. Earth's orbit is almost a circle: its distance from the Sun changes by only about 3 percent, so its sunlight changes by about 7 percent. Being nearest in January works against the north's seasons, not with them."
+          },
+          {
+            "q": "What would a world with no tilt be like?",
+            "a": "Paris would get 12 hours of daylight every day, and the noon Sun would stand about 41 degrees high all year. Only the 7 percent change in sunlight from Earth's distance would remain, warming the whole Earth a little in January, both halves at once."
+          },
+          {
+            "q": "Why a fifth, and not a sixth?",
+            "a": "Three times is the noon figure, and twice the hours counts every June hour as if the Sun were as high as at noon. But June's extra hours come early and late, when the Sun is low, so they add less. And Earth is nearer the Sun in December, which gives December about 7 percent more. So December gets about a fifth of June's sunlight, not a sixth."
+          },
+          {
+            "q": "Does the axis ever move?",
+            "a": "Over a year, hardly at all. A spinning Earth keeps its axis pointing one way, as a spinning wheel or gyroscope does, so the axis stays aimed at the same stars. Over very long times it slowly swings round, a motion called axial precession."
+          },
+          {
+            "q": "What about places near the equator?",
+            "a": "There the noon Sun is high all year and days last about 12 hours in every season, so the seasons are mild."
+          },
+          {
+            "q": "Are these sunlight numbers measured on the ground?",
+            "a": "They count sunlight at the top of the air. Air and clouds dim it on the way down, and more so for a low Sun, which makes winter's share smaller still."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "In Paris the June noon Sun is about 65 degrees high and the December one about 18",
+          "pass": true
+        },
+        {
+          "name": "A beam from the low December Sun covers about three times the ground",
+          "pass": true
+        },
+        {
+          "name": "A beam straight from overhead covers the least ground",
+          "pass": true
+        },
+        {
+          "name": "Paris has about 16 hours of daylight in June and 8 in December",
+          "pass": true
+        },
+        {
+          "name": "The equator has 12 hours of daylight all year",
+          "pass": true
+        },
+        {
+          "name": "With no tilt, every day in Paris lasts 12 hours and the noon Sun keeps one height",
+          "pass": true
+        },
+        {
+          "name": "Paris gets about five times the sunlight a day in June as in December, distance included",
+          "pass": true
+        },
+        {
+          "name": "Being nearest the Sun in January adds only about 7 percent more sunlight",
+          "pass": true
+        },
+        {
+          "name": "Seasons in the south are the mirror of the north",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 4.0 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 80)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 10)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Round 3 accuracy review of the rebuilt seasons guide (se6-scene.json, web/physics.js, web/scene.js, se4-research.json, se6 frames, probes, sizes, plus my own captures and a node harness in /tmp/se6-review-accuracy/). I found nothing wrong in the text or the pictures. Physics.allChecks() runs 241 checks with no failures; the seasons set passes 9 of 9, including the new no-tilt check. Every number matches the model and the research record. The noon Sun stands 64.58 and 17.70 degrees (65 and 18). A beam spreads over 2.97 times the ground (three times). Paris's daylight is 15.97 and 8.03 hours (16 and 8). With no tilt the day is 12 hours and the noon Sun 41.14 degrees. June gets 5.15 times December's sunlight with distance included (5.50 without, 5.9 for the naive 3 x 2), so December gets 0.194, a fifth and not a sixth, and the FAQ's reason for that is right. The distances 147.1 and 152.1 million km differ by 3.4%, which gives 6.9% more sunlight ('7% more than July'); at the solstices the factor is 1.068 ('about 7 percent more' for December). Gold share against the caption: I ran the drawing at 13 stage sizes, every 0.05 s of chapters 2 and 3, and on a live grid of 101 tilts by 151 orbit positions. The lit share times 24 always stays within 0.17 h of dayHours, which is one segment of the 144-segment ring. Both come from the same f and tilt, and the layout only changes the view angle, which the globes share with the orbit. Month names: seasonMonth has no boundary errors against the calendar (assuming Earth moves at an even pace), and the model's day lengths are within 0.12 h of the real Sun-centre day length on every date. The only differences are within about two days of the September equinox, where for example late September shows 11 hours because of rounding. The axis is one 3D vector shared by the orbit Earth, the faint June Earth and the close-up. It leans toward the June Sun and stays parallel in every frame and size. Spin and orbit both turn counterclockwise seen from the north, and the knob drag inverts the projection correctly. Chapter 4 opens with a faint Sun straight overhead on a dashed vertical line marked 90°. The 65° Sun fades in from 7.04 to 7.64 s (the second sentence starts at 7.34 s), and the swing to 18° runs 13.59 to 15.19 s (the third sentence starts at 13.89 s); the drawn angles measure 64.7 and 17.6 degrees. In chapter 5 the beam swings from 6.50 to 8.30 s (the second sentence starts at 6.70 s), and 'covers 3 times the ground' appears at about 7.95 s; the patches measure 58 px and 171 px. In chapter 6 Earth goes June to December and then on to January with the third sentence, and the dots and labels come in on their sentences. The live tag is the rounded tilt actually drawn: settled at 0.47° it says 'no tilt', 0.70° gives 'tilted 1 degree' and 11.95° gives 'tilted 12 degrees' (June 14 hours, November 10, both correct).",
+        "changes": [
+          "The BENCHES seasons entry and seasonsLabels did not get the chapter 4 change. They give '65°' and 'June noon' from the start of the chapter and carry no overhead 90° Sun or fade value, so the visionOS renderer would show the June Sun during the first sentence. The web drawing is right. The faint June Earth also follows a slightly different rule there (more than 0.5 rad from June, against 2.6 Earth radii on screen in drawSeasons).",
+          "When publishing, re-bake web/published/20261120T235402-seasons/poster.jpg with python3 -m lab poster 20261120T235402-seasons. The current poster, used for the card and for the stage before playback, is the old two-globe June/December picture, which the rebuilt guide no longer has, and publish-se-r4.py does not re-bake it.",
+          "Optional: at tilt 0.02 (0.47°) the stage tag says 'no tilt' while the tilt slider readout, hidden by default, shows '0.5°'. Show 'no tilt' only at exactly zero, or show the readout in whole degrees.",
+          "Optional: the 'June noon'/'December noon' and 'June patch'/'December patch' pills switch halfway through each swing. A paused mid-swing frame can show 'December noon' next to 41°. Switch the pill when the swing ends."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "All three round-2 blockers are fixed. Chapter 5's beam now turns with its second sentence: it starts 0.2 s before that sentence, takes 1.8 s, and the December patch and 'covers 3 times the ground' come in during it. Chapter 4 opens on the faint 90-degree Sun, and the June Sun cross-fades in with the second sentence. Chapter 3 opens in June, and the faint June Earth appears only once the moving Earth is clear of it. Tall mid-width stages (704x580, 756x580, 536x540, 614x580, 640x420 and others up to about 935 wide) now stack the orbit above the close-up and read well. The 800x450 poster is clean. On short wide stages (1176x384 down to 1240x260, and phone landscape 780x260) Earth, the axis, the knob and the N stay inside the field and clear of the Sun all year, at every tilt. I swept 190 stage sizes with a canvas recorder in the browser: 497 to 1240 wide by 260 to 580 tall, 4:5 phones from 320 to 560 wide, phone landscape, and card sizes. Each size was checked every 0.1 s of playback and at 5 tilts x 96 orbit positions after playback. At every real stage size, nothing touches the Sun, leaves the field or covers the close-up. Labels stay inside the field and off the Sun and globes, and at most 10 label words show at once. Only 300x188 still clashes, and that size is never a stage. The author's sweep agrees. The se6-sizes live-mar and live-sep captures are partly hidden by the page's sticky read bar, so I checked those moments with direct canvas renders instead; they are clean. What remains is polish. The close-up caption gets small on common short laptop stages. The new drag arrows are often hidden or crowded. On some stacked sizes the close-up's month header runs into its own axis. A few rare window sizes have label collisions, and on short stages the Sun is drawn no bigger than Earth.",
+        "changes": [
+          "Keep the close-up caption 'Paris's daylight: N hours' legible instead of shrinking it to fit the box. After playback the hint tells viewers to watch this caption. It is 10 px at 1176x384, 9 px at 1216x340 (1280x700 window) and 960x338, 8 px at 1240x290 (1366x650 window), 7 px at 1240x260 and phone landscape 780x260, and 5 to 6 px on 500-px-wide short windows. Wrap it onto two lines or widen the box on short stages so it stays at about 10 to 11 px.",
+          "Stop the month and tilt tags from covering the drag arrows, by adding the arrows to the label helper's keep list or moving them further along the orbit. At March and September the two tags sit on the orbit either side of Earth and hide both arrows on nearly every screen. Also keep the arrows off the axis and knob. In the opening December view on the wide stage (d-live-dec), the lower arrow sits on the axis's lower end. Near the solstices at smaller tilts, one arrow tucks against the knob.",
+          "On stacked stages where the close-up globe is mid-sized, the month header inside the box runs into the close-up's axis and the top of the globe. This happens at about 560 to 680 px wide by 384 to 420 tall, for example half-screen laptop windows like 600x420 or 640x420, and on 320-px phones. 'December' touches the axis and the gold arc. Give the header its own row above the globe, or shrink the globe slightly.",
+          "Rare narrow, short windows (stage about 500 to 540 wide by 260 to 340 tall) have three problems. In chapter 1, 'Earth' stacks on 'Sun' for about 0.8 s as Earth passes in front of the Sun. In chapter 2, the close-up's 'Paris' pill keeps running over the 'June' header. The orbit Earth shrinks to 7 to 11 px. Treat the plain 'Earth' label as an obstacle the tags avoid, or hide it when it would hit 'Sun'.",
+          "On short stages the Sun's disc is no bigger than Earth's (radius in px, Sun vs Earth): 13 vs 15 at 1240x260, 17 vs 19 at 1240x290, 14 vs 17 at 780x260, 23 vs 23 at 1216x340. Shrink Earth before the Sun so the Sun always reads as the larger body.",
+          "Nits: after playback the month appears twice, in the close-up header and the orbit tag. In chapter 5 on wide stages the raised 'June patch' pill sits on the December beam's upper edge. For about 0.2 s at the start of chapter 1's third sentence, 'Earth' and the January tag touch on short stages."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "1. In my words: Earth spins round an axis that leans 23 degrees and keeps pointing the same way all year. In June the north end leans toward the Sun, so Paris spends more of each daily turn in light (16 hours), the noon Sun stands high (65 degrees) and each beam lands on a small, bright patch. Half a year later Earth is on the far side of the Sun and the same lean points the north away: 8 hours, an 18-degree noon Sun, light spread over three times the ground, about a fifth of June's sunlight. Australia gets the reverse at the same time. Being nearest the Sun in January adds only 7 percent. With no lean, Paris would get 12 hours of daylight every day and almost no seasons. 2. The comparison clicks at frame 6 (and d-c3-dec). It repeats frame 4's layout (June ghost on the left, December on the right, the inset in the corner), but now both axes lean the same way and the readout says 8 hours instead of 12. Watching the axis tip while the readout climbs from 12 to 16 (d-c3-back, d-c3-tilt, frame 5) sets it up, and the yellow part of Paris's ring growing and shrinking shows why. 3. Yes, I want to try it. The white knob on the N end and the small arrows on the path beside Earth show what to grab, and the hint names the readout to watch. The tag ('tilted 23 degrees', 'tilted 12 degrees', 'no tilt') helps: it confirms what the knob did and links the live view back to chapters 2 and 3. 4. I did not get lost. The one step I took on trust is chapter 4's 'so the noon Sun stands 65 degrees high': nothing shows why leaning toward the Sun raises it. Smaller hitches: on short wide screens the opening path is drawn 3 to 4 times wider than tall, right under 'a nearly round path'. In the live view the September inset globe looks almost all dark (we see its night side) while it reads 12 hours. 5. FAQ, answered first from the pictures and subtitles alone. Tilted vs facing: facing is the daily turn into daylight, the lean lasts months; matched. July hotter than June: heat keeps building after the longest day; matched (seasonal lag). Distance: a little, 7 percent, small next to the tilt's fivefold effect; matched, though the step from 3 to 7 percent is not explained. No tilt: 12 hours of daylight all year, with only the distance effect left; matched, and the 41 degrees was new. A fifth, not a sixth: I guessed the distance effect and the low early and late hours; partly matched, and its second clause is hard to follow. Axis moving: it keeps its direction over the year, as frame 6 shows; matched, and precession was new. Equator: I could only guess (about 12 hours all year, mild seasons); matched. Measured on the ground: I guessed the numbers were calculated before air and clouds; matched. 6. Every subtitle meets the rules (80 characters or fewer, one idea, terms defined, no other guides). I propose three small edits. 'midwinter' is the standard spelling. 'as Earth's really is' can be heard as 'Earth is really is'. In the noon opener, 'where' ties the 90-degree scale to Paris, and '90 degrees high' matches the next line's '65 degrees high'. Notes: the June 65-degree noon moment is not in the supplied captures, so I rendered it (with a few other moments) to /tmp/se6-review/shots, and it reads well. The sticky header in the live captures shows the capture page's example title ('Light takes the natural path...'). I treated it as a capture artifact, because the real page (mobile-overview.png) shows this guide's title.",
+        "changes": [
+          "Chapter 4 (A higher Sun): show why the tilt raises the noon Sun. A faint marker at the no-tilt height, 41 degrees (the FAQ's figure), would let the viewer see the June Sun stand about 23 degrees above it and the December Sun about 23 degrees below it, which is the tilt itself. As it is, 'so the noon Sun stands 65 degrees high' is only asserted.",
+          "Opening orbit on short wide screens: at 1366x650 the path is drawn about 4 times wider than tall (about 3 times at 1280x700), right under 'a nearly round path', and it looks like the stretched orbit the guide argues against. Keeping the oval at least about half as tall as it is wide would match the words.",
+          "Page intro (the why text): 'so something else must warm the summer' reads oddly; 'so something else must make summer warm' says it plainly.",
+          "FAQ 'Why a fifth, and not a sixth?': the clause 'twice the hours counts every June hour as if the Sun were as high as at noon' is hard to follow. Suggested opening: 'Three times the ground at noon and twice the hours would make a sixth. But June's extra hours come early and late, when the Sun is low, so they add less.' The rest can stay.",
+          "FAQ 'What would a world with no tilt be like?': 'Every day in Paris would last 12 hours' sounds as if a day were 12 hours long; 'Paris would get 12 hours of daylight every day' matches chapter 2.",
+          "FAQ 'Does Earth's distance matter at all?': write '3 percent' and '7 percent', as the rest of the text does. Also spell out 'works against the north's seasons, not with them', for example 'so it makes the north's winters, and its summers, a little milder.'",
+          "FAQ 'Does the axis ever move?': give the time scale, 'Over about 26,000 years it slowly swings round', instead of 'Over very long times'.",
+          "Live view: when Earth is dragged to March (the top of the path), its knob sits at the stage's top edge. On phones and short screens (390x844-live-mar, 1366x650-live-mar) the page's sticky header covers it. Drawing the path a little lower, or keeping the header off the stage, would keep the knob reachable all year.",
+          "Live view, minor: in September the inset globe shows its night side and looks almost all dark, though it reads 12 hours, the same as March's all-bright globe. A beginner may briefly take dark to mean less light; the readout settles it."
+        ],
+        "subtitle_edits": [
+          {
+            "from": "But Earth is nearest in early January, mid-winter in Europe and North America.",
+            "to": "But Earth is nearest in early January, midwinter in Europe and North America."
+          },
+          {
+            "from": "Now tilt the axis 23 degrees, as Earth's really is.",
+            "to": "Now tilt the axis 23 degrees, as Earth's axis really is."
+          },
+          {
+            "from": "Imagine noon in Paris, where a Sun straight overhead would stand at 90 degrees.",
+            "to": "Imagine noon in Paris: a Sun straight overhead would stand 90 degrees high."
+          }
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Pictures 1-12. (1) Space view on a dark navy panel. A glowing yellow 'Sun' sits at the centre of a large slanted orbit ellipse, and a small blue 'Earth' is on the near (bottom) side, showing only a thin lit crescent toward the Sun. (2) Earth has moved to the right end, lit on its Sun side and tagged 'January: 147 million km'. A dashed ghost circle at the left end is tagged 'July: 152 million km'. So Earth is nearest in January, and the two distances look, and are, almost the same. (3) Earth is at the left end with an upright white axis (N on top) and the tag 'imagine no tilt'. A bottom-left inset titled 'June' zooms in on the globe: the Sun-facing half is lit, a circle near the top (Paris's path as Earth spins) is yellow along its lit half, and the caption reads 'Paris's daylight: 12 hours'. (4) The June Earth fades to a ghost tagged 'June', and an upright Earth at the right end is tagged 'December'. The inset, now 'December', is lit from the other side and still says 12 hours, with a grey dot (Paris) on the circle. With no tilt, June and December are the same. (5) Back at June, the axis now leans its N end toward the Sun ('tilted 23 degrees'). In the inset the Paris circle is tipped so about two thirds of it is in sunlight: 16 hours. (6) At December the axis still points the same way in space (parallel to the faded June axis), so the N end now leans away from the Sun. The inset shows a short yellow arc: 8 hours. (7) Cut to the ground in Paris: blue sky, green grass and the Eiffel Tower tagged 'Paris'. An empty dashed Sun outline sits straight above the tower, with a dotted vertical line and '90°', as a reference for straight overhead. (8) 'December noon': the sky is greyer and the grass duller. The Sun is low on the right, with a dashed sight line to the tower's foot and an arc marking 18°. (9) Blue June sky with the Sun high. A pale beam as wide as the Sun lands on a small bright orange strip, 'June patch'. (10) Grey December sky. The low Sun's beam, the same width, slants in and lands on a long, duller strip, 'December patch', with the June patch drawn as a dashed outline inside it and the tag 'covers 3 times the ground'. (11) Back in space: the tilted Earth alone at the December spot, with no tags. (12) Earth has moved a little further, to the January spot of picture 2. Two dots are tagged 'Paris: winter' (north) and 'Australia: summer' (south), plus 'nearest: 7% more than July'. Main idea: seasons come from Earth's 23-degree tilt, not from its distance to the Sun. Because the axis keeps pointing the same way while Earth circles, Paris leans toward the Sun in June and away from it in December. In June that means 16-hour days and a high noon Sun with concentrated light. In December it means 8-hour days and a noon Sun only 18° up, so the same light is spread over three times the ground. With no tilt every day would be 12 hours. Earth is actually nearest the Sun in January, yet that is winter in Paris and summer in Australia. All the numbers I could check from the drawings agree with each other: the January and July spots sit about 13° past the solstice spots, the June Sun is about 64° up, and the patch ratio is about 3. Pictures 13-15 (play): the same orbit and inset. Earth's axis now has a white round knob on its N tip, and two small arrowheads on the orbit, one on each side of Earth, point both ways along it. From 13 to 14, Earth moves from December to June: the tag changes and the inset goes from 8 to 16 hours. From 14 to 15, the axis is stood upright: the tag changes from 'tilted 23 degrees' to 'no tilt' and the inset shows 12 hours. So the viewer can drag Earth around its orbit to pick the month, and drag the knob to change the tilt, and watch Paris's daylight update. The knob, which looks like a handle, and the orbit arrows are the cues. Unclear spots: (a) what the 90° frame refers to (it can suggest the June Sun is overhead in Paris); (b) '7% more' does not say more of what; (c) the inset's circle, yellow arc and grey dot have to be worked out; (d) the slanted orbit looks stretched; (e) in the play view the orbit arrows collide with the ends of the axis.",
+        "changes": [
+          "Picture 7: make the 90° frame say what it is. Tag the empty Sun 'straight overhead' (or similar) and put a right-angle mark at the tower's foot, like the 18° arc in picture 8. Avoid the bright June sky here: an empty Sun straight above Paris on a summer-blue sky lets a viewer conclude the June Sun is overhead in Paris, which it never is.",
+          "Picture 9: give the June Sun its angle as well, with a 'June noon' tag like picture 8's and an arc at about 64°. Then the viewer compares June's 64° with December's 18°, not 90° with 18°.",
+          "Picture 12: say what the 7% is, e.g. 'nearest: 7% more sunlight' or '7% more sunlight than July'. As written it can be read as 7% closer, which does not match the 147 and 152 million km in picture 2. Naming the month (January) would also help, since this spot is only a little past the December spot of picture 11.",
+          "Insets (pictures 3 to 6): tag the grey dot 'Paris' the first time it appears, and show it in picture 3 too (it is missing there but present in 4 and 6). Then the viewer knows the top circle is Paris's daily path and the yellow arc is the part of it in daylight.",
+          "Picture 10: the dashed June outline is faint (thin white dashes on orange), and its 'June patch' tag floats in the beam above the ground. Strengthen the outline and keep the tag close to it. 'covers 3 times the ground' would read better as 'spread over 3 times the ground'. A clearer drop in brightness from the June patch to the December patch would show 'same light, spread thinner'.",
+          "Orbit (pictures 1, 2, 11, 12 and the play view): the slanted circle reads as a stretched ellipse. In picture 1, Earth on the near side looks much closer to the Sun than it does at the ends, which can feed the very distance idea the guide refutes, and the orbit in the play view is flatter still. A depth cue (the far side of the orbit fainter, or Earth slightly smaller there) or a rounder ellipse would make it read as a circle seen at a slant.",
+          "Play view: move the small orbit arrows clear of the axis. In 13 the lower arrow sits on the axis's south end. In 14 the upper arrow sits on the axis just below the knob, so the axis itself looks like an arrow, and the orbit line runs through the 'N'. Slightly larger arrows would make it easier to discover that Earth can be dragged along the orbit.",
+          "Play view captures 14 and 15 show an orange bar at the top-left edge, and the top of the stage is cut off. Check that these are page or capture artifacts and not part of the picture. The inset caption is small at this size."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261120T235402-seasons/revision-4-0.png",
+        "published/20261120T235402-seasons/revision-4-1.png",
+        "published/20261120T235402-seasons/revision-4-2.png",
+        "published/20261120T235402-seasons/revision-4-3.png",
+        "published/20261120T235402-seasons/revision-4-4.png",
+        "published/20261120T235402-seasons/revision-4-5.png",
+        "published/20261120T235402-seasons/revision-4-6.png",
+        "published/20261120T235402-seasons/revision-4-7.png",
+        "published/20261120T235402-seasons/revision-4-8.png",
+        "published/20261120T235402-seasons/revision-4-9.png",
+        "published/20261120T235402-seasons/revision-4-10.png",
+        "published/20261120T235402-seasons/revision-4-11.png"
+      ]
     }
   ],
-  "updated": "2026-11-21T07:10:51Z"
+  "updated": "2026-11-21T21:43:57Z"
 }

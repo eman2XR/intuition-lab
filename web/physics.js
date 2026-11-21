@@ -632,6 +632,7 @@
         'A beam straight from overhead covers the least ground': this.beamSpread(90) === 1 && this.beamSpread(30) > 1.99 && this.beamSpread(30) < 2.01,
         'Paris has about 16 hours of daylight in June and 8 in December': near(this.dayHours(lat, T), 15.97, .02) && near(this.dayHours(lat, -T), 8.03, .02),
         'The equator has 12 hours of daylight all year': near(this.dayHours(0, T), 12, 1e-9) && near(this.dayHours(0, -T), 12, 1e-9),
+        'With no tilt, every day in Paris lasts 12 hours and the noon Sun keeps one height': near(this.dayHours(lat, 0), 12, 1e-9) && this.noonSun(lat, 0) === 90 - lat,
         'Paris gets about five times the sunlight a day in June as in December, distance included': sunRatio > 4.9 && sunRatio < 5.3,
         'Being nearest the Sun in January adds only about 7 percent more sunlight': near((d.july / d.january) ** 2, 1.069, .002),
         'Seasons in the south are the mirror of the north': this.noonSun(-lat, -T) === june && this.dayHours(-lat, -T) === this.dayHours(lat, T),
