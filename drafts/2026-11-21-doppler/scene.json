@@ -1,0 +1,69 @@
+{
+ "title": "Why does a passing siren drop in pitch?",
+ "subtitle": "The driver hears one steady note. You hear it high, then low. Which note is the siren really playing?",
+ "why": "Say an ambulance's siren plays one steady note. As it races past, you hear the note drop, while the driver hears no change at all.",
+ "opening": "Why does a passing siren drop in pitch?",
+ "beats": [
+  {
+   "title": "Higher, then lower",
+   "body": "Imagine standing by a road as an ambulance races past, siren on. Its note sounds high while it comes toward you, then drops as it passes. Yet the driver hears one steady note the whole time."
+  },
+  {
+   "title": "Rings of squeezed air",
+   "body": "Imagine slowing time right down, so you can watch the sound itself. A parked siren squeezes the air 700 times a second, sending out rings. Your ear counts the rings that reach it: more each second sounds higher."
+  },
+  {
+   "title": "Each ring starts where the siren is",
+   "body": "Now imagine it driving: each new ring starts a little further along the road. The air carries every ring at 1,235 kilometres an hour, however fast it drives. So ahead of it the rings bunch up, and behind it they spread out."
+  },
+  {
+   "title": "More rings a second",
+   "body": "Imagine standing ahead of an ambulance doing 108 kilometres an hour. The bunched rings reach you 767 times a second, not 700: a higher note. Behind it, only 644 a second: three piano keys below the note ahead."
+  },
+  {
+   "title": "Why the note slides",
+   "body": "Imagine it far away, coming almost straight at you: the note stays high. Passing you, it moves across rather than toward you, so the note slides down. Once it has passed, the note settles low and stays low as it drives away."
+  }
+ ],
+ "takeaway": "Sound always crosses the air at the same speed, but each ring starts from where the siren is. When it comes toward you, the rings bunch up and reach you more often: a higher note. When it goes away, they spread out: a lower one.",
+ "mass": 0.25,
+ "distance": 1,
+ "controls": "first",
+ "accent": "blue",
+ "kind": "doppler",
+ "show_reference": false,
+ "show_labels": true,
+ "line_width": 2,
+ "duration": 60,
+ "questions": [
+  {
+   "q": "Is it higher because it gets louder?",
+   "a": "No. Loudness is how strong each squeeze of the air is; pitch is how many reach you each second. The siren grows louder as it nears and quieter as it leaves, but its note is highest while it is still far off and coming almost straight at you."
+  },
+  {
+   "q": "Doesn't the ambulance's speed add to the sound's?",
+   "a": "No. Sound is a squeeze that each bit of air passes on to the next, so it crosses the air at a speed set by the air, 1,235 km/h, whatever made it. That is why each ring spreads at the same speed from where it started, while the ambulance drives on."
+  },
+  {
+   "q": "Why does the driver hear no change?",
+   "a": "The driver moves with the siren and stays the same distance from it, so every ring takes the same time to arrive. The rings reach the driver just as often as the siren sends them: 700 a second, the siren's own note."
+  },
+  {
+   "q": "What if I'm the one moving?",
+   "a": "Moving toward a parked siren raises its note too, because you meet its rings more often. Moving away lowers it. What counts is how the siren and you each move through the air."
+  },
+  {
+   "q": "What if it went faster than sound?",
+   "a": "It would outrun its own rings. They would pile up into one strong squeeze of air, a sonic boom. You would hear nothing until the boom swept past you as a loud bang, just after the ambulance had passed."
+  },
+  {
+   "q": "Who worked this out?",
+   "a": "It is called the Doppler effect, after Christian Doppler, who proposed it in 1842. In 1845 the Dutch scientist Buys Ballot tested it with musicians playing one note on a train near Utrecht: the note sounded higher as the train came and lower as it went."
+  },
+  {
+   "q": "Is it used for anything?",
+   "a": "Police radar bounces radio waves off a car and reads its speed from how the echo's waves bunch up or spread out. Doctors do the same with ultrasound, sound too high for us to hear, to measure how fast blood flows. Astronomers measure the same effect in starlight to tell how fast stars and galaxies move toward or away from us."
+  }
+ ],
+ "theme": "sky"
+}

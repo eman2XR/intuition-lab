@@ -1,0 +1,64 @@
+{
+ "claim": "A siren's note sounds higher while it approaches and lower while it recedes because each crest of squeezed air leaves from where the siren is at that moment and then spreads at the speed of sound, whatever the siren's speed. For a 700-hertz siren on an ambulance at 30 m/s (108 km/h) in still air where sound travels 343 m/s, crests ahead are 0.447 m apart and arrive 767 times a second, and crests behind are 0.533 m apart and arrive 644 times a second, about three semitones lower. A listener beside the road hears the note slide from high to low as the ambulance passes, because only the part of its motion toward the listener matters.",
+ "explanation": "For a source moving at speed v through still air and a listener at rest, the received frequency is f = f0 c / (c - v cos theta), where theta is the angle between the source's velocity and the line from the source to the listener at the moment the crest was sent. Straight ahead cos theta = 1, so the crest spacing is (c - v)/f0 and the frequency f0 c/(c - v); straight behind the spacing is (c + v)/f0 and the frequency f0 c/(c + v). The spacing times the received frequency is always c. For a listener a distance d from the road, the crest heard when the source is at x left from xe, where x - xe = (v/c) sqrt(xe^2 + d^2); the received note falls smoothly from f0 c/(c - v) to f0 c/(c + v) and equals f0 for the crest sent when the source is beside the listener.",
+ "assumptions": [
+  "Still air at 20 degrees C, where sound travels 343 m/s.",
+  "A siren sounding one steady note of 700 crests a second (sirens use several hundred hertz).",
+  "An ambulance at a steady 30 m/s (108 km/h) along a straight road; the listener beside the road stands 7 m from the siren's line, and the listeners ahead and behind stand on it.",
+  "One ring is drawn for every ten crests; the pictures run slower than real time (ring pictures 24 times slower), keeping the true ratio of the ambulance's speed to the speed of sound."
+ ],
+ "prediction": "Ahead of the ambulance 767 crests a second arrive, behind it 644; a listener beside the road hears the note slide between them as it passes.",
+ "falsifier": "If the crests ahead of a 700-hertz siren at 108 km/h stayed 0.49 m apart instead of bunching to 0.447 m, or a listener ahead counted 700 a second instead of about 767, this explanation would be wrong.",
+ "limitations": [
+  "Real sirens often wail up and down or switch between two notes; the model uses one steady note.",
+  "Wind, changes in temperature and echoes from buildings are left out.",
+  "The pictures model pitch, not loudness; the sound only grows and fades roughly with distance."
+ ],
+ "misconceptions": [
+  "The siren sounds higher because it gets louder as it comes closer.",
+  "The moving ambulance pushes its sound forward, so sound ahead travels faster.",
+  "The pitch rises as the siren approaches and is highest when it is closest."
+ ],
+ "questions": [
+  "Is it higher because it gets louder?",
+  "Doesn't the ambulance's speed add to the sound's?",
+  "Why does the driver hear no change?",
+  "What if I'm the one moving?",
+  "What if it went faster than sound?",
+  "Who worked this out?",
+  "Is it used for anything?"
+ ],
+ "sources": [
+  {
+   "title": "Doppler effect (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Doppler_effect",
+   "supports": "The received frequency f = (v_m ± v_r)/(v_m ∓ v_s) f0; the wave speed is set by the medium, not by the source; each cycle is emitted from a position closer to an approaching observer, shortening the period; a passing siren starts higher than its stationary pitch, slides down as it passes and continues lower, and the radial speed is v_s cos(theta); Doppler proposed the effect in 1842 and Buys Ballot tested it for sound in 1845; a source faster than sound makes a shock wave and sonic boom; uses in radar, echocardiography and blood-flow measurement, and astronomy."
+  },
+  {
+   "title": "Speed of sound (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Speed_of_sound",
+   "supports": "At 20 degrees C the speed of sound in air is about 343 m/s."
+  },
+  {
+   "title": "Siren (alarm) (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Siren_(alarm)",
+   "supports": "Sirens use a relatively low frequency, usually several hundred hertz."
+  },
+  {
+   "title": "Semitone (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Semitone",
+   "supports": "In 12-tone equal temperament a semitone is a frequency ratio of the twelfth root of two; the step from any piano key to the one next to it, black or white, is a semitone."
+  },
+  {
+   "title": "C. H. D. Buys Ballot (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/C._H._D._Buys_Ballot",
+   "supports": "Buys Ballot tested the Doppler effect for sound in 1845 with musicians playing a calibrated note on a train on the Utrecht-Amsterdam line."
+  },
+  {
+   "title": "Christian Doppler (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Christian_Doppler",
+   "supports": "Doppler presented the effect in 1842."
+  }
+ ],
+ "sources_retrieved": true
+}
