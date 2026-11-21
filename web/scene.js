@@ -478,6 +478,16 @@ function guitarPlan(st){
  const press=lines[2]?lines[2].start-c0:9;
  return {plucks:[[.9,1],[press+.9,.5]],press};
 }
+// The guitar chapter's playback at a moment: which plucks have happened, whether a fingertip is pulling the string
+// before the next one, how long the string has rung since the last, and whether it is pressed at the middle.
+function guitarMoment(st){
+ const {plucks,press}=guitarPlan(st), since=st.since;
+ const last=plucks.filter(([tp])=>since>=tp).at(-1), next=plucks.find(([tp])=>since<tp);
+ const len=since>=press?.5:1;let pull=0, age=null;
+ if(next&&next[0]-since<.6)pull=1-(next[0]-since)/.6;
+ else age=last?since-last[0]:null;
+ return {plucks,press,len,pull,age};
+}
 function drawGuitar(ctx,w,h,spec,st){
  const accent=ACCENT[spec.accent]||ACCENT.gold, warm='#c2410c', small=w<520, P=Physics;
  let p=P.stringPluckAt, sign=1;
@@ -493,14 +503,11 @@ function drawGuitar(ctx,w,h,spec,st){
   else{p=GUITAR.p;sign=GUITAR.sign;age=GUITAR.tAbs===null?99:st.t-GUITAR.tAbs;}
  }else{
   GUITAR.p=P.stringPluckAt;GUITAR.sign=1;GUITAR.hold=null;
-  const {plucks,press}=guitarPlan(st), since=st.since;
+  const m=guitarMoment(st), since=st.since, plucks=m.plucks;
   if(GUITAR.key!==String(st.stage)||since<GUITAR.lastSince){GUITAR.key=String(st.stage);GUITAR.lastSince=-1;}
   for(const [tp,L] of plucks)if(st.playing&&GUITAR.lastSince<tp&&since>=tp){soundPluck(220/L);GUITAR.plucked.push(Math.round(220/L));}
   GUITAR.lastSince=since;
-  const last=plucks.filter(([tp])=>since>=tp).at(-1), next=plucks.find(([tp])=>since<tp);
-  len=since>=press?.5:1;
-  if(next&&next[0]-since<.6){pull=1-(next[0]-since)/.6;age=null;}
-  else age=last?since-last[0]:null;
+  len=m.len;pull=m.pull;age=m.age;
   GUITAR.tAbs=age===null?null:st.t-age;GUITAR.lastLen=len;
  }
  GUITAR.active=true;GUITAR.len=len;
@@ -2617,10 +2624,25 @@ function eiffelTower(ctx,x,gy,H){
 const SEASONS_TOUCH={hint:'drag Earth around the Sun to change the season.',
  grab(w,h,spec,st,x,y){const g=SEASONS.geo;return g&&g.live&&Math.hypot(x-g.ex,y-g.ey)<g.er+18?{cursor:'grab'}:null;},
  move(w,h,spec,st,x,y){const g=SEASONS.geo;if(!g)return null;const f=(Math.atan2(-(y-g.cy)/g.ry,(x-g.cx)/g.rx)+TAU)%TAU;return {distance:1+1.5*f/TAU};}};
-function drawSeasons(ctx,w,h,spec,st){
- const P=Physics, small=w<520, preview=st.since===undefined, last=(st.chapters?.length||6)-1;
+// The seasons picture's moment as plain values, shared by drawSeasons and by other renderers through CouncilBench:
+// the stage and its clock, Earth's place on its orbit (f = 0 at the December solstice), the axis tilt, and for the
+// noon chapters how far the noon Sun has gone from its June height to its December one.
+function seasonsPlan(spec,st){
+ const preview=st.since===undefined, last=(st.chapters?.length||6)-1;
  const stage=preview?4:Math.min(st.live?last:st.stage,last), since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage];
- const at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+4*i, labels=st.labels, size=small?11:13;
+ const at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+4*i, T=Physics.seasonTilt;
+ const live=!!st.live&&!preview, tilt=live?T*clamp(st.mass??1):T;
+ let f=null;
+ if(live)f=((clamp(st.distance??1,1,2.5)-1)/1.5)*TAU;
+ else if(stage===0)f=SEASON_AT.june+smooth((since-.6)/Math.max(1,at(2)+.6))*(Math.PI+.22);
+ else if(stage===1)f=SEASON_AT.december+smooth((since-at(1)-.2)/2.6)*Math.PI;
+ else if(stage===5)f=SEASON_AT.june+smooth((since-.4)/2)*Math.PI;
+ const turn=stage===2?smooth((since-at(2)+.3)/1.6):stage===3?smooth((since-at(2)+.2)/1.8):0;
+ return {preview,last,stage,since,at,live,tilt,f,turn};
+}
+function drawSeasons(ctx,w,h,spec,st){
+ const P=Physics, small=w<520, plan=seasonsPlan(spec,st), {preview,stage,since,at}=plan;
+ const labels=st.labels, size=small?11:13;
  const T=P.seasonTilt, lat=P.seasonLat, eJ=P.noonSun(lat,T), eD=P.noonSun(lat,-T);
  const ink='rgba(20,23,28,.82)', white='#ffffff';
  SEASONS.show=false;
@@ -2633,12 +2655,7 @@ function drawSeasons(ctx,w,h,spec,st){
   ctx.fillStyle='#1f2b5c';ctx.beginPath();ctx.roundRect(fx,fy,fw,fh,18);ctx.fill();
   ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,TAU);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.5;ctx.stroke();
   const pos=f=>[cx+rx*Math.cos(f),cy-ry*Math.sin(f)], sr=Math.min(w,h)*(small?.075:.085), sun=[cx+ecc*rx*Math.cos(SEASON_AT.january),cy-ecc*ry*Math.sin(SEASON_AT.january)];
-  const live=!!st.live&&!preview, tilt=live?T*clamp(st.mass??1):T, axis=seasonAxis(tilt);
-  let f, er, rod=stage>0;
-  if(live){f=((clamp(st.distance??1,1,2.5)-1)/1.5)*TAU;er=small?24:38;}
-  else if(stage===0){f=SEASON_AT.june+smooth((since-.6)/Math.max(1,at(2)+.6))*(Math.PI+.22);er=small?13:17;}
-  else if(stage===1){f=SEASON_AT.december+smooth((since-at(1)-.2)/2.6)*Math.PI;er=small?24:38;}
-  else{f=SEASON_AT.june+smooth((since-.4)/2)*Math.PI;er=small?24:38;}
+  const live=plan.live, tilt=plan.tilt, axis=seasonAxis(tilt), f=plan.f, er=stage===0&&!live?(small?13:17):(small?24:38), rod=stage>0;
   const [ex,ey]=pos(f), far=Math.sin(f)>.05, opts={axis,rod,north:rod,rodLength:2.1};
   SEASONS.geo={cx,cy,rx,ry,ex,ey,er,live};
   // In chapter 2 Earth's December place stays drawn once it leaves, so the parallel axis can be compared.
@@ -2681,7 +2698,7 @@ function drawSeasons(ctx,w,h,spec,st){
  }
  if(stage===2||stage===3){
   // Noon in Paris: one field of sky above one field of ground, the Sun on its height above the horizon.
-  const gy=h*(small?.72:.76), turn=stage===2?smooth((since-at(2)+.3)/1.6):smooth((since-at(2)+.2)/1.8);
+  const gy=h*(small?.72:.76), turn=plan.turn;
   const e=eJ+(eD-eJ)*turn, rad=e*Math.PI/180, sky=['#7cc4ff','#aebfd6'], ground=['#4f9d57','#8a9a74'];
   const mix=(a,b)=>{const p=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16)), A=p(a), B=p(b);return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*turn)).join(',')})`;};
   ctx.fillStyle=mix(...sky);ctx.fillRect(0,0,w,gy);ctx.fillStyle=mix(...ground);ctx.fillRect(0,gy,w,h-gy);
@@ -3761,6 +3778,56 @@ function timelineOf(spec){
  for(const c of chapters){c.start*=stretch;c.end*=stretch;for(const l of c.lines){l.start*=stretch;l.end*=stretch;}}
  return {chapters,total:t*stretch};
 }
+// Words the seasons picture shows, each tied to a named place the renderer knows how to find in its own view.
+function seasonsLabels(spec,st,p){
+ if(!st.labels)return [];
+ const out=[], add=(id,text,anchor,tone='ink')=>out.push({id,text,anchor,tone}), P=Physics, s=p.stage, at=p.at, since=p.since, lat=P.seasonLat, T=P.seasonTilt;
+ if(p.live){const months=['December','January','February','March','April','May','June','July','August','September','October','November'];
+  add('month',months[Math.floor(((p.f/TAU*12)%12+12+.5)%12)],'earth');
+  add('day',`Paris's day: ${Math.round(P.dayHours(lat,seasonDec(p.f,p.tilt)))} hours`,'below-earth');return out;}
+ if(s===0){add('sun','Sun','sun');if(since<at(2))add('earth','Earth','earth');
+  if(since>=at(2)-.2){add('january','January: 147 million km','january');add('july','July: 152 million km','july');}}
+ if(s===1){if(since>=at(0)+.4&&since<at(2))add('tilt','tilted 23 degrees','earth');
+  if(since>=at(2)-.1){add('june','June: north tilts toward Sun','june');add('december','December: north tilts away','december');}}
+ if(s===2||s===3){add('paris','Paris','paris');
+  if(s===2){add('angle',`${Math.round(P.noonSun(lat,T*(1-2*p.turn)))}°`,'angle');add('season',p.turn<.5?'June noon':'December noon','season');}
+  else{add('patch',p.turn<.5?'June patch':'December patch','patch');if(p.turn>.9)add('times','covers 3 times the ground','below-patch');}}
+ if(s===4){add('june','June','globe-june');add('december','December','globe-december');
+  if(since>=at(1)-.35){add('june-hours',`${Math.round(P.dayHours(lat,T))} hours lit`,'below-june');add('december-hours',`${Math.round(P.dayHours(lat,-T))} hours lit`,'below-december');}
+  if(since>=at(2)-.2)add('times',`${Math.round(P.dailySun(lat,T,1.0167)/P.dailySun(lat,-T,.9837))} times the sunlight`,'between');}
+ if(s===5){if(since>=at(1)-.2){add('paris','Paris: winter','paris');add('australia','Australia: summer','australia');}
+  if(since>=at(2)-.1)add('nearest','nearest: only 7% more','below-earth');}
+ return out;
+}
+// The guitar string's shape along its ringing part (u from 0 at the nut or finger to 1 at the bridge), in units of
+// the pull: pulled into a bend while a finger holds it, then ringing as Physics.stringY after it is let go.
+function guitarString(len,p,sign,age,pull,N=120){
+ return Array.from({length:N+1},(_,i)=>{const u=i/N;
+  return pull!==0?pull*(u<p?u/p:(1-u)/(1-p)):age!==null&&age!==undefined?sign*Physics.stringY(u,age,len,16,p):0;});
+}
+// Words the rope and guitar pictures show, at places along the rope (x from the hand to the wall, y in rope units).
+function ropeLabels(st,r,y,inStep,n,A){
+ if(!st.labels)return [];
+ const out=[], add=(id,text,at,tone='ink')=>out.push({id,text,at,tone}), N=y.length-1, shakes=r.rate, stage=st.stage??0;
+ add('rate',stage===0?'one shake, 8× slower':`${shakes%1?shakes.toFixed(1):shakes} shake${shakes===1?'':'s'} a second`,[0,-.2]);
+ if(stage===0){add('hand','your hand',[0,-.14]);add('wall','wall',[1,-.14]);
+  let k=4;for(let i=4;i<N;i++)if(Math.abs(y[i])>Math.abs(y[k]))k=i;
+  const leg=Math.floor(Math.max(0,2*(r.t-.15)));
+  if(leg<2&&Math.abs(y[k])>.25*A)add('hump',leg?'← back, upside down':'hump →',[k/N,y[k]+(y[k]>0?.05:-.05)],leg?'warm':'accent');}
+ else if(inStep){add('step',`in step: ${n} loop${n>1?'s':''}`,[.5,-.2],'accent');if(n>1)add('still','still point',[1/n,-.08],'warm');}
+ else if(shakes>0&&Math.abs(shakes-n)>.04&&st.since>3)add('step','out of step',[.5,-.2],'warm');
+ return out;
+}
+function guitarLabels(st,len,pull){
+ if(!st.labels)return [];
+ const out=[{id:'title',text:'a guitar string',anchor:'above',tone:'ink'},
+  {id:'length',text:len<.999?(len>.51?`${Math.round(len*100)}% of it rings`:'pressed at the middle'):'open string',anchor:'below',tone:len<.999?'warm':'accent'}];
+ if(pull>0&&!st.live)out.push({id:'pluck',text:'pluck',anchor:'pluck',tone:'accent'});
+ return out;
+}
+// A rope the viewer shakes in another renderer: the same damped rope as the guide, its end following the hand's
+// height (in rope lengths) between one call and the next.
+const ROPE_LIVE={s:null,t0:0,last:[0,0]};
 // Pictures that other renderers can draw from plain state: the state at a moment, the landed dots for that state,
 // and the timeline. Used by the visionOS app, which runs this file in JavaScriptCore.
 const BENCHES={'two-slit-particles':{
@@ -3768,8 +3835,27 @@ const BENCHES={'two-slit-particles':{
   geometry:{XB:b.XB,XS:b.XS,L:b.L,yc:b.yc,sw:b.sw,zs:b.zs,lam:b.lam},dots:`${b.A.toFixed(3)}|${b.known}|${b.stage>=6}`,
   fresh:b.slow&&!b.fly&&b.n>0,flash:b.flash,fronts:b.fronts,frontAlpha:b.frontAlpha,arcs:b.arcs,photon:b.leg&&b.leg.a>=.02?b.leg:null,
   sensor:b.sensor,up:b.up,click:b.click,dim:b.dimD,rings:b.compare?{fade:b.fade,points:b.rings}:null,labels:particlesLabels(spec,st,b)};},
- dots(spec,st,count){const b=particlesBench(spec,st);return Array.from({length:Math.max(0,Math.min(count,2400))},(_,i)=>b.dot(i));}}};
-window.CouncilBench={kinds:()=>Object.keys(BENCHES),timeline:spec=>timelineOf(spec),
+ dots(spec,st,count){const b=particlesBench(spec,st);return Array.from({length:Math.max(0,Math.min(count,2400))},(_,i)=>b.dot(i));}},
+ 'seasons':{state(spec,st){const p=seasonsPlan(spec,st), P=Physics, s=p.stage, at=p.at, since=p.since, dec=P.seasonTilt*(1-2*p.turn);
+  return {stage:s,live:p.live,view:p.live||s===0||s===1||s===5?'orbit':s===4?'globes':'noon',tilt:p.tilt,f:p.f,lat:P.seasonLat,
+   perihelion:SEASON_AT.january,ecc:.0167,rod:s>0||p.live,ghost:s===1&&!p.live&&since>at(1),marks:s===5&&!p.live,beam:s===3,
+   turn:p.turn,dec,noon:P.noonSun(P.seasonLat,dec),ring:p.live||(s===4&&since>=at(0)),spin:p.live?(st.t||0)*1.4:s===4?since*1.3:0,
+   julyMarker:s===0&&since>=at(2)-.2,labels:seasonsLabels(spec,st,p)};}},
+ 'standing-waves':{
+  state(spec,st){const P=Physics, A=P.ropeModel.A, preview=st.since===undefined;
+   if(!(st.stage>=4||st.live)){const r=preview?ropeStill():ropeAdvance(spec,st), y=Array.from(r.y), n=Math.round(r.rate);
+    const inStep=r.size>3.2&&r.held>2.5&&n>=1&&Math.abs(r.rate-n)<.04;
+    return {mode:'rope',stage:st.stage??0,y,A,rate:r.rate,size:r.size,inStep,loops:inStep?n:0,labels:ropeLabels(st,r,y,inStep,n,A)};}
+   const m=st.live||preview?null:guitarMoment(st), p=P.stringPluckAt, len=m?m.len:1, pull=m?m.pull:0, age=m?m.age:null;
+   return {mode:'guitar',stage:st.stage??4,live:!!st.live,len,pull,age,p,sign:1,plucks:m?m.plucks:[],string:guitarString(len,p,1,age,pull),
+    frets:Array.from({length:12},(_,k)=>1-Math.pow(2,-(k+1)/12)),labels:guitarLabels(st,len,pull)};},
+  string(len,p,sign,age,pull){return guitarString(len,p,sign,age===null||age<0?null:age,pull);},
+  ropeLive(reset,t,hand){const P=Physics;if(reset||!ROPE_LIVE.s){ROPE_LIVE.s=P.ropeStart();ROPE_LIVE.t0=t;ROPE_LIVE.last=[0,hand];}
+   const tau=t-ROPE_LIVE.t0, [ta,ya]=ROPE_LIVE.last;
+   P.ropeStep(ROPE_LIVE.s,tau,tt=>tau>ta?ya+(hand-ya)*clamp((tt-ta)/(tau-ta)):hand);ROPE_LIVE.last=[tau,hand];
+   return Array.from(ROPE_LIVE.s.y);}}};
+window.CouncilBench={kinds:()=>Object.keys(BENCHES),timeline:spec=>timelineOf(spec),land:()=>ERA_LAND,
+ call:(kind,name,...args)=>BENCHES[kind]&&typeof BENCHES[kind][name]==='function'?BENCHES[kind][name](...args):null,
  state:(kind,spec,st)=>BENCHES[kind]?BENCHES[kind].state(spec,st):null,dots:(kind,spec,st,count)=>BENCHES[kind]?BENCHES[kind].dots(spec,st,count):[]};
 
 const $=id=>document.getElementById(id);
