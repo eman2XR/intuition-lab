@@ -1,0 +1,260 @@
+{
+  "id": "20261121T235900-doppler",
+  "provider": "draft",
+  "status": "draft",
+  "review_status": "review failed",
+  "question": "Why does a passing siren drop in pitch?",
+  "topic": "doppler",
+  "created": "2026-11-21T23:59:00+00:00",
+  "research": {
+    "claim": "A siren's note sounds higher while it approaches and lower while it recedes because each crest of squeezed air leaves from where the siren is at that moment and then spreads at the speed of sound, whatever the siren's speed. For a 700-hertz siren on an ambulance at 30 m/s (108 km/h) in still air where sound travels 343 m/s, crests ahead are 0.447 m apart and arrive 767 times a second, and crests behind are 0.533 m apart and arrive 644 times a second, about three semitones lower. A listener beside the road hears the note slide from high to low as the ambulance passes, because only the part of its motion toward the listener matters.",
+    "explanation": "For a source moving at speed v through still air and a listener at rest, the received frequency is f = f0 c / (c - v cos theta), where theta is the angle between the source's velocity and the line from the source to the listener at the moment the crest was sent. Straight ahead cos theta = 1, so the crest spacing is (c - v)/f0 and the frequency f0 c/(c - v); straight behind the spacing is (c + v)/f0 and the frequency f0 c/(c + v). The spacing times the received frequency is always c. For a listener a distance d from the road, the crest heard when the source is at x left from xe, where x - xe = (v/c) sqrt(xe^2 + d^2); the received note falls smoothly from f0 c/(c - v) to f0 c/(c + v) and equals f0 for the crest sent when the source is beside the listener.",
+    "assumptions": [
+      "Still air at 20 degrees C, where sound travels 343 m/s.",
+      "A siren sounding one steady note of 700 crests a second (sirens use several hundred hertz).",
+      "An ambulance at a steady 30 m/s (108 km/h) along a straight road; the listener beside the road stands 7 m from the siren's line, and the listeners ahead and behind stand on it.",
+      "One ring is drawn for every ten crests; the pictures run slower than real time (ring pictures 24 times slower), keeping the true ratio of the ambulance's speed to the speed of sound."
+    ],
+    "prediction": "Ahead of the ambulance 767 crests a second arrive, behind it 644; a listener beside the road hears the note slide between them as it passes.",
+    "falsifier": "If the crests ahead of a 700-hertz siren at 108 km/h stayed 0.49 m apart instead of bunching to 0.447 m, or a listener ahead counted 700 a second instead of about 767, this explanation would be wrong.",
+    "limitations": [
+      "Real sirens often wail up and down or switch between two notes; the model uses one steady note.",
+      "Wind, changes in temperature and echoes from buildings are left out.",
+      "The pictures model pitch, not loudness; the sound only grows and fades roughly with distance."
+    ],
+    "misconceptions": [
+      "The siren sounds higher because it gets louder as it comes closer.",
+      "The moving ambulance pushes its sound forward, so sound ahead travels faster.",
+      "The pitch rises as the siren approaches and is highest when it is closest."
+    ],
+    "questions": [
+      "Is it higher because it gets louder?",
+      "Doesn't the ambulance's speed add to the sound's?",
+      "Why does the driver hear no change?",
+      "What if I'm the one moving?",
+      "What if it went faster than sound?",
+      "Who worked this out?",
+      "Is it used for anything?"
+    ],
+    "sources": [
+      {
+        "title": "Doppler effect (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Doppler_effect",
+        "supports": "The received frequency f = (v_m ± v_r)/(v_m ∓ v_s) f0; the wave speed is set by the medium, not by the source; each cycle is emitted from a position closer to an approaching observer, shortening the period; a passing siren starts higher than its stationary pitch, slides down as it passes and continues lower, and the radial speed is v_s cos(theta); Doppler proposed the effect in 1842 and Buys Ballot tested it for sound in 1845; a source faster than sound makes a shock wave and sonic boom; uses in radar, echocardiography and blood-flow measurement, and astronomy."
+      },
+      {
+        "title": "Speed of sound (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Speed_of_sound",
+        "supports": "At 20 degrees C the speed of sound in air is about 343 m/s."
+      },
+      {
+        "title": "Siren (alarm) (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Siren_(alarm)",
+        "supports": "Sirens use a relatively low frequency, usually several hundred hertz."
+      },
+      {
+        "title": "Semitone (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Semitone",
+        "supports": "In 12-tone equal temperament a semitone is a frequency ratio of the twelfth root of two; the step from any piano key to the one next to it, black or white, is a semitone."
+      },
+      {
+        "title": "C. H. D. Buys Ballot (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/C._H._D._Buys_Ballot",
+        "supports": "Buys Ballot tested the Doppler effect for sound in 1845 with musicians playing a calibrated note on a train on the Utrecht-Amsterdam line."
+      },
+      {
+        "title": "Christian Doppler (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Christian_Doppler",
+        "supports": "Doppler presented the effect in 1842."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "Why does a passing siren drop in pitch?",
+    "subtitle": "The driver hears one steady note. You hear it high, then low. Which note is the siren really playing?",
+    "why": "Say an ambulance's siren plays one steady note. As it races past, you hear the note drop, while the driver hears no change at all.",
+    "opening": "Why does a passing siren drop in pitch?",
+    "beats": [
+      {
+        "title": "Higher, then lower",
+        "body": "Imagine standing by a road as an ambulance races past, siren on. Its note sounds high while it comes toward you, then drops as it passes. Yet the driver hears one steady note the whole time."
+      },
+      {
+        "title": "Rings of squeezed air",
+        "body": "Imagine slowing time right down, so you can watch the sound itself. A parked siren squeezes the air 700 times a second, sending out rings. Your ear counts the rings that reach it: more each second sounds higher."
+      },
+      {
+        "title": "Each ring starts where the siren is",
+        "body": "Now imagine it driving: each new ring starts a little further along the road. The air carries every ring at 1,235 kilometres an hour, however fast it drives. So ahead of it the rings bunch up, and behind it they spread out."
+      },
+      {
+        "title": "More rings a second",
+        "body": "Imagine standing ahead of an ambulance doing 108 kilometres an hour. The bunched rings reach you 767 times a second, not 700: a higher note. Behind it, only 644 a second: three piano keys below the note ahead."
+      },
+      {
+        "title": "Why the note slides",
+        "body": "Imagine it far away, coming almost straight at you: the note stays high. Passing you, it moves across rather than toward you, so the note slides down. Once it has passed, the note settles low and stays low as it drives away."
+      }
+    ],
+    "takeaway": "Sound always crosses the air at the same speed, but each ring starts from where the siren is. When it comes toward you, the rings bunch up and reach you more often: a higher note. When it goes away, they spread out: a lower one.",
+    "mass": 0.25,
+    "distance": 1,
+    "controls": "first",
+    "accent": "blue",
+    "kind": "doppler",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Is it higher because it gets louder?",
+        "a": "No. Loudness is how strong each squeeze of the air is; pitch is how many reach you each second. The siren grows louder as it nears and quieter as it leaves, but its note is highest while it is still far off and coming almost straight at you."
+      },
+      {
+        "q": "Doesn't the ambulance's speed add to the sound's?",
+        "a": "No. Sound is a squeeze that each bit of air passes on to the next, so it crosses the air at a speed set by the air, 1,235 km/h, whatever made it. That is why each ring spreads at the same speed from where it started, while the ambulance drives on."
+      },
+      {
+        "q": "Why does the driver hear no change?",
+        "a": "The driver moves with the siren and stays the same distance from it, so every ring takes the same time to arrive. The rings reach the driver just as often as the siren sends them: 700 a second, the siren's own note."
+      },
+      {
+        "q": "What if I'm the one moving?",
+        "a": "Moving toward a parked siren raises its note too, because you meet its rings more often. Moving away lowers it. What counts is how the siren and you each move through the air."
+      },
+      {
+        "q": "What if it went faster than sound?",
+        "a": "It would outrun its own rings. They would pile up into one strong squeeze of air, a sonic boom. You would hear nothing until the boom swept past you as a loud bang, just after the ambulance had passed."
+      },
+      {
+        "q": "Who worked this out?",
+        "a": "It is called the Doppler effect, after Christian Doppler, who proposed it in 1842. In 1845 the Dutch scientist Buys Ballot tested it with musicians playing one note on a train near Utrecht: the note sounded higher as the train came and lower as it went."
+      },
+      {
+        "q": "Is it used for anything?",
+        "a": "Police radar bounces radio waves off a car and reads its speed from how the echo's waves bunch up or spread out. Doctors do the same with ultrasound, sound too high for us to hear, to measure how fast blood flows. Astronomers measure the same effect in starlight to tell how fast stars and galaxies move toward or away from us."
+      }
+    ],
+    "theme": "sky"
+  },
+  "checks": [
+    {
+      "name": "Ahead of a 700-hertz siren at 108 km/h, 767 crests arrive each second",
+      "pass": true
+    },
+    {
+      "name": "Behind it, 644 crests arrive each second",
+      "pass": true
+    },
+    {
+      "name": "The notes ahead and behind are about three semitones apart",
+      "pass": true
+    },
+    {
+      "name": "A parked siren sounds the same in every direction",
+      "pass": true
+    },
+    {
+      "name": "Crests sent from where the siren is bunch up ahead and spread out behind",
+      "pass": true
+    },
+    {
+      "name": "Crest spacing times crests a second is always the speed of sound",
+      "pass": true
+    },
+    {
+      "name": "Passing a listener 7 m from the siren’s line, the note slides steadily from the high note to the low one",
+      "pass": true
+    },
+    {
+      "name": "The siren’s own note arrives just after it passes",
+      "pass": true
+    },
+    {
+      "name": "A faster siren spreads the two notes further apart",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 79)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 5)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4490 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "reviews": {
+    "physics_review": {
+      "pass": false,
+      "score": 7,
+      "summary": "Round 3: every claim and number in the text holds against the model and the sources; one blocking issue, the after-playback note plot pinned notes flat on its edges during drags (fixed since: the range now covers every plotted note)."
+    },
+    "learner_review": {
+      "pass": true,
+      "score": 9,
+      "summary": "Round 3: the idea clicks at the bunched-up and spread-out picture and the 767 and 644 counts; copy edits to the takeaway and two FAQ answers applied."
+    },
+    "blind_review": {
+      "pass": true,
+      "score": 8,
+      "summary": "Round 3: the pictures alone tell the story: the note slides as the ambulance passes, rings bunch ahead and spread behind, and the viewer can drag the ambulance."
+    }
+  },
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "built_by": "coding session",
+    "intro_note": "Made in a coding session on 2026-11-21 and kept as a draft. After three review rounds the final accuracy review failed on a play-mode plot bug, since fixed, and the final visual review was stopped to save cost. It awaits a fresh round of reviews."
+  },
+  "note": "Made in a coding session on 2026-11-21 and kept as a draft. After three review rounds the final accuracy review failed on a play-mode plot bug, since fixed, and the final visual review was stopped to save cost. It awaits a fresh round of reviews."
+}

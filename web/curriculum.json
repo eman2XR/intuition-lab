@@ -78,6 +78,11 @@
           "question": "Why do waves spread out after passing a narrow gap?",
           "model": "diffraction",
           "ready": true
+        },
+        {
+          "id": "3.5",
+          "question": "Why does a passing siren drop in pitch?",
+          "model": "doppler"
         }
       ]
     },
