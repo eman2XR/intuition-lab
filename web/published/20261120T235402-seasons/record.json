@@ -87,7 +87,7 @@
       },
       {
         "title": "Longer days",
-        "body": "Each bar is one day: yellow while Paris faces the Sun, dark while turned away. Tilted toward the Sun, Paris faces it for more of each spin: 16 hours, not 8. Higher and longer together: June gets about five times December's sunlight."
+        "body": "Each day, the spin carries Paris round this circle: facing the Sun, then away. The tilt sets how much of the circle is lit: 16 hours in June, 8 in December. Higher and longer together: June gets about five times December's sunlight."
       },
       {
         "title": "Opposite seasons",
@@ -97,7 +97,7 @@
     "takeaway": "Summer is warm because your half of Earth is tilted toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Distance changes sunlight by only about 7 percent.",
     "mass": 1,
     "distance": 1,
-    "controls": "none",
+    "controls": "both",
     "accent": "gold",
     "kind": "seasons",
     "show_reference": false,
@@ -202,7 +202,7 @@
       "pass": true
     },
     {
-      "name": "At most 12 words of labels on the stage at once (most: 11)",
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
       "pass": true
     },
     {
@@ -226,7 +226,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The owner approved publishing guides made this way. The reviews below are from that session’s final review. Later that day, at the owner’s request, “leans” became “tilted” throughout, and the guide now explains the difference between facing the Sun (day and night) and being tilted toward it (the seasons), in chapter 5 and a new first question. That revision was checked again by an accuracy review and a first-time-reader test."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. The owner approved publishing guides made this way. The reviews below are from that session’s final review. Later that day, at the owner’s request, “leans” became “tilted” throughout, and the guide now explains the difference between facing the Sun (day and night) and being tilted toward it (the seasons), in chapter 5 and a new first question. That revision was checked again by an accuracy review and a first-time-reader test. Then, at the owner’s request, the tilt was drawn more intuitively: Earth became a globe drawn from 3D geometry with its axis as a rod, chapter 5 shows Paris’s daily circle lit for 16 hours in June and 8 in December, and after playback the viewer can drag Earth around the Sun or change the tilt. That revision passed the checks and four reviews again."
   },
   "revisions": [
     {
@@ -677,7 +677,231 @@
         "published/20261120T235402-seasons/revision-2-10.png",
         "published/20261120T235402-seasons/revision-2-11.png"
       ]
+    },
+    {
+      "number": 3,
+      "scene": {
+        "title": "Why is summer warmer than winter?",
+        "subtitle": "Earth is nearest the Sun in early January, in the north's winter. So what really makes summer warm?",
+        "why": "Most people guess summer comes when Earth is nearest the Sun. But Earth is nearest in January, so something else must warm the summer.",
+        "opening": "Why is summer warmer than winter?",
+        "beats": [
+          {
+            "title": "Nearest in January",
+            "body": "Imagine Earth on its yearly trip around the Sun. Many people think summer comes when Earth is nearest the Sun. But Earth is nearest in early January, mid-winter in Europe and North America."
+          },
+          {
+            "title": "A tilted Earth",
+            "body": "Earth spins like a top around a line, its axis, which is tilted 23 degrees. All year, the tilt keeps pointing the same way in space. So in June the northern half tilts toward the Sun, and in December away."
+          },
+          {
+            "title": "A higher Sun",
+            "body": "Imagine noon in Paris on the longest day of the year. In June, Paris's half tilts toward the Sun: the noon Sun stands 65 degrees high. In December, tilted away, the noon Sun climbs only 18 degrees."
+          },
+          {
+            "title": "Spread-out light",
+            "body": "Shine a torch straight down, then at a slant: its spot grows and dims. Here the sunbeam keeps the same width; only its slant changes. Low in December, it covers three times June's patch, a third as bright."
+          },
+          {
+            "title": "Longer days",
+            "body": "Each day, the spin carries Paris round this circle: facing the Sun, then away. The tilt sets how much of the circle is lit: 16 hours in June, 8 in December. Higher and longer together: June gets about five times December's sunlight."
+          },
+          {
+            "title": "Opposite seasons",
+            "body": "In December the north tilts away from the Sun, and the south tilts toward it. So in December, Australia has summer while Paris has winter. Nearest in January, Earth gets only about 7 percent more sunlight than in July."
+          }
+        ],
+        "takeaway": "Summer is warm because your half of Earth is tilted toward the Sun: the Sun climbs higher, its light spreads less, and it stays up longer. Distance changes sunlight by only about 7 percent.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "both",
+        "accent": "gold",
+        "kind": "seasons",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Isn't tilted toward the Sun the same as facing it?",
+            "a": "No. Facing the Sun is day and night: as Earth spins, a place like Paris turns to face the Sun once a day, in summer and winter alike. Tilted toward the Sun lasts for months: the whole northern half stays tipped toward it, so its noon Sun is higher and its days are longer. Near the North Pole, the tilt even keeps it facing the Sun all day in June, and turned away all day in December."
+          },
+          {
+            "q": "Then why is July hotter than June?",
+            "a": "Land and sea take weeks to warm up, so the warmest months come after the longest day. This delay is called seasonal lag."
+          },
+          {
+            "q": "Does Earth's distance matter at all?",
+            "a": "A little. Earth's orbit is almost a circle: its distance from the Sun changes by only about 3%, so its sunlight changes by about 7%. Being nearest in January works against the north's seasons, not with them."
+          },
+          {
+            "q": "Why five times, and not three times two?",
+            "a": "Three times holds only at noon. June's extra hours come early and late, when the Sun is low, so they add less. And in June Earth is near its farthest from the Sun, which takes off about 7 percent. Together that makes about five times."
+          },
+          {
+            "q": "Does the axis ever move?",
+            "a": "Over a year, hardly at all: it keeps pointing toward the same stars. Over very long times it slowly swings round, a motion called axial precession."
+          },
+          {
+            "q": "What about places near the equator?",
+            "a": "There the noon Sun is high all year and days last about 12 hours in every season, so the seasons are mild."
+          },
+          {
+            "q": "Are these sunlight numbers measured on the ground?",
+            "a": "They count sunlight at the top of the air. Air and clouds dim it on the way down, and more so for a low Sun, which makes winter's share smaller still."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "In Paris the June noon Sun is about 65 degrees high and the December one about 18",
+          "pass": true
+        },
+        {
+          "name": "A beam from the low December Sun covers about three times the ground",
+          "pass": true
+        },
+        {
+          "name": "A beam straight from overhead covers the least ground",
+          "pass": true
+        },
+        {
+          "name": "Paris has about 16 hours of daylight in June and 8 in December",
+          "pass": true
+        },
+        {
+          "name": "The equator has 12 hours of daylight all year",
+          "pass": true
+        },
+        {
+          "name": "Paris gets about five times the sunlight a day in June as in December, distance included",
+          "pass": true
+        },
+        {
+          "name": "Being nearest the Sun in January adds only about 7 percent more sunlight",
+          "pass": true
+        },
+        {
+          "name": "Seasons in the south are the mirror of the north",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 80)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "The globe geometry is right in code and frames: lit halves face the Sun, the axis is one fixed vector tilted toward the Sun in June and away in December, Paris's ring is the true circle of latitude and its lit share equals the day length (16.00 and 8.00 h against 15.97 and 8.03; 12 at the equinox); with the Sun between the June and December globes both use the same axis; the after-playback close-up uses the true Sun direction and its caption agrees with the drawn share; the declination formula and month mapping are right; the new chapter 5 lines are correct.",
+        "changes": [
+          "Optional: 'the tilt' sets the lit share together with Paris's latitude.",
+          "Optional: real days are about 16 h 05 min and 8 h 15 min with refraction."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Round 2: phone chapter 2 labels fit inside the panel; chapter 5 puts the Sun between June and December so both rods lean the same way as on the orbit, with the lit halves facing the Sun and Paris's circle clearly 16 against 8 hours; the after-playback close-up matches the dragged Earth and gives the hours. The tilt reads well across the guide, labels are short and unclipped, and one thing moves at a time.",
+        "changes": [
+          "Optional: heavier arc and dot on the phone in chapter 5.",
+          "Drop the duplicate readout after playback (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Earth spins on a tilted rod that keeps pointing the same way all year; the spin makes day and night, carrying Paris into the lit half and out every day, in every season. The tilt lasts for months: in June the north end leans toward the Sun, so Paris's daily circle is mostly lit (16 hours) and the noon Sun stands high, and in December the reverse (8 hours, low Sun). Higher and longer give June about five times December's sunlight; distance changes it by only 7 percent. The two globes in chapter 5 made facing versus tilted click.",
+        "changes": [
+          "Chapter 5 rods lean opposite ways (applied: Sun between the globes).",
+          "Gold arc thicker (applied).",
+          "Name the distinction in narration (applied).",
+          "Bridge chapter 3 from globe to ground.",
+          "Join chapter 4 labels."
+        ],
+        "subtitle_edits": [],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Every main change is readable: Earth's place on the orbit with the January and July distances, the fixed tilt with rods leaning the same way, the low December noon Sun over an Eiffel Tower, the spread-out patch, June's mostly gold and December's mostly white daily circle with a dot for Paris, Paris winter and Australia summer at the nearest point, and a draggable Earth with a close-up of Paris's day.",
+        "changes": [
+          "Flattened oval may suggest large distance changes.",
+          "Chapter 6 tags without leader lines.",
+          "Chapter 5 Paris dot untagged; ratio label placement.",
+          "Chapter 4 June outline faint.",
+          "18 degrees shown twice.",
+          "Live inset mirrored relative to the orbit."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261120T235402-seasons/revision-3-0.png",
+        "published/20261120T235402-seasons/revision-3-1.png",
+        "published/20261120T235402-seasons/revision-3-2.png",
+        "published/20261120T235402-seasons/revision-3-3.png",
+        "published/20261120T235402-seasons/revision-3-4.png",
+        "published/20261120T235402-seasons/revision-3-5.png",
+        "published/20261120T235402-seasons/revision-3-6.png",
+        "published/20261120T235402-seasons/revision-3-7.png",
+        "published/20261120T235402-seasons/revision-3-8.png",
+        "published/20261120T235402-seasons/revision-3-9.png",
+        "published/20261120T235402-seasons/revision-3-10.png",
+        "published/20261120T235402-seasons/revision-3-11.png"
+      ]
     }
   ],
-  "updated": "2026-11-21T01:11:03Z"
+  "updated": "2026-11-21T07:10:51Z"
 }

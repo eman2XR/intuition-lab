@@ -2527,25 +2527,70 @@ function montyHand(ctx,x,y,s,t){
 // width spread over about three times the ground by the low Sun; June's long day and December's short one, and the
 // daily sunlight they add up to; the south leaning toward the Sun in December, so its seasons are opposite, and the
 // small effect of distance. Numbers are Physics.noonSun, beamSpread, dayHours and dailySun for Paris at the solstices.
-const SEASONS={show:false,angle:0};
+const SEASONS={show:false,angle:0,text:'',geo:null};
 // Earth's place on its orbit as an angle: 0 at the December solstice, a quarter turn per season.
 const SEASON_AT={december:0,january:.22,march:Math.PI/2,june:Math.PI,july:Math.PI+.22};
-function seasonEarth(ctx,x,y,r,sun,{tilt=0,axis=false,north=false}={}){
- const a=Math.atan2(sun[1]-y,sun[0]-x);
- ctx.save();ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle='#1d4f9e';ctx.fill();ctx.clip();
- ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r+1,a-Math.PI/2,a+Math.PI/2);ctx.closePath();ctx.fillStyle='#5aaaff';ctx.fill();
- if(axis){const t=tilt*Math.PI/180, ex=Math.cos(t), ey=Math.sin(t);
-  trace(ctx,[[x-ex*r,y-ey*r],[x+ex*r,y+ey*r]]);ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1.5;ctx.stroke();}
+// A globe drawn from real 3D geometry: world x to the right, y up (perpendicular to the orbit), z toward the viewer;
+// the camera looks from the front and `view` radians above the orbit's plane. `sun` is the unit direction from Earth
+// to the Sun and `axis` the unit direction of the north pole. The lit half faces the Sun; Paris's daily ring is the
+// circle at latitude `ring` around the axis, gold where it is in sunlight. Returns the lit share of that ring and the
+// screen points of any `marks` ({lat, turn}, turn in radians around the axis).
+const v3={dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+ add:(...vs)=>vs.reduce((s,v)=>[s[0]+v[0],s[1]+v[1],s[2]+v[2]],[0,0,0]),mul:(v,k)=>[v[0]*k,v[1]*k,v[2]*k],unit:v=>{const l=Math.hypot(...v)||1;return [v[0]/l,v[1]/l,v[2]/l];}};
+function seasonGlobe(ctx,x,y,R,{sun,axis=[0,1,0],view=.3,ring=null,dot=null,marks=[],north=false,rod=true,rodLength=1.5,behind=false,rodEdge=false}){
+ const V=[0,Math.sin(view),Math.cos(view)], up=[0,Math.cos(view),-Math.sin(view)];
+ const P=p=>[x+R*p[0],y-R*v3.dot(p,up)], front=p=>v3.dot(p,V)>=0, lit=p=>v3.dot(p,sun)>0;
+ // Two directions perpendicular to the north pole, for circles of latitude.
+ const u=v3.unit(Math.abs(axis[2])<.9?v3.cross(axis,[0,0,1]):v3.cross(axis,[1,0,0])), w=v3.cross(axis,u);
+ const onRing=(lat,t)=>{const r=lat*Math.PI/180;return v3.add(v3.mul(axis,Math.sin(r)),v3.mul(u,Math.cos(r)*Math.cos(t)),v3.mul(w,Math.cos(r)*Math.sin(t)));};
+ const stub=s=>{const a=P(v3.mul(axis,s)), b=P(v3.mul(axis,s*rodLength));if(rodEdge){trace(ctx,[a,b]);ctx.strokeStyle='#1d2a55';ctx.lineWidth=Math.max(2.5,R*.08)+3;ctx.lineCap='round';ctx.stroke();}trace(ctx,[a,b]);ctx.strokeStyle='#ffffff';ctx.lineWidth=Math.max(2.5,R*.08);ctx.lineCap='round';ctx.stroke();return b;};
+ const backPole=v3.dot(axis,V)<0?1:-1;
+ if(rod)stub(backPole);
+ ctx.save();ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.fillStyle='#1d4f9e';ctx.fill();ctx.clip();
+ // The sunlit half: the visible half of the day-night circle, closed along the sunlit edge of the disc.
+ const k0=v3.cross(sun,V), kl=Math.hypot(...k0);
+ if(kl<1e-3){if(v3.dot(sun,V)>0){ctx.fillStyle='#5aaaff';ctx.fillRect(x-R,y-R,2*R,2*R);}}
+ else{const k=v3.mul(k0,1/kl);let m=v3.cross(sun,k);if(v3.dot(m,V)<0)m=v3.mul(m,-1);let n=v3.cross(V,k);if(v3.dot(n,sun)<0)n=v3.mul(n,-1);
+  const pts=[];for(let i=0;i<=40;i++){const a=Math.PI*i/40;pts.push(P(v3.add(v3.mul(k,Math.cos(a)),v3.mul(m,Math.sin(a)))));}
+  for(let i=0;i<=40;i++){const a=Math.PI*i/40;pts.push(P(v3.add(v3.mul(k,-Math.cos(a)),v3.mul(n,Math.sin(a)))));}
+  trace(ctx,pts);ctx.closePath();ctx.fillStyle='#5aaaff';ctx.fill();}
+ // A soft highlight toward the Sun, so the ball reads as round.
+ {const hx=x+R*.45*sun[0], hy=y-R*.45*v3.dot(sun,up), g=ctx.createRadialGradient(hx,hy,R*.05,hx,hy,R*1.1);
+  g.addColorStop(0,'rgba(255,255,255,.28)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(x-R,y-R,2*R,2*R);}
+ // The equator, faint, on the near side.
+ {let seg=[];const flush=()=>{if(seg.length>1){trace(ctx,seg);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.2;ctx.stroke();}seg=[];};
+  for(let i=0;i<=72;i++){const p=onRing(0,TAU*i/72);if(front(p))seg.push(P(p));else flush();}flush();}
+ let share=null;
+ if(ring!==null){let on=0;const N=144;
+  for(let i=0;i<N;i++){const t0=TAU*i/N, t1=TAU*(i+1)/N, p0=onRing(ring,t0), p1=onRing(ring,t1), mid=onRing(ring,(t0+t1)/2);
+   if(lit(mid))on++;if(!front(mid)){if(behind){trace(ctx,[P(p0),P(p1)]);ctx.setLineDash([4,4]);ctx.strokeStyle=lit(mid)?'rgba(255,210,63,.75)':'rgba(255,255,255,.3)';ctx.lineWidth=2;ctx.lineCap='butt';ctx.stroke();ctx.setLineDash([]);}continue;}
+   trace(ctx,[P(p0),P(p1)]);ctx.strokeStyle=lit(mid)?'#ffd23f':'rgba(255,255,255,.4)';ctx.lineWidth=lit(mid)?Math.max(4,R*.06):2;ctx.lineCap='butt';ctx.stroke();}
+  share=on/N;}
  ctx.restore();
- if(axis){const t=tilt*Math.PI/180, dx=Math.sin(t), dy=-Math.cos(t), L=r*1.5;
-  trace(ctx,[[x-dx*L,y-dy*L],[x+dx*L,y+dy*L]]);ctx.strokeStyle='#ffffff';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
-  ctx.beginPath();ctx.arc(x+dx*L,y+dy*L,4,0,TAU);ctx.fillStyle='#ffffff';ctx.fill();
-  if(north)text(ctx,'N',x+dx*(L+13),y+dy*(L+13)+4,{align:'center',size:12,weight:700,color:'#ffffff'});}
+ ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1;ctx.stroke();
+ if(rod)stub(-backPole);
+ const northTip=P(v3.mul(axis,rodLength));
+ if(north&&rod)text(ctx,'N',northTip[0]+(northTip[0]>x?9:-9),northTip[1]-4,{align:'center',size:12,weight:700,color:'#ffffff'});
+ if(dot!==null&&ring!==null){const p=onRing(ring,dot);if(front(p)){const [px,py]=P(p);ctx.beginPath();ctx.arc(px,py,Math.max(4,R*.07),0,TAU);ctx.fillStyle=lit(p)?'#fff3b0':'#9aa7c4';ctx.fill();ctx.strokeStyle='#1d2a55';ctx.lineWidth=1.5;ctx.stroke();}}
+ // A mark at turn 'face' sits where its circle best faces both the viewer and the Sun.
+ const points=marks.map(({lat,turn})=>{let t=turn;if(t==='face'){let best=-9;for(let i=0;i<72;i++){const q=onRing(lat,TAU*i/72), sc=v3.dot(q,sun)+v3.dot(q,V);if(sc>best){best=sc;t=TAU*i/72;}}}
+  const p=onRing(lat,t);return {at:P(p),front:front(p),lit:lit(p)};});
+ return {share,points,tip:northTip};
 }
+// The north pole's direction for a tilt in degrees, leaning toward +x, the way it points all year.
+const seasonAxis=deg=>{const t=deg*Math.PI/180;return [Math.sin(t),Math.cos(t),0];};
+// Where Earth is on its orbit (f = 0 at the December solstice) as the direction from Earth to the Sun, and the
+// Sun's declination there.
+const seasonSunDir=f=>v3.unit([-Math.cos(f),0,Math.sin(f)]);
+const seasonDec=(f,tilt)=>Math.asin(Math.sin(tilt*Math.PI/180)*-Math.cos(f))*180/Math.PI;
 function seasonSun(ctx,x,y,r){
  const g=ctx.createRadialGradient(x,y,r*.9,x,y,r*1.9);g.addColorStop(0,'rgba(255,200,70,.45)');g.addColorStop(1,'rgba(255,200,70,0)');
  ctx.fillStyle=g;ctx.fillRect(x-r*2,y-r*2,r*4,r*4);ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle='#ffc23d';ctx.fill();
 }
+// After playback, dragging Earth moves it around its orbit, which sets the time of year.
+const SEASONS_TOUCH={hint:'drag Earth around the Sun to change the season.',
+ grab(w,h,spec,st,x,y){const g=SEASONS.geo;return g&&g.live&&Math.hypot(x-g.ex,y-g.ey)<g.er+18?{cursor:'grab'}:null;},
+ move(w,h,spec,st,x,y){const g=SEASONS.geo;if(!g)return null;const f=(Math.atan2(-(y-g.cy)/g.ry,(x-g.cx)/g.rx)+TAU)%TAU;return {distance:1+1.5*f/TAU};}};
 function drawSeasons(ctx,w,h,spec,st){
  const P=Physics, small=w<520, preview=st.since===undefined, last=(st.chapters?.length||6)-1;
  const stage=preview?3:Math.min(st.live?last:st.stage,last), since=preview?99:Math.max(0,st.since), ch=st.chapters?.[stage];
@@ -2553,40 +2598,58 @@ function drawSeasons(ctx,w,h,spec,st){
  const T=P.seasonTilt, lat=P.seasonLat, eJ=P.noonSun(lat,T), eD=P.noonSun(lat,-T);
  const ink='rgba(20,23,28,.82)', white='#ffffff';
  SEASONS.show=false;
+ // Earth as a ball lit by the Sun, its axis a rod that keeps its direction in space all year.
+ const globeAt=(f,ex,ey,er,view,o={})=>seasonGlobe(ctx,ex,ey,er,{sun:seasonSunDir(f),view,...o});
  if(stage===0||stage===1||stage===5){
-  // Space as one deep field, the Sun in the middle and Earth's nearly round orbit seen from a little above.
-  const fx=w*.03, fy=h*.04, fw=w*.94, fh=h*.92, cx=w*.5, cy=h*.5, rx=w*(small?.36:.25), ry=h*(small?.26:.38), ecc=.0167;
+  // Space as one deep field, the Sun near the middle and Earth's nearly round orbit seen from above at an angle.
+  const roomy=small&&!!st.live&&!preview, fx=w*.03, fy=h*.04, fw=w*.94, fh=h*.92, cx=w*.5, cy=h*(roomy?.33:.5), rx=w*(roomy?.32:small?.36:.25), ry=h*(roomy?.18:small?.26:.38), ecc=.0167;
+  const view=Math.asin(Math.min(.95,ry/rx));
   ctx.fillStyle='#1f2b5c';ctx.beginPath();ctx.roundRect(fx,fy,fw,fh,18);ctx.fill();
   ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,TAU);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.5;ctx.stroke();
   const pos=f=>[cx+rx*Math.cos(f),cy-ry*Math.sin(f)], sr=Math.min(w,h)*(small?.075:.085), sun=[cx+ecc*rx*Math.cos(SEASON_AT.january),cy-ecc*ry*Math.sin(SEASON_AT.january)];
-  let f, er, axis=stage>0, tilt=T;
-  if(stage===0){f=SEASON_AT.june+smooth((since-.6)/Math.max(1,at(2)+.6))*(Math.PI+.22);er=small?13:17;}
-  else if(stage===1){f=SEASON_AT.december+smooth((since-at(1)-.2)/2.6)*Math.PI;er=small?20:27;}
-  else{f=SEASON_AT.june+smooth((since-.4)/2)*Math.PI;er=small?22:30;}
-  const [ex,ey]=pos(f), far=Math.sin(f)>.05;
-  // In chapter 2 Earth's December place stays faintly drawn once it leaves, so the parallel lean can be compared.
-  if(stage===1&&since>at(1)){const [gx,gy]=pos(SEASON_AT.december);ctx.globalAlpha=.7;seasonEarth(ctx,gx,gy,er,sun,{tilt,axis:true,north:true});ctx.globalAlpha=1;}
-  if(far)seasonEarth(ctx,ex,ey,er,sun,{tilt,axis,north:axis});
+  const live=!!st.live&&!preview, tilt=live?T*clamp(st.mass??1):T, axis=seasonAxis(tilt);
+  let f, er, rod=stage>0;
+  if(live){f=((clamp(st.distance??1,1,2.5)-1)/1.5)*TAU;er=small?24:38;}
+  else if(stage===0){f=SEASON_AT.june+smooth((since-.6)/Math.max(1,at(2)+.6))*(Math.PI+.22);er=small?13:17;}
+  else if(stage===1){f=SEASON_AT.december+smooth((since-at(1)-.2)/2.6)*Math.PI;er=small?24:38;}
+  else{f=SEASON_AT.june+smooth((since-.4)/2)*Math.PI;er=small?24:38;}
+  const [ex,ey]=pos(f), far=Math.sin(f)>.05, opts={axis,rod,north:rod,rodLength:2.1};
+  SEASONS.geo={cx,cy,rx,ry,ex,ey,er,live};
+  // In chapter 2 Earth's December place stays drawn once it leaves, so the parallel axis can be compared.
+  if(stage===1&&!live&&since>at(1)){const [gx,gy]=pos(SEASON_AT.december);ctx.globalAlpha=.75;globeAt(SEASON_AT.december,gx,gy,er,view,opts);ctx.globalAlpha=1;}
+  let earth=null;
+  const marks=stage===5&&!live?[{lat:lat,turn:'face'},{lat:-30,turn:'face'}]:[];
+  if(far)earth=globeAt(f,ex,ey,er,view,{...opts,marks});
   seasonSun(ctx,sun[0],sun[1],sr);
-  if(!far)seasonEarth(ctx,ex,ey,er,sun,{tilt,axis,north:axis});
+  if(!far)earth=globeAt(f,ex,ey,er,view,{...opts,marks});
+  if(live){
+   // After playback: a close-up of the globe at this time of year, with Paris riding its daily circle.
+   const R=small?Math.min(52,h*.1):Math.min(70,h*.13), ix=small?w*.5:fx+R*1.6+14, iy=small?h*.76:fy+fh-R*1.5-12, dec=seasonDec(f,tilt);
+   ctx.fillStyle='rgba(255,255,255,.08)';ctx.beginPath();ctx.roundRect(ix-R*1.55,iy-R*1.5,R*3.1,R*3.05,14);ctx.fill();
+   const day=seasonGlobe(ctx,ix,iy,R,{sun:seasonSunDir(f),axis,view:.62,ring:lat,dot:(st.t||0)*1.4,behind:true,rodLength:1.3});
+
+   if(labels){const months=['December','January','February','March','April','May','June','July','August','September','October','November'];
+    pill(ctx,months[Math.floor(((f/TAU*12)%12+12+.5)%12)],ex,ey+er*1.6+24,{align:'center',size,weight:700,color:ink});
+    text(ctx,`Paris's day: ${Math.round(P.dayHours(lat,dec))} hours`,ix,iy+R*1.5-(small?6:8),{align:'center',size,weight:700,color:white});void day;}
+   return;
+  }
   if(labels){
    const onField=(s,x,y,o={})=>text(ctx,s,x,y,{size,weight:700,color:white,spacing:'1px',...o});
    if(stage===0){onField('Sun',cx,cy+sr+20,{align:'center'});if(since<at(2))onField('Earth',ex,ey-er-10,{align:'center'});
     if(since>=at(2)-.2){const [jx,jy]=pos(SEASON_AT.january), [lx,ly]=pos(SEASON_AT.july);
      ctx.beginPath();ctx.arc(lx,ly,er*.7,0,TAU);ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
-     pill(ctx,'January: 147 million km',Math.min(jx+er+10,w-12),jy+(small?er+30:4),{align:small?'right':'left',size,weight:700,color:ink});
+     pill(ctx,'January: 147 million km',small?w-16:jx+er+10,small?jy-er-18:jy+4,{align:small?'right':'left',size,weight:700,color:ink});
      pill(ctx,'July: 152 million km',Math.max(lx-er-10,12),ly-(small?er+18:0),{align:small?'left':'right',size,weight:600,color:ink});}}
-   if(stage===1){if(since>=at(0)+.4&&since<at(2))pill(ctx,'tilted 23 degrees',ex,ey-er*1.5-26,{align:'center',size,weight:700,color:ink});
+   if(stage===1){if(since>=at(0)+.4&&since<at(2))pill(ctx,'tilted 23 degrees',ex,ey-er*1.6-30,{align:'center',size,weight:700,color:ink});
     if(since>=at(2)-.1){const [dx,dy]=pos(SEASON_AT.december), [jx,jy]=pos(SEASON_AT.june);
-     pill(ctx,'June: north tilts toward Sun',jx,jy+er*1.6+24,{align:'center',size,weight:700,color:ink});
-     pill(ctx,'December: north tilts away',dx,dy+er*1.6+24,{align:'center',size,weight:700,color:ink});}}
-   if(stage===5){const r=er, t=T*Math.PI/180, nx=Math.sin(t), ny=-Math.cos(t);
-    const qx=Math.cos(t), qy=Math.sin(t), paris=[ex+nx*r*.62-qx*r*.34,ey+ny*r*.62-qy*r*.34], oz=[ex-nx*r*.45-qx*r*.36,ey-ny*r*.45-qy*r*.36], ready=since>=at(1)-.2;
-    if(ready){for(const [px,py] of [paris,oz]){ctx.beginPath();ctx.arc(px,py,3.5,0,TAU);ctx.fillStyle='#ffde59';ctx.fill();}
-     pill(ctx,'Paris: winter',small?w-16:ex+r+14,small?ey-r*1.6-22:paris[1]+2,{align:small?'right':'left',size,weight:700,color:ink});
-     pill(ctx,'Australia: summer',small?w-16:ex+r+14,small?ey+r*1.6+28:oz[1]+6,{align:small?'right':'left',size,weight:700,color:ink});}
-    if(since>=at(2)-.1){const [jx,jy]=pos(SEASON_AT.january);
-     pill(ctx,'nearest: only 7% more',small?w-16:ex+r+14,small?ey+r*1.6+56:ey+r*1.6+40,{align:small?'right':'left',size,weight:700,color:ink});}}
+     pill(ctx,'June: north tilts toward Sun',small?fx+10:jx,small?jy+er*2.2+30:jy+er*1.6+24,{align:small?'left':'center',size,weight:700,color:ink});
+     pill(ctx,'December: north tilts away',small?fx+fw-10:dx,small?dy-er*2.2-22:dy+er*1.6+24,{align:small?'right':'center',size,weight:700,color:ink});}}
+   if(stage===5&&earth){const ready=since>=at(1)-.2, [paris,oz]=earth.points;
+    if(ready){for(const m of [paris,oz]){ctx.beginPath();ctx.arc(m.at[0],m.at[1],4,0,TAU);ctx.fillStyle='#ffde59';ctx.fill();ctx.strokeStyle='#1d2a55';ctx.lineWidth=1.2;ctx.stroke();}
+     const lx=small?w-16:ex+er*1.7+12, al=small?'right':'left';
+     pill(ctx,'Paris: winter',lx,small?ey-er*1.7-18:paris.at[1]-4,{align:al,size,weight:700,color:ink});
+     pill(ctx,'Australia: summer',lx,small?ey+er*1.7+26:oz.at[1]+10,{align:al,size,weight:700,color:ink});}
+    if(since>=at(2)-.1)pill(ctx,'nearest: only 7% more',small?w-16:ex+er*1.7+12,small?ey+er*1.7+54:ey+er*1.7+46,{align:small?'right':'left',size,weight:700,color:ink});}
   }
   return;
  }
@@ -2604,7 +2667,7 @@ function drawSeasons(ctx,w,h,spec,st){
    const R=Math.min(w*(small?.62:.5),(gy-sr-20)/Math.sin(eJ*Math.PI/180)), sx=ox+R*Math.cos(rad), sy=gy-R*Math.sin(rad);
    trace(ctx,[[ox,gy],[sx,sy]]);ctx.setLineDash([6,6]);ctx.strokeStyle='rgba(255,236,170,.95)';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
    const ar=small?58:84;ctx.beginPath();ctx.moveTo(ox+ar,gy);ctx.arc(ox,gy,ar,0,-rad,true);ctx.strokeStyle='#ffffff';ctx.lineWidth=2.5;ctx.stroke();
-   seasonSun(ctx,sx,sy,sr);SEASONS.show=true;SEASONS.angle=e;
+   seasonSun(ctx,sx,sy,sr);SEASONS.show=true;SEASONS.angle=e;SEASONS.text=`noon Sun ${Math.round(e)}°`;
    if(labels){text(ctx,`${Math.round(e)}°`,ox+ar*1.2*Math.cos(rad/2)+6,Math.min(gy-14,gy-ar*1.2*Math.sin(rad/2)+5),{size:size+2,weight:700,color:'#ffffff'});
     pill(ctx,'Paris',ox,gy+(small?22:26),{align:'center',size,weight:700,color:ink});
     pill(ctx,turn<.5?'June noon':'December noon',22,32,{align:'left',size,weight:700,color:ink});}
@@ -2626,19 +2689,24 @@ function drawSeasons(ctx,w,h,spec,st){
   }
   return;
  }
- // June's long day and December's short one, as 24-hour bars with daylight in yellow, then the sunlight each day adds up to.
- const x0=w*(small?.08:.2), bw=w*(small?.84:.6), bh=small?26:34, rows=[[h*(small?.2:.22),T,'June'],[h*(small?.5:.5),-T,'December']];
- const grow=smooth((since-at(0)-.5)/1.6), sumIn=smooth((since-at(2)+.2)/1.4), top=P.dailySun(lat,T,1.0167), times=top/P.dailySun(lat,-T,.9837);
- for(const [y,dec,name] of rows){
-  const hrs=P.dayHours(lat,dec)*grow, dw=bw*hrs/24;
-  ctx.fillStyle='#24325f';ctx.beginPath();ctx.roundRect(x0,y,bw,bh,8);ctx.fill();
-  if(dw>1){ctx.fillStyle='#ffcf3f';ctx.beginPath();ctx.roundRect(x0+bw/2-dw/2,y,dw,bh,8);ctx.fill();}
-  if(sumIn>0){const ew=bw*.9*(P.dailySun(lat,dec,dec>0?1.0167:.9837)/top)*sumIn;ctx.fillStyle='#ff7a1a';ctx.beginPath();ctx.roundRect(x0,y+bh+12,Math.max(4,ew),bh*.6,6);ctx.fill();}
-  if(labels){text(ctx,name,small?x0:x0-14,small?y-10:y+bh*.66,{align:small?'left':'right',size:size+1,weight:700,color:ink});
-   if(grow>.5)text(ctx,`${Math.round(P.dayHours(lat,dec))} hours`,x0+bw/2,y+bh*.68,{align:'center',size,weight:700,color:'#3b2a00'});}
+ // Paris's day in June and in December: the Sun between two globes, June on its left and December on its right, so
+ // the axis leans the same way in both, as on the orbit. Each globe shows Paris's daily circle, gold where it is in
+ // sunlight, and a dot riding it as Earth spins. Then the sunlight each day adds up to.
+ {const gy=h*.46, R=small?Math.min(w*.15,h*.12):Math.min(h*.21,w*.12), spin=since*1.3, view=.62, axis=seasonAxis(T);
+  const sx=w*.5, sr=Math.min(w,h)*(small?.06:.08);
+  const spots=[[w*(small?.2:.24),gy,[1,0,0],'June'],[w*(small?.8:.76),gy,[-1,0,0],'December']];
+  ctx.strokeStyle='rgba(255,210,80,.4)';ctx.lineWidth=2;
+  for(const [x] of spots)for(let k=-2;k<=2;k++){const yy=gy+k*R*.45;trace(ctx,[[sx+(x<sx?-sr:sr),yy],[x,yy]]);ctx.stroke();}
+  seasonSun(ctx,sx,gy,sr);
+  const show=smooth((since-at(1)+.4)/1);
+  for(const [x,y,sun,name] of spots){
+   const g=seasonGlobe(ctx,x,y,R,{sun,axis,view,ring:since>=at(0)?lat:null,dot:since>=at(0)?spin:null,behind:true,rodLength:1.45,rodEdge:true});
+   if(labels){text(ctx,name,x,y-R*1.55-12,{align:'center',size:size+1,weight:700,color:ink});
+    if(show>.05&&g.share!==null){ctx.globalAlpha=show;pill(ctx,`${Math.round(g.share*24)} hours lit`,x,y+R*1.55+20,{align:'center',size,weight:700,color:ink});ctx.globalAlpha=1;}}
+  }
+  if(labels&&since>=at(2)-.2){const times=Math.round(P.dailySun(lat,T,1.0167)/P.dailySun(lat,-T,.9837));
+   pill(ctx,`${times} times the sunlight`,sx,h*(small?.86:.9),{align:'center',size,weight:700,color:ink});}
  }
- if(labels&&sumIn>.3){pill(ctx,'sunlight per day',small?x0+bw*.9:x0+bw*.9+12,small?rows[0][0]+bh+12+bh*.6+20:rows[0][0]+bh+12+bh*.3,{align:small?'right':'left',size,weight:700,color:ink});
-  void times;}
 }
 
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
@@ -3588,11 +3656,11 @@ const ENGINES={
   measure:['Shadow angle in Alexandria',()=>ERA.show?(ERA.angle*180/Math.PI).toFixed(1)+'°':''],scale:'',
   disclosure:'Exact for parallel sunlight on a perfect sphere. As in the classic account, the two cities are treated as due north and south of each other, the Sun as exactly overhead at Syene, and the distance as 800 km.',
   try:'',aria:'Sunlight falls straight down on a stick in Syene, which casts no shadow, while a stick in Alexandria, 800 km away on the curved Earth, casts a short shadow at 7.2 degrees. Extended down, the two sticks meet at the Earth’s centre at the same 7.2 degrees, one fiftieth of a circle, so the Earth is 50 times 800 km around.'},
- 'seasons':{draw:drawSeasons,demo:false,a:['Tilt','how far the axis of the Earth leans'],b:['Unused','',''],
-  fa:a=>(clamp(a)*Physics.seasonTilt).toFixed(1)+'°',fb:b=>'',
+ 'seasons':{draw:drawSeasons,touch:SEASONS_TOUCH,demo:false,a:['Tilt','how far the axis of the Earth is tilted'],b:['Time of year','where Earth is on its trip around the Sun',''],
+  fa:a=>(clamp(a)*Physics.seasonTilt).toFixed(1)+'°',fb:b=>['December','January','February','March','April','May','June','July','August','September','October','November'][Math.floor(((clamp(b,1,2.5)-1)/1.5*12+.5)%12)],
   // The modelled effect for the render checks: how much higher the noon Sun stands in Paris in June than in December.
   effect:a=>Physics.noonSun(Physics.seasonLat,clamp(a)*Physics.seasonTilt)-Physics.noonSun(Physics.seasonLat,-clamp(a)*Physics.seasonTilt),
-  measure:['Noon Sun in Paris',()=>SEASONS.show?Math.round(SEASONS.angle)+'°':''],scale:'',
+  measure:['Paris',()=>SEASONS.show?SEASONS.text:''],scale:'',
   disclosure:'Paris at 48.86° north, at the June and December solstices, with Earth’s tilt of 23.44°. Sunlight is counted as it arrives at the top of the air, before air and clouds dim it, and the daily totals include Earth’s distance from the Sun.',
   try:'',aria:'Earth travels around the Sun on a nearly round orbit and is nearest in early January. Its axis is tilted 23 degrees and keeps pointing the same way, so the north tilts toward the Sun in June and away in December. At noon in Paris the Sun stands 65 degrees high in June and 18 degrees in December, so the same beam of sunlight covers about three times the ground in December. June days last about 16 hours and December days about 8, so Paris gets about five times the sunlight a day in June.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
