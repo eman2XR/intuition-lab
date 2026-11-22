@@ -10,10 +10,11 @@
     "claim": "A siren's note sounds higher while it approaches and lower while it recedes because each crest of squeezed air leaves from where the siren is at that moment and then spreads at the speed of sound, whatever the siren's speed. For a 700-hertz siren on an ambulance at 30 m/s (108 km/h) in still air where sound travels 343 m/s, crests ahead are 0.447 m apart and arrive 767 times a second, and crests behind are 0.533 m apart and arrive 644 times a second, about three semitones lower. A listener beside the road hears the note slide from high to low as the ambulance passes, because only the part of its motion toward the listener matters.",
     "explanation": "For a source moving at speed v through still air and a listener at rest, the received frequency is f = f0 c / (c - v cos theta), where theta is the angle between the source's velocity and the line from the source to the listener at the moment the crest was sent. Straight ahead cos theta = 1, so the crest spacing is (c - v)/f0 and the frequency f0 c/(c - v); straight behind the spacing is (c + v)/f0 and the frequency f0 c/(c + v). The spacing times the received frequency is always c. For a listener a distance d from the road, the crest heard when the source is at x left from xe, where x - xe = (v/c) sqrt(xe^2 + d^2); the received note falls smoothly from f0 c/(c - v) to f0 c/(c + v) and equals f0 for the crest sent when the source is beside the listener.",
     "assumptions": [
-      "Still air at 20 degrees C, where sound travels 343 m/s.",
+      "Still air at 20 degrees C, where sound travels 343 m/s (1,235 km/h).",
       "A siren sounding one steady note of 700 crests a second (sirens use several hundred hertz).",
       "An ambulance at a steady 30 m/s (108 km/h) along a straight road; the listener beside the road stands 7 m from the siren's line, and the listeners ahead and behind stand on it.",
-      "One ring is drawn for every ten crests; the pictures run slower than real time (ring pictures 24 times slower), keeping the true ratio of the ambulance's speed to the speed of sound."
+      "To make the bunching easy to see, chapter 3 shows a siren at half the speed of sound (171.5 m/s), where crests ahead are a third as far apart as crests behind.",
+      "One ring is drawn for every fifteen crests; the pictures run much slower than real time, keeping the true ratio of the siren's speed to the speed of sound."
     ],
     "prediction": "Ahead of the ambulance 767 crests a second arrive, behind it 644; a listener beside the road hears the note slide between them as it passes.",
     "falsifier": "If the crests ahead of a 700-hertz siren at 108 km/h stayed 0.49 m apart instead of bunching to 0.447 m, or a listener ahead counted 700 a second instead of about 767, this explanation would be wrong.",
@@ -30,6 +31,7 @@
     "questions": [
       "Is it higher because it gets louder?",
       "Doesn't the ambulance's speed add to the sound's?",
+      "Why show it at half the speed of sound?",
       "Why does the driver hear no change?",
       "What if I'm the one moving?",
       "What if it went faster than sound?",
@@ -86,11 +88,11 @@
       },
       {
         "title": "Each ring starts where the siren is",
-        "body": "Now imagine it driving: each new ring starts a little further along the road. The air carries every ring at 1,235 kilometres an hour, however fast it drives. So ahead of it the rings bunch up, and behind it they spread out."
+        "body": "Now imagine the siren racing at half the speed of sound. Each new ring starts further along, but every ring spreads at 1,235 km/h. So ahead of it the rings bunch up, and behind it they spread out."
       },
       {
         "title": "More rings a second",
-        "body": "Imagine standing ahead of an ambulance doing 108 kilometres an hour. The bunched rings reach you 767 times a second, not 700: a higher note. Behind it, only 644 a second: three piano keys below the note ahead."
+        "body": "Imagine a real ambulance at 108 kilometres an hour: the bunching is gentler. Still, the bunched rings reach you 767 times a second, not 700: a higher note. Behind it, only 644 a second: three piano keys below the note ahead."
       },
       {
         "title": "Why the note slides",
@@ -98,7 +100,7 @@
       }
     ],
     "takeaway": "Sound always crosses the air at the same speed, but each ring starts from where the siren is. When it comes toward you, the rings bunch up and reach you more often: a higher note. When it goes away, they spread out: a lower one.",
-    "mass": 0.25,
+    "mass": 0.175,
     "distance": 1,
     "controls": "first",
     "accent": "blue",
@@ -115,6 +117,10 @@
       {
         "q": "Doesn't the ambulance's speed add to the sound's?",
         "a": "No. Sound is a squeeze that each bit of air passes on to the next, so it crosses the air at a speed set by the air, 1,235 km/h, whatever made it. That is why each ring spreads at the same speed from where it started, while the ambulance drives on."
+      },
+      {
+        "q": "Why show it at half the speed of sound?",
+        "a": "At an ambulance's speed the rings bunch by less than a tenth, too little to see at a glance. At half the speed of sound the same thing happens, only more: the rings ahead are a third as far apart as the rings behind."
       },
       {
         "q": "Why does the driver hear no change?",
@@ -177,6 +183,10 @@
       "pass": true
     },
     {
+      "name": "At half the speed of sound, crests ahead are a third as far apart as crests behind",
+      "pass": true
+    },
+    {
       "name": "Subtitles read at most 14.0 characters per second (limit 15)",
       "pass": true
     },
@@ -189,7 +199,7 @@
       "pass": true
     },
     {
-      "name": "Every subtitle is at most 80 characters (longest: 79)",
+      "name": "Every subtitle is at most 80 characters (longest: 78)",
       "pass": true
     },
     {
@@ -225,7 +235,7 @@
       "pass": true
     },
     {
-      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4490 moments)",
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4450 moments)",
       "pass": true
     },
     {
@@ -254,7 +264,7 @@
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
     "built_by": "coding session",
-    "intro_note": "Made in a coding session on 2026-11-21 and kept as a draft. After three review rounds the final accuracy review failed on a play-mode plot bug, since fixed, and the final visual review was stopped to save cost. It awaits a fresh round of reviews."
+    "intro_note": "Made in a coding session and kept as a draft. Revised on 2026-11-22 at the owner's request: calmer, fainter rings, and the bunching shown at half the speed of sound before the real ambulance. It awaits its reviews."
   },
-  "note": "Made in a coding session on 2026-11-21 and kept as a draft. After three review rounds the final accuracy review failed on a play-mode plot bug, since fixed, and the final visual review was stopped to save cost. It awaits a fresh round of reviews."
+  "note": "Made in a coding session and kept as a draft. Revised on 2026-11-22 at the owner's request: calmer, fainter rings, and the bunching shown at half the speed of sound before the real ambulance. It awaits its reviews."
 }

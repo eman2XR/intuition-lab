@@ -679,6 +679,7 @@
         'Passing a listener 7 m from the siren’s line, the note slides steadily from the high note to the low one': slide.every((n, i) => i === 0 || n < slide[i - 1]) && near(slide[0], ahead, 1.5) && near(slide.at(-1), behind, 1.5),
         'The siren’s own note arrives just after it passes': near(this.passingNote(f, v, 7, v / c * 7), f, 1e-9) && this.passingNote(f, v, 7, 0) > f,
         'A faster siren spreads the two notes further apart': this.semitones(this.dopplerHeard(f, 60, 0), this.dopplerHeard(f, 60, Math.PI)) > this.semitones(ahead, behind),
+        'At half the speed of sound, crests ahead are a third as far apart as crests behind': near(this.crestGap(f, c / 2, 0) / this.crestGap(f, c / 2, Math.PI), 1 / 3, 1e-12),
       }).map(([name, pass]) => ({ name, pass }));
     },
     montyChecks() {
