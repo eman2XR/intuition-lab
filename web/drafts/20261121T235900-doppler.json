@@ -11,7 +11,7 @@
     "explanation": "For a source moving at speed v through still air and a listener at rest, the received frequency is f = f0 c / (c - v cos theta), where theta is the angle between the source's velocity and the line from the source to the listener at the moment the crest was sent. Straight ahead cos theta = 1, so the crest spacing is (c - v)/f0 and the frequency f0 c/(c - v); straight behind the spacing is (c + v)/f0 and the frequency f0 c/(c + v). The spacing times the received frequency is always c. For a listener a distance d from the road, the crest heard when the source is at x left from xe, where x - xe = (v/c) sqrt(xe^2 + d^2); the received note falls smoothly from f0 c/(c - v) to f0 c/(c + v) and equals f0 for the crest sent when the source is beside the listener.",
     "assumptions": [
       "Still air at 20 degrees C, where sound travels 343 m/s (1,235 km/h).",
-      "A siren sounding one steady note of 700 crests a second (sirens use several hundred hertz).",
+      "A two-tone siren alternating a high note of 700 crests a second with a low note a fourth lower (525), as hi-lo sirens alternate two tones; the rings and the plot follow the high note, and a moving siren shifts both notes by the same factor.",
       "An ambulance at a steady 30 m/s (108 km/h) along a straight road; the listener beside the road stands 7 m from the siren's line, and the listeners ahead and behind stand on it.",
       "To make the bunching easy to see, chapter 3 shows a siren at half the speed of sound (171.5 m/s), where crests ahead are a third as far apart as crests behind.",
       "One ring is drawn for every fifteen crests; the pictures run much slower than real time, keeping the true ratio of the siren's speed to the speed of sound."
@@ -19,7 +19,7 @@
     "prediction": "Ahead of the ambulance 767 crests a second arrive, behind it 644; a listener beside the road hears the note slide between them as it passes.",
     "falsifier": "If the crests ahead of a 700-hertz siren at 108 km/h stayed 0.49 m apart instead of bunching to 0.447 m, or a listener ahead counted 700 a second instead of about 767, this explanation would be wrong.",
     "limitations": [
-      "Real sirens often wail up and down or switch between two notes; the model uses one steady note.",
+      "Real sirens also wail or switch tones at other rates and pitches; this one alternates two steady notes.",
       "Wind, changes in temperature and echoes from buildings are left out.",
       "The pictures model pitch, not loudness; the sound only grows and fades roughly with distance."
     ],
@@ -52,7 +52,7 @@
       {
         "title": "Siren (alarm) (Wikipedia)",
         "url": "https://en.wikipedia.org/wiki/Siren_(alarm)",
-        "supports": "Sirens use a relatively low frequency, usually several hundred hertz."
+        "supports": "Sirens use a relatively low frequency, usually several hundred hertz; two-tone (hi-lo) sirens alternate a high-pitched and a low-pitched tone."
       },
       {
         "title": "Semitone (Wikipedia)",
@@ -74,17 +74,17 @@
   },
   "scene": {
     "title": "Why does a passing siren drop in pitch?",
-    "subtitle": "The driver hears one steady note. You hear it high, then low. Which note is the siren really playing?",
-    "why": "Say an ambulance's siren plays one steady note. As it races past, you hear the note drop, while the driver hears no change at all.",
+    "subtitle": "The driver hears the same two notes all along. You hear them high, then low. Which notes is the siren really playing?",
+    "why": "Say an ambulance's siren plays its two notes, high and low, over and over. As it races past, you hear both drop, while the driver hears no change at all.",
     "opening": "Why does a passing siren drop in pitch?",
     "beats": [
       {
         "title": "Higher, then lower",
-        "body": "Imagine standing by a road as an ambulance races past, siren on. Its note sounds high while it comes toward you, then drops as it passes. Yet the driver hears one steady note the whole time."
+        "body": "Imagine standing by a road as an ambulance races past, siren on. Its notes sound high while it comes toward you, then drop as it passes. Yet the driver hears the same two notes the whole time."
       },
       {
         "title": "Rings of squeezed air",
-        "body": "Imagine slowing time right down, so you can watch the sound itself. A parked siren squeezes the air 700 times a second, sending out rings. Your ear counts the rings that reach it: more each second sounds higher."
+        "body": "Imagine slowing time right down, so you can watch the sound itself. A parked siren's high note sends out 700 rings of squeezed air a second. Your ear counts the rings that reach it: more each second sounds higher."
       },
       {
         "title": "Each ring starts where the siren is",
@@ -96,10 +96,10 @@
       },
       {
         "title": "Why the note slides",
-        "body": "Imagine it far away, coming almost straight at you: the note stays high. Passing you, it moves across rather than toward you, so the note slides down. Once it has passed, the note settles low and stays low as it drives away."
+        "body": "Imagine it far away, coming almost straight at you: its notes stay high. Passing you, it moves across rather than toward you, so the notes slide down. Once it has passed, the notes settle low and stay low as it drives away."
       }
     ],
-    "takeaway": "Sound always crosses the air at the same speed, but each ring starts from where the siren is. When it comes toward you, the rings bunch up and reach you more often: a higher note. When it goes away, they spread out: a lower one.",
+    "takeaway": "Sound always crosses the air at the same speed, but each ring starts from where the siren is. When it comes toward you, the rings bunch up and reach you more often: higher notes. When it goes away, they spread out: lower ones.",
     "mass": 0.175,
     "distance": 1,
     "controls": "first",
@@ -112,7 +112,7 @@
     "questions": [
       {
         "q": "Is it higher because it gets louder?",
-        "a": "No. Loudness is how strong each squeeze of the air is; pitch is how many reach you each second. The siren grows louder as it nears and quieter as it leaves, but its note is highest while it is still far off and coming almost straight at you."
+        "a": "No. Loudness is how strong each squeeze of the air is; pitch is how many reach you each second. The siren grows louder as it nears and quieter as it leaves, but its notes are highest while it is still far off and coming almost straight at you."
       },
       {
         "q": "Doesn't the ambulance's speed add to the sound's?",
@@ -124,7 +124,7 @@
       },
       {
         "q": "Why does the driver hear no change?",
-        "a": "The driver moves with the siren and stays the same distance from it, so every ring takes the same time to arrive. The rings reach the driver just as often as the siren sends them: 700 a second, the siren's own note."
+        "a": "The driver moves with the siren and stays the same distance from it, so every ring takes the same time to arrive. The rings reach the driver just as often as the siren sends them, so the driver hears its own two notes: 700 a second for the high one."
       },
       {
         "q": "What if I'm the one moving?",
@@ -195,7 +195,7 @@
       "pass": true
     },
     {
-      "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+      "name": "Each subtitle stays up at least 3.9 s (minimum 2.5)",
       "pass": true
     },
     {
@@ -235,7 +235,7 @@
       "pass": true
     },
     {
-      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4450 moments)",
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4470 moments)",
       "pass": true
     },
     {
@@ -264,7 +264,7 @@
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
     "built_by": "coding session",
-    "intro_note": "Made in a coding session and kept as a draft. Revised on 2026-11-22 at the owner's request: calmer, fainter rings, and the bunching shown at half the speed of sound before the real ambulance. It awaits its reviews."
+    "intro_note": "Made in a coding session and kept as a draft. Revised on 2026-11-22 at the owner's request: calmer, fainter rings, the bunching shown at half the speed of sound before the real ambulance, and a two-tone siren. It awaits its reviews."
   },
-  "note": "Made in a coding session and kept as a draft. Revised on 2026-11-22 at the owner's request: calmer, fainter rings, and the bunching shown at half the speed of sound before the real ambulance. It awaits its reviews."
+  "note": "Made in a coding session and kept as a draft. Revised on 2026-11-22 at the owner's request: calmer, fainter rings, the bunching shown at half the speed of sound before the real ambulance, and a two-tone siren. It awaits its reviews."
 }

@@ -2832,6 +2832,9 @@ function drawSeasons(ctx,w,h,spec,st){
 const DOPPLER={geo:null,hold:null,offset:0,live:null};
 const DOP={every:15,slow:60,side:7,top:171.5};
 const dopplerSpeed=a=>DOP.top*clamp(a);
+// What you hear at time t (seconds): a two-tone siren that alternates its high note with a low one a fourth below,
+// each held 0.55 s. A moving siren shifts both by the same factor, so `heard` (its high note as it reaches you) sets both.
+const sirenSound=(t,heard)=>Math.floor((t||0)/.55)%2?heard*.75:heard;
 // After playback the viewer drags the ambulance along the road; it follows the finger smoothly, never faster than the
 // slider's top speed.
 const DOPPLER_TOUCH={hint:'drag the ambulance along the road and watch your note.',
@@ -2938,7 +2941,7 @@ function drawDoppler(ctx,w,h,spec,st){
   const {since,at,stage}=plan, x=plan.x, lo=620, hi=790;
   you(true);dopAmbulance(ctx,X(x),Y(0),k,1);
   const dist=Math.hypot(x,DOP.side), note=P.passingNote(f0,plan.v,DOP.side,x);
-  if(st.playing&&Math.abs(x)<70)soundTone(note,clamp(14/dist));
+  if(st.playing&&Math.abs(x)<70)soundTone(sirenSound(st.t,note),clamp(14/dist));
   if(stage===4&&X(x)>-3*k&&X(x)<w+3*k){
    // The ambulance's motion along the road, and the part of it toward you: the line from it to you, with an arrow as
    // long as its speed toward you, pointing at you while it comes and away once it has passed.
@@ -2995,7 +2998,7 @@ function drawDoppler(ctx,w,h,spec,st){
  if(DOPPLER.hold!==null){ctx.globalAlpha=.3;dopAmbulance(ctx,X(clamp(DOPPLER.hold,-span/2+4,span/2-4)),Y(0),k,L.dir);ctx.globalAlpha=1;}
  for(const sgn of [-1,1]){const ax=X(L.x)+sgn*(4.3*k+8), z=small?5:6;ctx.beginPath();ctx.moveTo(ax+sgn*z,Y(0));ctx.lineTo(ax-sgn*z*.6,Y(0)-z);ctx.lineTo(ax-sgn*z*.6,Y(0)+z);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.8)';ctx.fill();}
  DOPPLER.geo={live:true,ax:X(L.x),ay:Y(0),reach:Math.max(34,3.6*k),ox,k};
- const dist=Math.hypot(L.x,DOP.side);soundTone(note,clamp(14/dist));
+ const dist=Math.hypot(L.x,DOP.side);soundTone(sirenSound(st.t,note),clamp(14/dist));
  // The plot's range covers the chosen speed's two notes and every note now on the plot, so nothing is drawn flat on
  // its edges.
  const vr=Math.max(30,dopplerSpeed(st.mass));let nlo=f0*P.soundSpeed/(P.soundSpeed+vr), nhi=f0*P.soundSpeed/(P.soundSpeed-vr);
@@ -3964,7 +3967,7 @@ const ENGINES={
   // The modelled effect for the render checks: how much higher the note ahead of the siren is than its own note.
   effect:a=>Physics.dopplerHeard(Physics.sirenNote,dopplerSpeed(a),0)-Physics.sirenNote,
   measure:null,scale:'',
-  disclosure:'A siren of 700 squeezes of the air a second, in still air at 20 °C, where sound travels 343 metres a second (1,235 km/h): on an ambulance at 30 metres a second (108 km/h), and in chapter 3 racing at half the speed of sound. One ring is drawn for every fifteen squeezes. The pictures run much slower than real time; the rings’ spacing and the siren’s speed keep their true proportions.',
+  disclosure:'A two-tone siren whose high note squeezes the air 700 times a second and whose low note is a fourth lower, in still air at 20 °C, where sound travels 343 metres a second (1,235 km/h): on an ambulance at 30 metres a second (108 km/h), and in chapter 3 racing at half the speed of sound. The rings and the plot follow the high note, and both notes shift together. One ring is drawn for every fifteen squeezes. The pictures run much slower than real time; the rings’ spacing and the siren’s speed keep their true proportions.',
   try:'',aria:'An ambulance drives along a street seen from above, its siren sending out rings of squeezed air that spread at the speed of sound from wherever the siren was. The rings bunch up ahead of it and spread out behind, so a listener ahead hears 767 squeezes a second and one behind hears 644, against the siren’s own 700. As it passes a listener beside the road, the note heard slides from high to low.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
@@ -4165,9 +4168,10 @@ function soundPluck(freq,gain=1){SOUND.queue.push([freq,gain]);}
 function voice(){
  const a=SOUND.ctx, want=SOUND.on?TONE.want:null;TONE.want=null;
  if(a&&(want||SOUND.osc)){
-  if(want&&!SOUND.osc){const o=a.createOscillator(), g=a.createGain();o.type='triangle';g.gain.value=0;o.connect(g);g.connect(SOUND.out);o.start();SOUND.osc=o;SOUND.oscGain=g;}
+  // A square wave through a soft low-pass sounds like a siren's horn speaker.
+  if(want&&!SOUND.osc){const o=a.createOscillator(), soft=a.createBiquadFilter(), g=a.createGain();o.type='square';soft.type='lowpass';soft.frequency.value=2400;g.gain.value=0;o.connect(soft);soft.connect(g);g.connect(SOUND.out);o.start();SOUND.osc=o;SOUND.oscGain=g;}
   const now=a.currentTime, g=SOUND.oscGain.gain;g.cancelScheduledValues(now);
-  if(want){SOUND.osc.frequency.setTargetAtTime(clamp(want[0],80,4000),now,.03);g.setTargetAtTime(.22*clamp(want[1]),now,.06);g.setTargetAtTime(0,now+.3,.1);}
+  if(want){SOUND.osc.frequency.setTargetAtTime(clamp(want[0],80,4000),now,.012);g.setTargetAtTime(.12*clamp(want[1]),now,.06);g.setTargetAtTime(0,now+.3,.1);}
   else g.setTargetAtTime(0,now,.08);}
  if(!a||!SOUND.on){SOUND.queue.length=0;return;}
  while(SOUND.queue.length){const [f,g]=SOUND.queue.shift(), src=SOUND.ctx.createBufferSource();src.buffer=stringBuffer(f);
