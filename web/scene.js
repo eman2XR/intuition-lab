@@ -4141,6 +4141,9 @@ const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const SOUND={ctx:null,out:null,buffers:new Map(),queue:[],on:(()=>{try{return localStorage.getItem('council-sound')!=='off';}catch{return true;}})()};
 const sounds=e=>!!(e&&(e.plucks||e.tone));
 function audioStart(){
+ // iPhones send web audio through the ringer, so a phone on silent heard nothing; a page that asks for playback is
+ // heard the way a video is. Browsers without the setting ignore it.
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(error){}
  if(SOUND.ctx||!sounds(engineOf(spec)))return SOUND.ctx?.resume?.();
  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
  const a=SOUND.ctx=new AC(), out=SOUND.out=a.createGain(), warm=a.createBiquadFilter();
