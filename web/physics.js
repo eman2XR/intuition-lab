@@ -680,6 +680,7 @@
         'The siren’s own note arrives just after it passes': near(this.passingNote(f, v, 7, v / c * 7), f, 1e-9) && this.passingNote(f, v, 7, 0) > f,
         'A faster siren spreads the two notes further apart': this.semitones(this.dopplerHeard(f, 60, 0), this.dopplerHeard(f, 60, Math.PI)) > this.semitones(ahead, behind),
         'At half the speed of sound, crests ahead are a third as far apart as crests behind': near(this.crestGap(f, c / 2, 0) / this.crestGap(f, c / 2, Math.PI), 1 / 3, 1e-12),
+        'At 108 km/h crests ahead are less than a tenth closer together than a parked siren’s': near(1 - this.crestGap(f, v, 0) / this.crestGap(f, 0, 0), .087, .001),
       }).map(([name, pass]) => ({ name, pass }));
     },
     montyChecks() {

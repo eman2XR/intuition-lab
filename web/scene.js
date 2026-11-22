@@ -2837,7 +2837,7 @@ const dopplerSpeed=a=>DOP.top*clamp(a);
 const sirenSound=(t,heard)=>Math.floor((t||0)/.55)%2?heard*.75:heard;
 // After playback the viewer drags the ambulance along the road; it follows the finger smoothly, never faster than the
 // slider's top speed.
-const DOPPLER_TOUCH={hint:'drag the ambulance along the road and watch your note.',
+const DOPPLER_TOUCH={hint:'drag the ambulance along the road and watch what you hear on the plot.',
  grab(w,h,spec,st,x,y){const g=DOPPLER.geo;if(!(g&&g.live&&Math.hypot(x-g.ax,y-g.ay)<g.reach))return null;DOPPLER.offset=(x-g.ax)/g.k;return {kind:'drive',cursor:'grab'};},
  move(w,h,spec,st,x,y){const g=DOPPLER.geo;if(!g)return null;DOPPLER.hold=(x-g.ox)/g.k-(DOPPLER.offset||0);return {};},
  release(){DOPPLER.hold=null;return {};}};
@@ -2855,7 +2855,7 @@ function dopplerPlan(spec,st,span=80){
  if(stage===0||stage===4){const edge=span/2-6, t0=.3, pace=2*edge/Math.max(1,dur-.6), xAt=s=>-edge+pace*(s-t0);
   return {mode:'pass',stage,since,at,live,preview,v,x:xAt(since),xAt,t0,dur};}
  const fast=stage===2, vd=fast?Physics.soundSpeed/2:v, drive=stage>=2, start=stage===1?1:fast?-4:-3;
- const slow=fast?vd*Math.max(1,dur)/(.7*span):DOP.slow, vs=vd/slow, x0=stage===1?-.18*span:fast?-.5*span:-vs*(dur/2-start);
+ const cross=span<60?.5:.7, slow=fast?vd*Math.max(1,dur)/(cross*span):DOP.slow, vs=vd/slow, x0=stage===1?-.18*span:fast?-.5*span:-vs*(dur/2-start);
  return {mode:'rings',stage,since,at,live,preview,v:drive?vd:0,x0,start,slow,x:x0+(drive?vs*(since-start):0)};
 }
 // An ambulance seen from above, 6 m long and 2.3 m wide, its siren on the light bar at (x, y), facing dir (1 is +x).
@@ -2893,7 +2893,7 @@ function dopPlot(ctx,box,lo,hi,t0,t1,samples,{label,steady,size,small}){
 function dopLive(st,span){
  const t=st.t||0, c=Physics.soundSpeed/DOP.slow, vmax=DOP.top/DOP.slow, edge=span/2-4;
  let L=DOPPLER.live;
- if(!L||t<L.t-.001){L=DOPPLER.live={t,x:-span/4,dir:1,path:[[t-12,-span/4],[t,-span/4]],notes:[],speed:0};}
+ if(!L||t<L.t-.001){const x=clamp(DOPPLER.stillX??-span/4,-edge,edge);L=DOPPLER.live={t,x,dir:DOPPLER.stillX!==undefined?-1:1,path:[[t-12,x],[t,x]],notes:[],speed:0};}
  const dt=Math.min(.1,t-L.t), x0=L.x;
  if(DOPPLER.hold!==null){const want=clamp(DOPPLER.hold,-edge,edge), step=clamp((want-L.x)*(1-Math.exp(-dt*10)),-vmax*dt,vmax*dt);L.x+=step;if(dt>0&&Math.abs(step)/dt>.4)L.dir=Math.sign(step);}
  else{L.x+=L.dir*dopplerSpeed(st.mass)/DOP.slow*dt;if(L.x>edge){L.x=edge;L.dir=-1;}if(L.x<-edge){L.x=-edge;L.dir=1;}}
@@ -2912,6 +2912,11 @@ function dopLive(st,span){
  return {L,rings,note,t};
 }
 function drawDoppler(ctx,w,h,spec,st){
+ // After playback the picture holds still and silent on the last chapter's end (the note's whole drop on the plot), so
+ // the takeaway is easy to read; it comes alive, driving and sounding, once the viewer drags the ambulance or moves the
+ // speed slider.
+ const still=!!st.live&&!st.touched&&st.since!==undefined;
+ if(still){const c=st.chapters?.at(-1);st={...st,live:false,playing:false,stage:(st.chapters?.length||5)-1,since:c?c.end-c.start:18};DOPPLER.live=null;}
  const small=w<520, P=Physics, passView=!st.live&&st.since!==undefined&&(st.stage===0||st.stage===4);
  // Phones show 44 m of road where rings are drawn and 70 m in the passing chapters, so the ambulance starts further off.
  const span=small?(passView?70:44):80, plan=dopplerPlan(spec,st,span), labels=st.labels, size=small?11:13, ink='rgba(20,23,28,.85)';
@@ -2928,12 +2933,13 @@ function drawDoppler(ctx,w,h,spec,st){
  DOPPLER.geo=null;
  const tagAt=(s,x,y)=>{ctx.font=`700 ${size}px ${FONT}`;const half=ctx.measureText(s).width/2+14;pill(ctx,s,clamp(x,half,w-half),y,{align:'center',size,weight:700,color:ink});};
  const people=Math.max(small?20:28,1.7*k), youAt=[X(0),Y(DOP.side)], you=s=>{dopPerson(ctx,youAt[0],youAt[1],people,'#e0833a');if(labels&&s)pill(ctx,'you',youAt[0],youAt[1]+(small?22:26),{align:'center',size,weight:700,color:ink});};
- // Rings of squeezed air, each centred where it started: thin and faint, and gone well before the picture's edges, so
- // a few slow rings carry the idea without filling the screen.
- // With marks, each ring's two crossings of the road's centre line get a short tick, so the gaps between rings ahead and
- // behind can be compared at a glance.
- const rings=(list,reach,marks=false)=>{for(const {x,r} of list){if(r<=0||r>=reach)continue;const fade=Math.pow(1-r/reach,marks?1.1:1.4);
-   ctx.beginPath();ctx.arc(X(x),Y(0),r*k,0,TAU);ctx.strokeStyle=`rgba(170,215,255,${.55*fade})`;ctx.lineWidth=small?1.2:1.5;ctx.stroke();
+ // Rings of squeezed air, each centred where it started: thin and faint, gone well before the picture's ends, and
+ // fading out with distance from the road (full within 8 m, gone by 14 m), so a few slow rings carry the idea near the
+ // road and the rest of the picture stays still. With marks, each ring's two crossings of the road's centre line get a
+ // short tick, so the gaps between rings ahead and behind can be compared at a glance.
+ const rings=(list,reach,marks=false)=>{for(const {x,r} of list){if(r<=0||r>=reach)continue;const fade=Math.pow(1-r/reach,marks?1.1:1.4), a=.55*fade;
+   const band=ctx.createLinearGradient(0,Y(-14),0,Y(14)), c=v=>`rgba(170,215,255,${v})`;band.addColorStop(0,c(0));band.addColorStop(6/28,c(a));band.addColorStop(22/28,c(a));band.addColorStop(1,c(0));
+   ctx.beginPath();ctx.arc(X(x),Y(0),r*k,0,TAU);ctx.strokeStyle=band;ctx.lineWidth=small?1.2:1.5;ctx.stroke();
    if(marks)for(const e of [x-r,x+r]){trace(ctx,[[X(e),Y(-.9)],[X(e),Y(.9)]]);ctx.strokeStyle=`rgba(200,232,255,${.8*fade})`;ctx.lineWidth=small?1.5:2;ctx.stroke();}}};
  // The note plot sits top right on a wide screen and under the street on a phone.
  const by0=Math.max(h*.66,Y(DOP.side)+58), box=small?[w*.05,by0,w*.9,Math.max(40,Math.min(h*.28,h-by0-8))]:[w*.6,Math.min(h-Math.min(150,h*.28)-14,Y(8.5)+30),Math.min(380,w*.36),Math.min(150,h*.28)];
@@ -2960,12 +2966,14 @@ function drawDoppler(ctx,w,h,spec,st){
     if(labels&&sx>-20&&sx<w+20){const s=cos>0?'speed toward you':'speed away from you';ctx.font=`700 ${size}px ${FONT}`;const half=ctx.measureText(s).width/2+8;
      tagAt(s,cos>0?sx:sx-half,Y(-3.3)-(small?2:0));}}
   }
+  if(still){DOPPLER.stillX=x;DOPPLER.geo={live:true,ax:X(x),ay:Y(0),reach:Math.max(34,3.6*k),ox,k};
+   for(const sgn of [-1,1]){const ax=X(x)+sgn*(4.3*k+8), z=small?5:6;ctx.beginPath();ctx.moveTo(ax+sgn*z,Y(0));ctx.lineTo(ax-sgn*z*.6,Y(0)-z);ctx.lineTo(ax-sgn*z*.6,Y(0)+z);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.8)';ctx.fill();}}
   const samples=[];for(let s=0;s<=since+1e-9;s+=.05)samples.push([s,P.passingNote(f0,plan.v,DOP.side,plan.xAt(s))]);
-  dopPlot(ctx,box,lo,hi,0,Math.max(plan.dur,since),samples,{label:labels?'your note':'',steady:labels?'siren’s own note':'',size,small});
+  dopPlot(ctx,box,lo,hi,0,Math.max(plan.dur,since),samples,{label:labels?'you hear':'',steady:labels?'siren plays':'',size,small});
   return;
  }
  if(plan.mode==='rings'){
-  const {since,at,stage}=plan, tr=(since-plan.start)/plan.slow, list=P.sirenCrests(plan.v,DOP.every/f0,tr,plan.x0), reach=stage===3?span/2+4:stage===2?.45*span:.4*span;
+  const {since,at,stage}=plan, tr=(since-plan.start)/plan.slow, list=P.sirenCrests(plan.v,DOP.every/f0,tr,plan.x0), reach=stage===3?span/2+4:stage===2?(span<60?.6:.45)*span:.4*span;
   rings(list,reach,stage>=2);dopAmbulance(ctx,X(plan.x),Y(0),k,1);
   // Where each ring started: small gold dots along the road behind the racing siren.
   if(stage===2)for(const {x,r} of list){if(r>=reach)continue;const fade=Math.pow(1-r/reach,.6);ctx.beginPath();ctx.arc(X(x),Y(0),Math.max(2.5,.2*k),0,TAU);ctx.fillStyle=`rgba(255,211,107,${.9*fade})`;ctx.fill();}
@@ -2974,22 +2982,26 @@ function drawDoppler(ctx,w,h,spec,st){
   if(stage===1){you(since<at(2));
    // Your ear lights up as each ring reaches it.
    flash(youAt[0],youAt[1],Math.hypot(plan.x,DOP.side));
-   if(labels&&since>=at(1))tagAt('parked: 700 squeezes a second',X(plan.x),Y(-3.3));
+   if(labels&&since>=at(1))tagAt('high note: 700 a second',X(plan.x),Y(-3.3));
    if(labels&&since>=at(2))tagAt('you count 700 a second',youAt[0],youAt[1]+(small?22:26));}
   if(stage===2&&labels){
    if(since>=at(1)){tagAt('sound: 1,235 km/h',w/2,Math.max(size+10,Y(-11)));tagAt(`${Math.round(plan.v*3.6)} km/h`,X(plan.x),Y(-3.3));}
    // The two tags go either side of the ambulance; on a narrow stage where they would meet, 'spread out' moves above the road.
    if(since>=at(2)){ctx.font=`700 ${size}px ${FONT}`;const a=ctx.measureText('bunched up').width/2+14, b=ctx.measureText('spread out').width/2+14;
     // Both sit just below the ambulance's lane, low enough to clear it even when the edge of the picture pushes them in.
-    const bx=clamp(X(plan.x)+(small?70:130),a,w-a), sx=clamp(X(plan.x)-(small?70:140),b,w-b), apart=bx-sx>=a+b-10, ty=Math.max(Y(2.4),Y(1.15)+size*.75+6);
+    // 'spread out' goes under the widest gap between the rings' crossings behind the siren, not under the start points.
+    const backs=list.filter(c=>c.r>0&&c.r<reach&&c.x-c.r<plan.x-3.6).map(c=>c.x-c.r).sort((p,q)=>q-p);let gx=X(plan.x)-(small?70:140);
+    if(backs.length>2)gx=X((backs[1]+backs[2])/2);else if(backs.length>1)gx=X((backs[0]+backs[1])/2);
+    const bx=clamp(X(plan.x)+(small?70:130),a,w-a), sx=clamp(gx,b,w-b), apart=bx-sx>=a+b-10, ty=Math.max(Y(2.4),Y(1.15)+size*.75+6);
     tagAt('bunched up',bx,ty);tagAt('spread out',sx,apart?ty:Y(-2.4));}}
   if(stage===3){const ahead=span/2-(small?2.5:5), behind=-ahead;
-   for(const px of [ahead,behind]){const near=list.find(c=>c.r>=Math.abs(px-c.x));flash(X(px),Y(0),near?Math.abs(px-near.x):1e9);dopPerson(ctx,X(px),Y(0),people,px>0?'#e0833a':'#7aa6d6');}
+   for(const px of [ahead,behind]){const near=list.find(c=>c.r>=Math.abs(px-c.x));if(px>0||since>=at(2))flash(X(px),Y(0),near?Math.abs(px-near.x):1e9);dopPerson(ctx,X(px),Y(0),people,px>0?'#e0833a':'#7aa6d6');}
    if(labels){tagAt('108 km/h',X(plan.x),Y(-3.3));
     // Each count sits under its listener, kept inside the picture.
     const under=(s,px)=>{ctx.font=`700 ${size}px ${FONT}`;const half=ctx.measureText(s).width/2+8;pill(ctx,s,clamp(X(px),half,w-half),Y(3.8),{align:'center',size,weight:700,color:ink});};
-    if(since>=at(1))under(`you count ${Math.round(P.dopplerHeard(f0,plan.v,0))} a second`,ahead);
-    if(since>=at(2))under(`behind: ${Math.round(P.dopplerHeard(f0,plan.v,Math.PI))} a second`,behind);}}
+    // The two listeners are named from the start; each count replaces its name with its sentence.
+    under(since>=at(1)?`you count ${Math.round(P.dopplerHeard(f0,plan.v,0))} a second`:'you',ahead);
+    under(since>=at(2)?`behind: ${Math.round(P.dopplerHeard(f0,plan.v,Math.PI))} a second`:'behind',behind);}}
   return;
  }
  // Live play: the ambulance drives back and forth at the chosen speed, or follows the viewer's finger.
@@ -3004,7 +3016,7 @@ function drawDoppler(ctx,w,h,spec,st){
  const vr=Math.max(30,dopplerSpeed(st.mass));let nlo=f0*P.soundSpeed/(P.soundSpeed+vr), nhi=f0*P.soundSpeed/(P.soundSpeed-vr);
  for(const [,f] of L.notes){nlo=Math.min(nlo,f);nhi=Math.max(nhi,f);}
  const lo=nlo*.985, hi=nhi*1.015;
- dopPlot(ctx,box,lo,hi,t-10,t,L.notes,{label:labels?'your note':'',steady:labels?'siren’s own note':'',size,small});
+ dopPlot(ctx,box,lo,hi,t-10,t,L.notes,{label:labels?'you hear':'',steady:labels?'siren plays':'',size,small});
  if(labels)tagAt(`${DOPPLER.hold===null?Math.round(dopplerSpeed(st.mass)*3.6):Math.round(L.speed*3.6/5)*5} km/h`,X(L.x),Y(-3.3));
 }
 
@@ -3968,7 +3980,7 @@ const ENGINES={
   effect:a=>Physics.dopplerHeard(Physics.sirenNote,dopplerSpeed(a),0)-Physics.sirenNote,
   measure:null,scale:'',
   disclosure:'A two-tone siren whose high note squeezes the air 700 times a second and whose low note is a fourth lower, in still air at 20 °C, where sound travels 343 metres a second (1,235 km/h): on an ambulance at 30 metres a second (108 km/h), and in chapter 3 racing at half the speed of sound. The rings and the plot follow the high note, and both notes shift together. One ring is drawn for every fifteen squeezes. The pictures run much slower than real time; the rings’ spacing and the siren’s speed keep their true proportions.',
-  try:'',aria:'An ambulance drives along a street seen from above, its siren sending out rings of squeezed air that spread at the speed of sound from wherever the siren was. The rings bunch up ahead of it and spread out behind, so a listener ahead hears 767 squeezes a second and one behind hears 644, against the siren’s own 700. As it passes a listener beside the road, the note heard slides from high to low.'},
+  try:'',aria:'An ambulance drives along a street seen from above. Its two-tone siren sends out rings of squeezed air that spread at the speed of sound from wherever the siren was. The rings bunch up ahead of it and spread out behind, plainly so for a siren at half the speed of sound, so for an ambulance at 108 km/h a listener ahead hears its high note of 700 as 767 and one behind as 644. As it passes a listener beside the road, the notes heard slide from high to low.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.
