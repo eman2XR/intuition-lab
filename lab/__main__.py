@@ -14,7 +14,7 @@ from .topics import TOPICS
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
     parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','feature','checkin','poster'])
-    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
+    parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | inbox-keys | inbox | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
     parser.add_argument('--model',help='Optional CLI model override; required for the direct OpenAI API.')
@@ -53,6 +53,15 @@ def main():
                 print('Subscription added.' if push.add(rest[0]) else 'Subscription updated.')
             except ValueError as error:
                 parser.exit(2,f'Not a valid notification code: {error}\n')
+        elif action=='inbox-keys' and not rest:
+            print(f'Inbox public key (put it in web/push.json as "inbox"): {push.inbox_keys()}')
+        elif action=='inbox' and not rest:
+            # Sign-ups from the installed app: sealed subscriptions posted as GitHub issues by the owner.
+            try:
+                lines=push.inbox(SITE)
+            except RuntimeError as error:
+                parser.exit(1,f'Could not read sign-up requests: {error}\n')
+            print('\n'.join(lines) if lines else 'No sign-up requests.')
         elif action=='test' and not rest:
             raise SystemExit(0 if push.notify('Intuition Lab','Notifications are working',SITE) else 1)
         elif action=='announce' and len(rest)==1:
@@ -64,7 +73,7 @@ def main():
             raise SystemExit(0 if push.notify(scene.get('title','New guide').replace('\n',' '),scene.get('subtitle',''),
                                               f'{SITE}?guide={rest[0]}') else 1)
         else:
-            parser.error("push needs: keys | add '<code>' | test | announce <guide-id>")
+            parser.error("push needs: keys | inbox-keys | inbox | add '<code>' | test | announce <guide-id>")
         return
     if args.command=='schedule':
         from .schedule import write_schedule

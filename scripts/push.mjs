@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-// Web Push sender for the owner's devices: VAPID (RFC 8292) and aes128gcm payload encryption (RFC 8291).
-// Node 18+ built-ins only. Usage: keys <state-dir> | send <state-dir> <json-payload> | selftest
+// Web Push sender for the owner's devices: VAPID (RFC 8292) and aes128gcm payload encryption (RFC 8291), plus the
+// inbox key that opens a device's subscription, which the installed app seals before posting it as a GitHub issue.
+// Node 18+ built-ins only. Usage: keys <state-dir> | inbox-keys <state-dir> | unseal <state-dir> <sealed-json> |
+// seal <inbox-public-key> <json> | send <state-dir> <json-payload> [endpoint] | selftest
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -54,7 +56,36 @@ function keys(dir){
  console.log(publicKey);
 }
 
-async function send(dir,payload){
+// The inbox key pair: the app seals a subscription with its public half (web/push.json), and only this checkout can
+// open it. ECDH on P-256, HKDF-SHA256 with this label, then AES-256-GCM, as the app's WebCrypto does.
+const INBOX_INFO='intuition-lab inbox v1';
+function inboxKeys(dir){
+ const file=path.join(dir,'push-inbox.json');
+ if(fs.existsSync(file)){console.log(JSON.parse(fs.readFileSync(file,'utf8')).publicKey);return;}
+ fs.mkdirSync(dir,{recursive:true});
+ const ecdh=crypto.createECDH('prime256v1');ecdh.generateKeys();
+ const keys={publicKey:b64(ecdh.getPublicKey()),privateKey:b64(ecdh.getPrivateKey())};
+ fs.writeFileSync(file,JSON.stringify(keys,null,1)+'\n',{mode:0o600});fs.chmodSync(file,0o600);
+ console.log(keys.publicKey);
+}
+function seal(inboxPublic,data){
+ const ecdh=crypto.createECDH('prime256v1');ecdh.generateKeys();
+ const salt=crypto.randomBytes(16),iv=crypto.randomBytes(12);
+ const key=hkdf(ecdh.computeSecret(unb64(inboxPublic)),salt,Buffer.from(INBOX_INFO),32);
+ const cipher=crypto.createCipheriv('aes-256-gcm',key,iv);
+ const ct=Buffer.concat([cipher.update(Buffer.from(data)),cipher.final(),cipher.getAuthTag()]);
+ return {epk:b64(ecdh.getPublicKey()),salt:b64(salt),iv:b64(iv),ct:b64(ct)};
+}
+function unseal(dir,sealed){
+ const keys=JSON.parse(fs.readFileSync(path.join(dir,'push-inbox.json'),'utf8'));
+ const ecdh=crypto.createECDH('prime256v1');ecdh.setPrivateKey(unb64(keys.privateKey));
+ const key=hkdf(ecdh.computeSecret(unb64(sealed.epk)),unb64(sealed.salt),Buffer.from(INBOX_INFO),32);
+ const data=unb64(sealed.ct),decipher=crypto.createDecipheriv('aes-256-gcm',key,unb64(sealed.iv));
+ decipher.setAuthTag(data.subarray(data.length-16));
+ return Buffer.concat([decipher.update(data.subarray(0,data.length-16)),decipher.final()]).toString('utf8');
+}
+
+async function send(dir,payload,only){
  const message=JSON.stringify(JSON.parse(payload));
  const vapid=JSON.parse(fs.readFileSync(path.join(dir,'vapid.json'),'utf8'));
  const key=vapidKey(vapid);
@@ -63,6 +94,7 @@ async function send(dir,payload){
  if(!subs.length){console.log('No push subscriptions.');return 0;}
  const keep=[];let failed=0;
  for(const sub of subs){
+  if(only&&sub.endpoint!==only){keep.push(sub);continue;}
   const host=(()=>{try{return new URL(sub.endpoint).host;}catch{return 'invalid endpoint';}})();
   try{
    const response=await fetch(sub.endpoint,{method:'POST',body:encrypt(message,sub.keys.p256dh,sub.keys.auth),signal:AbortSignal.timeout(30000),
@@ -92,10 +124,13 @@ function selftest(){
  return ok?0:1;
 }
 
-const [command,dir,payload]=process.argv.slice(2);
+const [command,dir,payload,extra]=process.argv.slice(2);
 try{
  if(command==='keys'&&dir)keys(dir);
- else if(command==='send'&&dir&&payload)process.exitCode=await send(dir,payload);
+ else if(command==='inbox-keys'&&dir)inboxKeys(dir);
+ else if(command==='unseal'&&dir&&payload)console.log(unseal(dir,JSON.parse(payload)));
+ else if(command==='seal'&&dir&&payload)console.log(JSON.stringify(seal(dir,payload)));
+ else if(command==='send'&&dir&&payload)process.exitCode=await send(dir,payload,extra);
  else if(command==='selftest')process.exitCode=selftest();
- else{console.error('Usage: push.mjs keys <state-dir> | send <state-dir> <json-payload> | selftest');process.exitCode=2;}
+ else{console.error('Usage: push.mjs keys <state-dir> | inbox-keys <state-dir> | unseal <state-dir> <sealed-json> | seal <inbox-public-key> <json> | send <state-dir> <json-payload> [endpoint] | selftest');process.exitCode=2;}
 }catch(error){console.log(`Push failed: ${error.message}`);process.exitCode=1;}

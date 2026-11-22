@@ -175,12 +175,7 @@ The home page features the newest published guide and lists every other one, new
 
 ## Install on iPhone
 
-Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, and send the code it shows to the owner. The owner runs this once in this checkout:
-
-```sh
-python3 -m lab push add '<code>'
-python3 -m lab push test
-```
+Open https://eman2xr.github.io/intuition-lab/ in Safari, tap **Share → Add to Home Screen**, and open Intuition Lab from the Home Screen. At the bottom of the page, tap **Notify me of new guides**, allow notifications, then tap **Open GitHub to finish** and **Create** on the GitHub page (signed in as the owner; no token). The issue carries the device's subscription sealed with the lab's inbox key (`web/push.json` holds its public half, `.council-state/push-inbox.json` its private half), so the public issue reveals nothing. The session's rounds run `python3 -m lab push inbox`, which opens each sign-up, adds the device, sends it a welcome notification and closes the issue. Without an inbox key the app falls back to a code to copy, which `python3 -m lab push add '<code>'` adds.
 
 After that, the daily run notifies you when a reviewed guide is published, as soon as the site serves it (it checks for up to ten minutes), and sends “Today’s run stopped early” when an attempt stops before review. Drafts and days with nothing to do send nothing. There is no server: the worker's `.council-state` holds the key pair (`vapid.json`, created with `python3 -m lab push keys`; its public key is `web/push.json`) and the subscriptions, and `scripts/push.mjs` sends standard Web Push with Node's built-in crypto.
 

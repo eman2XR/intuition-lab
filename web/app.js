@@ -661,12 +661,29 @@ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.sta
 const deployed=!document.querySelector('script[src*="?v=dev"]');
 const worker='serviceWorker' in navigator&&isSecureContext&&deployed?navigator.serviceWorker.register('sw.js').catch(()=>null):Promise.resolve(null);
 const keyBytes=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(s.length/4)*4,'=')),c=>c.charCodeAt(0));
-function notifyPanel(message,subscription){
+function notifyPanel(message,subscription,github){
  put('notify-msg',message);
+ const link=$('notify-github');link.hidden=!github;if(github)link.href=github;
  $('notify-share').hidden=!subscription;
  if(subscription){$('notify-code').value=JSON.stringify(subscription);put('notify-copy','Copy');}
  $('notify-panel').hidden=false;
 }
+// Seals a subscription so that only the lab's Mac can open it (web/push.json's inbox key): ECDH on P-256, HKDF-SHA256
+// with the label below, then AES-256-GCM, as scripts/push.mjs unseal expects. The public issue shows only the seal.
+const b64u=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+async function sealFor(inboxPublic,data){
+ const subtle=crypto.subtle, inbox=await subtle.importKey('raw',keyBytes(inboxPublic),{name:'ECDH',namedCurve:'P-256'},false,[]);
+ const pair=await subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+ const bits=await subtle.deriveBits({name:'ECDH',public:inbox},pair.privateKey,256), hkdf=await subtle.importKey('raw',bits,'HKDF',false,['deriveKey']);
+ const salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+ const key=await subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt,info:new TextEncoder().encode('intuition-lab inbox v1')},hkdf,{name:'AES-GCM',length:256},false,['encrypt']);
+ const ct=await subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(data)));
+ return {epk:b64u(await subtle.exportKey('raw',pair.publicKey)),salt:b64u(salt),iv:b64u(iv),ct:b64u(ct)};
+}
+// The sign-up request: a prefilled GitHub issue carrying the sealed subscription; the lab opens it, adds the device,
+// sends a welcome notification and closes the issue.
+const signupURL=sealed=>issueURL('council:push','Notifications for a new device',
+ `<!-- council-push -->\nThis asks Intuition Lab to send new-guide notifications to a device. Its details are sealed, so only the lab can read them.\n\n\`\`\`\n${JSON.stringify(sealed)}\n\`\`\``);
 async function notifySetup(){
  if(!standalone||!('PushManager' in window)||!(await worker))return;
  const button=$('notify-open'),ready=navigator.serviceWorker.ready;
@@ -678,12 +695,12 @@ async function notifySetup(){
    if(await Notification.requestPermission()!=='granted')return notifyPanel('Notifications are off. Allow them for Intuition Lab in Settings, then try again.');
    const push=(await ready).pushManager;
    let subscription=await push.getSubscription();
-   if(!subscription){
-    const {publicKey}=await (await fetch('push.json',{cache:'no-store'})).json();
-    subscription=await push.subscribe({userVisibleOnly:true,applicationServerKey:keyBytes(publicKey)});
-   }
+   const keys=await (await fetch('push.json',{cache:'no-store'})).json();
+   if(!subscription)subscription=await push.subscribe({userVisibleOnly:true,applicationServerKey:keyBytes(keys.publicKey)});
    button.textContent='Notifications are on';
-   notifyPanel('Send this code to the lab’s owner to turn on notifications.',subscription);
+   if(!keys.inbox||!crypto.subtle)return notifyPanel('Send this code to the lab’s owner to turn on notifications.',subscription);
+   // A phone opens a new page only from a fresh tap, so GitHub opens from the panel's button.
+   notifyPanel('Tap the button, then Create on GitHub. A welcome notification arrives once the lab reads it, within a few hours.',null,signupURL(await sealFor(keys.inbox,subscription.toJSON())));
   }catch(error){notifyPanel(`Notifications could not be turned on (${error.name||'error'}).`);}
  };
  $('notify-copy').onclick=async()=>{
