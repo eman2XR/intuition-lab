@@ -83,6 +83,11 @@
           "id": "3.5",
           "question": "Why does a passing siren drop in pitch?",
           "model": "doppler"
+        },
+        {
+          "id": "3.6",
+          "question": "How does a radio signal carry a voice through the air?",
+          "model": "radio"
         }
       ]
     },
