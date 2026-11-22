@@ -683,6 +683,36 @@
         'At 108 km/h crests ahead are less than a tenth closer together than a parked siren’s': near(1 - this.crestGap(f, v, 0) / this.crestGap(f, 0, 0), .087, .001),
       }).map(([name, pass]) => ({ name, pass }));
     },
+    // Radio. A station pushes electrons up and down its mast; the changing push spreads as an electromagnetic wave at the
+    // speed of light, and pushes the electrons in a far antenna in step, weaker with distance. A tuned circuit answers one
+    // frequency; a voice rides on the wave by changing its strength (AM) or its frequency (FM). SI units.
+    radioC: 299792458,
+    radioWavelength(f) { return this.radioC / f; },
+    radioTravelTime(d) { return d / this.radioC; },
+    // A tuned circuit's swing when pushed at frequency f, relative to pushes at its own frequency f0, for quality Q:
+    // 1 / sqrt(1 + Q^2 (f/f0 - f0/f)^2), the band-pass response of a resonator.
+    tunedResponse(f, f0, Q = 30) { const r = f / f0; return 1 / Math.sqrt(1 + Q * Q * (r - 1 / r) ** 2); },
+    // The wave's push at time t carrying a voice s(t) (between -1 and 1): AM changes its strength by depth m; FM changes
+    // its frequency by up to dev around f, keeping its strength.
+    amWave(t, f, s, m = .6) { return (1 + m * s(t)) * Math.sin(2 * Math.PI * f * t); },
+    fmWave(t, f, sInt, dev) { return Math.sin(2 * Math.PI * (f * t + dev * sInt(t))); },
+    radioChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, voice = t => Math.sin(2 * Math.PI * 3 * t), voiceInt = t => (1 - Math.cos(2 * Math.PI * 3 * t)) / (2 * Math.PI * 3);
+      // Envelope of an AM wave: the largest push in each carrier cycle follows 1 + m s(t).
+      const f = 400, peaks = Array.from({length: 40}, (_, k) => { const t0 = k / f; let top = 0; for (let i = 0; i < 200; i++) top = Math.max(top, this.amWave(t0 + i / (200 * f), f, voice)); return [t0 + .5 / f, top]; });
+      // Rhythm of an FM wave: upward crossings in a short window follow f + dev s(t).
+      const crossings = (t0, t1) => { let n = 0, prev = this.fmWave(t0, f, voiceInt, 60); for (let t = t0; t < t1; t += 1 / (f * 400)) { const y = this.fmWave(t, f, voiceInt, 60); if (prev < 0 && y >= 0) n++; prev = y; } return n / (t1 - t0); };
+      return Object.entries({
+        'An FM wave at 100 million pushes a second is about 3 metres long': near(this.radioWavelength(100e6), 2.998, .001),
+        'An AM wave at a million pushes a second is about 300 metres long': near(this.radioWavelength(1e6), 299.8, .1),
+        'A radio wave crosses a 30 km city in about a ten-thousandth of a second': near(this.radioTravelTime(30e3), 1e-4, 1e-6),
+        'A tuned circuit answers its own frequency in full': this.tunedResponse(1e6, 1e6) === 1,
+        'A station 40% away in frequency moves the tuner by less than a twentieth as much': this.tunedResponse(1.4e6, 1e6) < .05 && this.tunedResponse(1e6 / 1.4, 1e6) < .05,
+        'The further a station is from the tuned frequency, the less it moves the tuner': this.tunedResponse(1.1e6, 1e6) > this.tunedResponse(1.2e6, 1e6) && this.tunedResponse(1.2e6, 1e6) > this.tunedResponse(1.4e6, 1e6),
+        'An AM wave keeps its rhythm while its strength follows the voice': peaks.every(([t, top]) => near(top, 1 + .6 * voice(t), .03)),
+        'An FM wave keeps its strength while its rhythm follows the voice': near(crossings(.07, .09), f + 60 * voice(.08), 25) && near(crossings(.24, .26), f + 60 * voice(.25), 25) && Math.abs(this.fmWave(.123, f, voiceInt, 60)) <= 1,
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     montyChecks() {
       const near=(a,b)=>Math.abs(a-b)<1e-12, g=this.montyGames(3), careless=this.montyGames(3,false);
       return Object.entries({
@@ -716,7 +746,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

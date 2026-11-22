@@ -1,0 +1,570 @@
+{
+  "id": "20261122T223447-radio",
+  "status": "reviewed",
+  "question": "How does a radio signal carry a voice through the air?",
+  "topic": "radio",
+  "created": "2026-11-22T22:34:47.158970+00:00",
+  "research": {
+    "claim": "A radio station sends sound by pushing the electrons in its antenna up and down at a steady rhythm: an AM station at 1,000 on the dial (1,000 kHz) pushes them a million times a second, and its whole steel mast is the antenna. Electric charges push on each other across a distance, so as the mast's electrons move, their push on charges far away changes, and that change spreads outward at the speed of light (299,792 km a second) as a radio wave, 300 m from one crest to the next at this rhythm. It is light, with waves far longer than visible light's 380 to 750 nanometres, and it needs no air. Reaching a car's antenna, it pushes that antenna's electrons up and down in step, a tiny copy of the mast's current, which the radio strengthens with its own power. The radio's tuner is a resonator that answers strongly only near its own rhythm, so turning the dial picks one station out of the many in the same air. An AM station carries a voice by changing how hard it pushes; the radio follows those changes and moves its speaker with them.",
+    "explanation": "The wavelength of a wave of frequency f is lambda = c/f: about 300 m at 1 MHz and 3 m at 100 MHz. It covers a distance d in d/c: 30 km in 1.0e-4 s. The radiated electric field of the accelerating charges in a vertical antenna points along the antenna in the horizontal plane around it and falls off as 1/r; on the electrons of a parallel receiving antenna it exerts a force that drives a current at the same frequency, delayed by r/c. A tuned circuit with resonant frequency f0 and quality Q responds to a drive at f with relative amplitude 1/sqrt(1 + Q^2 (f/f0 - f0/f)^2): with Q = 30, a station 30% away in frequency moves it by less than 7% as much as one at f0. An AM wave is (1 + m s(t)) sin(2 pi f t), its strength following the sound s(t); an FM wave keeps its strength and shifts its frequency in proportion to s(t), by at most 75 kHz around stations near 100 MHz, less than a thousandth.",
+    "assumptions": [
+      "An AM (medium wave) station at 1,000 kHz, a million pushes a second, whose steel mast is the antenna (a mast radiator); such masts are often between a quarter and five-eighths of a wavelength tall.",
+      "The receiving antenna is a car's vertical whip; most portable radios receive AM with a coil wound on a ferrite rod instead.",
+      "Radio waves travel at the speed of light, 299,792,458 m/s; in air slightly slower, by less than a thousandth.",
+      "The arrows show the push of the wave's electric part on electrons, along the ground around the mast, where it points up and down; the wave's magnetic part, at right angles, is not drawn. Within about a wavelength of the mast the push has further parts that are left out.",
+      "The tuner is one resonator with a quality of 30, which sets how sharply it picks a station; in the picture it builds up and dies down over a few seconds, faster than such a resonator would. Chapter 6 has three stations, at 700, 1,000 and 1,300 on the dial.",
+      "The pictures run 1.6 million times slower than real time. A voice changes the push's strength at most a few thousand times a second, so in a real station each change spans hundreds of pushes."
+    ],
+    "prediction": "Waves from an AM station at 1,000 kHz are about 300 m long, and from an FM station at 100 MHz about 3 m long; a radio wave crosses 30 km in about a ten-thousandth of a second; a tuner set to 1,000 with a quality of 30 answers a station at 1,400 with less than a twentieth of its full response.",
+    "falsifier": "If a change in a mast's current reached an antenna 30 km away noticeably later than a ten-thousandth of a second, or if radio waves could not cross empty space, this explanation would be wrong.",
+    "limitations": [
+      "Real AM waves travel along the ground and, at night, also bounce off the upper air (the ionosphere); hills, buildings and tunnels weaken them. None of this is modelled.",
+      "Real receivers shift the chosen station to a fixed middle rhythm and filter it in several tuned stages (the superheterodyne); a single resonator stands in for them.",
+      "The car and its antenna are drawn as icons, and the scene as a side-on slice through the mast and the car."
+    ],
+    "misconceptions": [
+      "Radio is a kind of sound that travels through the air.",
+      "The electrons in the mast fly across the air to your radio.",
+      "Each station's signal travels along its own path, so stations never meet in the air."
+    ],
+    "questions": [
+      "Does a radio wave need air?",
+      "Do the electrons fly across to my radio?",
+      "What do the numbers on the dial mean?",
+      "Why does a station fade as I drive away?",
+      "Why does my radio need power if the wave does the pushing?",
+      "Is it really light?",
+      "What is the difference between AM and FM?",
+      "Do phones and Wi-Fi work the same way?"
+    ],
+    "sources": [
+      {
+        "title": "Radio (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Radio",
+        "supports": "Radio waves are radiated by charges undergoing acceleration, such as electrons flowing back and forth in an antenna; they travel at the speed of light; AM varies the amplitude and FM the frequency of the carrier; at the receiver the wave induces a tiny oscillating voltage, a weaker replica of the current in the transmitting antenna, which the receiver amplifies and demodulates; signals from many transmitters pass through the air at once without interfering because each oscillates at a different frequency; a tuned circuit acts like a resonator, similar to a tuning fork, and tuning adjusts its resonant frequency; Hertz first proved that radio waves exist in 1886."
+      },
+      {
+        "title": "Radio wave (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Radio_wave",
+        "supports": "Radio waves are electromagnetic radiation with the longest wavelengths, longer than about 1 mm; they travel at the speed of light in vacuum and slightly slower in air; wavelength is inversely proportional to frequency; when they strike a receiving antenna they push the electrons in the metal back and forth, creating tiny oscillating currents; ground stations communicate with spacecraft billions of miles away; cell phones and wireless networks use radio waves. Hertz generated radio waves in his laboratory (the article gives 1887)."
+      },
+      {
+        "title": "Antenna (radio) (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Antenna_(radio)",
+        "supports": "Resonant antennas use elements about a quarter wavelength long; a vertical conductor gives vertical polarization; most portable AM receivers, other than car radios, use a coil on a ferrite rod; whip antennas are found on portable radios."
+      },
+      {
+        "title": "Mast radiator (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Mast_radiator",
+        "supports": "In a mast radiator the steel mast itself is the antenna, commonly used for AM broadcasting; heights from a quarter-wave monopole to about 0.625 of a wavelength are used."
+      },
+      {
+        "title": "AM broadcasting (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/AM_broadcasting",
+        "supports": "Medium-wave stations transmit at 531 to 1602 kHz with 9 kHz spacing in ITU Regions 1 and 3, and 530 to 1700 kHz with 10 kHz spacing in the Americas."
+      },
+      {
+        "title": "Amplitude modulation (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Amplitude_modulation",
+        "supports": "In AM the amplitude of the carrier is varied in proportion to the message signal, such as an audio signal."
+      },
+      {
+        "title": "Frequency modulation (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Frequency_modulation",
+        "supports": "FM varies the instantaneous frequency in proportion to the message signal and rejects radio frequency interference better than AM."
+      },
+      {
+        "title": "FM broadcasting (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/FM_broadcasting",
+        "supports": "FM broadcasting uses about 87.5 to 108 MHz; the maximum permitted deviation is typically plus or minus 75 kHz."
+      },
+      {
+        "title": "Tuner (radio) (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Tuner_(radio)",
+        "supports": "A tuner passes one radio frequency and rejects the others using resonant circuits."
+      },
+      {
+        "title": "Speed of light (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Speed_of_light",
+        "supports": "The speed of light in vacuum is exactly 299,792,458 m/s; in an 1865 paper Maxwell proposed that light is an electromagnetic wave travelling at this speed; radio waves are electromagnetic waves and travel at it too."
+      },
+      {
+        "title": "Visible spectrum (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Visible_spectrum",
+        "supports": "The human eye responds to wavelengths from about 380 to about 750 nanometres."
+      },
+      {
+        "title": "Static electricity (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Static_electricity",
+        "supports": "A balloon rubbed against hair becomes charged and attracts other charges from a distance; rubbing can make hair stand up."
+      },
+      {
+        "title": "Superheterodyne receiver (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Superheterodyne_receiver",
+        "supports": "Most receivers convert the chosen station to a fixed intermediate frequency and filter it in tuned stages."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "How does a radio signal carry a voice through the air?",
+    "subtitle": "Nothing you can see crosses the air, yet the music arrives, and the dial picks one station out of dozens. What is crossing, and how?",
+    "why": "Your car radio pulls music out of thin air, from a mast many kilometres away, and a turn of the dial swaps one station for another.",
+    "opening": "How does a radio signal carry a voice through the air?",
+    "takeaway": "A station pushes the electrons in its mast up and down. Their changing push spreads out at the speed of light: a radio wave. It pushes the electrons in your antenna the same way, a moment later. Your radio's tuner builds up only at one station's rhythm. The voice rides on changes in how hard the station pushes (AM) or in its rhythm (FM).",
+    "mass": 1,
+    "distance": 1,
+    "controls": "first",
+    "accent": "gold",
+    "kind": "radio",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Does a radio wave need air?",
+        "a": "No. Sound is the air itself being squeezed, so it needs air, or some other stuff, to travel through. A radio wave is a changing electric push, with a magnetic one alongside, and it crosses empty space just as well: that is how we keep in touch with spacecraft billions of kilometres away."
+      },
+      {
+        "q": "Do the electrons fly across to my radio?",
+        "a": "No. Each electron in the mast only moves back and forth, by a tiny amount. What travels is the change in their push, the way a ripple crosses a pond while the water stays where it is. The electrons in your antenna were there all along."
+      },
+      {
+        "q": "What do the numbers on the dial mean?",
+        "a": "How many times a second the station pushes. AM dials count in thousands, so 1000 means a million pushes a second; FM dials count in millions, so 98.1 means 98.1 million. Each wave is as long as the distance light travels between two pushes: at a million pushes a second, 300 m. Stations in the same area get numbers spaced apart, so a tuner can tell them apart."
+      },
+      {
+        "q": "Why does a station fade as I drive away?",
+        "a": "The wave spreads over a wider and wider area, so its push thins: in open space, twice as far means half the push. The ground soaks up some of it, and hills, buildings and tunnels block some too."
+      },
+      {
+        "q": "Why does my radio need power if the wave does the pushing?",
+        "a": "The push that arrives is tiny: it moves the antenna's electrons only a very little. The radio uses its own power to make a much stronger copy of that current, strong enough to move a speaker."
+      },
+      {
+        "q": "Is it really light?",
+        "a": "Yes. Radio waves, the light we see and X-rays are the same kind of wave, an electromagnetic wave, and all travel at the speed of light. They differ in length: our eyes see waves from about 380 to 750 billionths of a metre long, while radio waves are longer than about a millimetre. James Clerk Maxwell predicted such waves in 1865, and Heinrich Hertz made and detected them in his laboratory in the late 1880s."
+      },
+      {
+        "q": "What is the difference between AM and FM?",
+        "a": "AM and FM are short for amplitude modulation and frequency modulation: changing the strength, or changing the rhythm. AM stations change how hard they push, in step with the sound. FM stations keep the strength steady and nudge the rhythm instead, by up to about 75 thousand pushes a second around roughly 100 million: less than one part in a thousand, far too little to see in a picture like this one. FM shrugs off electrical noise better, so it usually sounds cleaner."
+      },
+      {
+        "q": "Do phones and Wi-Fi work the same way?",
+        "a": "Yes. Phones and Wi-Fi push electrons in tiny antennas too, but hundreds of millions to billions of times a second, so their waves are centimetres to tens of centimetres long. They carry voices and data as numbers, by changing the wave very quickly."
+      }
+    ],
+    "beats": [
+      {
+        "title": "Music from thin air",
+        "body": "Imagine driving with the radio on, far from the station's mast. Nothing you can see or hear crosses the air between them. Yet music plays, and a turn of the dial finds another station."
+      },
+      {
+        "title": "Inside the mast",
+        "body": "Now imagine slowing time right down, to watch inside the mast. A transmitter pushes the mast's electrons up and down, over and over. The AM dial counts in thousands, so 1000 means a million pushes a second."
+      },
+      {
+        "title": "A ripple of push",
+        "body": "Electrons push and pull from afar: think of a balloon tugging your hair. So when the mast's electrons move, their push far away changes. That change ripples outward at the speed of light, even through space."
+      },
+      {
+        "title": "Light too long to see",
+        "body": "This ripple is a radio wave: light with waves too long to see. Each wave is 300 metres long, about three football pitches. It crosses 30 kilometres in a ten-thousandth of a second."
+      },
+      {
+        "title": "Your antenna",
+        "body": "At your car, the wave pushes the antenna's electrons up and down. They copy the mast's electrons, just a moment later. This tiny current of moving electrons is boosted by the car's own power."
+      },
+      {
+        "title": "Picking one station",
+        "body": "Dozens of stations push at once, each a different number of times a second. Like a swing pushed in time, the tuner builds up at just one rhythm. Turning the dial changes that rhythm, so another station builds up."
+      },
+      {
+        "title": "Carrying a voice",
+        "body": "To carry a voice, an AM station varies how hard it pushes. Your radio follows those changes, and they move its speaker."
+      }
+    ],
+    "theme": "sand"
+  },
+  "checks": [
+    {
+      "name": "An FM wave at 100 million pushes a second is about 3 metres long",
+      "pass": true
+    },
+    {
+      "name": "An AM wave at a million pushes a second is about 300 metres long",
+      "pass": true
+    },
+    {
+      "name": "A radio wave crosses a 30 km city in about a ten-thousandth of a second",
+      "pass": true
+    },
+    {
+      "name": "A tuned circuit answers its own frequency in full",
+      "pass": true
+    },
+    {
+      "name": "A station 40% away in frequency moves the tuner by less than a twentieth as much",
+      "pass": true
+    },
+    {
+      "name": "The further a station is from the tuned frequency, the less it moves the tuner",
+      "pass": true
+    },
+    {
+      "name": "An AM wave keeps its rhythm while its strength follows the voice",
+      "pass": true
+    },
+    {
+      "name": "An FM wave keeps its strength while its rhythm follows the voice",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 75)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 7)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 5)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5510 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, at the owner’s request for a guide on how radio works, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds, and their copy edits were applied; the reviews below are the last of each kind."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "How does a radio signal carry a voice through the air?",
+        "subtitle": "Nothing you can see crosses the air, yet the music arrives, and the dial picks one station out of dozens. What is crossing, and how?",
+        "why": "Your car radio pulls music out of thin air, from a mast many kilometres away, and a turn of the dial swaps one station for another.",
+        "opening": "How does a radio signal carry a voice through the air?",
+        "takeaway": "A station pushes the electrons in its mast up and down. Their changing push spreads out at the speed of light: a radio wave. It pushes the electrons in your antenna the same way, a moment later. Your radio's tuner builds up only at one station's rhythm. The voice rides on changes in how hard the station pushes (AM) or in its rhythm (FM).",
+        "mass": 1,
+        "distance": 1,
+        "controls": "first",
+        "accent": "gold",
+        "kind": "radio",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Does a radio wave need air?",
+            "a": "No. Sound is the air itself being squeezed, so it needs air, or some other stuff, to travel through. A radio wave is a changing electric push, with a magnetic one alongside, and it crosses empty space just as well: that is how we keep in touch with spacecraft billions of kilometres away."
+          },
+          {
+            "q": "Do the electrons fly across to my radio?",
+            "a": "No. Each electron in the mast only moves back and forth, by a tiny amount. What travels is the change in their push, the way a ripple crosses a pond while the water stays where it is. The electrons in your antenna were there all along."
+          },
+          {
+            "q": "What do the numbers on the dial mean?",
+            "a": "How many times a second the station pushes. AM dials count in thousands, so 1000 means a million pushes a second; FM dials count in millions, so 98.1 means 98.1 million. Each wave is as long as the distance light travels between two pushes: at a million pushes a second, 300 m. Stations in the same area get numbers spaced apart, so a tuner can tell them apart."
+          },
+          {
+            "q": "Why does a station fade as I drive away?",
+            "a": "The wave spreads over a wider and wider area, so its push thins: in open space, twice as far means half the push. The ground soaks up some of it, and hills, buildings and tunnels block some too."
+          },
+          {
+            "q": "Why does my radio need power if the wave does the pushing?",
+            "a": "The push that arrives is tiny: it moves the antenna's electrons only a very little. The radio uses its own power to make a much stronger copy of that current, strong enough to move a speaker."
+          },
+          {
+            "q": "Is it really light?",
+            "a": "Yes. Radio waves, the light we see and X-rays are the same kind of wave, an electromagnetic wave, and all travel at the speed of light. They differ in length: our eyes see waves from about 380 to 750 billionths of a metre long, while radio waves are longer than about a millimetre. James Clerk Maxwell predicted such waves in 1865, and Heinrich Hertz made and detected them in his laboratory in the late 1880s."
+          },
+          {
+            "q": "What is the difference between AM and FM?",
+            "a": "AM and FM are short for amplitude modulation and frequency modulation: changing the strength, or changing the rhythm. AM stations change how hard they push, in step with the sound. FM stations keep the strength steady and nudge the rhythm instead, by up to about 75 thousand pushes a second around roughly 100 million: less than one part in a thousand, far too little to see in a picture like this one. FM shrugs off electrical noise better, so it usually sounds cleaner."
+          },
+          {
+            "q": "Do phones and Wi-Fi work the same way?",
+            "a": "Yes. Phones and Wi-Fi push electrons in tiny antennas too, but hundreds of millions to billions of times a second, so their waves are centimetres to tens of centimetres long. They carry voices and data as numbers, by changing the wave very quickly."
+          }
+        ],
+        "beats": [
+          {
+            "title": "Music from thin air",
+            "body": "Imagine driving with the radio on, far from the station's mast. Nothing you can see or hear crosses the air between them. Yet music plays, and a turn of the dial finds another station."
+          },
+          {
+            "title": "Inside the mast",
+            "body": "Now imagine slowing time right down, to watch inside the mast. A transmitter pushes the mast's electrons up and down, over and over. The AM dial counts in thousands, so 1000 means a million pushes a second."
+          },
+          {
+            "title": "A ripple of push",
+            "body": "Electrons push and pull from afar: think of a balloon tugging your hair. So when the mast's electrons move, their push far away changes. That change ripples outward at the speed of light, even through space."
+          },
+          {
+            "title": "Light too long to see",
+            "body": "This ripple is a radio wave: light with waves too long to see. Each wave is 300 metres long, about three football pitches. It crosses 30 kilometres in a ten-thousandth of a second."
+          },
+          {
+            "title": "Your antenna",
+            "body": "At your car, the wave pushes the antenna's electrons up and down. They copy the mast's electrons, just a moment later. This tiny current of moving electrons is boosted by the car's own power."
+          },
+          {
+            "title": "Picking one station",
+            "body": "Dozens of stations push at once, each a different number of times a second. Like a swing pushed in time, the tuner builds up at just one rhythm. Turning the dial changes that rhythm, so another station builds up."
+          },
+          {
+            "title": "Carrying a voice",
+            "body": "To carry a voice, an AM station varies how hard it pushes. Your radio follows those changes, and they move its speaker."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "An FM wave at 100 million pushes a second is about 3 metres long",
+          "pass": true
+        },
+        {
+          "name": "An AM wave at a million pushes a second is about 300 metres long",
+          "pass": true
+        },
+        {
+          "name": "A radio wave crosses a 30 km city in about a ten-thousandth of a second",
+          "pass": true
+        },
+        {
+          "name": "A tuned circuit answers its own frequency in full",
+          "pass": true
+        },
+        {
+          "name": "A station 40% away in frequency moves the tuner by less than a twentieth as much",
+          "pass": true
+        },
+        {
+          "name": "The further a station is from the tuned frequency, the less it moves the tuner",
+          "pass": true
+        },
+        {
+          "name": "An AM wave keeps its rhythm while its strength follows the voice",
+          "pass": true
+        },
+        {
+          "name": "An FM wave keeps its strength while its rhythm follows the voice",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 75)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 7)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5510 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Both blocking errors from round 1 are fixed, in the code and in the frames. (1) In chapter 7, env = (1 + 0.6 voice)/1.6 and mast = Physics.amWave(...)/1.6, with voice between -1 and 1. The voice is on from u = 0, so the strength swings between 0.25 and 1 around the silence level of 0.625. The speaker offset is d = (e - .625)*22, which is about ±8 px on the desktop picture and zero in silence. Frames 13 and 14 show the gold outline rising and falling around a middle level. (2) The FAQ now says Maxwell predicted the waves in 1865 and Hertz made and detected them in the late 1880s. This matches the sources: Speed of light gives 1865, Radio gives 11 Nov 1886, Radio wave gives 1887. I re-checked the changed parts by running the engine source in a scratch harness. Arrows, car and arcs all measure distance from the mast's foot. At all ten layout-check sizes the mast is 0.34 to 0.61 of a wave, inside the quarter to five-eighths range, and phones fit 1.63 to 1.89 waves. The push at the car is 0.26 to 0.33 of full strength, times 1.2 for the car's electrons. The tuner builds up with a 2.5 s lag, the dial turns from 1300 to 1000 between 13.0 and 15.4 s, and 1000 overtakes 1300 at about 16 s, so the sound follows the tuned station. In chapter 5 the gold crest leaves the mast at 6.7 s and reaches the car at 10.05 s, just as line 2 ends and the car's electrons reach their highest point. In chapter 3 the single push sends down, strong up, down, which is correctly opposite to the acceleration, and the car's electrons follow the push, which is right for a short antenna. All 260 model checks pass (0 failing). The text, takeaway, FAQ, disclosure, aria text and research record are accurate: 300 m, about 3 m for FM, 1e-4 s for 30 km, 380 to 750 nm, under 7% at 30% away and under a twentieth at 1,400, 7.5e-4 for FM, 5 cm to 50 cm for phones, the ferrite rod and 'other than car radios' wording from the Antenna source. I found no blocking errors. Only small optional refinements remain.",
+        "changes": [
+          "Chapter 4: the bracket 'one wave: 300 m' runs from the first arrow, only about 0.3 of a wave from the mast, where the arrow row cuts across the arcs at a slant. So it covers 522 px against a wavelength of 482 px on desktop (8% long), and 194 px against 170 px on phones (14% long). It does mark one full repeat of the arrows along the row, so it is not wrong. If you want it to measure 300 m, start it at a crest about 0.6 of a wave or more from the mast's foot, where it comes out only 1 to 3% long.",
+          "Chapter 3, first line: the car's electrons fade in at rest at about 1.2 s, the same moment the mast's electrons stop. In the code, pc is forced to 0 before at(1), and push uses only y(u), leaving out the mast's 1.2 s slow-down. But a push sent while the mast's electrons were still moving reaches the car about 3.4 s later, so up to about 4.6 s. Suggested fix: compute push from the whole mast motion and drop the pc=0 override. The car's electrons would then settle a moment after the mast's, which reinforces this chapter's point about delay.",
+          "Chapter 6 tuner: the 2.5 s build-up and die-down lag is about 1.6 pushes, which is how a resonator with a quality of about 5 behaves. The selectivity, and the research record's line 'The tuner is one resonator with a quality of 30', use 30. A quality-30 resonator needs about Q/pi, so roughly 10 pushes, to build up, which is about 15 s at this slow-down. Viewers never see a number for this. Optionally, tie 'quality of 30' in the record to how sharply the tuner picks a station, not how fast it builds up.",
+          "Chapter 6: the far stations' pushes are computed as spreading from the main mast's foot (field uses ph(r) with r measured from mx), but their two small masts stand on the ridge between the mast and the car. A far-off station's wave would cross the row from its own direction. No arcs are drawn for those stations, so this is minor. Optionally, move the small masts to the left side.",
+          "FAQ, AM and FM: 'by at most 75 thousand pushes a second' is a little stronger than the source, which says 'typically ±75 kHz, although higher are allowed in the United States when SCA systems are used'. Suggest 'by up to about 75 thousand pushes a second'. The conclusion 'less than one part in a thousand' still holds either way."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The round-1 blocker is fixed. The swing stays inside its panel at all four screenshot sizes. The code sizes its rope from the panel height and width and clips it, so the seat stays inside at 704x580 even at its widest swing. Most of the other round-1 fixes look as described: arrows run across the car and stop above the roof; one gold crest is sent in chapter 5, with a capsule that fits; the needle starts at 1300 and moves to 1000 on line 3; the swing starts at rest; the far masts are drawn; the voice trace is full from the start and a dashed gold line runs to the speaker; the panel sits 22 px above the antenna tip and its connector ends at the windscreen; chapter 1 has no arcs; on phones the 300 m bracket ends well short of the car. The pictures are calm, the labels short (at most 7 words on screen), and each line's subject is on screen when the line plays. Nothing would stop a viewer from following. One listed fix does not work. In chapters 6-7 the mast electrons stay fully blue while the arrows and arcs dim, because sphere() sets globalAlpha itself. Smaller issues: at 704x580, 414x518 and 390x488 an arrow column sits 5 px from the antenna and runs through its electrons. At 780x260 the dial numbers hang over the panel's bottom edge; the automated check only tests the stage edge, so it misses this. The antenna electrons move only about 2 px either way, too little to see as 'up and down' in chapter 5. The gold crest shows a second, teal arrowhead where it overlaps a column. Paths: images are under .council-state/round/2026-11-22/; code is web/scene.js (the same file as radio-r2-root/web/scene.js).",
+        "changes": [
+          "Make the mast electrons dim as described (radio2-frames/canvas-6.png, canvas-7.png, frame-12.png, frame-14.png: the mast electrons are rgb(37,99,235), the same as in chapter 5). In web/scene.js, sphere() (line 165) sets ctx.globalAlpha=a, which overrides drawRadio's ctx.globalAlpha=showMastE*dim (line 3196). Pass the alpha in instead: sphere(ctx,mx,y,re,blue,showMastE*dim), and tintMast*showMastE*dim for the gold tint (line 3197). Do the same with showCarE at line 3212 so the antenna electrons' chapter-3 fade-in works. Leave sphere() itself alone, because other guides use it.",
+          "Keep the arrows clear of the antenna's electrons (radio2-sizes/768x1024-c3b.png, -c6.png, -c7.png: a small down arrow comes out of the middle electron; 768x1024-drag.png: an up arrow runs beside the rod over the top electron and looks like a second antenna; 390x844-c3b.png). The layout arithmetic puts the nearest column 5.1 px from the antenna at 704x580 and 390x488, and 5.9 px at 414x518, so it is just outside the 5 px skip. In drawRadio (line 3199), start the row so that one column falls exactly on the antenna: x0=ax-Math.floor((ax-(mx+Math.max(18,.2*lam)))/step)*step. The skipped column is then the antenna's, and its neighbours are a full step (15-18 px) away.",
+          "Keep the dial numbers inside a short panel (radio2-sizes/844x390-c6.png, a 70 px panel at 780x260: the white pills of 700/1000/1300 hang about 5 px below the panel's bottom edge and break its outline; at 1240x290 they clear it by only 2 px). At line 3234 use dy=Math.min(py+28+(ph-28)*.42, py+ph-tsz*.75-24). Consider adding a 'labels stay inside the panel' check to the layout check.",
+          "Make the antenna electrons' motion visible when chapter 5 line 1 says 'the wave pushes the antenna's electrons up and down'. In frames 5-14 the top antenna electron only moves between y=334 and 338 (about 2 px either way) while the mast electrons move about 10 px; it is about 2 px on phones too. At line 3211 raise field(rCar)*1.2 to about *2.5 and keep the 1.6 clamp. They then move about half to two-thirds as far as the mast's: still weaker, but readable.",
+          "Hide the teal arrow under the gold crest (radio2-sizes/1240x744-c5.png, 390x844-c5.png: a teal arrowhead sticks out of the capsule beside the gold one, so it looks doubled). In the row loop (line 3201) skip columns while the crest is near: if(crest&&Math.abs(x-xOf(crest.r))<8)continue;",
+          "(optional) On small stages the top mast electron rides over the beacon at the top of each swing (390x844-c3b.png, 844x390-c3b.png). With dm*1.6 travel it can rise 2-4 px above the tip when dragged hard on phones. Start the electron column lower on small stages (line 3197, y=gy-H*.08-i*sp-dy) or reduce dm (line 3189) so the top electron stays below the beacon.",
+          "(optional) Move the 'speaker' label up to just under the cone. It sits about 50 px below the speaker at the panel's bottom edge (radio2-frames/frame-14.png, radio2-sizes/768x1024-c7.png). At line 3264 use y=sy+sh*.5+14.",
+          "(optional) Live play: after a quick wiggle almost every arrow sits at its maximum length, so the row turns into flat-topped blocks that look clipped (radio2-sizes/1240x744-drag.png, 768x1024-drag.png, 844x390-drag.png). In live play only, use a wider easing curve, e.g. tanh((|f|-.8)/.6) instead of /.2 (line 3202), so pushes between 1 and 2.2 keep different lengths.",
+          "(optional) Panel labels are 10 px on phones (tsz, line 3220) while the outdoor labels are 11 px. Use 11 px; mobile.png shows there is room."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "A beginner can follow this guide. Each chapter builds on the one before: the mast's electrons are pushed, the change in their push ripples out at the speed of light, the antenna's electrons copy it, a swing-like tuner picks one rhythm, and AM or FM carries the voice. The labels appear just as the words name things (electrons, transmitter, a million pushes a second, one wave: 300 m, tiny current, tuner, the voice, speaker), and the gold crest makes 'a moment later' visible. Where I stumbled: 'Charges' (ch3) is never tied to the electrons. Ch2 says '1000 on the dial' and then 'a million times a second', and only the FAQ explains why. 'Rhythm' (ch6) could be read as a pattern of pushes rather than how many a second. 'By less than a thousandth' (ch7) reads like a thousandth of a second. The FM line plays over a picture that only ever shows AM. My answers: (1) A million pushes a second; each wave is 300 m, about three football pitches. (2) No. Ch3 says the change ripples out 'even through space', and the FAQ says sound is squeezed air but a radio wave crosses empty space, which is how we keep in touch with spacecraft. (3) No. Each electron only moves back and forth a tiny amount. What travels is the change in their push, like a ripple crossing a pond, and the electrons in your antenna were there all along. (4) Each station pushes at its own rhythm. The tuner, like a swing pushed in time, builds up only at one rhythm, and turning the dial changes that rhythm; stations in one area get numbers spaced apart. (5) AM changes how hard it pushes. FM changes its rhythm, by less than a thousandth (the FAQ: at most 75 thousand pushes a second around roughly 100 million). (6) The push that arrives is tiny, so the radio uses its own power to make a much stronger copy of that current, strong enough to move a speaker. I am sure of 1, 2, 3 and 6: chapters, labels and FAQ all say them outright. For 4, I am sure of the idea, but what the swing is inside a real radio is not covered, so that part is inferred. For 5, I am sure of what each changes. I first guessed 'a thousandth' meant a thousandth of a second until the FAQ's 75 thousand in 100 million settled it, and FM comes from the words only, never the picture. None of the six answers was a pure guess.",
+        "changes": [
+          "Ch7: the picture never shows FM. The FM line plays over the AM picture (the push's height follows the gold voice line, the waves stay evenly spaced), so a beginner can tie 'vary the rhythm' to the changing heights on screen. If the engine allows it, show FM during line 3: the gold line held steady while the teal waves bunch up and spread out with the voice. Otherwise 'instead' and the edited line have to carry it.",
+          "Ch6 tuner panel: the little music arcs sit at the left end of the dial, right beside 700, while the needle points at 1000, so it can look as if 700 is playing. Put them next to the swing or above the needle.",
+          "Takeaway: in 'Your radio's tuner answers only one station's rhythm', 'answers' is vague. Use the guide's own picture word and give the voice its own sentence, e.g. 'Your radio's tuner builds up only at one station's rhythm. The voice rides on changes in how hard the station pushes (AM) or in its rhythm (FM).'",
+          "FAQ, AM vs FM: a beginner will wonder what the letters stand for. One clause would settle it: AM and FM are short for amplitude modulation and frequency modulation, which here means changing the strength or changing the rhythm.",
+          "Optional, ch4: nothing says why a wave is 300 m (it is how far the ripple gets in the millionth of a second between two pushes). The phones FAQ hints at it (faster pushes, shorter waves). One FAQ sentence would let a curious reader work out other stations' wave lengths."
+        ],
+        "subtitle_edits": [
+          {
+            "chapter": 2,
+            "old": "A station at 1000 on the AM dial does it a million times a second.",
+            "new": "The AM dial counts in thousands, so 1000 means a million pushes a second."
+          },
+          {
+            "chapter": 3,
+            "old": "Charges push and pull from afar: think of a balloon tugging your hair.",
+            "new": "Electrons push and pull from afar: think of a balloon tugging your hair."
+          },
+          {
+            "chapter": 3,
+            "old": "So when the mast's electrons move, their push out here changes.",
+            "new": "So when the mast's electrons move, their push far away changes."
+          },
+          {
+            "chapter": 5,
+            "old": "This tiny electric current is boosted with the car's own power.",
+            "new": "This tiny current of moving electrons is boosted by the car's own power."
+          },
+          {
+            "chapter": 6,
+            "old": "Dozens of stations push at once, each at its own rhythm.",
+            "new": "Dozens of stations push at once, each a different number of times a second."
+          },
+          {
+            "chapter": 7,
+            "old": "FM stations vary the rhythm instead, by less than a thousandth.",
+            "new": "FM stations vary the rhythm instead, by less than one part in a thousand."
+          }
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 7,
+        "summary": "STEP 1 (pictures only). Ch1: a guyed red-and-white mast with a hut, labelled 'radio station', on the left, and a red car with a tall whip antenna, labelled 'your car radio', on the right, in a desert. It sets up the question of how sound gets from one to the other. Ch2: evenly spaced blue dots appear along the mast with 'a million pushes a second', and the hut is labelled 'transmitter'. The column of dots sits at different heights in different frames, so in motion it bobs up and down together. Idea: the transmitter shoves something in the mast back and forth very fast. A still gives no cue of direction, and the dots are named 'electrons' only later, on the car's antenna. Ch3: a row of teal vertical arrows ('push on electrons') grows outward from near the mast, first up then down, with grey dots marking places not yet reached. The car's antenna now holds three blue dots ('electrons') still at rest (c3a). Then the row reaches the car and runs past it ('speed of light ->'), getting shorter with distance, with faint arcs centred on the mast. Idea: shaking the mast's electrons makes a pattern of push that travels out at light speed and weakens as it goes. Ch4: a bracket 'one wave: 300 m' over about one up-and-down cycle. Idea: the pattern repeats every 300 m. Ch5: one crest arrow is highlighted orange and seems to ride toward the car, with 'your antenna', then 'tiny current'. The antenna's dots sit high when the local arrows point up and low when they point down, but they move only 3-4 px (about 2 px on the phone). Idea: the arriving push jiggles the antenna's electrons in step, a small current. Ch6: the scene fades and two smaller, fainter masts appear between the station and the car. A panel 'inside your radio' shows a swing ('tuner') swung out, and a dial with dots at 700, 1000 and 1300 with the needle on 1000. The arrow pattern becomes irregular. Idea: there are several stations and the radio is set to one. The pictures do not say why a swing, or how it picks a station. Ch7: a panel 'push at your antenna' shows a fast teal wiggle whose height rises and falls. Its outline is orange ('the voice'), and a dashed line runs from the outline to a speaker. Idea: the voice is the changing strength of the push, and the radio sends that outline to the speaker. Still: the last panel stays, and blue up/down triangles beside the mast invite dragging its electrons. Drag: the viewer's wiggle sends out blocks of full-length up and down arrows, with an arc at each flip. Story in three sentences: A transmitter shakes the electrons in a radio mast up and down a million times a second, which sends out a pattern of push on electrons, 300 m per repeat, that travels at the speed of light and weakens with distance. When the push reaches a car it jiggles the electrons in the antenna a little, a tiny current. Of the several stations, a swing-like tuner set to one dial number picks that station, and the changing strength of its push, the voice, drives the speaker. Things I could not interpret, or that look odd: (a) The two small masts stand evenly spaced on the line between the station and the car, send no pushes of their own, and nothing ties them to the 700 and 1300 dots, so they could pass for relay towers. (b) At the scale set by the 300 m bracket, the car is about 90 m long with a 60 m antenna and only about 600 m (two waves) from the mast; the mast, about 140-180 m, is plausible. (c) The bracket starts at the first arrow by the mast rather than at a crest, and at every size it is 3-8% longer than the measured crest spacing. (d) In drag mode the hand-made pushes stay nearly full length out to the car (their lengths look capped), unlike the clear weakening during playback. (e) The antenna's electrons move too little to notice easily, especially on the phone. (f) The arcs are so faint that the single bold row of arrows can read as a beam aimed at the car. (g) Layout: on the 844x390 stage the dial numbers poke out of the bottom edge of the ch6 panel and the ch7 voice outline is almost flat; on the phone, ch1-5 leave the top half of the stage empty and everything is drawn small. STEP 2 (judgement). Chain links: the pushed electrons in the mast come through in ch2, provided the bob is visible in motion; the 'million a second' comes only from its label. The travelling push comes through very well in ch3: c3a's advancing front, with the car's electrons still at rest, also carries 'a moment later', and the shrinking arrows carry 'more weakly'. The antenna's electrons moved in step come through in ch3 and ch5, but faintly, because they move only a few pixels. The 300 m from crest to crest comes through approximately in ch4. 'Spreads out' is carried only by the faint arcs. Ch6 carries 'many stations, the radio is set to one', but not 'each pushes at its own rate' or 'the swing builds up only for the matching rhythm'; those rest on the narration and on whatever the swing does in motion. Ch7 carries 'the voice is the changing strength of the push, and it drives the speaker' well, but not that the station is the one changing how hard it pushes. Overall the main chain comes through from the pictures alone, while the tuner and AM mechanism need the narration. No picture actively misleads. The ch6 small masts risk being read as relay towers, and the scale is compressed, but the narration can correct both.",
+        "changes": [
+          "Ch1: show the electrons already sitting still in both the mast and the car's antenna, so the viewer sees from the start that both rods hold the same movable dots and later chapters only set them moving.",
+          "Ch2: put one teal push arrow on the mast, the same symbol as the wave's arrows, and flip it up and down with the dots. The up-and-down push is then visible at a glance, and ch3's travelling arrows read as that same push leaving the mast.",
+          "Ch3: draw the expanding arcs a little darker, or let faint arrow ticks ride on them, so the push reads as spreading out in every direction and not as a beam fired along one line at the car.",
+          "Ch4: pin the 'one wave: 300 m' bracket to two neighbouring crests and let it ride with them. Now it starts at the first arrow by the mast, its two ends fall at different points of the wave, and it is 3-8% longer than the real crest spacing, which blurs 'crest to crest'.",
+          "Ch5: give each antenna electron a faint resting mark (or a little more travel, still less than the mast's), and time a visible nudge of the dots to the moment the orange crest arrives, so 'pushed in step, a moment later, more weakly' can be seen. They now move about 3-4 px on desktop and 2 px on the phone.",
+          "Ch6: move the two other stations off the line between the station and the car, and give each its own faint rings and a colour shared with its dot on the dial (700, 1300). They then read as separate stations pushing at once, each at its own rate, instead of relay towers on the signal's path.",
+          "Ch7: make the mast's electrons swing harder and softer in time with the orange outline (and let the arrows leaving the mast follow it), so the viewer sees the station changing how hard it pushes, not only the result at the antenna.",
+          "Drag: let hand-made pushes shrink with distance as they do during playback. Their lengths now look capped, and they stay near full length out to the car.",
+          "Layout: on the 844x390 stage give the ch6 and ch7 panels a little more height, so the dial numbers stay inside the panel and the voice outline visibly rises and falls."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261122T223447-radio/revision-1-0.png",
+        "published/20261122T223447-radio/revision-1-1.png",
+        "published/20261122T223447-radio/revision-1-2.png",
+        "published/20261122T223447-radio/revision-1-3.png",
+        "published/20261122T223447-radio/revision-1-4.png",
+        "published/20261122T223447-radio/revision-1-5.png",
+        "published/20261122T223447-radio/revision-1-6.png",
+        "published/20261122T223447-radio/revision-1-7.png",
+        "published/20261122T223447-radio/revision-1-8.png",
+        "published/20261122T223447-radio/revision-1-9.png",
+        "published/20261122T223447-radio/revision-1-10.png",
+        "published/20261122T223447-radio/revision-1-11.png",
+        "published/20261122T223447-radio/revision-1-12.png",
+        "published/20261122T223447-radio/revision-1-13.png"
+      ]
+    }
+  ]
+}
