@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-21T22:26:43.547044+00:00",
-    "outcome": "Seasons guide rebuilt around the tilt and republished. New guide on why a passing siren drops in pitch kept as a draft: its final accuracy review found a play-mode plot bug, now fixed, for re-review in the next round."
+    "at": "2026-11-22T08:48:01.514483+00:00",
+    "outcome": "Published \u201cWhy does a passing siren drop in pitch?\u201d: calmer rings, the bunching shown at half the speed of sound, a two-tone siren and a still end, after one review round with all four reviews passing."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
