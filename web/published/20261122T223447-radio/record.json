@@ -123,6 +123,21 @@
         "title": "Crystal radio (Wikipedia)",
         "url": "https://en.wikipedia.org/wiki/Crystal_radio",
         "supports": "A crystal radio uses only the power of the received radio wave, with no external power supply; it can be built from a wire antenna, a coil, a capacitor, a crystal detector (a diode) and earphones; the antenna is made as long as possible and a low-resistance ground connection is needed; without amplification it receives only nearby stations, within about 25 to 50 miles."
+      },
+      {
+        "title": "Fireside Chat 1: On the Banking Crisis, 12 March 1933 (Wikimedia Commons, public domain)",
+        "url": "https://commons.wikimedia.org/wiki/File:Fireside_Chat_1_On_the_Banking_Crisis_(March_12,_1933)_Franklin_Delano_Roosevelt.ogg",
+        "supports": "The radio talk heard in the voice chapter: Franklin D. Roosevelt's first fireside chat, broadcast on 12 March 1933."
+      },
+      {
+        "title": "Anthem of Europe, US Navy Band instrumental short version (Wikimedia Commons, public domain)",
+        "url": "https://commons.wikimedia.org/wiki/File:Anthem_of_Europe_(US_Navy_instrumental_short_version).ogg",
+        "supports": "Ode to Joy, heard as station 1000."
+      },
+      {
+        "title": "Dixie Jass Band One-Step, Original Dixieland Jass Band, 1917 (Wikimedia Commons, public domain)",
+        "url": "https://commons.wikimedia.org/wiki/File:OriginalDixielandJassBand_DixieJassBandOneStep1917.ogg",
+        "supports": "The 1917 jazz recording heard as station 1300."
       }
     ],
     "sources_retrieved": true
@@ -338,7 +353,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, at the owner’s request for a guide on how radio works, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds, and their copy edits were applied; the reviews below are the last of each kind. Later the same night, at the owner’s request (\"I still don’t get how pushing electrons up and down means somebody on the other side of the earth can pick that up\"), it was revised in a coding session: chapter 3 now shows a single ripple travelling on after the electrons stop, a new chapter compares how fast a still charge’s steady push and the ripple fade, and another shows the Earth from space, with radio waves hopping between charged air high above and the ground. The revision passed the render checks and all four reviews in two rounds; their copy edits were then applied. Later still, at the owner’s request, the comparison in chapters 3 and 5 was made plainer, with the steady push of a charge sitting still, and the station music became real public-domain tunes; a reviewer checked those edits."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, at the owner’s request for a guide on how radio works, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds, and their copy edits were applied; the reviews below are the last of each kind. Later the same night, at the owner’s request (\"I still don’t get how pushing electrons up and down means somebody on the other side of the earth can pick that up\"), it was revised in a coding session: chapter 3 now shows a single ripple travelling on after the electrons stop, a new chapter compares how fast a still charge’s steady push and the ripple fade, and another shows the Earth from space, with radio waves hopping between charged air high above and the ground. The revision passed the render checks and all four reviews in two rounds; their copy edits were then applied. Later still, at the owner’s request, the comparison in chapters 3 and 5 was made plainer, with the steady push of a charge sitting still, and the station music became real public-domain tunes; a reviewer checked those edits. The station music and the voice are now public-domain recordings from Wikimedia Commons, heard through a radio’s narrow band, with radio hiss between stations."
   },
   "revisions": [
     {

@@ -3030,26 +3030,16 @@ function drawDoppler(ctx,w,h,spec,st){
 // (AM). The pictures run 1.6 million times slower than real time (chapter 6 about 200 times), so one push of a station
 // at 1,000 kHz takes 1.6 s, and the mast stands between a quarter and five-eighths of a wave tall, as real masts do.
 const RAD={period:1.6,stations:[700,1000,1300],
- // Each station's music: well-known public-domain tunes as [note (vibrations a second), beats], 0 a rest, 0.42 s a
- // beat. 1000 plays Beethoven's Ode to Joy, 1300 Frere Jacques and 700 Twinkle, Twinkle, Little Star.
- beat:.42,
- tunes:{1000:[[494,1],[494,1],[523,1],[587,1],[587,1],[523,1],[494,1],[440,1],[392,1],[392,1],[440,1],[494,1],[494,1.5],[440,.5],[440,2],
-   [494,1],[494,1],[523,1],[587,1],[587,1],[523,1],[494,1],[440,1],[392,1],[392,1],[440,1],[494,1],[440,1.5],[392,.5],[392,2]],
-  1300:[[523,1],[587,1],[659,1],[523,1],[523,1],[587,1],[659,1],[523,1],[659,1],[698,1],[784,2],[659,1],[698,1],[784,2],
-   [784,.5],[880,.5],[784,.5],[698,.5],[659,1],[523,1],[784,.5],[880,.5],[784,.5],[698,.5],[659,1],[523,1],[523,1],[392,1],[523,2],[523,1],[392,1],[523,2]],
-  700:[[262,1],[262,1],[392,1],[392,1],[440,1],[440,1],[392,2],[349,1],[349,1],[330,1],[330,1],[294,1],[294,1],[262,2]]}};
+ // Each station's recording (files in audio/, all public domain) and where in it to start, in seconds.
+ clips:{1000:['ode',0],1300:['jazz',0],700:['jazz',30]},
+ // Where Roosevelt's first fireside chat (12 March 1933) is speech, for the voice chapter.
+ talk:0};
 const RADIO={geo:null,hold:null,offset:0,live:null};
 // The guide's chapters, in order.
 const RS={intro:0,mast:1,ripple:2,light:3,far:4,world:5,antenna:6,tuner:7,voice:8};
-// The note a station's music plays at time t, and how loud within it: each note swells in, then eases off, with a short
-// gap before the next, so the tune is played rather than buzzed.
-function radioTune(station,t){
- const notes=RAD.tunes[station], b=RAD.beat, total=notes.reduce((s,n)=>s+n[1],0)*b;let s=(((t||0)%total)+total)%total;
- for(const [f,beats] of notes){const d=beats*b;if(s<d){const x=s/d, g=Math.min(1,s/.03)*(.7+.3*Math.exp(-s*3))*(x<.9?1:.05);return [f,f?g:0,s];}s-=d;}
- return [0,0,0];
-}
-// A gentle vibrato that grows into each note, as a singer's or a violin's does.
-function radioPlay(station,t,gain){const [f,g,s]=radioTune(station,t);if(f&&g*gain>.01)soundTone(f*(1+.006*Math.min(1,s/.25)*Math.sin(TAU*5.5*(t||0))),g*gain,'triangle');}
+// A station's recording, as heard at time t (s) into the guide, at a loudness; the voice chapter plays a 1933 radio
+// talk instead.
+function radioPlay(station,t,gain){const [name,start]=RAD.clips[station];if(gain>.01)soundClip(name,gain,start+(t||0));}
 // After playback the viewer drags the mast's electrons up and down; the transmitter's own pushes take over again,
 // smoothly, when they let go.
 const RADIO_TOUCH={hint:'drag the mast’s electrons up and down, and watch your car’s antenna.',
@@ -3337,8 +3327,8 @@ function drawRadio(ctx,w,h,spec,st){
  // in chapter 8.
  if(st.playing&&!plan.live){const tg=plan.g0+since;
   if(stage===RS.intro)radioPlay(1000,tg,.7*fade(.4,.8));
-  if(stage===RS.tuner&&tuned)radioPlay(tuned[0],tg,.8*clamp(tuned[1]*1.2));
-  if(stage===RS.voice)radioPlay(1000,tg,.7);}
+  if(stage===RS.tuner){if(tuned)radioPlay(tuned[0],since,.8*clamp(tuned[1]*1.2));soundClip('static',.3*(1-clamp((tuned?tuned[1]:0)*1.3)));}
+  if(stage===RS.voice)soundClip('fdr',.8,RAD.talk+since);}
  // Grabbing the mast's electrons is offered once the guide has played.
  RADIO.geo=st.live||still?{live:true,mx,top,base:gy,y0:gy-H*.5,unit:clamp(H*.16,18,46),reach:Math.max(24,H*.1)}:null;
  if(still){for(const sgn of [-1,1]){const tx=mx+14, ty=gy-H*.5+sgn*12, z=small?5:6;
@@ -4328,7 +4318,7 @@ const ENGINES={
   // The modelled effect for the render checks: the push that reaches the car's antenna, relative to full strength.
   effect:a=>clamp(a)*Physics.tunedResponse(1e6,1e6),
   measure:null,scale:'',
-  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with the steady push of an electron sitting still, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
+  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with the steady push of an electron sitting still, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. The sounds are public-domain recordings from Wikimedia Commons, heard through a radio’s narrow band: the US Navy Band playing Ode to Joy (station 1000), the Original Dixieland Jass Band’s Dixie Jass Band One-Step of 1917 (station 1300), and Franklin D. Roosevelt’s first fireside chat on the radio, 12 March 1933 (the voice chapter); the hiss between stations is made in the page. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
   try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push travels outward on its own at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next. It halves when the distance doubles, much more slowly than the steady push of an electron sitting still, which falls to a quarter. Seen from space, charged air high above bends some radio waves back down, so they hop between it and the ground around the curve of the Earth. Back at the car, the wave pushes the electrons in its antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
@@ -4482,6 +4472,11 @@ const BENCHES={'two-slit-particles':{
 // An engine whose picture sounds (a siren, a radio's music) calls soundTone(freq, loudness, waveform) on each frame it
 // sounds; the page's sound player picks it up. Declared before the page code, so engines can draw without a page.
 const TONE={want:null};
+// Recorded sound an engine asks for on each frame it sounds: a clip's name (a file in audio/, or 'static', radio hiss
+// made in the page), its loudness and where in it to start, in seconds. The page plays clips through a radio's narrow
+// band, so recordings sound as they would from a car radio.
+const CLIPS={want:new Map()};
+function soundClip(name,gain,at=0){CLIPS.want.set(name,[gain,at]);}
 function soundTone(freq,gain,type='square'){TONE.want=[freq,gain,type];}
 window.CouncilBench={kinds:()=>Object.keys(BENCHES),timeline:spec=>timelineOf(spec),land:()=>ERA_LAND,
  call:(kind,name,...args)=>BENCHES[kind]&&typeof BENCHES[kind][name]==='function'?BENCHES[kind][name](...args):null,
@@ -4535,9 +4530,32 @@ function voice(){
   if(want&&SOUND.osc.type!==want[2])SOUND.osc.type=want[2];
   if(want){SOUND.osc.frequency.setTargetAtTime(clamp(want[0],80,4000),now,.012);g.setTargetAtTime(.12*clamp(want[1]),now,.06);g.setTargetAtTime(0,now+.3,.1);}
   else g.setTargetAtTime(0,now,.08);}
+ clips();
  if(!a||!SOUND.on){SOUND.queue.length=0;return;}
  while(SOUND.queue.length){const [f,g]=SOUND.queue.shift(), src=SOUND.ctx.createBufferSource();src.buffer=stringBuffer(f);
   if(g<.999){const v=SOUND.ctx.createGain();v.gain.value=Math.max(.08,g);src.connect(v);v.connect(SOUND.out);}else src.connect(SOUND.out);src.start();}
+}
+// A recording's samples, loaded once from audio/<name>.mp3 (null until it has arrived or if it cannot be had); 'static'
+// is a few seconds of soft, crackling noise made here.
+function clipBuffer(name){
+ const a=SOUND.ctx, have=SOUND.clipBufs||(SOUND.clipBufs=new Map());if(have.has(name))return have.get(name);
+ if(name==='static'){const n=Math.floor(a.sampleRate*3), b=a.createBuffer(1,n,a.sampleRate), y=b.getChannelData(0);let prev=0;
+  for(let i=0;i<n;i++){prev=.6*prev+.4*(Math.random()*2-1);y[i]=.5*prev+(Math.random()<.0004?(Math.random()*2-1)*.9:0);}have.set(name,b);return b;}
+ have.set(name,null);
+ fetch(`audio/${name}.mp3`).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();}).then(d=>a.decodeAudioData(d)).then(b=>have.set(name,b)).catch(()=>{});
+ return null;
+}
+// Plays the clips asked for this frame, each looping from where it was asked to start, and fades out the rest.
+function clips(){
+ const a=SOUND.ctx, want=new Map(SOUND.on?CLIPS.want:[]);CLIPS.want.clear();if(!a)return;
+ const playing=SOUND.clips||(SOUND.clips=new Map()), now=a.currentTime;
+ if(!SOUND.radio&&want.size){const hp=a.createBiquadFilter(), lp=a.createBiquadFilter();hp.type='highpass';hp.frequency.value=280;lp.type='lowpass';lp.frequency.value=3600;hp.connect(lp);lp.connect(SOUND.out);SOUND.radio=hp;}
+ for(const [name,[gain,at]] of want){let c=playing.get(name);
+  if(!c){const b=clipBuffer(name);if(!b)continue;const src=a.createBufferSource(), g=a.createGain();src.buffer=b;src.loop=true;g.gain.value=0;src.connect(g);g.connect(SOUND.radio);
+   src.start(0,((at%b.duration)+b.duration)%b.duration);c={src,g};playing.set(name,c);}
+  c.seen=now;c.g.gain.cancelScheduledValues(now);c.g.gain.setTargetAtTime(1.6*clamp(gain),now,.06);c.g.gain.setTargetAtTime(0,now+.3,.12);}
+ for(const [name,c] of playing)if(!want.has(name)){c.g.gain.cancelScheduledValues(now);c.g.gain.setTargetAtTime(0,now,.08);
+  if(now-c.seen>1.2){try{c.src.stop();}catch(error){}playing.delete(name);}}
 }
 // A hidden tab freezes the picture, so its sound pauses too.
 document.addEventListener('visibilitychange',()=>{if(!SOUND.ctx)return;if(document.hidden)SOUND.ctx.suspend?.();else SOUND.ctx.resume?.();});
