@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-23T06:00:44.990755+00:00",
-    "outcome": "Radio guide now plays real public-domain radio recordings, at the owner's request."
+    "at": "2026-11-23T17:45:58.639644+00:00",
+    "outcome": "Radio guide now plays real broadcasts (NBC chimes, FDR's fireside chat, WWV shortwave)."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
