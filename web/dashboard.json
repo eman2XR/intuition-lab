@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-23T17:45:58.639644+00:00",
-    "outcome": "Radio guide now plays real broadcasts (NBC chimes, FDR's fireside chat, WWV shortwave)."
+    "at": "2026-11-23T19:00:51.450444+00:00",
+    "outcome": "Published 'Why does the Moon change shape?' (6.4, the owner's pick: something about space); passed all four reviews in two rounds."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
