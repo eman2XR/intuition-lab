@@ -727,6 +727,27 @@
         'An FM wave keeps its strength while its rhythm follows the voice': near(crossings(.07, .09), f + 60 * voice(.08), 25) && near(crossings(.24, .26), f + 60 * voice(.25), 25) && Math.abs(this.fmWave(.123, f, voiceInt, 60)) <= 1,
       }).map(([name, pass]) => ({ name, pass }));
     },
+    // The Moon's phases. The Sun lights the half of the Moon that faces it; from Earth we see the share of that lit half
+    // that faces us, which depends on the angle psi between the Sun and the Moon as seen from Earth (0 at new Moon, pi at
+    // full). Earth's shadow points away from the Sun, so it can reach the Moon only near full Moon, and the Moon's orbit
+    // is tilted 5.14 degrees to Earth's, so most full Moons pass above or below it.
+    moonLit(psi) { return (1 - Math.cos(psi)) / 2; },
+    synodicMonth(sidereal = 27.32, year = 365.25) { return 1 / (1 / sidereal - 1 / year); },
+    moonTilt: 5.14, shadowReach: .96,
+    // The share of full Moons at which the Moon passes close enough to the middle of Earth's shadow (within its umbra's
+    // radius plus its own, about 0.96 degrees) to be at least partly eclipsed, for an evenly spread position along its orbit.
+    eclipseShare(tilt = 5.14, reach = .96) { return Math.asin(Math.min(1, reach / tilt)) / (Math.PI / 2); },
+    phaseChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, deg = Math.PI / 180, crescent = [...Array(60).keys()].map(i => i * deg), round = [...Array(360).keys()].map(i => i * deg);
+      return Object.entries({
+        'A new Moon shows none of its lit half, a half Moon half and a full Moon all': this.moonLit(0) === 0 && near(this.moonLit(Math.PI / 2), .5, 1e-12) && this.moonLit(Math.PI) === 1,
+        'The more of its lit half faces us, the further the Moon is round from the Sun': crescent.every((p, i) => i === 0 || this.moonLit(p) > this.moonLit(crescent[i - 1])),
+        'The phases repeat every 29.5 days, longer than one 27.3-day trip round Earth': near(this.synodicMonth(), 29.53, .02),
+        'A thin crescent is under 60 degrees from the Sun, so at least 120 degrees from Earth\'s shadow': round.every(p => (this.moonLit(p) < .25 - 1e-9) === (p < 60 * deg || p > 300 * deg)) && round.filter(p => this.moonLit(p) < .25).every(p => Math.abs(Math.PI - p) >= 120 * deg),
+        'With a 5 degree tilt, fewer than one full Moon in five meets the dark middle of Earth\'s shadow': this.eclipseShare() < .2 && this.eclipseShare() > .05,
+        'With no tilt, every full Moon would meet it': this.eclipseShare(0) === 1,
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     montyChecks() {
       const near=(a,b)=>Math.abs(a-b)<1e-12, g=this.montyGames(3), careless=this.montyGames(3,false);
       return Object.entries({
@@ -760,7 +781,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

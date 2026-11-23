@@ -145,6 +145,11 @@
           "id": "6.3",
           "question": "Why is summer warmer than winter?",
           "model": "seasons"
+        },
+        {
+          "id": "6.4",
+          "question": "Why does the Moon change shape?",
+          "model": "moon-phases"
         }
       ]
     },

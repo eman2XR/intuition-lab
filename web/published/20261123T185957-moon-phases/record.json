@@ -1,0 +1,437 @@
+{
+  "id": "20261123T185957-moon-phases",
+  "status": "reviewed",
+  "question": "Why does the Moon change shape?",
+  "topic": "moon-phases",
+  "created": "2026-11-23T18:59:57.347335+00:00",
+  "research": {
+    "claim": "The Moon changes shape because the Sun always lights the half of it that faces the Sun, and as the Moon circles the Earth we see different shares of that lit half. At new Moon, with the Moon between Earth and the Sun, its lit half faces away; a quarter of the way round we see half of it; at full Moon, opposite the Sun, we see all of it. The cycle repeats every 29.5 days. Earth's shadow does not cause the phases: it points away from the Sun and reaches the Moon only near full Moon, in a lunar eclipse, which is rare because the Moon's path is tilted about 5 degrees.",
+    "explanation": "With psi the angle between the Sun and the Moon as seen from Earth, the share of the Moon's disc that is lit is (1 - cos psi)/2: 0 at new Moon, 1/2 at a quarter, 1 at full. The synodic month, from one phase to the next of the same kind, is 1/(1/27.32 - 1/365.25) = 29.53 days, longer than the 27.32-day sidereal month because Earth moves round the Sun meanwhile. A thin crescent (less than a quarter lit) is less than 60 degrees from the Sun, so at least 120 degrees from the direction of Earth's shadow. With the orbit tilted 5.14 degrees and the Moon needing to pass within about 0.96 degrees of the shadow's centre, only about 12% of full Moons are at least partly eclipsed by the dark middle of the shadow.",
+    "assumptions": [
+      "Seen from above Earth's North Pole with sunlight from the left; the Moon goes round anticlockwise.",
+      "The view from Earth is drawn as seen from Earth's northern half, where a growing Moon is lit on its right.",
+      "The Sun is far enough away that its light arrives in parallel rays.",
+      "The Moon, the Earth and their distance are drawn at sizes that fit the picture; the Moon is really about 30 Earth widths away."
+    ],
+    "prediction": "A crescent Moon is always seen fairly near the Sun in the sky (in the west after sunset when growing), and a full Moon rises as the Sun sets, on the opposite side of the sky.",
+    "falsifier": "If a thin crescent Moon could be seen high in the sky opposite the setting Sun, or if the Moon's phases lined up with Earth's shadow instead of with the angle between the Sun and the Moon, this explanation would be wrong.",
+    "limitations": [
+      "The Moon's orbit is slightly oval, so the 29.5 days is an average.",
+      "Earthshine, sunlight reflected from Earth that dimly lights the dark part of a crescent, is not drawn.",
+      "The Moon's 5-degree tilt is described, not drawn."
+    ],
+    "misconceptions": [
+      "Earth's shadow causes the Moon's phases.",
+      "There is a far side of the Moon that never gets sunlight.",
+      "Every full Moon brings an eclipse."
+    ],
+    "questions": [
+      "Why isn't there an eclipse every full Moon?",
+      "Why do we always see the same face?",
+      "Does the far side stay dark?",
+      "Why does the phase cycle take 29.5 days, not 27.3?",
+      "Why does an eclipsed Moon turn red?",
+      "Does the Moon look the same everywhere?"
+    ],
+    "sources": [
+      {
+        "title": "Lunar phase (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Lunar_phase",
+        "supports": "The sunlit portion of the visible side varies from 0% at new Moon to nearly 100% at full Moon; the phases are not caused by Earth's shadow; a lunar month averages about 29.5 days (29.53059 days); eclipses are not seen every month because the Moon's orbit is tilted about 5 degrees; seen from the southern hemisphere each phase is rotated 180 degrees; earthshine dimly lights the dark side."
+      },
+      {
+        "title": "Lunar eclipse (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Lunar_eclipse",
+        "supports": "In a lunar eclipse the Moon passes through Earth's shadow and turns reddish because sunlight reaching it passes through a long, dense layer of Earth's atmosphere, where it is scattered; at least two lunar eclipses (including penumbral) occur every year."
+      },
+      {
+        "title": "Orbit of the Moon (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Orbit_of_the_Moon",
+        "supports": "The Moon orbits Earth in about 27.3 days relative to the stars and about 29.5 days relative to the Sun; its orbit is inclined about 5.14 degrees to the ecliptic."
+      },
+      {
+        "title": "Tidal locking (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Tidal_locking",
+        "supports": "The same side of the Moon always faces Earth; most of the far side was first seen in 1959 in photographs from Luna 3."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "Why does the Moon change shape?",
+    "subtitle": "Every month the Moon grows from a thin sliver to a full disc and back. Is something covering it, or is something else going on?",
+    "why": "The Moon seems to change shape every night, yet it is always the same round ball, half of it in sunlight.",
+    "opening": "Why does the Moon change shape?",
+    "takeaway": "The Sun always lights the half of the Moon that faces it. As the Moon circles the Earth each month, we see more or less of that lit half: none at new Moon, between us and the Sun; half at a half Moon; all of it at full Moon, opposite the Sun. Earth's shadow points away from the Sun, so it plays no part in the phases; it reaches the Moon only at some full Moons, in a lunar eclipse.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "first",
+    "accent": "blue",
+    "kind": "moon-phases",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Why isn't there an eclipse every full Moon?",
+        "a": "The Moon's path is tilted about 5 degrees to Earth's path round the Sun, so at most full Moons it passes just above or below Earth's shadow. Only about one full Moon in eight dips into the dark middle of Earth's shadow."
+      },
+      {
+        "q": "Why do we always see the same face?",
+        "a": "The Moon turns on its axis exactly once for each trip round the Earth, so the same side always faces us. The far side was first photographed in 1959, by the Soviet spacecraft Luna 3."
+      },
+      {
+        "q": "Does the far side stay dark?",
+        "a": "No. The far side is lit whenever it faces the Sun: at new Moon it is fully lit, while the side facing us is dark. There is no side that never sees sunlight."
+      },
+      {
+        "q": "Why does the phase cycle take 29.5 days, not 27.3?",
+        "a": "The Moon goes once round the Earth in about 27.3 days. But in that time Earth has moved along its own path round the Sun, so the Moon needs about two more days to line up with the Sun again."
+      },
+      {
+        "q": "Why does an eclipsed Moon turn red?",
+        "a": "Sunlight still reaches it by passing through Earth's air, which bends it into the shadow. On that long trip the air scatters away the blue, as at sunset, so the light that arrives is red."
+      },
+      {
+        "q": "Does the Moon look the same everywhere?",
+        "a": "The shapes are the same, but from the southern half of the Earth each phase looks turned upside down: a growing Moon is lit on its left."
+      }
+    ],
+    "beats": [
+      {
+        "title": "A Moon that changes shape",
+        "body": "Imagine looking at the Moon each night for a month. A thin crescent grows to a full Moon, then shrinks away again. The whole cycle repeats every 29 and a half days."
+      },
+      {
+        "title": "Half is always lit",
+        "body": "Imagine a ball held up in sunlight: one half bright, the other dark. The Moon is the same: the Sun lights the half that faces it. The Moon makes no light of its own; it only reflects sunlight."
+      },
+      {
+        "title": "Around the Earth",
+        "body": "Now imagine looking down on Earth, with sunlight from one side. The Moon circles Earth about once a month, lit on its Sun side. From Earth, we see a different share of that lit half each night."
+      },
+      {
+        "title": "What we see",
+        "body": "Between us and the Sun, the Moon's lit half faces away: a new Moon. A quarter of the way round, we see half of it lit: a half Moon. Opposite the Sun, the whole lit half faces us: a full Moon."
+      },
+      {
+        "title": "Not Earth's shadow",
+        "body": "Many people think Earth's shadow makes the phases. But the shadow points away from the Sun, far from a crescent Moon. It reaches the Moon only at some full Moons: a lunar eclipse."
+      }
+    ],
+    "theme": "lilac"
+  },
+  "checks": [
+    {
+      "name": "A new Moon shows none of its lit half, a half Moon half and a full Moon all",
+      "pass": true
+    },
+    {
+      "name": "The more of its lit half faces us, the further the Moon is round from the Sun",
+      "pass": true
+    },
+    {
+      "name": "The phases repeat every 29.5 days, longer than one 27.3-day trip round Earth",
+      "pass": true
+    },
+    {
+      "name": "A thin crescent is under 60 degrees from the Sun, so at least 120 degrees from Earth's shadow",
+      "pass": true
+    },
+    {
+      "name": "With a 5 degree tilt, fewer than one full Moon in five meets the dark middle of Earth's shadow",
+      "pass": true
+    },
+    {
+      "name": "With no tilt, every full Moon would meet it",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.5 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 68)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 8)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 3)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4100 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, on the owner’s request for something about space, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds (the first found the view from above running the wrong way round), and their copy edits were then applied."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Why does the Moon change shape?",
+        "subtitle": "Every month the Moon grows from a thin sliver to a full disc and back. Is something covering it, or is something else going on?",
+        "why": "The Moon seems to change shape every night, yet it is always the same round ball, half of it in sunlight.",
+        "opening": "Why does the Moon change shape?",
+        "takeaway": "The Sun always lights the half of the Moon that faces it. As the Moon circles the Earth each month, we see more or less of that lit half: none at new Moon, between us and the Sun; half at a half Moon; all of it at full Moon, opposite the Sun. Earth's shadow points away from the Sun, so it plays no part in the phases; it reaches the Moon only at some full Moons, in a lunar eclipse.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "first",
+        "accent": "blue",
+        "kind": "moon-phases",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Why isn't there an eclipse every full Moon?",
+            "a": "The Moon's path is tilted about 5 degrees to Earth's path round the Sun, so at most full Moons it passes just above or below Earth's shadow. Only about one full Moon in eight dips into the dark middle of Earth's shadow."
+          },
+          {
+            "q": "Why do we always see the same face?",
+            "a": "The Moon turns on its axis exactly once for each trip round the Earth, so the same side always faces us. The far side was first photographed in 1959, by the Soviet spacecraft Luna 3."
+          },
+          {
+            "q": "Does the far side stay dark?",
+            "a": "No. The far side is lit whenever it faces the Sun: at new Moon it is fully lit, while the side facing us is dark. There is no side that never sees sunlight."
+          },
+          {
+            "q": "Why does the phase cycle take 29.5 days, not 27.3?",
+            "a": "The Moon goes once round the Earth in about 27.3 days. But in that time Earth has moved along its own path round the Sun, so the Moon needs about two more days to line up with the Sun again."
+          },
+          {
+            "q": "Why does an eclipsed Moon turn red?",
+            "a": "Sunlight still reaches it by passing through Earth's air, which bends it into the shadow. On that long trip the air scatters away the blue, as at sunset, so the light that arrives is red."
+          },
+          {
+            "q": "Does the Moon look the same everywhere?",
+            "a": "The shapes are the same, but from the southern half of the Earth each phase looks turned upside down: a growing Moon is lit on its left."
+          }
+        ],
+        "beats": [
+          {
+            "title": "A Moon that changes shape",
+            "body": "Imagine looking at the Moon each night for a month. A thin crescent grows to a full Moon, then shrinks away again. The whole cycle repeats every 29 and a half days."
+          },
+          {
+            "title": "Half is always lit",
+            "body": "Imagine a ball held up in sunlight: one half bright, the other dark. The Moon is the same: the Sun lights the half that faces it. The Moon makes no light of its own; it only reflects sunlight."
+          },
+          {
+            "title": "Around the Earth",
+            "body": "Now imagine looking down on Earth, with sunlight from one side. The Moon circles Earth about once a month, lit on its Sun side. From Earth, we see a different share of that lit half each night."
+          },
+          {
+            "title": "What we see",
+            "body": "Between us and the Sun, the Moon's lit half faces away: a new Moon. A quarter of the way round, we see half of it lit: a half Moon. Opposite the Sun, the whole lit half faces us: a full Moon."
+          },
+          {
+            "title": "Not Earth's shadow",
+            "body": "Many people think Earth's shadow makes the phases. But the shadow points away from the Sun, far from a crescent Moon. It reaches the Moon only at some full Moons: a lunar eclipse."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "A new Moon shows none of its lit half, a half Moon half and a full Moon all",
+          "pass": true
+        },
+        {
+          "name": "The more of its lit half faces us, the further the Moon is round from the Sun",
+          "pass": true
+        },
+        {
+          "name": "The phases repeat every 29.5 days, longer than one 27.3-day trip round Earth",
+          "pass": true
+        },
+        {
+          "name": "A thin crescent is under 60 degrees from the Sun, so at least 120 degrees from Earth's shadow",
+          "pass": true
+        },
+        {
+          "name": "With a 5 degree tilt, fewer than one full Moon in five meets the dark middle of Earth's shadow",
+          "pass": true
+        },
+        {
+          "name": "With no tilt, every full Moon would meet it",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.5 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 68)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 8)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 3)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4100 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Round 2: both round-1 blocking issues are fixed in code and frames. The view from above runs anticlockwise (first quarter at the bottom, growing crescent lower left, shrinking crescent upper left) and the drag handler matches; chapter 1 says 'each night'. The terminator ellipse gives the lit share (1 - cos psi)/2, a growing Moon is lit on the right in the northern view, the shadow points away from the Sun and is wider than the Moon, the eclipse is dim copper. Synodic month 29.53 days, eclipse share 0.12 (about one full Moon in eight), and the FAQ facts (5.14-degree tilt, Luna 3 in 1959, far side lit at new Moon, red eclipse light, southern view) are correct. All 271 model and 20 render checks pass.",
+        "changes": [
+          "Make the thin-crescent check test every angle, and the no-tilt check use a zero tilt (applied).",
+          "Say the one-in-eight full Moons dip into the dark middle of the shadow, and match the research wording (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "A calm, attractive set of pictures: a deep-space stage with faint stars, warm light from the left and a single moving Moon. Labels are short, legible and never clipped or overlapping at four window sizes, and each chapter's picture matches its subtitles. Remaining polish: a flat ball in chapter 2, a bright eclipse colour, a small Moon in the top view on small stages, tight inset labels on phones and a loose inset on tablets, a round sunlight smudge on tall stages.",
+        "changes": [
+          "Shade the chapter 2 ball as a sphere (applied).",
+          "Darken the eclipse to a shaded deep copper (applied).",
+          "A minimum Moon size and roomier inset labels on small and tall stages (applied).",
+          "Sunlight as a soft band from the left (applied).",
+          "Keep the Moon named early in chapter 4 (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The main idea is easy to follow: the Sun always lights the half of the Moon facing it, and as the Moon circles Earth we see more or less of that lit half; Earth's shadow points away from the Sun and reaches the Moon only at some full Moons, in a red eclipse. Answers from the guide: the cause of phases, that Earth's shadow does not cause them, where new and full Moon sit, why a new Moon is unseen, why eclipses are rare (FAQ) and that no side stays dark (FAQ), all sure. Edits: 'each night', name the Moon in chapter 4, 'we see half of it lit', a takeaway that places the new Moon.",
+        "changes": [
+          "Name the Moon in chapter 4 line 1 and simplify line 2 (applied).",
+          "Place the new Moon in the takeaway (applied)."
+        ],
+        "subtitle_edits": [
+          {
+            "chapter": 1,
+            "old": "Imagine looking at the Moon each evening for a month.",
+            "new": "Imagine looking at the Moon each night for a month."
+          },
+          {
+            "chapter": 4,
+            "old": "Between us and the Sun, its lit half faces away: a new Moon.",
+            "new": "Between us and the Sun, the Moon's lit half faces away: a new Moon."
+          },
+          {
+            "chapter": 4,
+            "old": "A quarter of the way round, we see half the lit half: a half Moon.",
+            "new": "A quarter of the way round, we see half of it lit: a half Moon."
+          }
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Round 2, pictures only: a Moon changing shape over a month; a ball half lit from the left; a view from above with the Moon going anticlockwise, its lit half toward the Sun, and an inset seen from Earth that agrees with it at every position checked (crescent lit on the right at lower left, half Moon at the bottom, full opposite the Sun, dark between Earth and Sun); Earth's shadow pointing away from the Sun, far from a growing crescent, and a red Moon inside it labelled lunar eclipse. The main idea comes through clearly; 'only at some full Moons' rests on the narration.",
+        "changes": [
+          "Outline the half of the small Moon that faces Earth, so the share seen is visible in the top view (applied).",
+          "Show why most full Moons miss the shadow (left to the FAQ)."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261123T185957-moon-phases/revision-1-0.png",
+        "published/20261123T185957-moon-phases/revision-1-1.png",
+        "published/20261123T185957-moon-phases/revision-1-2.png",
+        "published/20261123T185957-moon-phases/revision-1-3.png",
+        "published/20261123T185957-moon-phases/revision-1-4.png",
+        "published/20261123T185957-moon-phases/revision-1-5.png",
+        "published/20261123T185957-moon-phases/revision-1-6.png",
+        "published/20261123T185957-moon-phases/revision-1-7.png",
+        "published/20261123T185957-moon-phases/revision-1-8.png",
+        "published/20261123T185957-moon-phases/revision-1-9.png"
+      ]
+    }
+  ]
+}

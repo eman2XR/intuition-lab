@@ -3354,6 +3354,110 @@ function drawRadio(ctx,w,h,spec,st){
   key('steady push',aboveRow-24,'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));key('the ripple',aboveRow-2,gold,[],fade(at(1)+.2,.8));}
 }
 
+// Why the Moon changes shape. The Sun lights the half of the Moon that faces it; the Moon circles Earth once a month,
+// and from Earth we see the share of that lit half that faces us. Seen from above Earth's north, with sunlight from the
+// left, the Moon goes round anticlockwise: new Moon on the Sun's side, a half Moon a quarter of the way round, full Moon
+// opposite the Sun. Earth's shadow points away from the Sun, so it reaches the Moon only near full Moon (an eclipse).
+// The view from Earth is drawn as seen from Earth's northern half, where a growing Moon is lit on its right.
+const PHASE={geo:null,hold:null};
+// The angle between the Sun and the Moon as seen from Earth (0 new, pi full, 2 pi new again), from days since new Moon.
+const phaseAt=day=>TAU*(((day/29.53)%1)+1)%TAU;
+const phaseName=psi=>{const k=Physics.moonLit(psi), wax=psi<Math.PI;return k<.03?'new Moon':k>.97?'full Moon':Math.abs(k-.5)<.06?'half Moon':k<.5?(wax?'growing crescent':'shrinking crescent'):(wax?'growing gibbous':'shrinking gibbous');};
+// The Moon as seen from Earth at angle psi: dark disc, then the lit part bounded by the limb and the terminator, an
+// ellipse whose width follows cos(psi). A growing Moon is lit on the right.
+function phaseDisc(ctx,x,y,r,psi,red=0){
+ ctx.save();ctx.translate(x,y);if(psi>Math.PI)ctx.scale(-1,1);
+ ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.fillStyle='#2a2f40';ctx.fill();
+ const c=Math.cos(psi>Math.PI?TAU-psi:psi);
+ ctx.beginPath();ctx.arc(0,0,r,-Math.PI/2,Math.PI/2,false);ctx.ellipse(0,0,r*Math.abs(c)+.01,r,0,Math.PI/2,-Math.PI/2,c>0);ctx.closePath();
+ const g=ctx.createRadialGradient(r*.3,-r*.3,r*.1,0,0,r);g.addColorStop(0,'#fbf7ec');g.addColorStop(1,'#cfc6b2');let fill=g;if(red>0){fill=ctx.createRadialGradient(-r*.35,-r*.3,r*.1,0,0,r);fill.addColorStop(0,'rgb(128,58,38)');fill.addColorStop(1,'rgb(82,34,26)');}ctx.fillStyle=fill;ctx.fill();
+ ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
+}
+// A ball lit from the left: its left half bright, its right half dark, with a soft edge between.
+function litBall(ctx,x,y,r,light,dark){
+ ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle=dark;ctx.fill();
+ ctx.save();ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.clip();const g=ctx.createLinearGradient(x-r,y,x+r,y);g.addColorStop(0,light);g.addColorStop(.47,light);g.addColorStop(.53,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=g;ctx.fillRect(x-r,y-r,2*r,2*r);
+ // Round shading: brightest toward the light, darker toward the rim, so it reads as a ball.
+ const s=ctx.createRadialGradient(x-r*.45,y-r*.25,r*.1,x,y,r*1.05);s.addColorStop(0,'rgba(255,255,255,.18)');s.addColorStop(.7,'rgba(0,0,0,0)');s.addColorStop(1,'rgba(0,0,0,.35)');ctx.fillStyle=s;ctx.fillRect(x-r,y-r,2*r,2*r);ctx.restore();
+}
+// After playback the viewer drags the Moon round its path; the view from Earth follows.
+const PHASE_TOUCH={hint:'drag the Moon round the Earth and watch how it looks from Earth.',
+ grab(w,h,spec,st,x,y){const g=PHASE.geo;if(!(g&&Math.hypot(x-g.mx,y-g.my)<g.reach))return null;return {kind:'moon',cursor:'grab'};},
+ move(w,h,spec,st,x,y){const g=PHASE.geo;if(!g)return null;const a=Math.atan2(y-g.ey,x-g.ex);PHASE.hold=((Math.PI-a)%TAU+TAU)%TAU;return {};},
+ release(){return {};}};
+function phaseLayout(w,h){
+ const small=w<520, fx=w*.02, fy=h*.03, fw=w*.96, fh=h*.94;
+ // Wide: the view from above on the left, the view from Earth on the right; phones: above and below.
+ const orbit=small?[fx,fy,fw,fh*.62]:[fx,fy,fw*.62,fh], sky=small?[fx,fy+fh*.62,fw,fh*.38]:[fx+fw*.64,fy,fw*.36,fh];
+ const ex=orbit[0]+orbit[2]*(small?.56:.55), ey=orbit[1]+orbit[3]*.52, ro=Math.min(orbit[2]*(small?.3:.33),orbit[3]*.36);
+ const re=clamp(ro*.15,9,24), rm=Math.max(re*.5,8), dr=Math.min(sky[2]*(small?.26:.34),sky[3]*(small?.25:.3));
+ return {small,fx,fy,fw,fh,orbit,sky,ex,ey,ro,re,rm,dr,sx:sky[0]+sky[2]/2,sy:sky[1]+sky[3]*.5};
+}
+function drawPhases(ctx,w,h,spec,st){
+ const still=!!st.live&&!st.touched&&st.since!==undefined;
+ if(still){const c=st.chapters?.at(-1);st={...st,live:false,stage:(st.chapters?.length||5)-1,since:c?c.end-c.start:16};}
+ const L=phaseLayout(w,h), {small,fx,fy,fw,fh,orbit,sky,ex,ey,ro,re,rm,dr,sx,sy}=L, labels=st.labels, size=small?11:13;
+ const preview=st.since===undefined, last=(st.chapters?.length||5)-1, stage=preview?3:Math.min(st.live?last:st.stage,last), since=preview?9:Math.max(0,st.since);
+ const ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+5*i, dur=ch?ch.end-ch.start:16, live=!!st.live&&!preview;
+ const fade=(s0,d=.6)=>live?1:clamp((since-s0)/d), ink='rgba(20,23,28,.85)';
+ const tag=(s,x,y,o={})=>{if(!labels)return;const z=o.size||size;ctx.font=`700 ${z}px ${FONT}`;const half=ctx.measureText(s).width/2+8;pill(ctx,s,clamp(x,half,w-half),clamp(y,z,h-z),{align:'center',size:z,weight:700,color:ink});};
+ // Space: one deep field with a few faint stars, and sunlight arriving from the left.
+ const g=ctx.createLinearGradient(0,fy,0,fy+fh);g.addColorStop(0,'#141a36');g.addColorStop(1,'#0c1026');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(fx,fy,fw,fh,18);ctx.fill();
+ for(let i=0;i<46;i++){const x=fx+hash(i*3.7)*fw, y=fy+hash(i*9.1)*fh;ctx.beginPath();ctx.arc(x,y,.6+hash(i*1.3)*.9,0,TAU);ctx.fillStyle=`rgba(255,255,255,${.15+.35*hash(i*5.9)})`;ctx.fill();}
+ // The angle of the Moon from the Sun as seen from Earth, for this moment.
+ let psi=Math.PI/3, view='orbit';
+ if(live)psi=PHASE.hold!==null?PHASE.hold:Math.PI*clamp(st.mass);
+ else if(stage===0){view='sky';psi=phaseAt(1.5+26.5*clamp((since-at(0)-.3)/(dur-1.6)));}
+ else if(stage===1)view='ball';
+ else if(stage===2)psi=Math.PI*.15+TAU*clamp((since-at(1))/(dur-at(1)-.8))*.85;
+ else if(stage===3){const step=(i,a,b)=>a+(b-a)*smooth((since-at(i))/1.4);psi=since<at(1)?step(0,Math.PI*1.75,TAU-.02):since<at(2)?step(1,.02,Math.PI/2):step(2,Math.PI/2,Math.PI);}
+ else if(stage===4)psi=since<at(2)?Math.PI/4:Math.PI/4+(Math.PI*.75)*smooth((since-at(2))/1.8);
+ // Sunlight from the left: a warm glow at the edge and a few faint rays, in every view but the evening sky.
+ if(view!=='sky'){const sg=ctx.createLinearGradient(fx,0,fx+Math.min(fw*.35,orbit[2]*.5),0);sg.addColorStop(0,'rgba(255,214,140,.3)');sg.addColorStop(1,'rgba(255,214,140,0)');ctx.save();ctx.beginPath();ctx.roundRect(fx,fy,fw,fh,18);ctx.clip();ctx.fillStyle=sg;ctx.fillRect(fx,fy,fw,fh);ctx.restore();
+  for(let k=0;k<5;k++){const y=orbit[1]+orbit[3]*(.15+.175*k);trace(ctx,[[fx+10,y],[fx+Math.min(70,orbit[2]*.14),y]]);ctx.strokeStyle='rgba(255,214,140,.5)';ctx.lineWidth=1.5;ctx.stroke();
+   ctx.beginPath();ctx.moveTo(fx+Math.min(70,orbit[2]*.14)+7,y);ctx.lineTo(fx+Math.min(70,orbit[2]*.14),y-4);ctx.lineTo(fx+Math.min(70,orbit[2]*.14),y+4);ctx.closePath();ctx.fillStyle='rgba(255,214,140,.6)';ctx.fill();}}
+ const words=[];
+ if(view==='sky'){
+  // Chapter 1: the Moon in the evening sky, a month in a few seconds.
+  const R=Math.min(fw,fh)*.22, x=fx+fw/2, y=fy+fh*.46;phaseDisc(ctx,x,y,R,psi);
+  words.push([`day ${Math.max(1,Math.round(psi/TAU*29.53))}`,x,y+R+(small?22:28)]);
+ }
+ else if(view==='ball'){
+  // Chapter 2: the Moon close up, lit on the side facing the Sun.
+  const R=Math.min(fw,fh)*.24, x=fx+fw*.55, y=fy+fh*.5;litBall(ctx,x,y,R,'#efe8d8','#262a38');
+  if(since>=at(0)+.4)words.push(['sunlight',fx+Math.min(70,orbit[2]*.14)/2+12,orbit[1]+orbit[3]*.15-16]);
+  if(since>=at(1))words.push(['lit half',x-R*.5,y-R-16],['dark half',x+R*.5,y+R+18]);
+ }
+ else{
+  // The view from above: Earth, the Moon's path, and the Moon with its lit half toward the Sun.
+  const showShadow=stage===4&&!live?fade(at(1)):0;
+  if(showShadow>0){ctx.save();ctx.globalAlpha=showShadow;const len=ro*1.45;ctx.beginPath();ctx.moveTo(ex,ey-re);ctx.lineTo(ex+len,ey-re*.62);ctx.lineTo(ex+len,ey+re*.62);ctx.lineTo(ex,ey+re);ctx.closePath();
+   const sh=ctx.createLinearGradient(ex,0,ex+len,0);sh.addColorStop(0,'rgba(0,0,0,.6)');sh.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=sh;ctx.fill();ctx.restore();}
+  ctx.beginPath();ctx.arc(ex,ey,ro,0,TAU);ctx.strokeStyle='rgba(255,255,255,.22)';ctx.setLineDash([4,6]);ctx.lineWidth=1.2;ctx.stroke();ctx.setLineDash([]);
+  const a=Math.PI-psi, mx=ex+ro*Math.cos(a), my=ey+ro*Math.sin(a);
+  if(stage>=3||live){trace(ctx,[[ex,ey],[mx,my]]);ctx.strokeStyle='rgba(255,255,255,.3)';ctx.setLineDash([3,4]);ctx.lineWidth=1.2;ctx.stroke();ctx.setLineDash([]);}
+  litBall(ctx,ex,ey,re,'#5aa0d6','#14284a');
+  const eclipse=stage===4&&!live?clamp((since-at(2)-1.6)/.6):0;
+  if(eclipse>0){ctx.beginPath();ctx.arc(mx,my,rm,0,TAU);ctx.fillStyle='#6e2f22';ctx.fill();}
+  else litBall(ctx,mx,my,rm,'#efe8d8','#3a3f50');
+  // The half of the Moon that faces Earth, outlined, so the share we see is where it overlaps the lit half.
+  if(eclipse<=0&&(stage>=3||live)){const toE=Math.atan2(ey-my,ex-mx);ctx.beginPath();ctx.arc(mx,my,rm+2.2,toE-Math.PI/2,toE+Math.PI/2);ctx.strokeStyle='rgba(140,200,255,.85)';ctx.lineWidth=1.8;ctx.stroke();}
+  PHASE.geo=live||still?{mx,my,ex,ey,reach:Math.max(26,rm*3)}:null;
+  if(still){for(const s of [-1,1]){const t=a+s*.22, x=ex+ro*Math.cos(t), y=ey+ro*Math.sin(t);ctx.beginPath();ctx.arc(x,y,3,0,TAU);ctx.fillStyle='rgba(255,255,255,.7)';ctx.fill();}}
+  // The view from Earth, once it is introduced.
+  const showSky=live?1:stage===2?fade(at(2)):stage>=3?1:0;
+  if(showSky>0){ctx.save();ctx.globalAlpha=showSky;ctx.beginPath();ctx.roundRect(sky[0]+8,sky[1]+8,sky[2]-16,sky[3]-16,14);ctx.fillStyle='rgba(255,255,255,.05)';ctx.fill();
+   phaseDisc(ctx,sx,sy,dr,psi,eclipse);ctx.restore();
+   if(showSky>.5){words.push(['seen from Earth',sx,Math.max(sky[1]+8+(small?13:18),sy-dr-(small?16:22))]);words.push([eclipse>.5?'lunar eclipse':phaseName(psi),sx,sy+dr+(small?18:24)]);}}
+  if(stage===2&&since>=at(0)+.3)words.push(['Earth',ex,ey+re+(small?16:20)]);
+  if((stage===2&&since>=at(1))||(stage===3&&since<at(1)))words.push(['Moon',mx,my-rm-14]);
+  if((stage===2&&since>=at(0)+.3)||stage===3)words.push(['sunlight',fx+Math.min(70,orbit[2]*.14)/2+12,orbit[1]+orbit[3]*.15-16]);
+  if(stage===4&&since>=at(1))words.push(["Earth's shadow",ex+ro*.9,ey+re+(small?18:22)]);
+ }
+ for(const [s,x,y] of words)tag(s,x,y);
+}
+
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
 // time, from 22 chances; but a match can be between any two people, and 23 people make 253 pairs. As people arrive
 // one at a time, each newcomer must miss every birthday already in the room, so the chance of a shared birthday
@@ -4322,6 +4426,13 @@ const ENGINES={
   measure:null,scale:'',
   disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with the steady push of an electron sitting still, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. The sounds are public-domain recordings from Wikimedia Commons, heard through a radio’s narrow band: NBC’s three-note chimes and Franklin D. Roosevelt’s first fireside chat on the radio, 12 March 1933 (station 1000 and the voice chapter), and the WWV time station recorded off the air on shortwave, 15 MHz, in 2009 (station 1300 and chapter 6); the hiss between stations is made in the page. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
   try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push travels outward on its own at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next. It halves when the distance doubles, much more slowly than the steady push of an electron sitting still, which falls to a quarter. Seen from space, charged air high above bends some radio waves back down, so they hop between it and the ground around the curve of the Earth. Back at the car, the wave pushes the electrons in its antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
+ 'moon-phases':{draw:drawPhases,touch:PHASE_TOUCH,demo:false,a:['Moon’s place','how far round from new Moon to full Moon'],b:['Unused','',''],
+  fa:a=>phaseName(Math.PI*clamp(a)),fb:b=>'',
+  // The modelled effect for the render checks: the share of its lit half the Moon shows us.
+  effect:a=>Physics.moonLit(Math.PI*clamp(a)),
+  measure:null,scale:'',
+  disclosure:'Seen from above Earth’s North Pole, with sunlight from the left: the Moon goes round anticlockwise once every 29.5 days from one new Moon to the next. The view from Earth is drawn as seen from Earth’s northern half, where a growing Moon is lit on its right. Earth’s shadow points away from the Sun; the Moon’s path is tilted about 5 degrees to Earth’s, so most full Moons pass above or below the shadow, and in an eclipse the Moon turns a dim red. The Moon, the Earth and their distance are drawn at sizes that fit the picture.',
+  try:'',aria:'Over a month the Moon grows from a thin crescent to a full disc and shrinks again. The Sun always lights the half of the Moon that faces it. Seen from above, the Moon circles the Earth with its lit half toward the Sun; from Earth we see none of the lit half at new Moon, half of it a quarter of the way round, and all of it at full Moon, opposite the Sun. Earth’s shadow points away from the Sun, far from a crescent Moon, and reaches the Moon only at some full Moons, in a lunar eclipse.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.
