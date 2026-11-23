@@ -3030,16 +3030,17 @@ function drawDoppler(ctx,w,h,spec,st){
 // (AM). The pictures run 1.6 million times slower than real time (chapter 6 about 200 times), so one push of a station
 // at 1,000 kHz takes 1.6 s, and the mast stands between a quarter and five-eighths of a wave tall, as real masts do.
 const RAD={period:1.6,stations:[700,1000,1300],
- // Each station's recording (files in audio/, all public domain) and where in it to start, in seconds.
- clips:{1000:['ode',0],1300:['jazz',0],700:['jazz',30]},
- // Where Roosevelt's first fireside chat (12 March 1933) is speech, for the voice chapter.
- talk:0};
+ // Each station's broadcast (recordings in audio/, all public domain) and where in it to start, in seconds: 1000 is
+ // Roosevelt's first fireside chat (12 March 1933), 1300 the WWV time station as heard off the air on shortwave.
+ clips:{1000:['fdr',0],1300:['wwv',0],700:['wwv',35]},
+ // The NBC chimes that open chapter 1, in seconds, and where the voice chapter picks up the talk.
+ chimes:2.7, talk:22};
 const RADIO={geo:null,hold:null,offset:0,live:null};
 // The guide's chapters, in order.
 const RS={intro:0,mast:1,ripple:2,light:3,far:4,world:5,antenna:6,tuner:7,voice:8};
 // A station's recording, as heard at time t (s) into the guide, at a loudness; the voice chapter plays a 1933 radio
 // talk instead.
-function radioPlay(station,t,gain){const [name,start]=RAD.clips[station];if(gain>.01)soundClip(name,gain,start+(t||0));}
+function radioPlay(station,t,gain){const [name,start]=RAD.clips[station];if(gain>.01)soundClip(name,gain,start+Math.max(0,t||0));}
 // After playback the viewer drags the mast's electrons up and down; the transmitter's own pushes take over again,
 // smoothly, when they let go.
 const RADIO_TOUCH={hint:'drag the mast’s electrons up and down, and watch your car’s antenna.',
@@ -3199,7 +3200,8 @@ function drawRadio(ctx,w,h,spec,st){
  const tag=(s,x,y,o={})=>{if(!labels)return;const z=o.size||size;ctx.font=`700 ${z}px ${FONT}`;const half=ctx.measureText(s).width/2+8, c=o.left?x+half-3:o.right?x-half+3:x;
   pill(ctx,s,clamp(c,half,w-half),clamp(y,z,h-z),{align:'center',size:z,weight:700,color:o.color||ink});};
  // Chapter 6 is the whole Earth, seen from space.
- if(!plan.live&&stage===RS.world){RADIO.geo=null;radioWorld(ctx,w,h,plan,tag,small);return;}
+ // Its sound is a real shortwave signal from far away, the WWV time station heard off the air.
+ if(!plan.live&&stage===RS.world){RADIO.geo=null;radioWorld(ctx,w,h,plan,tag,small);if(st.playing&&since>=at(1))soundClip('wwv',.75*fade(at(1),1),40+since-at(1));return;}
  // The ground: a far ridge, the land and a road.
  ctx.fillStyle='rgba(214,196,160,.35)';ctx.beginPath();ctx.moveTo(0,gy);for(let i=0;i<=24;i++){const x=w*i/24;ctx.lineTo(x,gy-h*(.035+.025*Math.sin(i*.9+1.2)+.015*Math.sin(i*2.3)));}ctx.lineTo(w,gy);ctx.closePath();ctx.fill();
  ctx.fillStyle='#e8dbc0';ctx.fillRect(0,gy,w,h-gy);ctx.fillStyle='#d8c6a2';ctx.fillRect(0,gy,w,clamp((h-gy)*.28,5,14));
@@ -3326,7 +3328,7 @@ function drawRadio(ctx,w,h,spec,st){
  // Sound plays while the guide plays: the station's music in chapters 1 and 9, and whichever station the tuner picks
  // in chapter 8.
  if(st.playing&&!plan.live){const tg=plan.g0+since;
-  if(stage===RS.intro)radioPlay(1000,tg,.7*fade(.4,.8));
+  if(stage===RS.intro){const g=.7*fade(.4,.8);if(since<.4+RAD.chimes)soundClip('chimes',g,since-.4);else radioPlay(1000,since-.4-RAD.chimes,g);}
   if(stage===RS.tuner){if(tuned)radioPlay(tuned[0],since,.8*clamp(tuned[1]*1.2));soundClip('static',.3*(1-clamp((tuned?tuned[1]:0)*1.3)));}
   if(stage===RS.voice)soundClip('fdr',.8,RAD.talk+since);}
  // Grabbing the mast's electrons is offered once the guide has played.
@@ -4318,7 +4320,7 @@ const ENGINES={
   // The modelled effect for the render checks: the push that reaches the car's antenna, relative to full strength.
   effect:a=>clamp(a)*Physics.tunedResponse(1e6,1e6),
   measure:null,scale:'',
-  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with the steady push of an electron sitting still, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. The sounds are public-domain recordings from Wikimedia Commons, heard through a radio’s narrow band: the US Navy Band playing Ode to Joy (station 1000), the Original Dixieland Jass Band’s Dixie Jass Band One-Step of 1917 (station 1300), and Franklin D. Roosevelt’s first fireside chat on the radio, 12 March 1933 (the voice chapter); the hiss between stations is made in the page. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
+  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with the steady push of an electron sitting still, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. The sounds are public-domain recordings from Wikimedia Commons, heard through a radio’s narrow band: NBC’s three-note chimes and Franklin D. Roosevelt’s first fireside chat on the radio, 12 March 1933 (station 1000 and the voice chapter), and the WWV time station recorded off the air on shortwave, 15 MHz, in 2009 (station 1300 and chapter 6); the hiss between stations is made in the page. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
   try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push travels outward on its own at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next. It halves when the distance doubles, much more slowly than the steady push of an electron sitting still, which falls to a quarter. Seen from space, charged air high above bends some radio waves back down, so they hop between it and the ground around the curve of the Earth. Back at the car, the wave pushes the electrons in its antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',

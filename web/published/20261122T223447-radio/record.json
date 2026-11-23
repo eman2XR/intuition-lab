@@ -130,14 +130,14 @@
         "supports": "The radio talk heard in the voice chapter: Franklin D. Roosevelt's first fireside chat, broadcast on 12 March 1933."
       },
       {
-        "title": "Anthem of Europe, US Navy Band instrumental short version (Wikimedia Commons, public domain)",
-        "url": "https://commons.wikimedia.org/wiki/File:Anthem_of_Europe_(US_Navy_instrumental_short_version).ogg",
-        "supports": "Ode to Joy, heard as station 1000."
+        "title": "NBC chimes (Wikimedia Commons, public domain)",
+        "url": "https://commons.wikimedia.org/wiki/File:NBC_chimes.ogg",
+        "supports": "The three-note NBC chimes that open chapter 1, as station 1000's identification."
       },
       {
-        "title": "Dixie Jass Band One-Step, Original Dixieland Jass Band, 1917 (Wikimedia Commons, public domain)",
-        "url": "https://commons.wikimedia.org/wiki/File:OriginalDixielandJassBand_DixieJassBandOneStep1917.ogg",
-        "supports": "The 1917 jazz recording heard as station 1300."
+        "title": "WWV time signal, 4 September 2009 (Wikimedia Commons, public domain)",
+        "url": "https://commons.wikimedia.org/wiki/File:WWV_time_signal_-_20090904.ogg",
+        "supports": "A broadcast of the NIST time station WWV recorded off the air on shortwave, 15 MHz, heard as station 1300 and in chapter 6."
       }
     ],
     "sources_retrieved": true
@@ -202,7 +202,7 @@
     "beats": [
       {
         "title": "Music from thin air",
-        "body": "Imagine driving with the radio on, far from the station's mast. Nothing you can see or hear crosses the air between them. Yet music plays, and a turn of the dial finds another station."
+        "body": "Imagine driving with the radio on, far from the station's mast. Nothing you can see or hear crosses the air between them. Yet a voice comes out, and a turn of the dial finds another station."
       },
       {
         "title": "Inside the mast",
@@ -341,7 +341,7 @@
       "pass": true
     },
     {
-      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 7180 moments)",
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 7190 moments)",
       "pass": true
     },
     {
@@ -353,7 +353,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, at the owner’s request for a guide on how radio works, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds, and their copy edits were applied; the reviews below are the last of each kind. Later the same night, at the owner’s request (\"I still don’t get how pushing electrons up and down means somebody on the other side of the earth can pick that up\"), it was revised in a coding session: chapter 3 now shows a single ripple travelling on after the electrons stop, a new chapter compares how fast a still charge’s steady push and the ripple fade, and another shows the Earth from space, with radio waves hopping between charged air high above and the ground. The revision passed the render checks and all four reviews in two rounds; their copy edits were then applied. Later still, at the owner’s request, the comparison in chapters 3 and 5 was made plainer, with the steady push of a charge sitting still, and the station music became real public-domain tunes; a reviewer checked those edits. The station music and the voice are now public-domain recordings from Wikimedia Commons, heard through a radio’s narrow band, with radio hiss between stations."
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, at the owner’s request for a guide on how radio works, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds, and their copy edits were applied; the reviews below are the last of each kind. Later the same night, at the owner’s request (\"I still don’t get how pushing electrons up and down means somebody on the other side of the earth can pick that up\"), it was revised in a coding session: chapter 3 now shows a single ripple travelling on after the electrons stop, a new chapter compares how fast a still charge’s steady push and the ripple fade, and another shows the Earth from space, with radio waves hopping between charged air high above and the ground. The revision passed the render checks and all four reviews in two rounds; their copy edits were then applied. Later still, at the owner’s request, the comparison in chapters 3 and 5 was made plainer, with the steady push of a charge sitting still, and the station music became real public-domain tunes; a reviewer checked those edits. The sounds are now real broadcasts, public domain from Wikimedia Commons, heard through a radio’s narrow band: NBC’s chimes and Roosevelt’s first fireside chat, and the WWV time station recorded off the air on shortwave, with radio hiss between stations."
   },
   "revisions": [
     {
@@ -1238,7 +1238,285 @@
         "published/20261122T223447-radio/revision-3-16.png",
         "published/20261122T223447-radio/revision-3-17.png"
       ]
+    },
+    {
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Review of the owner-requested edits only (balloon wording replaced by the steady push of a still charge; real public-domain melodies for the station music): both new lines are accurate (Coulomb's inverse-square law), plain and under 80 characters, nothing mentions a balloon any more, and all three tunes are correct in notes and rhythm. Its suggested chapter 5 line 2 edit and shorter note gap were applied.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "The revision works. Chapter 6 is now clean at every size: three even hops with clear white-and-gold ground marks, a soft air glow, 'charged air' above the layer, 'one hop: about 2,150 km' between the marks, and the landing glow at the house. The faded dashed ray reads as the straight path the wave would have taken. The chapter 5 curves leave the mast clear. Chapter 3 now has a ripple crossing during line 3 and still at the end. The baseline dots and the beacon are calmer. The resting rings show at all four sizes: each electron visibly swings out of its ring and back, the mast and car electrons sit in their rings while the chapter 3 ripple travels, and the car's electrons move only when it arrives. So 'the electrons stay put' is plain. The new bands read as ripples spreading through the air from the mast's foot. They are soft in the narrated chapters, strongest near the ground and fading overhead, and they line up with the arrow row (teal over up arrows, violet over down arrows). Labels stay legible on them. What remains is polish. The bands are drawn as fixed, stepped rings, and they turn loud when plucked. 'a radio far away' covers the house on a phone. The chapter 5 curves run into the car's electrons. 'electric push' is left over flat dots at the end of chapter 3. Dimmed electrons look muddy. Nothing blocks a viewer.",
+        "changes": [
+          "Bands (R/radio7-frames/canvas-4.png, frame-7.png, frame-13.png; 1240x744-c4/c5f/c7.png): the bands are a fixed set of rings about 27-30 px wide. The ring edges sit at the same radii in every capture (at the 1176 stage x = 303, 336, 368, 398, 428 ... in c3a, c4, c5f, c7 and drag). The sky therefore shows fine concentric contour lines, clearest near the ground, and in motion the tint will probably step outward ring by ring instead of gliding. Draw each band as a smooth radial gradient, or move the ring radii outward with the wave, or use rings about 4x thinner.",
+          "Drag (R/radio7-sizes/1240x744-drag.png, 768x1024-drag.png, 390x844-drag.png, 844x390-drag.png): when plucked, the bands jump to saturated, hard-edged teal, violet and white stripes and the arrows go flat-topped. This is the loudest picture in the guide. Cap band opacity near the narrated level (soft-clip the amplitude used for the tint) so plucking stays calm.",
+          "Chapter 6 'a radio far away' (R/radio7-sizes/390x844-c6w.png, 768x1024-c6w.png): at 390 the label covers the house's base, the landing glow and the end of the gold path. At 768 its right end touches the house and hides the landing point. Keep the label at least 10 px clear of the house and its ring; on narrow stages put it below-left of the house on the Earth's face. The layout check only tests labels against each other and the edges; adding the house and the car antenna as keep-clear boxes would catch this.",
+          "Chapter 5 curves (R/radio7-frames/frame-10.png; R/radio7-sizes/1240x744-c5f.png, 768x1024-c5f.png, 844x390-c5f.png): both curves run on through the car's antenna. The gold line breaks right at an electron, and the dashed line passes behind the next electron and its ring. End both curves 10-15 px before the antenna so the antenna and its electrons stay clean.",
+          "Chapter 3 end (R/radio7-sizes/*-c3b.png): once the ripple has passed, 'electric push' is left over flat baseline dots, away from any arrows. Let it move with the ripple and sit over its arrows, as it does in frame-6.png.",
+          "Chapter 3 on phones (R/radio7-sizes/390x844-c3a.png, 390x844-c3b.png): the single-push ripple is only a few arrows of 5-14 px and a barely visible band. On small stages, raise the minimum arrow length and the band strength in this chapter so the crossing ripple reads.",
+          "Optional, arrow colour (R/radio7-frames/frame-6.png, canvas-4.png): the down arrows are teal although they sit in violet bands. That weakens the reading that the arrow row is a slice through the bands. Tint the down arrows a muted violet in the band's hue, or draw all arrows in one neutral ink.",
+          "Dimmed electrons (R/radio7-frames/frame-16.png, frame-18.png; R/radio7-sizes/*-c8.png, *-c9.png): the faded, see-through electrons turn muddy purple over the mast's red stripes and pale blue over the white ones. Dim them by blending toward the sky colour at full opacity, or draw a sand-coloured disc under each, so they stay one colour."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Review of the owner-requested edits only (balloon wording replaced by the steady push of a still charge; real public-domain melodies for the station music): both new lines are accurate (Coulomb's inverse-square law), plain and under 80 characters, nothing mentions a balloon any more, and all three tunes are correct in notes and rhythm. Its suggested chapter 5 line 2 edit and shorter note gap were applied.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "STEP 1 (pictures only). C1: On the left is a striped mast with guy wires and a hut ('radio station'). On the right is a red car with a whip antenna ('your car radio'), with empty desert between them. Nothing passes between them yet. The picture asks how the station reaches the car. C2: The mast fills with a column of blue balls. Each sits off-centre inside a faint ring that marks its usual spot ('a million pushes a second', 'transmitter'). I read them as electrons in the metal, shoved up and down very fast. Each moves only a little within its ring: they jiggle in place and do not flow anywhere. The car antenna is still plain. C3: A row of teal arrows runs at mid-height. There is one short train (down, up, down) with tiny dots everywhere else, and faint coloured rings spread from the mast like pond ripples ('electric push', 'speed of light ->'). From c3a to c3b the train moves from near the mast to near the car and leaves only dots behind, while the mast balls sit back at the centres of their rings. The car antenna now shows blue balls too, at rest, already there before the ripple arrives. Idea: one shove sends out a ripple of electric push that keeps going on its own at the speed of light after the mast stops. C4: Arrows fill the gap in alternating up and down groups that shrink with distance, matched by alternating green and lilac rings. A bracket over one up group plus one down group reads 'one wave: 300 m'. The car balls are displaced the same way as the arrows at the car. Idea: shoving again and again makes a continuous wave that repeats every 300 m and weakens with distance. C5: Two curves start at the first crest. A dashed grey 'a balloon's push' plunges to almost nothing within half the gap. An orange 'the ripple' roughly traces the arrow tips, slopes gently, and is still well above zero at the car. Idea: a steady push dies off fast with distance, but the wave's push fades slowly, so it stays strong far away. C6: The view zooms out to a curved Earth with a lilac band high above ('charged air'). An orange line leaves a tiny 'station' and rises straight to the band. It turns down to a white dot on the ground, rises again, comes down to a second dot, and finally comes down to a glowing tiny house ('a radio far away'). Between the two dots: 'one hop: about 2,150 km'. A dashed grey line carries the first leg straight on into space. In c6s the line is still being drawn and the far radio is dark; in c6w the line arrives and the radio lights up. Idea: the wave goes in straight lines and would leave the Earth, but the charged layer sends it back down, so it hops between layer and ground far around the curve. C7: Mast and car again, with a full wave ('tiny current', or 'your antenna' at 1240). At 1240 one mid-way arrow is highlighted orange. The car balls are displaced slightly, in the direction of the arrows at the car, and much less than the mast balls. Idea: the arriving wave nudges the electrons already in the car antenna, a weak copy of the mast's motion, making a tiny current. C8: The mast and wave fade, two smaller faint masts appear (other stations), and the arrows form an irregular mixed pattern. A callout 'inside your radio' shows a swinging swing ('tuner') and a dial marked 700, 1000, 1300. A red needle sits on 1000, which has a teal dot; the other two dots are grey. Idea: several stations arrive at once, and a tuner that builds up like a swing pushed at its own rhythm picks the 1000 one. C9: A callout 'push at your antenna' shows a fast teal oscillation whose height rises and falls. A bold orange outline runs along its tops ('the voice', mirrored faintly below), and a dashed link joins the outline to a 'speaker' giving off sound. The arrows outside show groups of different heights. Idea: the voice rides on the changing strength of the push, and the radio follows that outline to the speaker (AM). Still: the chapter 9 state is held, with blue up/down triangles by the mast inviting a drag. Drag: big arrow groups and saturated rings spread from the mast while the stretch near the car still shows the old small wave; the electrons stay in their rings. STORY: A station shoves the electrons in its mast up and down about a million times a second; they only jiggle in place and stay in the metal. Each shove sends a ripple of electric push outward at the speed of light that carries on by itself, and repeated shoves make a wave 300 m long that fades far more slowly than a charged balloon's push. Over long distances the wave goes straight, but a layer of charged air high up turns it back down, so it hops between that layer and the ground thousands of kilometres around the Earth. At a car it jiggles the electrons already in the antenna into a tiny current, a swing-like tuner picks one station, and the rising and falling strength of the push carries the voice to the speaker. WHAT TRAVELS: the pattern of teal push arrows and the coloured rings, a ripple of electric push at the speed of light. The blue electrons never leave the mast and the car has its own, so nothing suggested that electrons make the trip. UNCLEAR OR CONFUSING (none blocking): (a) The car antenna balls are absent in C1-C2 and appear in C3. c3a shows them before the ripple arrives, so they clearly did not ride it, but it is a small 'where did these come from' moment. (b) The 'electric push' label stays put, so in c3b it names an empty row of dots, and those zero-push dots could read as air particles or beads that carry the wave. (c) At the mast the nearest arrows always point opposite to the balls' displacement (c4: balls down, arrows up; c7: balls up, arrows down), while at the car the balls move with the local arrows. A careful viewer may find that puzzling. (d) No balloon is drawn, so 'a balloon's push' is opaque without narration. (e) In C6 the downward legs look almost flat because of the curvature, so part of each hop reads as skimming under the band. The outer turns sit at the band's lower edge but the middle one is inside it. The dashed line could mean 'escapes' or 'would go'. On the phone the hops are squashed and the dashed line is the most prominent line. (f) The orange arrow in C7 is unexplained, and 'a moment later' cannot be seen in stills. (g) In C8 nothing links the three masts to the three dial marks, the arrows turn irregular for no visible reason, and 1000 has no unit. (h) In C9 the station is dimmed, so the voice appears only at the receiving end. (i) In the drag view the arrows hit a maximum length and stay that size out to the car, so the hand-made ripple does not seem to fade, unlike C5. On the phone the scene is a thin strip with tiny arrows and electrons. STEP 2 (judgement). C1 carried fully (setting). C2 mostly carried: the rings make 'rock about their places' and 'stay in the metal' visible and the label gives the rate; only the word electron is left to narration. C3 strongly carried: c3a to c3b shows a single ripple leaving while the mast is still, which is exactly 'travels on by itself at the speed of light'. C4 carried: a continuous wave and a 300 m bracket (node to node across one up and one down group, the same length as crest to crest). C5 carried in quality (fast versus slow fade, still strong at the car); the quarter and half rule, the balloon, and 'thousands of kilometres' need narration. C6 well carried: charged layer, hops, far reach, and straight legs with a straight dashed continuation, though the picture says 'bounce' more than 'bend'. C7 mostly carried: the antenna's own electrons are there before the wave, move in step with the local push, and move visibly less than the mast's; 'a moment later' is not visible in stills. C8 partly carried: swing plus a dial with one highlighted station suggests tuning to viewers who know swings, but 'builds up only for one rhythm' and the link to the stations need narration. C9 well carried at the receiving end (voice is the outline of the push strength, sent to the speaker); the station changing how hard it pushes is only implied by the varying arrow heights. The main chain comes across from the pictures alone: electrons jiggle in the mast and stay, a travelling ripple of push fades slowly, it hops around the Earth via charged air, and it moves the far antenna's own electrons. No picture suggests that electrons travel to the car.",
+        "changes": [
+          "Chapter 1: no change needed; the scene sets up the question cleanly.",
+          "Chapter 2: show the car antenna's electrons, still and centred in their rings, at the same moment as the mast's, so both antennas visibly have their own electrons before any wave exists. This also sets up 'there all along' for chapter 7.",
+          "Chapter 3: let the 'electric push' label ride with the travelling ripple (anchored to the arrow train), so that in c3b it does not name an empty row of dots that could be mistaken for particles carrying the wave.",
+          "Chapter 4: put the bracket ends on two neighbouring crests (the tallest up arrows) instead of zero points, so it matches 'crest to crest' and shows that one wave is one up group plus one down group.",
+          "Chapter 5: add a tiny rubbed-balloon icon to the dashed legend entry, so the dashed curve reads as a different, steady source being compared and not as another property of the ripple.",
+          "Chapter 6: draw each turn at the charged air as a short curve inside the band at the same depth for every hop, instead of sharp corners at different depths, so the layer visibly bends the wave back and all hops look alike. On the phone, also keep the dashed straight line from becoming the dominant line.",
+          "Chapter 7: when the orange-highlighted crest reaches the car, light the car antenna's electrons in the same orange as they move. That shows the cause and the slight delay in the picture and gives the highlighted arrow a visible purpose.",
+          "Chapter 8: colour-link the stations to the dial. Give the main station's glow and wave the teal of its 1000 dot, and give the two faint masts the grey of the 700 and 1300 dots, so the viewer sees three stations arriving and the swing answering only to one.",
+          "Chapter 9: undim the mast and let its electrons' swing visibly grow and shrink along the same orange voice outline, so the voice is seen going in at the station as well as coming out at the speaker.",
+          "Drag view: scale or compress arrow lengths so a hand wiggle stays below the maximum, keeping the slow fade with distance from chapter 5 visible instead of equal-height arrows all the way to the car."
+        ],
+        "blocking_issues": []
+      },
+      "number": 4,
+      "scene": {
+        "title": "How does a radio signal carry a voice through the air?",
+        "subtitle": "Nothing you can see crosses the air, yet the music arrives, and the dial picks one station out of dozens. What is crossing, and how?",
+        "why": "Your car radio pulls music out of thin air, from a mast many kilometres away, and a turn of the dial swaps one station for another.",
+        "opening": "How does a radio signal carry a voice through the air?",
+        "takeaway": "A station pushes the electrons in its mast up and down. They stay in the mast, but the change in their push travels on by itself at the speed of light: a radio wave. It fades only slowly, and charged air high above bends some of it back down, so it can reach far around the Earth. It pushes the electrons in your antenna the same way, a moment later. Your radio's tuner builds up only at one station's rhythm, and the voice rides on changes in how hard the station pushes (AM) or in its rhythm (FM).",
+        "mass": 1,
+        "distance": 1,
+        "controls": "first",
+        "accent": "gold",
+        "kind": "radio",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Do the electrons fly across to my radio?",
+            "a": "No. Each electron in the mast only rocks back and forth by a tiny amount and stays in the metal. What travels is the change in their push, the way a ripple crosses a pond while the water stays where it is. The electrons in your antenna were there all along; the ripple just sets them rocking."
+          },
+          {
+            "q": "Does a radio wave need air?",
+            "a": "No. Sound is the air itself being squeezed, so it needs air, or some other stuff, to travel through. A radio wave is a changing electric push, with a magnetic one alongside, and it crosses empty space just as well: that is how we keep in touch with spacecraft billions of kilometres away."
+          },
+          {
+            "q": "What do the numbers on the dial mean?",
+            "a": "How many times a second the station pushes. AM dials count in thousands, so 1000 means a million pushes a second; FM dials count in millions, so 98.1 means 98.1 million. Each wave is as long as the distance light travels between two pushes: at a million pushes a second, 300 m. Stations in the same area get numbers spaced apart, so a tuner can tell them apart."
+          },
+          {
+            "q": "Why does a station fade as I drive away?",
+            "a": "The wave spreads over a wider and wider area, so its push thins: in open space, twice as far means half the push, because a push half as strong carries a quarter of the energy, and the energy is spread over four times the area. The ground soaks up some of it, and hills, buildings and tunnels block some too. AM's long waves also bend along the ground, around the curve of the Earth, but FM's 3-metre waves go in straight lines, so beyond the horizon they pass over your head."
+          },
+          {
+            "q": "Why can I hear far-away AM stations at night?",
+            "a": "Sunlight keeps the air high above charged. By day it also charges the air lower down, and that lower layer soaks up AM waves before they reach the higher one, so AM reaches only as far as its waves can follow the ground. At night the lower layer fades, and the higher charged air bends AM waves back down, so a station can be heard hundreds or even thousands of kilometres away."
+          },
+          {
+            "q": "Why does my radio need power if the wave does the pushing?",
+            "a": "The push that arrives is tiny: it moves the antenna's electrons only a very little. The radio uses its own power to make a much stronger copy of that current, strong enough to move a speaker."
+          },
+          {
+            "q": "Can I build my own antenna, or even a radio?",
+            "a": "Yes. Any wire is an antenna, because the wave pushes the electrons in it. For AM, the longer and higher it is, the more it catches. Two wires, each about 75 cm long (a quarter of an FM wave), stretched out in opposite directions make a simple FM antenna. The simplest radio of all, a crystal set, needs no battery: a long wire strung up high, a connection to the ground, a coil and a capacitor to tune it, a diode and an earphone. It runs only on the power of the radio wave itself, enough to hear stations within about 40 to 80 km."
+          },
+          {
+            "q": "Is it really light?",
+            "a": "Yes. Radio waves, the light we see and X-rays are the same kind of wave, an electromagnetic wave, and all travel at the speed of light. They differ in length: our eyes see waves from about 380 to 750 billionths of a metre long, while radio waves are longer than about a millimetre. James Clerk Maxwell predicted such waves in 1865, and Heinrich Hertz made and detected them in his laboratory in the late 1880s."
+          },
+          {
+            "q": "What is the difference between AM and FM?",
+            "a": "AM and FM are short for amplitude modulation and frequency modulation: changing the strength, or changing the rhythm. AM stations change how hard they push, in step with the sound. FM stations keep the strength steady and nudge the rhythm instead, by up to about 75 thousand pushes a second around roughly 100 million: less than one part in a thousand, far too little to see in a picture like this one. FM shrugs off electrical noise better, so it usually sounds cleaner."
+          },
+          {
+            "q": "Do phones and Wi-Fi work the same way?",
+            "a": "Yes. Phones and Wi-Fi push electrons in tiny antennas too, but hundreds of millions to billions of times a second, so their waves are centimetres to tens of centimetres long. They carry voices and data as numbers, by changing the wave very quickly."
+          }
+        ],
+        "beats": [
+          {
+            "title": "Music from thin air",
+            "body": "Imagine driving with the radio on, far from the station's mast. Nothing you can see or hear crosses the air between them. Yet a voice comes out, and a turn of the dial finds another station."
+          },
+          {
+            "title": "Inside the mast",
+            "body": "Now imagine slowing time right down, to watch inside the mast. A transmitter pushes the mast's electrons up and down, over and over. The AM dial counts in thousands, so 1000 means a million pushes a second."
+          },
+          {
+            "title": "A ripple of push",
+            "body": "Electrons push on each other from afar, with nothing in between. So when the mast's electrons move, their push on distant electrons changes. The electrons stay put; only the change in their push travels outward."
+          },
+          {
+            "title": "Light too long to see",
+            "body": "Push the electrons again and again, and the ripples make a radio wave. It's light with waves 300 metres long, far too long to see. It needs no air, and crosses 30 kilometres in a ten-thousandth of a second."
+          },
+          {
+            "title": "Why it carries so far",
+            "body": "An electron sitting still pushes a quarter as hard twice as far away. A ripple carries energy outward, so it still pushes half as hard twice as far. So thousands of kilometres away, it can still nudge electrons."
+          },
+          {
+            "title": "Around the world",
+            "body": "High above the ground, radio waves go in straight lines, as light does. But a layer of charged air, high above, bends many of them back down. Hopping between it and the ground, some reach the far side of Earth."
+          },
+          {
+            "title": "Your antenna",
+            "body": "Back at your car, the wave pushes the antenna's electrons up and down. They copy the mast's electrons, just a moment later. This tiny current of moving electrons is boosted by the car's own power."
+          },
+          {
+            "title": "Picking one station",
+            "body": "Dozens of stations push at once, each a different number of times a second. The tuner is like a swing: it builds up only when pushed at its own rhythm. Turning the dial changes that rhythm, so another station builds up."
+          },
+          {
+            "title": "Carrying a voice",
+            "body": "An AM station varies how hard it pushes, in step with the voice. Your radio follows those changes, and they move its speaker."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "An FM wave at 100 million pushes a second is about 3 metres long",
+          "pass": true
+        },
+        {
+          "name": "An AM wave at a million pushes a second is about 300 metres long",
+          "pass": true
+        },
+        {
+          "name": "A radio wave crosses a 30 km city in about a ten-thousandth of a second",
+          "pass": true
+        },
+        {
+          "name": "A tuned circuit answers its own frequency in full",
+          "pass": true
+        },
+        {
+          "name": "A station 40% away in frequency moves the tuner by less than a twentieth as much",
+          "pass": true
+        },
+        {
+          "name": "The further a station is from the tuned frequency, the less it moves the tuner",
+          "pass": true
+        },
+        {
+          "name": "An AM wave keeps its rhythm while its strength follows the voice",
+          "pass": true
+        },
+        {
+          "name": "Twice as far, a steady push is a quarter as strong and the ripple half",
+          "pass": true
+        },
+        {
+          "name": "Ten times as far, the ripple is ten times stronger than the steady push",
+          "pass": true
+        },
+        {
+          "name": "A grazing ray bent back by charged air 250 km up lands about 3,500 km away",
+          "pass": true
+        },
+        {
+          "name": "Launched 8 degrees up, it lands about 2,150 km away, and steeper rays land nearer",
+          "pass": true
+        },
+        {
+          "name": "Six such hops reach halfway around the Earth, and five do not",
+          "pass": true
+        },
+        {
+          "name": "An FM wave keeps its strength while its rhythm follows the voice",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.7 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 78)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 7190 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "frames": [
+        "published/20261122T223447-radio/revision-4-0.png",
+        "published/20261122T223447-radio/revision-4-1.png",
+        "published/20261122T223447-radio/revision-4-2.png",
+        "published/20261122T223447-radio/revision-4-3.png",
+        "published/20261122T223447-radio/revision-4-4.png",
+        "published/20261122T223447-radio/revision-4-5.png",
+        "published/20261122T223447-radio/revision-4-6.png",
+        "published/20261122T223447-radio/revision-4-7.png",
+        "published/20261122T223447-radio/revision-4-8.png",
+        "published/20261122T223447-radio/revision-4-9.png",
+        "published/20261122T223447-radio/revision-4-10.png",
+        "published/20261122T223447-radio/revision-4-11.png",
+        "published/20261122T223447-radio/revision-4-12.png",
+        "published/20261122T223447-radio/revision-4-13.png",
+        "published/20261122T223447-radio/revision-4-14.png",
+        "published/20261122T223447-radio/revision-4-15.png",
+        "published/20261122T223447-radio/revision-4-16.png",
+        "published/20261122T223447-radio/revision-4-17.png"
+      ]
     }
   ],
-  "updated": "2026-11-23T02:36:51Z"
+  "updated": "2026-11-23T17:45:51Z"
 }
