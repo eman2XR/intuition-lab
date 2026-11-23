@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-23T00:18:17.010415+00:00",
-    "outcome": "Revised the radio guide at the owner's request: how the signal reaches far around the Earth, and electrons that stay put; passed all four reviews."
+    "at": "2026-11-23T02:39:54.194170+00:00",
+    "outcome": "Radio guide: plainer steady-push wording and real tunes, at the owner's request."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
