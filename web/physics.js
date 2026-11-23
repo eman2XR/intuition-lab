@@ -696,6 +696,15 @@
     // its frequency by up to dev around f, keeping its strength.
     amWave(t, f, s, m = .6) { return (1 + m * s(t)) * Math.sin(2 * Math.PI * f * t); },
     fmWave(t, f, sInt, dev) { return Math.sin(2 * Math.PI * (f * t + dev * sInt(t))); },
+    // Why the ripple carries so far: a steady push from a charge (a rubbed balloon's) falls as 1/r^2, the ripple's push
+    // as 1/r; both are 1 at r0.
+    balloonPush(r, r0) { return (r0 / r) ** 2; },
+    ripplePush(r, r0) { return r0 / r; },
+    // Around the Earth: a ray that leaves the ground at an angle beta above it and is bent back down by charged air at
+    // height h lands 2 R (arccos(R cos(beta) / (R + h)) - beta) away, measured along the ground; grazing (beta = 0) it
+    // goes furthest.
+    earthR: 6371e3,
+    hopDistance(h, beta = 0) { const R = this.earthR; return 2 * R * (Math.acos(R * Math.cos(beta) / (R + h)) - beta); },
     radioChecks() {
       const near = (a, b, e) => Math.abs(a - b) <= e, voice = t => Math.sin(2 * Math.PI * 3 * t), voiceInt = t => (1 - Math.cos(2 * Math.PI * 3 * t)) / (2 * Math.PI * 3);
       // Envelope of an AM wave: the largest push in each carrier cycle follows 1 + m s(t).
@@ -710,6 +719,11 @@
         'A station 40% away in frequency moves the tuner by less than a twentieth as much': this.tunedResponse(1.4e6, 1e6) < .05 && this.tunedResponse(1e6 / 1.4, 1e6) < .05,
         'The further a station is from the tuned frequency, the less it moves the tuner': this.tunedResponse(1.1e6, 1e6) > this.tunedResponse(1.2e6, 1e6) && this.tunedResponse(1.2e6, 1e6) > this.tunedResponse(1.4e6, 1e6),
         'An AM wave keeps its rhythm while its strength follows the voice': peaks.every(([t, top]) => near(top, 1 + .6 * voice(t), .03)),
+        'Twice as far, a balloon-like steady push is a quarter as strong and the ripple half': this.balloonPush(2, 1) === .25 && this.ripplePush(2, 1) === .5,
+        'Ten times as far, the ripple is ten times stronger than the steady push': near(this.ripplePush(10, 1) / this.balloonPush(10, 1), 10, 1e-9),
+        'A grazing ray bent back by charged air 250 km up lands about 3,500 km away': near(this.hopDistance(250e3), 3.51e6, .01e6),
+        'Launched 8 degrees up, it lands about 2,150 km away, and steeper rays land nearer': near(this.hopDistance(250e3, 8 * Math.PI / 180), 2.146e6, .01e6) && this.hopDistance(250e3, .3) < this.hopDistance(250e3, .1),
+        'Six such hops reach halfway around the Earth, and five do not': 6 * this.hopDistance(250e3) > Math.PI * this.earthR && 5 * this.hopDistance(250e3) < Math.PI * this.earthR,
         'An FM wave keeps its strength while its rhythm follows the voice': near(crossings(.07, .09), f + 60 * voice(.08), 25) && near(crossings(.24, .26), f + 60 * voice(.25), 25) && Math.abs(this.fmWave(.123, f, voiceInt, 60)) <= 1,
       }).map(([name, pass]) => ({ name, pass }));
     },

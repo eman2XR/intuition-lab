@@ -3022,16 +3022,19 @@ function drawDoppler(ctx,w,h,spec,st){
 
 // How a radio signal carries a voice. A station pushes the electrons in its mast up and down at its rhythm; as they move,
 // their push on charges far away changes, and the change spreads outward at the speed of light: the radio wave, drawn
-// as arrows along the ground that show which way, and how hard, it would push an electron at that spot, and as faint
-// arcs through its crests. Where it reaches a car's antenna it pushes that antenna's electrons up and down in step.
-// Chapter 6 adds two more stations and the radio's tuner, drawn as a swing that builds up only when pushed at its own
-// rhythm; chapter 7 has the station change how hard it pushes in time with a voice (AM). The pictures run 1.6 million
-// times slower than real time, so one push of a station at 1,000 kHz takes 1.6 s, and the mast stands between a quarter
-// and five-eighths of a wave tall, as real masts do.
+// as soft bands of push through the air (teal up, violet down) and as arrows along the ground that show which way, and
+// how hard, it would push an electron at that spot. Chapter 5 compares how it fades with a balloon's steady push, and chapter 6 shows the whole
+// Earth, where charged air high above bends radio waves back down. Where the wave reaches a car's antenna it pushes that
+// antenna's electrons up and down in step. Chapter 8 adds two more stations and the radio's tuner, drawn as a swing that
+// builds up only when pushed at its own rhythm; chapter 9 has the station change how hard it pushes in time with a voice
+// (AM). The pictures run 1.6 million times slower than real time (chapter 6 about 200 times), so one push of a station
+// at 1,000 kHz takes 1.6 s, and the mast stands between a quarter and five-eighths of a wave tall, as real masts do.
 const RAD={period:1.6,stations:[700,1000,1300],
  // Each station's music: notes (vibrations a second) held 0.36 s each; 0 is a rest.
  tunes:{700:[330,392,440,392,330,294,330,0],1000:[392,494,587,494,523,440,494,392],1300:[659,587,523,587,659,784,659,0]}};
 const RADIO={geo:null,hold:null,offset:0,live:null};
+// The guide's chapters, in order.
+const RS={intro:0,mast:1,ripple:2,light:3,far:4,world:5,antenna:6,tuner:7,voice:8};
 // The note a station's music plays at time t, and how loud within it (each note starts firm and softens).
 function radioTune(station,t){
  const notes=RAD.tunes[station], i=Math.floor((t||0)/.36), into=(t||0)/.36-i, n=notes[((i%notes.length)+notes.length)%notes.length];
@@ -3060,27 +3063,29 @@ function radioLayout(w,h){
 // carries, as functions of time within the chapter (u); the push reaching a spot r from the mast left the mast r/c
 // earlier. Steady pushes keep one rhythm across chapters (their phase follows the whole guide's clock).
 function radioPlan(spec,st){
- const preview=st.since===undefined, last=(st.chapters?.length||7)-1;
- const stage=preview?3:Math.min(st.live?last:st.stage,last), since=preview?6:Math.max(0,st.since);
+ const preview=st.since===undefined, last=(st.chapters?.length||9)-1;
+ const stage=preview?RS.antenna:Math.min(st.live?last:st.stage,last), since=preview?6:Math.max(0,st.since);
  const ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+5.5*i, g0=ch?ch.start:0;
- const T=RAD.period, W=TAU/T, live=!!st.live&&!preview, ramp=x=>{x=clamp(x);return x*x*x*(x*(6*x-15)+10);};
- const steady=u=>Math.sin(W*(g0+u));
- let mast=steady, push=steady, others=0, env=null, crests=null;
- if(stage===1){const s0=at(0)+1;mast=u=>ramp(u-s0)*steady(u);push=mast;}
- if(stage===2){
-  // Chapter 3: the electrons come to rest, then one push (up and back) sends a single ripple, then steady pushing
-  // starts again. The push a far electron feels is opposite to the mast electrons' acceleration (for steady pushes it
-  // follows their displacement), so the ripple is a strong push up with weaker pushes down either side.
-  const sig=T/3.5, tc=at(1)+.6+3*sig, ts=at(2)+.2, y=u=>Math.exp(-(((u-tc)/sig)**2))+ramp((u-ts)/2)*steady(u), h=.03;
-  mast=u=>(u<1.2?(1-ramp(u/1.2))*steady(u):0)+y(u);
-  push=u=>-(mast(u+h)-2*mast(u)+mast(u-h))/(h*h*W*W);crests='found';}
- if(stage===5)others=ramp((since-at(0))/1.5);
- if(stage===6){
-  // Chapter 7: the strength follows a voice (Physics.amWave). Silence would be the steady push at 0.625 of the
+ const T=RAD.period, W=TAU/T, live=!!st.live&&!preview, ramp=x=>{x=clamp(x);return x*x*x*(x*(6*x-15)+10);}, h=.03;
+ const steady=u=>Math.sin(W*(g0+u)), accel=y=>u=>-(y(u+h)-2*y(u)+y(u-h))/(h*h*W*W);
+ let mast=steady, push=steady, others=0, env=null, bumps=[];
+ if(stage===RS.mast){const s0=at(0)+1;mast=u=>ramp(u-s0)*steady(u);push=mast;}
+ if(stage===RS.ripple){
+  // Chapter 3: the electrons come to rest, then each single push (up and back) sends one ripple, which travels on by
+  // itself while they rest; a second push follows a few seconds later. The push a far electron feels is opposite to the mast electrons' acceleration (for steady
+  // pushes it follows their displacement), so the ripple is a strong push up with weaker pushes down either side.
+  const sig=T/3.5, tc=Math.max(at(1)+.6+3*sig,at(2)-.4), bump=c=>u=>Math.exp(-(((u-c)/sig)**2)), b1=bump(tc), b2=bump(tc+4.2);bumps=[tc,tc+4.2];
+  mast=u=>(u<1.2?(1-ramp(u/1.2))*steady(u):0)+1.4*(b1(u)+b2(u));push=accel(mast);}
+ if(stage===RS.light){
+  // Chapter 4: steady pushing starts again, and the wave's front travels out across the picture.
+  const ts=at(0)+.3;mast=u=>ramp((u-ts)/2)*steady(u);push=accel(mast);}
+ if(stage===RS.tuner)others=ramp((since-at(0))/1.5);
+ if(stage===RS.voice){
+  // The voice chapter: the strength follows a voice (Physics.amWave). Silence would be the steady push at 0.625 of the
   // strongest; the voice raises and lowers the strength around it, and is already on as the chapter opens.
   const voice=u=>.62*Math.sin(TAU*(g0+u)/9)+.38*Math.sin(TAU*(g0+u)/5.3+1.3);
   env=u=>(1+.6*voice(u))/1.6;mast=u=>Physics.amWave(g0+u,1/T,()=>voice(u),.6)/1.6;push=mast;}
- return {mode:live?'live':'story',stage,since,at,live,preview,g0,mast,push,others,env,crests,T,W};
+ return {mode:live?'live':'story',stage,since,at,live,preview,g0,mast,push,others,env,bumps,T,W};
 }
 // The live play: the mast's electrons follow the viewer's finger, or the transmitter's steady pushes at the chosen
 // strength, through a stiff spring; the push they send is opposite to their acceleration. Its history lets every spot
@@ -3110,7 +3115,7 @@ function radioMast(ctx,x,base,H){
  for(let i=0;i<7;i++){const y0=base-H*i/7, y1=base-H*(i+1)/7, w0=bw+(tw-bw)*i/7, w1=bw+(tw-bw)*(i+1)/7;
   ctx.beginPath();ctx.moveTo(x-w0/2,y0);ctx.lineTo(x+w0/2,y0);ctx.lineTo(x+w1/2,y1);ctx.lineTo(x-w1/2,y1);ctx.closePath();ctx.fillStyle=i%2?'#f7f3eb':'#cf6f5a';ctx.fill();}
  ctx.beginPath();ctx.moveTo(x-bw/2,base);ctx.lineTo(x-tw/2,top);ctx.lineTo(x+tw/2,top);ctx.lineTo(x+bw/2,base);ctx.closePath();ctx.strokeStyle='rgba(60,40,30,.35)';ctx.stroke();
- const g=ctx.createRadialGradient(x,top-3,0,x,top-3,9);g.addColorStop(0,'rgba(230,70,50,.55)');g.addColorStop(1,'rgba(230,70,50,0)');ctx.fillStyle=g;ctx.fillRect(x-9,top-12,18,18);
+ const g=ctx.createRadialGradient(x,top-3,0,x,top-3,9);g.addColorStop(0,'rgba(230,70,50,.28)');g.addColorStop(1,'rgba(230,70,50,0)');ctx.fillStyle=g;ctx.fillRect(x-9,top-12,18,18);
  ctx.beginPath();ctx.arc(x,top-2,2.6,0,TAU);ctx.fillStyle='#d9432f';ctx.fill();
 }
 // A car seen from the side, facing the station, its antenna rising from the back of the roof.
@@ -3132,94 +3137,148 @@ function radioArrow(ctx,x,y,len,color,width){
  trace(ctx,[[x,y],[x,tip+s*hs*.6]]);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();
  ctx.beginPath();ctx.moveTo(x,tip);ctx.lineTo(x-hs*.75,tip+s*hs);ctx.lineTo(x+hs*.75,tip+s*hs);ctx.closePath();ctx.fillStyle=color;ctx.fill();
 }
+// The whole Earth seen from space (chapter 6). A ray launched from the station 8 degrees above the ground would go on
+// straight into space; charged air high up bends it back down, so it hops between that layer and the ground, about
+// 2,150 km a hop (a ray that leaves grazing the ground goes up to 3,500 km). The layer is drawn 250 km up (the ionosphere
+// spans about 50 to 1,000 km); the Earth, the layer's height and the hops keep their true proportions. A hop takes 1.5 s,
+// about 200 times slower than real; the straight ray's signal runs at the same pace.
+function radioWorld(ctx,w,h,plan,tag,small){
+ const {since,at}=plan, RE=Physics.earthR, beta=8*Math.PI/180, hop=Physics.hopDistance(250e3,beta), a=hop/RE, n=3, span=n*a;
+ const R=.86*w/(2*Math.sin(span/2)), cx=w/2, cy=Math.min(h*(small?.56:.4),h-28-R*(1-Math.cos(span/2)))+R, hl=250e3/RE*R, th0=-Math.PI/2-span/2;
+ const P=(r,th)=>[cx+r*Math.cos(th),cy+r*Math.sin(th)], fade=(s0,d=.5)=>clamp((since-s0)/d), gold='#d98c06';
+ // The Earth: a soft blue ball with a thin glow of air; the charged layer as a faint band.
+ const g=ctx.createRadialGradient(cx,cy-R*.6,R*.2,cx,cy,R);g.addColorStop(0,'#b9d3e2');g.addColorStop(1,'#6d97b5');
+ ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fillStyle=g;ctx.fill();
+ const air=ctx.createRadialGradient(cx,cy,R,cx,cy,R+hl*.7);air.addColorStop(0,'rgba(120,170,210,.35)');air.addColorStop(1,'rgba(120,170,210,0)');
+ ctx.beginPath();ctx.arc(cx,cy,R+hl*.7,0,TAU);ctx.arc(cx,cy,R,0,TAU,true);ctx.fillStyle=air;ctx.fill();
+ const layer=fade(at(1),.6);
+ if(layer>0){ctx.beginPath();ctx.arc(cx,cy,R+hl,0,TAU);ctx.strokeStyle=`rgba(124,92,196,${.28*layer})`;ctx.lineWidth=Math.max(4,hl*.5);ctx.stroke();}
+ // The station and a radio far away, standing on the Earth.
+ const stand=(th,drawIt)=>{const [x,y]=P(R,th);ctx.save();ctx.translate(x,y);ctx.rotate(th+Math.PI/2);drawIt();ctx.restore();};
+ const ms=clamp(R*.05,16,30);stand(th0,()=>radioMast(ctx,0,0,ms));
+ const hs=clamp(R*.03,10,18), thL=th0+span;
+ stand(thL,()=>{ctx.fillStyle='#e9dcc4';ctx.fillRect(-hs/2,-hs*.8,hs,hs*.8);ctx.fillStyle='#b05a46';ctx.beginPath();ctx.moveTo(-hs*.62,-hs*.8);ctx.lineTo(0,-hs*1.35);ctx.lineTo(hs*.62,-hs*.8);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(60,50,40,.55)';ctx.fillRect(-hs*.15,-hs*.45,hs*.3,hs*.45);});
+ // The path: up to the layer and down again, hop after hop; the signal runs along it at one pace (px a second).
+ const pts=[P(R,th0)];for(let k=0;k<n;k++){pts.push(P(R+hl,th0+(k+.5)*a));pts.push(P(R,th0+(k+1)*a));}
+ const leg=Math.hypot(pts[1][0]-pts[0][0],pts[1][1]-pts[0][1]), pace=2*leg/1.5;
+ // Straight on: the first leg's direction, continued out past the picture's edge, where it would leave the Earth.
+ const [sx,sy]=pts[0], dir=[(pts[1][0]-sx)/leg,(pts[1][1]-sy)/leg];
+ let out=1e9;if(dir[0]>0)out=Math.min(out,(w-sx)/dir[0]);if(dir[0]<0)out=Math.min(out,-sx/dir[0]);if(dir[1]<0)out=Math.min(out,-sy/dir[1]);if(dir[1]>0)out=Math.min(out,(h-sy)/dir[1]);
+ const k1=fade(at(0)+.3,.4), len=Math.min(out,pace*Math.max(0,since-at(0)-.3));
+ if(k1>0){ctx.save();ctx.globalAlpha=k1*(since>=at(1)?.45:1);trace(ctx,[[sx,sy],[sx+dir[0]*len,sy+dir[1]*len]]);ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=1.8;ctx.stroke();ctx.setLineDash([]);
+  if(len<out){ctx.beginPath();ctx.arc(sx+dir[0]*len,sy+dir[1]*len,4,0,TAU);ctx.fillStyle=gold;ctx.fill();}ctx.restore();}
+ const q=clamp((since-(at(2)-1.6))/1.5,0,n);
+ if(q>0){const segs=Math.floor(2*q), f=2*q-segs, trail=pts.slice(0,segs+1);
+  if(segs<2*n){const [x0,y0]=pts[segs], [x1,y1]=pts[segs+1];trail.push([x0+(x1-x0)*f,y0+(y1-y0)*f]);}
+  trace(ctx,trail);ctx.strokeStyle=gold;ctx.lineWidth=small?2.2:2.8;ctx.lineJoin='round';ctx.stroke();
+  // Where the hops touch the ground, a small mark.
+  for(let k=1;k<n;k++)if(2*q>=2*k){const [gx,gy]=pts[2*k], age=(q-k)*1.5;if(age<.7){ctx.beginPath();ctx.arc(gx,gy,(small?5:7)+age*26,0,TAU);ctx.strokeStyle=`rgba(217,140,6,${.6*(1-age/.7)})`;ctx.lineWidth=2;ctx.stroke();}
+   ctx.beginPath();ctx.arc(gx,gy,small?3.5:4.5,0,TAU);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=gold;ctx.stroke();}
+  const end=trail.at(-1);if(q<n){ctx.beginPath();ctx.arc(end[0],end[1],small?4:5,0,TAU);ctx.fillStyle=gold;ctx.fill();}
+  else{const [lx,ly]=P(R,thL), gl=ctx.createRadialGradient(lx,ly,0,lx,ly,hs*2.2);gl.addColorStop(0,'rgba(255,196,60,.55)');gl.addColorStop(1,'rgba(255,196,60,0)');ctx.fillStyle=gl;ctx.fillRect(lx-hs*2.2,ly-hs*2.2,hs*4.4,hs*4.4);}}
+ // Words: 'into space' where the straight ray leaves the picture, nudged inside it.
+ const [tx,ty]=P(R+ms+14,th0);tag('station',tx,ty-6);
+ if(since<at(1)&&len>110){const ex=sx+dir[0]*len, ey=sy+dir[1]*len, done=len>=out-1;tag('into space',done?ex-dir[0]*60:ex+30,done?ey+22:ey-16);}
+ if(layer>.5){const [lx,ly]=P(R+hl+(small?16:18),th0+1.5*a);tag('charged air',lx,ly);}
+ if(since>=at(2)){const [hx,hy]=P(R-(small?20:24),th0+1.5*a);tag(`one hop: about ${(Math.round(hop/5e4)*50).toLocaleString('en-US')} km`,hx,hy);}
+ if(q>=n-.02){const [lx,ly]=P(R-(small?28:26),thL-(small?.6:.3)*a);tag('a radio far away',lx,ly);}
+}
 function drawRadio(ctx,w,h,spec,st){
  // After playback the picture holds still on the last chapter's end, so it is easy to read; it comes alive once the
  // viewer drags the mast's electrons or moves the strength slider.
  const still=!!st.live&&!st.touched&&st.since!==undefined;
- if(still){const c=st.chapters?.at(-1);st={...st,live:false,playing:false,stage:(st.chapters?.length||7)-1,since:c?c.end-c.start:18};RADIO.live=null;}
+ if(still){const c=st.chapters?.at(-1);st={...st,live:false,playing:false,stage:(st.chapters?.length||9)-1,since:c?c.end-c.start:18};RADIO.live=null;}
  const Lo=radioLayout(w,h), {small,gy,mx,H,top,carW,cx,roof,ax,La,ya,lam,Lmax,panel}=Lo;
  const plan=radioPlan(spec,st), {stage,since,at,T,W}=plan, labels=st.labels, size=small?11:13, ink='rgba(20,23,28,.85)';
  // Distances are measured from the mast's foot, as the arcs are; the arrows sit at the antenna's middle height.
  const v=lam/T, A=r=>Math.min(1,.55*lam/Math.max(r,1)), dyRow=gy-ya, rOf=x=>Math.hypot(x-mx,dyRow), rCar=rOf(ax), xOf=r=>mx+Math.sqrt(Math.max(0,r*r-dyRow*dyRow));
  const teal='#0f766e', gold='#d98c06', blue='#2563eb';
  const fade=(s0,d=.5)=>plan.live?1:clamp((since-s0)/d);
- // While the panel inside the radio is the subject (chapters 6 and 7 from their second line), the scene outside dims.
- const dim=!plan.live&&(stage===5||stage===6)?1-.62*fade(at(1),.8):1;
+ // While the panel inside the radio is the subject (chapters 8 and 9 from their second line), the scene outside dims.
+ const dim=!plan.live&&(stage===RS.tuner||stage===RS.voice)?1-.62*fade(at(1),.8):1;
+ const tag=(s,x,y,o={})=>{if(!labels)return;const z=o.size||size;ctx.font=`700 ${z}px ${FONT}`;const half=ctx.measureText(s).width/2+8, c=o.left?x+half-3:o.right?x-half+3:x;
+  pill(ctx,s,clamp(c,half,w-half),clamp(y,z,h-z),{align:'center',size:z,weight:700,color:o.color||ink});};
+ // Chapter 6 is the whole Earth, seen from space.
+ if(!plan.live&&stage===RS.world){RADIO.geo=null;radioWorld(ctx,w,h,plan,tag,small);return;}
  // The ground: a far ridge, the land and a road.
  ctx.fillStyle='rgba(214,196,160,.35)';ctx.beginPath();ctx.moveTo(0,gy);for(let i=0;i<=24;i++){const x=w*i/24;ctx.lineTo(x,gy-h*(.035+.025*Math.sin(i*.9+1.2)+.015*Math.sin(i*2.3)));}ctx.lineTo(w,gy);ctx.closePath();ctx.fill();
  ctx.fillStyle='#e8dbc0';ctx.fillRect(0,gy,w,h-gy);ctx.fillStyle='#d8c6a2';ctx.fillRect(0,gy,w,clamp((h-gy)*.28,5,14));
  trace(ctx,[[0,gy],[w,gy]]);ctx.strokeStyle='rgba(120,95,60,.35)';ctx.lineWidth=1;ctx.stroke();
- const tag=(s,x,y,o={})=>{if(!labels)return;const z=o.size||size;ctx.font=`700 ${z}px ${FONT}`;const half=ctx.measureText(s).width/2+8, c=o.left?x+half-3:o.right?x-half+3:x;
-  pill(ctx,s,clamp(c,half,w-half),clamp(y,z,h-z),{align:'center',size:z,weight:700,color:o.color||ink});};
- // The push the wave carries to a spot r from the mast now, and the mast electrons' displacement now. In chapter 6
- // two far stations add their pushes, which hardly weaken across the picture; the sum is scaled so the arrows keep
- // their size.
- let field, mastY;
- if(plan.live){const L=radioLive(st,small);field=r=>A(r)*L.pushAt((st.t||0)-r/v);mastY=L.Lv.y;}
+ // The push the wave carries to a spot r from the mast now, and the mast electrons' displacement now. In chapter 8
+ // two far stations, far behind the scene, add their pushes, which reach the whole row at once; the sum is scaled so
+ // the arrows keep their size.
+ let field, mastY, pushR;
+ if(plan.live){const L=radioLive(st,small);pushR=r=>L.pushAt((st.t||0)-r/v);field=r=>A(r)*pushR(r);mastY=L.Lv.y;}
  else{const o=plan.others, ph=r=>plan.g0+since-r/v;
-  field=r=>(A(r)*plan.push(since-r/v)+(o?o*.36*(Math.sin(.7*W*ph(r)+1.1)+Math.sin(1.3*W*ph(r)+2.3)):0))/(1+.72*o);mastY=plan.mast(since);}
- const showWave=plan.live?1:stage===2?fade(at(1)):stage>=3?1:0;
- const showArcs=(plan.live?1:stage===2?fade(at(2),1):stage>=3?1:0)*(1-.85*plan.others)*dim;
- // Two far-off stations stand small on the ridge while chapter 6 adds their pushes.
+  const far=o?o*.36*(Math.sin(.7*W*(plan.g0+since)+1.1)+Math.sin(1.3*W*(plan.g0+since)+2.3)):0;
+  pushR=r=>plan.push(since-r/v);field=r=>(A(r)*pushR(r)+far)/(1+.72*o);mastY=plan.mast(since);}
+ const showWave=plan.live?1:stage===RS.ripple?fade(at(1)):stage>=RS.light?1:0;
+ const showArcs=(plan.live?1:stage===RS.ripple?fade(at(1)+1,1):stage>=RS.light?1:0)*(1-plan.others)*dim;
+ // Two far-off stations stand small on the ridge while chapter 8 adds their pushes.
  if(plan.others>0){ctx.save();ctx.globalAlpha=.6*plan.others*dim;for(const [f,s] of [[.42,.2],[.68,.16]])radioMast(ctx,mx+f*(cx-carW*.6-mx),gy-h*.03,H*s);ctx.restore();}
- // Arcs through the wave's crests, centred on the mast's foot: strongest along the ground, fading overhead, where a
- // mast sends almost nothing, and with distance.
+ // The ripple in the field: soft bands of push spreading from the mast's foot, teal where the push is up and violet
+ // where it is down, strongest along the ground, fading overhead (where a mast sends almost nothing) and with distance.
+ // The row of arrows is a slice through them at the antenna's height.
  const Rmax=Math.hypot(w-mx,gy)*1.02;
- if(showArcs>0){
-  let list=[];
-  if(plan.live){
-   // In live play, only clear crests: the highest push within 0.12 s either side, a little apart, the nearest eight.
-   const p=RADIO.live.hist, tt=st.t||0, gap=1.5*clamp(lam/11,9,18);let last=-1e9;
-   for(let i=p.length-2;i>0&&list.length<8;i--){const [t0,y0]=p[i];if(y0<=.35)continue;let peak=true;
-    for(let j=i-1;j>=0&&p[j][0]>=t0-.12;j--)if(p[j][1]>y0){peak=false;break;}
-    if(peak)for(let j=i+1;j<p.length&&p[j][0]<=t0+.12;j++)if(p[j][1]>=y0){peak=false;break;}
-    const r=(tt-t0)*v;if(peak&&r-last>=gap){list.push([r,y0]);last=r;}}}
-  else if(plan.crests==='found'){const n=160, du=(Rmax/v)/n, ys=[];for(let i=0;i<=n+1;i++)ys.push(plan.push(since-(i-.5)*du));
-   for(let i=1;i<=n;i++)if(ys[i]>.3&&ys[i]>=ys[i-1]&&ys[i]>ys[i+1]){const den=ys[i-1]-2*ys[i]+ys[i+1], off=den<0?.5*(ys[i-1]-ys[i+1])/den:0;list.push([((i-.5)+off)*du*v,ys[i]]);}}
-  else{for(let n=Math.floor((plan.g0+since)/T-.25);n>=0;n--){const u=(n+.25)*T-plan.g0, r=(since-u)*v;if(r<0)continue;if(r>Rmax)break;list.push([r,plan.env?plan.env(u)/.625:1]);}}
-  for(const [r,s] of list){if(r<=2||r>=Rmax)continue;const a=.5*showArcs*Math.pow(1-r/Rmax,.7)*clamp(s);
-   for(let k=0;k<12;k++){const p0=Math.PI+Math.PI*k/12, p1=p0+Math.PI/12, mid=(p0+p1)/2, side=Math.sin(Math.abs(mid-1.5*Math.PI));
-    ctx.beginPath();ctx.arc(mx,gy,r,p0,p1+.002);ctx.strokeStyle=`rgba(15,118,110,${a*side*side})`;ctx.lineWidth=small?1.3:1.6;ctx.stroke();}}
- }
+ if(showArcs>0){const band=Math.max(3,lam/26), off=(((plan.live?(st.t||0):plan.g0+since)*v)%band+band)%band, top=plan.live?.26:.36;
+  for(let r=off-band/2;r<Rmax;r+=band){if(r+band/2<=0)continue;const s=pushR(Math.max(r,0))*A(Math.max(r,1)), a0=top*showArcs*clamp(Math.abs(s))*clamp((Rmax-r)/(.1*Rmax));if(a0<.006)continue;
+   const col=s>0?'15,118,110':'124,92,196';
+   // Each ring in one piece, its strength varying smoothly around it (a conic gradient), so no seams or spokes show;
+   // browsers without conic gradients get ring pieces that tile exactly.
+   const ring=(p0,p1)=>{ctx.beginPath();ctx.arc(mx,gy,r+band/2,p0,p1);ctx.arc(mx,gy,Math.max(0,r-band/2),p1,p0,true);ctx.closePath();};
+   if(ctx.createConicGradient){const g=ctx.createConicGradient(Math.PI,mx,gy);
+    for(let j=0;j<=16;j++){const f=j/16, side=Math.cos(Math.PI*f);g.addColorStop(f/2,`rgba(${col},${a0*side*side})`);}g.addColorStop(1,`rgba(${col},${a0})`);
+    ring(Math.PI,TAU);ctx.fillStyle=g;ctx.fill();}
+   else for(let k=0;k<24;k++){const p0=Math.PI+Math.PI*k/24, p1=p0+Math.PI/24, side=Math.sin(Math.abs((p0+p1)/2-1.5*Math.PI));ring(p0,p1);ctx.fillStyle=`rgba(${col},${a0*side*side})`;ctx.fill();}}}
  // The mast, its transmitter hut and its electrons.
  radioMast(ctx,mx,gy,H);
  const hw=clamp(H*.14,16,34), hx=mx+clamp(H*.045,5,11)/2+5;
  ctx.fillStyle='#d9ccb4';ctx.fillRect(hx,gy-hw*.62,hw,hw*.62);ctx.fillStyle='#a8957a';ctx.beginPath();ctx.moveTo(hx-2,gy-hw*.62);ctx.lineTo(hx+hw/2,gy-hw*.9);ctx.lineTo(hx+hw+2,gy-hw*.62);ctx.closePath();ctx.fill();
  ctx.fillStyle='rgba(60,50,40,.35)';ctx.fillRect(hx+hw*.38,gy-hw*.32,hw*.24,hw*.32);
- const showMastE=plan.live?1:stage===1?fade(at(0),.6):stage>=2?1:0, Ne=clamp(Math.round(H/26),5,9), re=clamp(H/45,small?3.5:3.2,5.5), sp=H*.76/(Ne-1), dm=.36*sp;
- // Chapter 5 follows one crest, sent as its second line starts, from the mast to the car; the electrons it leaves and
- // reaches turn gold for a moment, and it fades once it has passed the car.
+ const showMastE=plan.live?1:stage===RS.mast?fade(at(0),.6):stage>=RS.ripple?1:0, Ne=clamp(Math.round(H/26),5,9), re=clamp(H/45,small?3.5:3.2,5.5), sp=H*.76/(Ne-1), dm=.36*sp;
+ // Chapter 7 follows one crest, sent as its second line starts, from the mast to the car, and fades once it has passed
+ // the car.
  let crest=null;
- if(!plan.live&&stage===4){const n=Math.round((plan.g0+at(1))/T-.25), u=(n+.25)*T-plan.g0, r=(since-u)*v, arrive=u+rCar/v;
+ if(!plan.live&&stage===RS.antenna){const n=Math.round((plan.g0+at(1))/T-.25), u=(n+.25)*T-plan.g0, r=(since-u)*v, arrive=u+rCar/v;
   if(r>=0&&since>=at(1)-.3){const a=since<=arrive?fade(at(1)-.3,.4):1-clamp((since-arrive)/.8);if(a>0)crest={r,a};}}
- const tintMast=crest?crest.a*clamp(1-crest.r/(.15*lam)):0, tintCar=crest?crest.a*clamp(1-Math.abs(crest.r-rCar)/(.15*lam)):0;
+ // Each electron's resting place: a faint ring it rocks about, so it plainly stays in the metal.
+ const home=(x,y,r,a)=>{if(a<=.02)return;ctx.beginPath();ctx.arc(x,y,r*1.35,0,TAU);ctx.strokeStyle=`rgba(37,99,235,${.4*a})`;ctx.lineWidth=1.2;ctx.stroke();};
  if(showMastE>0){const dy=dm*clamp(mastY,-1.6,1.6), al=showMastE*dim;
-  for(let i=0;i<Ne;i++){const y=gy-H*.1-i*sp-dy;sphere(ctx,mx,y,re,blue,al);if(tintMast>.02)sphere(ctx,mx,y,re,gold,tintMast*al);}}
+  for(let i=0;i<Ne;i++)home(mx,gy-H*.1-i*sp,re,al);
+  for(let i=0;i<Ne;i++){const y=gy-H*.1-i*sp-dy;if(al<.999){ctx.beginPath();ctx.arc(mx,y,re,0,TAU);ctx.fillStyle=`rgba(249,244,234,${clamp(2.5*al)})`;ctx.fill();}sphere(ctx,mx,y,re,blue,al);}}
  // The row of push arrows along the ground, right past the car; over the car a push down stops short of its roof.
  const step=clamp(lam/11,9,18), x0=ax-Math.floor((ax-(mx+Math.max(18,.2*lam)))/step)*step, carL=cx-carW*.55, carR=cx+carW*.55, room=roof-3-ya, ease=plan.live?.6:.2;
  if(showWave>0){ctx.save();ctx.globalAlpha=dim;
   const xc=crest?xOf(crest.r):-1e9;
   for(let x=x0;x<=w-8;x+=step){if(Math.abs(x-ax)<5||Math.abs(x-xc)<8)continue;const f=field(rOf(x));
    let len=Lmax*(Math.abs(f)<=.8?f:Math.sign(f)*(.8+.2*Math.tanh((Math.abs(f)-.8)/ease)))*showWave;if(x>carL&&x<carR&&len<-room)len=-room;
-   ctx.beginPath();ctx.arc(x,ya,1.4,0,TAU);ctx.fillStyle=`rgba(15,118,110,${.35*showWave})`;ctx.fill();radioArrow(ctx,x,ya,len,`rgba(15,118,110,${.85*showWave})`,small?1.6:2);}
+   ctx.beginPath();ctx.arc(x,ya,1.1,0,TAU);ctx.fillStyle=`rgba(15,118,110,${.22*showWave})`;ctx.fill();radioArrow(ctx,x,ya,len,len>=0?`rgba(15,118,110,${.85*showWave})`:`rgba(110,78,182,${.85*showWave})`,small?1.6:2);}
   ctx.restore();}
  if(crest){const xc=xOf(crest.r), len=Lmax*A(crest.r);if(xc<=w-6){ctx.save();ctx.globalAlpha=crest.a;ctx.fillStyle='rgba(217,140,6,.16)';ctx.beginPath();ctx.roundRect(xc-7,ya-len-6,14,len+12,7);ctx.fill();
   radioArrow(ctx,xc,ya,len,gold,small?3:3.6);ctx.restore();}}
+ // Why it carries so far (chapter 5): how strong each push is along the row, for a steady push that fades like a
+ // balloon's (a quarter as strong twice as far; grey, dashed) and for the ripple (half as strong; gold, through the
+ // arrows' tips), equal near the mast.
+ if(!plan.live&&stage===RS.far){const r1=.55*lam, curve=(f,col,dash,k)=>{if(k<=0)return;const runs=[[]];for(let x=x0;x<=ax-12;x+=3){if(rOf(x)<r1)continue;runs.at(-1).push([x,ya-Lmax*f(rOf(x))]);}
+   ctx.save();ctx.globalAlpha=k;ctx.setLineDash(dash);ctx.strokeStyle=col;ctx.lineWidth=2.2;for(const pts of runs)if(pts.length>1){trace(ctx,pts);ctx.stroke();}ctx.restore();};
+  curve(r=>Physics.balloonPush(r,r1),'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));curve(r=>Physics.ripplePush(r,r1),gold,[],fade(at(1)+.2,.8));}
  // The car, its antenna and the antenna's electrons, which follow the push where they are: weaker than at the mast.
  radioCar(ctx,cx,gy,carW);
  trace(ctx,[[ax,roof+1],[ax,roof-La]]);ctx.strokeStyle='#8a929c';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.arc(ax,roof-La,2.4,0,TAU);ctx.fillStyle='#8a929c';ctx.fill();
- const showCarE=plan.live?1:stage===2?fade(at(0)+.4,.6):stage>=3?1:0, Nc=clamp(Math.round(La/24),3,4), spc=La*.8/(Nc-1), dc=.36*spc;
+ const showCarE=plan.live?1:stage===RS.ripple?fade(at(0)+.4,.6):stage>=RS.light?1:0, Nc=clamp(Math.round(La/24),3,4), spc=La*.8/(Nc-1), dc=.36*spc;
  if(showCarE>0){const dy=dc*clamp(field(rCar)*2,-1.6,1.6);
-  for(let i=0;i<Nc;i++){const y=roof-La*.1-i*spc-dy;sphere(ctx,ax,y,re*.9,blue,showCarE);if(tintCar>.02)sphere(ctx,ax,y,re*.9,gold,tintCar*showCarE);}}
- // The panel inside the radio: the tuner as a swing and the dial (chapter 6), then the push the antenna feels and the
- // speaker (chapter 7). A dashed line ties it to the car's windscreen.
- const [px,py,pw,ph]=panel, showPanel=plan.live?0:stage===5?fade(at(0),.6):stage===6?1:0;
+  for(let i=0;i<Nc;i++)home(ax,roof-La*.1-i*spc,re*.9,showCarE);
+  for(let i=0;i<Nc;i++)sphere(ctx,ax,roof-La*.1-i*spc-dy,re*.9,blue,showCarE);}
+ // The panel inside the radio: the tuner as a swing and the dial (chapter 8), then the push the antenna feels and the
+ // speaker (chapter 9). A dashed line ties it to the car's windscreen.
+ const [px,py,pw,ph]=panel, showPanel=plan.live?0:stage===RS.tuner?fade(at(0),.6):stage===RS.voice?1:0;
  let tuned=null;
  if(showPanel>0){
   ctx.save();ctx.globalAlpha=showPanel;ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.roundRect(px,py,pw,ph,12);ctx.fill();ctx.strokeStyle='rgba(20,23,28,.14)';ctx.lineWidth=1;ctx.stroke();
   trace(ctx,[[clamp(cx-carW*.35,px+16,px+pw-16),py+ph],[cx-carW*.1,roof+carW*.05]]);ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(20,23,28,.25)';ctx.stroke();ctx.setLineDash([]);ctx.restore();
   const tsz=small?11:12;
-  if(stage===5){
+  if(stage===RS.tuner){
    const s2=at(1), s3=at(2)+.2, dialAt=s=>s<s3?1300:1300-300*smooth((s-s3)/2.4), dial=dialAt(since), uCar=since-rCar/v;
    // Each station's share of the swing builds up and dies down over a few seconds as the dial moves.
    const rho=RAD.stations.map(f=>{let r=0;for(let s=s2;s<=since;s+=.05)r+=(Physics.tunedResponse(f,dialAt(s))-r)*(1-Math.exp(-.05/2.5));return r;});
@@ -3241,7 +3300,7 @@ function drawRadio(ctx,w,h,spec,st){
     if(since>=s2)tag('tuner',pivotX,py+13,{size:tsz});}
    const best=rho.indexOf(Math.max(...rho));if(rho[best]>.05)tuned=[RAD.stations[best],rho[best]];
   }
-  if(stage===6){
+  if(stage===RS.voice){
    // The push at the car's antenna over the last 16 s, newest at the right: the fast pushes fill a band whose outline,
    // in gold, is the voice. The speaker, side on, moves out and in with that outline as it reaches the car, and a gold
    // dashed line carries the outline's newest point to it.
@@ -3265,12 +3324,12 @@ function drawRadio(ctx,w,h,spec,st){
     if(since>=at(1)&&ph>=110)tag('speaker',sx-sh*.12,Math.min(py+ph-12,sy+sh*.5+14),{size:tsz});}
   }
  }
- // Sound plays while the guide plays: the station's music in chapters 1 and 7, and whichever station the tuner picks
- // in chapter 6.
+ // Sound plays while the guide plays: the station's music in chapters 1 and 9, and whichever station the tuner picks
+ // in chapter 8.
  if(st.playing&&!plan.live){const tg=plan.g0+since;
-  if(stage===0)radioPlay(1000,tg,.7*fade(.4,.8));
-  if(stage===5&&tuned)radioPlay(tuned[0],tg,.8*clamp(tuned[1]*1.2));
-  if(stage===6)radioPlay(1000,tg,.7);}
+  if(stage===RS.intro)radioPlay(1000,tg,.7*fade(.4,.8));
+  if(stage===RS.tuner&&tuned)radioPlay(tuned[0],tg,.8*clamp(tuned[1]*1.2));
+  if(stage===RS.voice)radioPlay(1000,tg,.7);}
  // Grabbing the mast's electrons is offered once the guide has played.
  RADIO.geo=st.live||still?{live:true,mx,top,base:gy,y0:gy-H*.5,unit:clamp(H*.16,18,46),reach:Math.max(24,H*.1)}:null;
  if(still){for(const sgn of [-1,1]){const tx=mx+14, ty=gy-H*.5+sgn*12, z=small?5:6;
@@ -3278,15 +3337,20 @@ function drawRadio(ctx,w,h,spec,st){
  // Words, a few at a time.
  if(plan.live)return;
  const aboveRow=ya-Lmax-12;
- if(stage===0){tag('radio station',mx+8,top-16,{left:true});tag('your car radio',cx,gy+(h-gy)/2);}
- if(stage===1){if(since>=at(0)+.4)tag(since<at(2)?'electrons':'a million pushes a second',mx+12,top+H*.22,{left:true});if(since>=at(1))tag('transmitter',hx+hw/2,gy+(h-gy)/2);}
- if(stage===2){if(since>=at(0)+.4&&since<at(2))tag('electrons',ax,roof-La-16);
-  if(since>=at(1))tag('push on electrons',mx+.3*(ax-mx),aboveRow);if(since>=at(2))tag('speed of light →',mx+.72*(ax-mx),aboveRow);}
- if(stage===3&&labels&&since>=at(1)){
+ if(stage===RS.intro){tag('radio station',mx+8,top-16,{left:true});tag('your car radio',cx,gy+(h-gy)/2);}
+ if(stage===RS.mast){if(since>=at(0)+.4)tag(since<at(2)?'electrons':'a million pushes a second',mx+12,top+H*.22,{left:true});if(since>=at(1))tag('transmitter',hx+hw/2,gy+(h-gy)/2);}
+ if(stage===RS.ripple){if(since>=at(0)+.4&&since<at(2))tag('electrons',ax,roof-La-16);
+  if(since>=at(1)){let lx=mx+.3*(ax-mx);const b=plan.bumps.filter(c=>since>=c).at(-1);if(b!==undefined){const rr=v*(since-b);if(rr>dyRow&&rr<rOf(w-8))lx=xOf(rr);}tag('electric push',clamp(lx,x0,w-8),aboveRow);}
+  if(since>=at(2))tag('speed of light →',mx+.6*(ax-mx),gy+(h-gy)/2);}
+ if(stage===RS.light&&labels&&since>=at(1)){
   // One wave along the arrows: from the first arrow to where the push is a whole wave later.
   const b0=x0, b1=xOf(rOf(x0)+lam), by=aboveRow+2;trace(ctx,[[b0,by+6],[b0,by],[b1,by],[b1,by+6]]);ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.stroke();
   tag(`one wave: ${Math.round(Physics.radioWavelength(1e6))} m`,(b0+b1)/2,by-12);}
- if(stage===4){tag(since<at(2)?'your antenna':'tiny current',ax,roof-La-16);}
+ if(stage===RS.antenna){tag(since<at(2)?'your antenna':'tiny current',ax,roof-La-16);}
+ if(stage===RS.far&&labels){
+  // The two curves' names, in a key above the arrows, each beside a sample of its line.
+  const kx=mx+.4*(ax-mx), key=(s,y,col,dash,k)=>{if(k<=0)return;ctx.save();ctx.globalAlpha=k;trace(ctx,[[kx,y],[kx+24,y]]);ctx.setLineDash(dash);ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.stroke();ctx.restore();tag(s,kx+32,y,{left:true});};
+  key("a balloon's push",aboveRow-24,'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));key('the ripple',aboveRow-2,gold,[],fade(at(1)+.2,.8));}
 }
 
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
@@ -4255,8 +4319,8 @@ const ENGINES={
   // The modelled effect for the render checks: the push that reaches the car's antenna, relative to full strength.
   effect:a=>clamp(a)*Physics.tunedResponse(1e6,1e6),
   measure:null,scale:'',
-  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground; its magnetic part, at right angles, is not drawn. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
-  try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push spreads outward at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next, and it pushes the electrons in the car’s antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
+  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with a steady push that fades like a rubbed balloon’s, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
+  try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push travels outward on its own at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next. It halves when the distance doubles, much more slowly than a balloon’s steady push, which falls to a quarter. Seen from space, charged air high above bends some radio waves back down, so they hop between it and the ground around the curve of the Earth. Back at the car, the wave pushes the electrons in its antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.
