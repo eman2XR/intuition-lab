@@ -3023,24 +3023,33 @@ function drawDoppler(ctx,w,h,spec,st){
 // How a radio signal carries a voice. A station pushes the electrons in its mast up and down at its rhythm; as they move,
 // their push on charges far away changes, and the change spreads outward at the speed of light: the radio wave, drawn
 // as soft bands of push through the air (teal up, violet down) and as arrows along the ground that show which way, and
-// how hard, it would push an electron at that spot. Chapter 5 compares how it fades with a balloon's steady push, and chapter 6 shows the whole
+// how hard, it would push an electron at that spot. Chapter 5 compares how it fades with an electron's steady push, and chapter 6 shows the whole
 // Earth, where charged air high above bends radio waves back down. Where the wave reaches a car's antenna it pushes that
 // antenna's electrons up and down in step. Chapter 8 adds two more stations and the radio's tuner, drawn as a swing that
 // builds up only when pushed at its own rhythm; chapter 9 has the station change how hard it pushes in time with a voice
 // (AM). The pictures run 1.6 million times slower than real time (chapter 6 about 200 times), so one push of a station
 // at 1,000 kHz takes 1.6 s, and the mast stands between a quarter and five-eighths of a wave tall, as real masts do.
 const RAD={period:1.6,stations:[700,1000,1300],
- // Each station's music: notes (vibrations a second) held 0.36 s each; 0 is a rest.
- tunes:{700:[330,392,440,392,330,294,330,0],1000:[392,494,587,494,523,440,494,392],1300:[659,587,523,587,659,784,659,0]}};
+ // Each station's music: well-known public-domain tunes as [note (vibrations a second), beats], 0 a rest, 0.42 s a
+ // beat. 1000 plays Beethoven's Ode to Joy, 1300 Frere Jacques and 700 Twinkle, Twinkle, Little Star.
+ beat:.42,
+ tunes:{1000:[[494,1],[494,1],[523,1],[587,1],[587,1],[523,1],[494,1],[440,1],[392,1],[392,1],[440,1],[494,1],[494,1.5],[440,.5],[440,2],
+   [494,1],[494,1],[523,1],[587,1],[587,1],[523,1],[494,1],[440,1],[392,1],[392,1],[440,1],[494,1],[440,1.5],[392,.5],[392,2]],
+  1300:[[523,1],[587,1],[659,1],[523,1],[523,1],[587,1],[659,1],[523,1],[659,1],[698,1],[784,2],[659,1],[698,1],[784,2],
+   [784,.5],[880,.5],[784,.5],[698,.5],[659,1],[523,1],[784,.5],[880,.5],[784,.5],[698,.5],[659,1],[523,1],[523,1],[392,1],[523,2],[523,1],[392,1],[523,2]],
+  700:[[262,1],[262,1],[392,1],[392,1],[440,1],[440,1],[392,2],[349,1],[349,1],[330,1],[330,1],[294,1],[294,1],[262,2]]}};
 const RADIO={geo:null,hold:null,offset:0,live:null};
 // The guide's chapters, in order.
 const RS={intro:0,mast:1,ripple:2,light:3,far:4,world:5,antenna:6,tuner:7,voice:8};
-// The note a station's music plays at time t, and how loud within it (each note starts firm and softens).
+// The note a station's music plays at time t, and how loud within it: each note swells in, then eases off, with a short
+// gap before the next, so the tune is played rather than buzzed.
 function radioTune(station,t){
- const notes=RAD.tunes[station], i=Math.floor((t||0)/.36), into=(t||0)/.36-i, n=notes[((i%notes.length)+notes.length)%notes.length];
- return [n,n?(.55+.45*Math.exp(-into*2.8))*(into<.86?1:.35):0];
+ const notes=RAD.tunes[station], b=RAD.beat, total=notes.reduce((s,n)=>s+n[1],0)*b;let s=(((t||0)%total)+total)%total;
+ for(const [f,beats] of notes){const d=beats*b;if(s<d){const x=s/d, g=Math.min(1,s/.03)*(.7+.3*Math.exp(-s*3))*(x<.9?1:.05);return [f,f?g:0,s];}s-=d;}
+ return [0,0,0];
 }
-function radioPlay(station,t,gain){const [f,g]=radioTune(station,t);if(f&&g*gain>.01)soundTone(f,g*gain,'triangle');}
+// A gentle vibrato that grows into each note, as a singer's or a violin's does.
+function radioPlay(station,t,gain){const [f,g,s]=radioTune(station,t);if(f&&g*gain>.01)soundTone(f*(1+.006*Math.min(1,s/.25)*Math.sin(TAU*5.5*(t||0))),g*gain,'triangle');}
 // After playback the viewer drags the mast's electrons up and down; the transmitter's own pushes take over again,
 // smoothly, when they let go.
 const RADIO_TOUCH={hint:'drag the mast’s electrons up and down, and watch your car’s antenna.',
@@ -3257,12 +3266,12 @@ function drawRadio(ctx,w,h,spec,st){
   ctx.restore();}
  if(crest){const xc=xOf(crest.r), len=Lmax*A(crest.r);if(xc<=w-6){ctx.save();ctx.globalAlpha=crest.a;ctx.fillStyle='rgba(217,140,6,.16)';ctx.beginPath();ctx.roundRect(xc-7,ya-len-6,14,len+12,7);ctx.fill();
   radioArrow(ctx,xc,ya,len,gold,small?3:3.6);ctx.restore();}}
- // Why it carries so far (chapter 5): how strong each push is along the row, for a steady push that fades like a
- // balloon's (a quarter as strong twice as far; grey, dashed) and for the ripple (half as strong; gold, through the
+ // Why it carries so far (chapter 5): how strong each push is along the row, for the steady push of electrons that
+ // sit still (a quarter as strong twice as far; grey, dashed) and for the ripple (half as strong; gold, through the
  // arrows' tips), equal near the mast.
  if(!plan.live&&stage===RS.far){const r1=.55*lam, curve=(f,col,dash,k)=>{if(k<=0)return;const runs=[[]];for(let x=x0;x<=ax-12;x+=3){if(rOf(x)<r1)continue;runs.at(-1).push([x,ya-Lmax*f(rOf(x))]);}
    ctx.save();ctx.globalAlpha=k;ctx.setLineDash(dash);ctx.strokeStyle=col;ctx.lineWidth=2.2;for(const pts of runs)if(pts.length>1){trace(ctx,pts);ctx.stroke();}ctx.restore();};
-  curve(r=>Physics.balloonPush(r,r1),'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));curve(r=>Physics.ripplePush(r,r1),gold,[],fade(at(1)+.2,.8));}
+  curve(r=>Physics.steadyPush(r,r1),'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));curve(r=>Physics.ripplePush(r,r1),gold,[],fade(at(1)+.2,.8));}
  // The car, its antenna and the antenna's electrons, which follow the push where they are: weaker than at the mast.
  radioCar(ctx,cx,gy,carW);
  trace(ctx,[[ax,roof+1],[ax,roof-La]]);ctx.strokeStyle='#8a929c';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.arc(ax,roof-La,2.4,0,TAU);ctx.fillStyle='#8a929c';ctx.fill();
@@ -3350,7 +3359,7 @@ function drawRadio(ctx,w,h,spec,st){
  if(stage===RS.far&&labels){
   // The two curves' names, in a key above the arrows, each beside a sample of its line.
   const kx=mx+.4*(ax-mx), key=(s,y,col,dash,k)=>{if(k<=0)return;ctx.save();ctx.globalAlpha=k;trace(ctx,[[kx,y],[kx+24,y]]);ctx.setLineDash(dash);ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.stroke();ctx.restore();tag(s,kx+32,y,{left:true});};
-  key("a balloon's push",aboveRow-24,'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));key('the ripple',aboveRow-2,gold,[],fade(at(1)+.2,.8));}
+  key('steady push',aboveRow-24,'rgba(90,80,70,.8)',[6,5],fade(at(0)+.2,.8));key('the ripple',aboveRow-2,gold,[],fade(at(1)+.2,.8));}
 }
 
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
@@ -4319,8 +4328,8 @@ const ENGINES={
   // The modelled effect for the render checks: the push that reaches the car's antenna, relative to full strength.
   effect:a=>clamp(a)*Physics.tunedResponse(1e6,1e6),
   measure:null,scale:'',
-  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with a steady push that fades like a rubbed balloon’s, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
-  try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push travels outward on its own at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next. It halves when the distance doubles, much more slowly than a balloon’s steady push, which falls to a quarter. Seen from space, charged air high above bends some radio waves back down, so they hop between it and the ground around the curve of the Earth. Back at the car, the wave pushes the electrons in its antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
+  disclosure:'An AM station at 1,000 on the dial pushes its electrons a million times a second, so its waves are 300 m long; its steel mast is its antenna. The arrows show the push of the wave’s electric part on electrons along the ground, and the soft bands show the same push through the air above, teal where it is up and violet where it is down; the wave’s magnetic part, at right angles, is not drawn. The electrons themselves only rock about their places in the metal. A car radio picks up AM with an antenna outside the car, here a whip; most portable radios use a coil inside instead. The pictures run 1.6 million times slower than real time, except chapter 6, where a hop takes 1.5 s, about 200 times slower. Chapter 5 compares the ripple’s push, which halves when the distance doubles, with the steady push of an electron sitting still, a quarter as strong twice as far; the two are drawn equal about half a wave from the mast. In chapter 6 the charged air is drawn as a thin layer 250 km up (the ionosphere spans about 50 to 1,000 km), where it bends some radio waves back down; the hops drawn leave 8 degrees above the ground and span about 2,150 km each (a ray that leaves grazing the ground goes furthest, up to 3,500 km), and the Earth, the layer’s height and the hops keep their proportions. By day a lower charged layer soaks up AM waves before they reach it, so AM hops mainly at night. The tuner is drawn as a swing, whose rhythm depends on its length; in a radio, turning the dial changes an electric circuit’s rhythm instead. In silence the push would stay steady at a middle strength; a voice raises and lowers it, at most a few thousand times a second, so in a real station each change spans hundreds of pushes.',
+  try:'',aria:'A radio station’s mast stands on the left and a car with its radio on the right. The station pushes the electrons in its mast up and down a million times a second. Their changing push travels outward on its own at the speed of light as a radio wave, drawn as arrows along the ground, 300 metres from one crest to the next. It halves when the distance doubles, much more slowly than the steady push of an electron sitting still, which falls to a quarter. Seen from space, charged air high above bends some radio waves back down, so they hop between it and the ground around the curve of the Earth. Back at the car, the wave pushes the electrons in its antenna up and down in step, a moment later. The radio’s tuner, drawn as a swing, builds up only for the station whose rhythm matches its own, so turning the dial picks one station. An AM station carries a voice by changing how hard it pushes, and the radio moves its speaker with those changes.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.
