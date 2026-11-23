@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-22T22:37:04.351423+00:00",
-    "outcome": "Published the radio guide (curriculum 3.6, owner's pick): how a radio signal carries a voice; passed all four reviews in two rounds."
+    "at": "2026-11-23T00:18:17.010415+00:00",
+    "outcome": "Revised the radio guide at the owner's request: how the signal reaches far around the Earth, and electrons that stay put; passed all four reviews."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
