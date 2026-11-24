@@ -748,6 +748,28 @@
         'With no tilt, every full Moon would meet it': this.eclipseShare(0) === 1,
       }).map(([name, pass]) => ({ name, pass }));
     },
+    // The expanding universe. Every distance between galaxies grows by the same share at once (a scale factor a), so seen
+    // from any galaxy the others recede at speeds in proportion to their distance (Hubble's law, H0 near 70 km/s for each
+    // megaparsec, 3.26 million light years). Light crossing the growing distances arrives stretched by the same factor.
+    hubbleH0: 70, lyPerMpc: 3.2616e6,
+    hubbleSpeed(dMpc, H0 = 70) { return H0 * dMpc; },
+    // Recession speeds seen from galaxy `home` in a set of positions (Mpc), when distances grow at rate H.
+    recession(points, home, H = 70) { const h = points[home]; return points.map(p => p.map((x, i) => H * (x - h[i]))); },
+    hubbleTime(H0 = 70) { return 977.8 / H0; },
+    stretch(aThen, aNow = 1) { return aNow / aThen; },
+    expansionChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, pts = [[0, 0], [3, 1], [-2, 4], [5, -3], [1, 2]];
+      const ratios = home => this.recession(pts, home).map((v, j) => j === home ? null : Math.hypot(...v) / Math.hypot(pts[j][0] - pts[home][0], pts[j][1] - pts[home][1])).filter(x => x !== null);
+      return Object.entries({
+        'Twice as far, a galaxy recedes twice as fast': this.hubbleSpeed(200) === 2 * this.hubbleSpeed(100),
+        'From every galaxy, the others recede at speeds in proportion to their distance': [0, 1, 2, 3, 4].every(h => ratios(h).every(r => near(r, 70, 1e-9))),
+        'From every galaxy, each other galaxy moves straight away': [0, 2, 4].every(h => this.recession(pts, h).every((v, j) => j === h || near(v[0] * (pts[j][1] - pts[h][1]) - v[1] * (pts[j][0] - pts[h][0]), 0, 1e-9))),
+        'A galaxy 3.26 million light years away recedes about 70 km a second': near(this.hubbleSpeed(1), 70, 1e-12) && near(this.lyPerMpc, 3.26e6, .01e6),
+        'That is about 21 km a second for each million light years': near(this.hubbleSpeed(1) / (this.lyPerMpc / 1e6), 21.46, .01),
+        'Running the growth back at that rate gives about 14 billion years': near(this.hubbleTime(), 13.97, .05),
+        'Light sent when distances were half as big arrives with waves twice as long': this.stretch(.5) === 2,
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     montyChecks() {
       const near=(a,b)=>Math.abs(a-b)<1e-12, g=this.montyGames(3), careless=this.montyGames(3,false);
       return Object.entries({
@@ -781,7 +803,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

@@ -1,0 +1,465 @@
+{
+  "id": "20261124T084818-expansion",
+  "status": "reviewed",
+  "question": "How do we know the universe is expanding?",
+  "topic": "expansion",
+  "created": "2026-11-24T08:48:18.913639+00:00",
+  "research": {
+    "claim": "We know the universe is expanding because the dark lines in distant galaxies' light are shifted toward red, more for farther galaxies, and the shift grows in proportion to distance (Hubble's law, about 70 km/s for every megaparsec, 3.26 million light years). Light from a receding source arrives with longer waves; and a pattern in which speed grows in proportion to distance is what every galaxy sees when all the distances between galaxies grow by the same share, so no galaxy is the centre. Running the growth back gives a hot, dense beginning about 13.8 billion years ago.",
+    "explanation": "With every distance scaled by a factor a(t), the separation of galaxies i and j is a(t) x_ij, so their relative speed is (da/dt / a) times their separation: H0 times distance, the same from every galaxy. Light emitted when the scale was a_then arrives with its wavelength multiplied by a_now/a_then (the cosmological redshift); for nearby galaxies the shift z is about v/c. 1/H0 for H0 = 70 km/s/Mpc is 977.8/70 = 14.0 billion years; with gravity's slowing and dark energy's later speeding up, the measured age is about 13.8 billion years.",
+    "assumptions": [
+      "A growth rate of 70 km/s per megaparsec; measurements range from about 67 to 73.",
+      "Hydrogen's lines at 410, 434, 486 and 656 nanometres, which hot hydrogen (as in stars' outer layers) absorbs and glowing hydrogen emits; cold hydrogen does not absorb at these colours. Chapter 1 slides them by 4 to 10%.",
+      "The grid stands for galaxies far apart; nearby galaxies and anything bound by gravity or other forces do not spread apart.",
+      "The plot's scatter is made up for the picture."
+    ],
+    "prediction": "A galaxy twice as far as another shows about twice the redshift, and the same proportion holds whichever direction we look.",
+    "falsifier": "If distant galaxies' lines showed no shift, or shifts that did not grow with distance, or galaxies in some directions approached as often as others receded, this explanation would be wrong.",
+    "limitations": [
+      "Very distant galaxies need the full theory (general relativity), in which redshift is not simply proportional to distance.",
+      "The picture leaves out the expansion's slowing and later speeding up.",
+      "Hubble's own 1929 value was about 500 km/s per megaparsec, too high because of errors in his distances; today's measurements give about 67 to 73."
+    ],
+    "misconceptions": [
+      "The galaxies are flying away from a centre where an explosion happened.",
+      "Everything, including atoms and the solar system, is expanding.",
+      "Nothing can move away from us faster than light."
+    ],
+    "questions": [
+      "Is everything expanding, even me?",
+      "So where is the centre?",
+      "How do we know how far the galaxies are?",
+      "Can galaxies move away faster than light?",
+      "Why 13.8 billion years?"
+    ],
+    "sources": [
+      {
+        "title": "Hubble's law (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Hubble%27s_law",
+        "supports": "Galaxies move away from Earth at speeds proportional to their distance; attributed to Edwin Hubble's 1929 work, using Cepheid variable stars to find distances; the Hubble constant is around 70 km/s/Mpc (Planck 67.4, other measurements near 70 and 73); the raisin-bread analogy; type Ia supernovae as standard candles."
+      },
+      {
+        "title": "Expansion of the universe (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Expansion_of_the_universe",
+        "supports": "To any observer, all but the nearest galaxies (bound by gravity) move away at speeds proportional to their distance; the ant-on-a-balloon analogy; recession of distant objects is not limited by the speed of light, which applies to local reference frames; picturing galaxies as stationary while space stretches is often argued erroneously."
+      },
+      {
+        "title": "Redshift (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Redshift",
+        "supports": "The cosmological redshift is commonly attributed to the stretching of photons' wavelengths as the universe expands."
+      },
+      {
+        "title": "Spectral line (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Spectral_line",
+        "supports": "Spectral lines identify atoms and molecules, like fingerprints."
+      },
+      {
+        "title": "Age of the universe (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Age_of_the_universe",
+        "supports": "The age of the universe is estimated at about 13.77 to 13.79 billion years."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "How do we know the universe is expanding?",
+    "subtitle": "Almost every distant galaxy's light arrives redder than it should, and the farther the galaxy, the redder. What does that tell us?",
+    "why": "The light from far galaxies carries a clue, discovered a century ago: almost all of them are moving away from us, and from each other.",
+    "opening": "How do we know the universe is expanding?",
+    "takeaway": "Distant galaxies' dark lines have slid toward red, more the farther away they are. Their light arrives stretched because the gaps between galaxies keep growing, so farther ones move away faster. Every galaxy sees that same pattern, so there is no centre. Run it backwards, and everything was packed together about 13.8 billion years ago.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "first",
+    "accent": "blue",
+    "kind": "expansion",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+      {
+        "q": "Is everything expanding, even me?",
+        "a": "No. Atoms, people, the Earth, the solar system and our own galaxy are held together by forces and gravity, and nearby galaxies are bound to each other too. Only the gaps between galaxies far apart grow."
+      },
+      {
+        "q": "So where is the centre?",
+        "a": "There isn't one. Every galaxy sees the others moving away in the same pattern, faster the farther they are, just as every raisin in a rising loaf sees the other raisins spread away from it."
+      },
+      {
+        "q": "How do we know how far the galaxies are?",
+        "a": "By stars of known true brightness. Hubble used Cepheid stars, which pulse at a rate that tells how bright they really are; how faint they look then gives the distance. Today exploding stars called type Ia supernovae reach much farther."
+      },
+      {
+        "q": "Can galaxies move away faster than light?",
+        "a": "Very distant ones, yes: their distance from us grows faster than light could cross it. That doesn't break the speed limit, which applies to things moving past each other nearby, not to the growth of distances across the universe."
+      },
+      {
+        "q": "Why 13.8 billion years?",
+        "a": "If each galaxy had always kept its speed, its distance divided by its speed gives the time since all were together: about 14 billion years, the same for every galaxy. Gravity's slowing and dark energy's later speeding up nearly cancel, and the full calculation with today's best measurements gives 13.8 billion."
+      },
+      {
+        "q": "What is a light year?",
+        "a": "The distance light travels in a year: about 9.5 trillion kilometres. A galaxy a million light years away is so far that its light set off a million years ago."
+      }
+    ],
+    "beats": [
+      {
+        "title": "Redder than it should be",
+        "body": "Spread a star's light into a rainbow, and hydrogen cuts four dark lines in it. A distant galaxy shows the same hydrogen lines, all slid toward red. The farther away the galaxy, the more its lines have slid."
+      },
+      {
+        "title": "Stretched light",
+        "body": "Light travels as waves, and each colour has its own wave length. If a galaxy moves away, each wave starts farther off and arrives stretched. Longer waves look redder, and the stretch tells us how fast it goes."
+      },
+      {
+        "title": "Farther means faster",
+        "body": "In 1929 Edwin Hubble plotted galaxies' speeds against their distances. A galaxy twice as far off is moving away about twice as fast. Measured today, each million light years adds about 21 km a second."
+      },
+      {
+        "title": "No centre",
+        "body": "Picture a field of galaxies, with every gap growing by the same percent. From one galaxy, the far ones move away faster, as Hubble found. From any other galaxy, the pattern looks exactly the same."
+      },
+      {
+        "title": "Stretched on the way",
+        "body": "So 'moving away' really means the gaps between galaxies keep growing. Light crossing those growing gaps is stretched along with them. The farther it travels, the more it stretches and reddens."
+      },
+      {
+        "title": "Running it backwards",
+        "body": "Run this growth backwards, and the galaxies crowd closer. Long ago, every part of the universe was packed close, hot and dense. That hot, dense start, about 13.8 billion years ago, is the Big Bang."
+      }
+    ],
+    "theme": "rose"
+  },
+  "checks": [
+    {
+      "name": "Twice as far, a galaxy recedes twice as fast",
+      "pass": true
+    },
+    {
+      "name": "From every galaxy, the others recede at speeds in proportion to their distance",
+      "pass": true
+    },
+    {
+      "name": "From every galaxy, each other galaxy moves straight away",
+      "pass": true
+    },
+    {
+      "name": "A galaxy 3.26 million light years away recedes about 70 km a second",
+      "pass": true
+    },
+    {
+      "name": "That is about 21 km a second for each million light years",
+      "pass": true
+    },
+    {
+      "name": "Running the growth back at that rate gives about 14 billion years",
+      "pass": true
+    },
+    {
+      "name": "Light sent when distances were half as big arrives with waves twice as long",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 4.1 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 78)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 4)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5070 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, on the owner’s pick, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in three rounds (the first found a wrong opening fact about hydrogen and pictures that suggested a centre), and their copy edits were then applied."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "How do we know the universe is expanding?",
+        "subtitle": "Almost every distant galaxy's light arrives redder than it should, and the farther the galaxy, the redder. What does that tell us?",
+        "why": "The light from far galaxies carries a clue, discovered a century ago: almost all of them are moving away from us, and from each other.",
+        "opening": "How do we know the universe is expanding?",
+        "takeaway": "Distant galaxies' dark lines have slid toward red, more the farther away they are. Their light arrives stretched because the gaps between galaxies keep growing, so farther ones move away faster. Every galaxy sees that same pattern, so there is no centre. Run it backwards, and everything was packed together about 13.8 billion years ago.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "first",
+        "accent": "blue",
+        "kind": "expansion",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Is everything expanding, even me?",
+            "a": "No. Atoms, people, the Earth, the solar system and our own galaxy are held together by forces and gravity, and nearby galaxies are bound to each other too. Only the gaps between galaxies far apart grow."
+          },
+          {
+            "q": "So where is the centre?",
+            "a": "There isn't one. Every galaxy sees the others moving away in the same pattern, faster the farther they are, just as every raisin in a rising loaf sees the other raisins spread away from it."
+          },
+          {
+            "q": "How do we know how far the galaxies are?",
+            "a": "By stars of known true brightness. Hubble used Cepheid stars, which pulse at a rate that tells how bright they really are; how faint they look then gives the distance. Today exploding stars called type Ia supernovae reach much farther."
+          },
+          {
+            "q": "Can galaxies move away faster than light?",
+            "a": "Very distant ones, yes: their distance from us grows faster than light could cross it. That doesn't break the speed limit, which applies to things moving past each other nearby, not to the growth of distances across the universe."
+          },
+          {
+            "q": "Why 13.8 billion years?",
+            "a": "If each galaxy had always kept its speed, its distance divided by its speed gives the time since all were together: about 14 billion years, the same for every galaxy. Gravity's slowing and dark energy's later speeding up nearly cancel, and the full calculation with today's best measurements gives 13.8 billion."
+          },
+          {
+            "q": "What is a light year?",
+            "a": "The distance light travels in a year: about 9.5 trillion kilometres. A galaxy a million light years away is so far that its light set off a million years ago."
+          }
+        ],
+        "beats": [
+          {
+            "title": "Redder than it should be",
+            "body": "Spread a star's light into a rainbow, and hydrogen cuts four dark lines in it. A distant galaxy shows the same hydrogen lines, all slid toward red. The farther away the galaxy, the more its lines have slid."
+          },
+          {
+            "title": "Stretched light",
+            "body": "Light travels as waves, and each colour has its own wave length. If a galaxy moves away, each wave starts farther off and arrives stretched. Longer waves look redder, and the stretch tells us how fast it goes."
+          },
+          {
+            "title": "Farther means faster",
+            "body": "In 1929 Edwin Hubble plotted galaxies' speeds against their distances. A galaxy twice as far off is moving away about twice as fast. Measured today, each million light years adds about 21 km a second."
+          },
+          {
+            "title": "No centre",
+            "body": "Picture a field of galaxies, with every gap growing by the same percent. From one galaxy, the far ones move away faster, as Hubble found. From any other galaxy, the pattern looks exactly the same."
+          },
+          {
+            "title": "Stretched on the way",
+            "body": "So 'moving away' really means the gaps between galaxies keep growing. Light crossing those growing gaps is stretched along with them. The farther it travels, the more it stretches and reddens."
+          },
+          {
+            "title": "Running it backwards",
+            "body": "Run this growth backwards, and the galaxies crowd closer. Long ago, every part of the universe was packed close, hot and dense. That hot, dense start, about 13.8 billion years ago, is the Big Bang."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Twice as far, a galaxy recedes twice as fast",
+          "pass": true
+        },
+        {
+          "name": "From every galaxy, the others recede at speeds in proportion to their distance",
+          "pass": true
+        },
+        {
+          "name": "From every galaxy, each other galaxy moves straight away",
+          "pass": true
+        },
+        {
+          "name": "A galaxy 3.26 million light years away recedes about 70 km a second",
+          "pass": true
+        },
+        {
+          "name": "That is about 21 km a second for each million light years",
+          "pass": true
+        },
+        {
+          "name": "Running the growth back at that rate gives about 14 billion years",
+          "pass": true
+        },
+        {
+          "name": "Light sent when distances were half as big arrives with waves twice as long",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 4.1 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 78)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 4)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5070 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Round 3: both round-2 blocking issues are fixed. Chapter 6 lays out a fresh lattice covering the whole stage at every moment, galaxies keep a fixed size and fade into an even glow, with no edge or block; the aria now describes rainbow light through hot hydrogen, as in a star. Balmer lines 410.2, 434.0, 486.1 and 656.3 nm times (1+z) with z 0.04 to 0.10; both chapter 2 waves travel at one speed; Hubble's plot through the origin; recession arrows straight away from the watched galaxy; chapter 5's stretch equals the gap growth; 21.46 km/s per million light years, 1/H0 about 14 billion years, age 13.8 billion; FAQ answers accurate; all 278 model checks pass.",
+        "changes": [
+          "Make the play-mode arrows follow the growth-rate slider (applied).",
+          "Let chapter 5's light end clearly red (applied).",
+          "Explain or drop chapter 1's dashed marks (dropped)."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Round 2: the grid chapters now read as an even field with no centre at every size, the growing links show gaps widening calmly, chapter 4 shows the same view from a second galaxy, chapter 1 is cleaner, chapter 2's waves compare fairly, 656 nm is red, labels clear the lines, chapter 6 ends on an even glow. Remaining polish: the chapter 5 light running into the ring, label placement in portrait, the end colour, the chapter 6 glow's bottom edge.",
+        "changes": [
+          "Stop the light at the ring and redden it (applied).",
+          "Label beside the packet (applied).",
+          "Even glow to the bottom (applied).",
+          "Show 'seen from here' with the ring at line 2 (applied).",
+          "Shorter arrows on short stages (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Round 2 reads as one connected story and all three round-1 blockers are fixed: chapter 5 shows only growing links, chapters 2 and 5 now connect motion and growing gaps, chapter 6 ends in an even glow. All six questions answered from the guide: redshifted hydrogen lines, stretched waves, Hubble's proportional speeds, no centre, bound systems do not expand (FAQ), 13.8 billion years and how (FAQ).",
+        "changes": [
+          "Subtitle polish (applied)."
+        ],
+        "subtitle_edits": [
+          {
+            "chapter": 1,
+            "old": "Hot hydrogen gas, as in a star, cuts four dark lines in a rainbow of light.",
+            "new": "Spread a star's light into a rainbow, and hydrogen cuts four dark lines in it."
+          },
+          {
+            "chapter": 2,
+            "old": "Longer waves look redder, and the stretch tells us its speed.",
+            "new": "Longer waves look redder, and the stretch tells us how fast it goes."
+          },
+          {
+            "chapter": 5,
+            "old": "So the farther it travels, the more it stretches and reddens.",
+            "new": "The farther it travels, the more it stretches and reddens."
+          },
+          {
+            "chapter": 6,
+            "old": "Everywhere, everything was once packed close, hot and dense.",
+            "new": "Long ago, every part of the universe was packed close, hot and dense."
+          }
+        ],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Round 3, pictures only: a hydrogen bar and a distant galaxy's bar with the same lines shifted toward red; a still and a receding galaxy's waves, the second longer and redder; Hubble's straight line through the origin; a lattice of galaxies where, from any circled galaxy, the others recede in proportion; light crossing the growing gaps arriving stretched; and an even, screen-filling field packing closer into a uniform warm glow, 13.8 billion years ago. Nothing shows a centre, an edge or a single blast.",
+        "changes": [
+          "Remove or align chapter 1's dotted ticks (removed).",
+          "Even glow to the bottom (applied).",
+          "Centre the second viewpoint on phones (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261124T084818-expansion/revision-1-0.png",
+        "published/20261124T084818-expansion/revision-1-1.png",
+        "published/20261124T084818-expansion/revision-1-2.png",
+        "published/20261124T084818-expansion/revision-1-3.png",
+        "published/20261124T084818-expansion/revision-1-4.png",
+        "published/20261124T084818-expansion/revision-1-5.png",
+        "published/20261124T084818-expansion/revision-1-6.png",
+        "published/20261124T084818-expansion/revision-1-7.png",
+        "published/20261124T084818-expansion/revision-1-8.png",
+        "published/20261124T084818-expansion/revision-1-9.png",
+        "published/20261124T084818-expansion/revision-1-10.png",
+        "published/20261124T084818-expansion/revision-1-11.png"
+      ]
+    }
+  ]
+}
