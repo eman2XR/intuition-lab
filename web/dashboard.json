@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-23T19:00:51.450444+00:00",
-    "outcome": "Published 'Why does the Moon change shape?' (6.4, the owner's pick: something about space); passed all four reviews in two rounds."
+    "at": "2026-11-24T08:49:16.127540+00:00",
+    "outcome": "Published 'How do we know the universe is expanding?' (6.6, owner's pick); passed all four reviews in three rounds."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
