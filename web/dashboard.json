@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-24T08:49:16.127540+00:00",
-    "outcome": "Published 'How do we know the universe is expanding?' (6.6, owner's pick); passed all four reviews in three rounds."
+    "at": "2026-11-24T20:17:03.494260+00:00",
+    "outcome": "Today's guide already published (the expanding universe); queue trimmed to why time runs forward, at the owner's request."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
