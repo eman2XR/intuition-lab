@@ -3478,13 +3478,12 @@ function inkGalaxy(ctx,x,y,r,rot=0,hot=false){
  for(const s of [0,Math.PI]){ctx.beginPath();for(let k=0;k<=24;k++){const u=k/24, a=s+u*3.4, rr=r*(.12+.88*u);k?ctx.lineTo(rr*Math.cos(a),rr*Math.sin(a)*.62):ctx.moveTo(rr*Math.cos(a),rr*Math.sin(a)*.62);}ctx.stroke();}
  ctx.restore();
 }
-// The grid of galaxies, as offsets from the middle in units of the starting gap.
-const EXPAND_GRID=(()=>{const out=[];for(let j=-9;j<=9;j++)for(let i=-14;i<=14;i++)out.push([i+.06*Math.sin(i*2.1+j*1.7),j+.06*Math.cos(i*1.3+j*2.9),i,j]);return out;})();
-const EXPAND_AT=(i,j)=>(j+9)*29+(i+14);
-// Tapping a galaxy, after playback, makes it the one we watch from.
-const EXPAND_TOUCH={hint:'tap any galaxy to watch from there: the others still rush away.',
- grab(w,h,spec,st,x,y){const g=EXPAND.geo;if(!g)return null;let best=-1,bd=1e9;g.pts.forEach(([px,py],k)=>{const d=Math.hypot(x-px,y-py);if(d<bd){bd=d;best=k;}});return bd<g.reach?{kind:'galaxy',cursor:'pointer',k:best}:null;},
- move(){return null;},release(w,h,spec,st,x,y,hd,moved){if(!moved&&hd)EXPAND.home=hd.k;return {};}};
+// Tapping a galaxy, after playback, makes it the one we watch from. On the last picture, which has no galaxies, any
+// tap starts the row.
+const EXPAND_TOUCH={hint:'tap the picture for a row of galaxies, then tap any one to watch from there.',
+ grab(w,h,spec,st,x,y){const g=EXPAND.geo;if(!g)return null;if(g.any)return {kind:'galaxy',cursor:'pointer',k:null};
+  let best=null,bd=1e9;g.pts.forEach(([k,px,py])=>{const d=Math.hypot(x-px,y-py);if(d<bd){bd=d;best=k;}});return bd<g.reach?{kind:'galaxy',cursor:'pointer',k:best}:null;},
+ move(){return null;},release(w,h,spec,st,x,y,hd,moved){if(!moved&&hd&&hd.k!==null)EXPAND.home=hd.k;return {};}};
 function drawExpansion(ctx,w,h,spec,st){
  const still=!!st.live&&!st.touched&&st.since!==undefined;
  if(still){const c=st.chapters?.at(-1);st={...st,live:false,stage:(st.chapters?.length||6)-1,since:c?c.end-c.start:16};}
@@ -3496,17 +3495,36 @@ function drawExpansion(ctx,w,h,spec,st){
  const words=[];EXPAND.geo=null;
  const L=w*.08, R=w*.92;
  if(stage===0||stage===1){
-  // A strip of colours from violet to red with the dark lines hydrogen leaves (410, 434, 486 and 656 nm).
-  const X=nm=>L+(R-L)*(nm-380)/(750-380), lines=[410.2,434.0,486.1,656.3];
-  const strip=(y,hh,z,a)=>{const g=ctx.createLinearGradient(L,0,R,0);for(let k=0;k<=12;k++){const nm=380+370*k/12;g.addColorStop(k/12,nmColour(nm,a));}
-   ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(L,y-hh/2,R-L,hh,6);ctx.fill();
-   for(const nm of lines){const x=X(nm*(1+z));if(x>R-2)continue;trace(ctx,[[x,y-hh/2],[x,y+hh/2]]);ctx.strokeStyle='rgba(15,15,20,.85)';ctx.lineWidth=small?2.5:3.5;ctx.stroke();}};
   if(stage===0){
-   const hh=Math.min(h*.16,70), y1=h*.3, y2=h*.62, z=since<at(2)?.04:.04+.06*smooth((since-at(2))/(dur-at(2)-1));
-   strip(y1,hh,0,fade(at(0)+.2));if(since>=at(1)-.2)strip(y2,hh,z,fade(at(1)-.2));
-   words.push(['hydrogen',w/2,y1-hh/2-16]);if(since>=at(1))words.push(['a distant galaxy',w/2,y2-hh/2-16]);
-   if(since>=at(1)+1){const x0=X(656.3), x1=X(656.3*(1+z));trace(ctx,[[x0,y2+hh/2+12],[x1,y2+hh/2+12]]);ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.stroke();
-    ctx.beginPath();ctx.moveTo(x1+6,y2+hh/2+12);ctx.lineTo(x1-1,y2+hh/2+8);ctx.lineTo(x1-1,y2+hh/2+16);ctx.closePath();ctx.fillStyle=ink;ctx.fill();words.push(['shifted toward red',(x0+x1)/2-40,y2+hh/2+30]);}
+  // A star's light passes through a prism and fans out into a rainbow. Hydrogen in the star has soaked up four exact
+  // colours (410, 434, 486 and 656 nm), which leave dark gaps. A distant galaxy's light, spread the same way, shows the
+  // same four gaps slid toward red; small ticks above its rainbow mark where hydrogen's gaps belong.
+  const hh=Math.min(h*.12,54), fanH=Math.min(h*.11,56), ps=small?28:40, sx=L+(small?8:14), px=w*(small?.27:.24), sr=small?9:12, S0=px+ps*.4;
+  const X=nm=>S0+(R-S0)*(nm-380)/(750-380), lines=[410.2,434.0,486.1,656.3];
+  const row=(yb,galaxy,on,gap,z)=>{
+   const yTop=yb+fanH, beam=clamp(on*2), spread=clamp(on*2-1);
+   if(galaxy)inkGalaxy(ctx,sx,yb,sr*1.7,.4,true);
+   else{const g=ctx.createRadialGradient(sx,yb,0,sx,yb,sr*2.2);g.addColorStop(0,'rgba(255,214,120,1)');g.addColorStop(.45,'rgba(250,180,70,.8)');g.addColorStop(1,'rgba(250,180,70,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(sx,yb,sr*2.2,0,TAU);ctx.fill();}
+   const bx=px-ps*.28;if(beam>0){trace(ctx,[[sx+sr,yb],[sx+sr+(bx-sx-sr)*beam,yb]]);ctx.strokeStyle='rgba(215,165,60,.9)';ctx.lineWidth=3;ctx.stroke();}
+   ctx.beginPath();ctx.moveTo(px,yb-ps*.6);ctx.lineTo(px-ps*.52,yb+ps*.3);ctx.lineTo(px+ps*.52,yb+ps*.3);ctx.closePath();ctx.fillStyle='rgba(190,215,235,.45)';ctx.fill();ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.stroke();
+   if(spread<=0)return yTop;
+   const ax=px+ps*.25, fan=ctx.createLinearGradient(S0,0,R,0), band=ctx.createLinearGradient(S0,0,R,0);
+   for(let k=0;k<=12;k++){const nm=380+370*k/12;fan.addColorStop(k/12,nmColour(nm,.22*spread));band.addColorStop(k/12,nmColour(nm,spread));}
+   ctx.fillStyle=fan;ctx.beginPath();ctx.moveTo(ax,yb);ctx.lineTo(R,yTop);ctx.lineTo(S0,yTop);ctx.closePath();ctx.fill();
+   ctx.fillStyle=band;ctx.beginPath();ctx.roundRect(S0,yTop,R-S0,hh,6);ctx.fill();
+   lines.forEach((nm,k)=>{const x=X(nm*(1+z)), a=gap(k);if(a<=0||x>R-2)return;trace(ctx,[[x,yTop],[x,yTop+hh]]);ctx.strokeStyle=`rgba(15,15,20,${.88*a})`;ctx.lineWidth=small?2.5:3.5;ctx.stroke();});
+   return yTop;};
+  const yb1=h*(small?.12:.13), yb2=h*(small?.55:.56), gapIn=k=>live?1:clamp((since-at(1)-.3-k*.45)/.4);
+  const on1=live?1:clamp((since-at(0)-.2)/2.2), on2=live?1:clamp((since-at(2)+.2)/1.6), z=live?.08:.08*smooth((since-at(2)-1.8)/1.6);
+  const top1=row(yb1,false,on1,gapIn,0);
+  words.push(['a star',sx,yb1-sr*2-6],['prism',px,yb1-ps*.6-14]);
+  if(since>=at(1)+.3)words.push(['hydrogen’s fingerprint',w/2,top1+hh+18]);
+  if(since>=at(2)-.2){
+   const top2=row(yb2,true,on2,()=>1,z);words.push(['a distant galaxy',sx+(small?40:0),yb2-sr*1.7-14]);
+   if(on2>=1){ctx.strokeStyle='rgba(20,23,28,.7)';ctx.lineWidth=2;for(const nm of lines){const x=X(nm);trace(ctx,[[x,top2-11],[x,top2-1]]);ctx.stroke();}}
+   if(z>.01){const x0=X(656.3), x1=X(656.3*(1+z)), ya=top2+hh+12;trace(ctx,[[x0,ya],[x1,ya]]);ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x1+6,ya);ctx.lineTo(x1-1,ya-4);ctx.lineTo(x1-1,ya+4);ctx.closePath();ctx.fillStyle=ink;ctx.fill();words.push(['slid toward red',(x0+x1)/2,ya+18]);}
+  }
   }else{
    // Light from a galaxy moving away arrives with its waves stretched: longer, so redder.
    const y1=h*.32, y2=h*.66, amp=Math.min(h*.07,24), gx0=R-20, v=since<at(1)?0:smooth((since-at(1))/2.5);
@@ -3525,40 +3543,70 @@ function drawExpansion(ctx,w,h,spec,st){
   words.push(['distance',(x0+x1)/2,y0+18],['speed away',x0+58,y1-4]);
   if(since>=at(1))words.push(['speed grows with distance',X(dMax*.36),Y(Physics.hubbleSpeed(dMax*.66))]);
  }
+ else if(stage===5&&!live){
+  // Run backwards, the galaxies crowd closer everywhere at once (the field is laid out afresh to cover the stage, so it
+  // never shows an edge) until all of space glows hot and dense. Then forward again: that glow, stretched ever since by
+  // the growing gaps, reddens past what eyes can see and still arrives from every direction as faint microwaves.
+  const cx=w/2, cy=h*.5, gap=Math.min(w*(small?.2:.11),h*(small?.17:.24));
+  const a=Math.max(.04,1.15-1.11*smooth((since-at(0)-.3)/(at(1)-at(0)+1.2))), hot=1-clamp((a-.04)/.04), u=since<at(2)?0:clamp((since-at(2))/Math.max(2,dur-at(2)-1));
+  // The glow cools from hot yellow-white through orange and red as its waves stretch, and the sky goes dark.
+  const temp=[[0,[255,200,105]],[.3,[255,160,80]],[.6,[200,60,50]],[1,[110,30,60]]];let q=0;while(q<temp.length-2&&u>temp[q+1][0])q++;
+  const [u0,c0]=temp[q],[u1,c1]=temp[q+1], mix=c0.map((c,k)=>Math.round(c+(c1[k]-c)*clamp((u-u0)/(u1-u0)))).join(','), glow=.92*hot*Math.pow(1-u,6), night=smooth(u*4);
+  if(night>0){ctx.fillStyle=`rgba(18,16,32,${night})`;ctx.fillRect(0,0,w,h);}
+  if(glow>0){ctx.fillStyle=`rgba(${mix},${glow})`;ctx.fillRect(0,0,w,h);
+   // An even shimmer over the whole glow, with no brighter middle: hot everywhere at once.
+   const cell=small?12:16;for(let j=0;j*cell<h;j++)for(let i=0;i*cell<w;i++){const v=.5+.5*Math.sin(since*1.6+hash(i*31.7+j*7.3)*TAU), ox=(hash(i*3.1+j*17.9)-.5)*cell, oy=(hash(i*11.3+j*5.7)-.5)*cell;ctx.fillStyle=`rgba(255,250,228,${.2*glow*v})`;ctx.beginPath();ctx.arc(i*cell+ox,j*cell+oy,cell*.8,0,TAU);ctx.fill();}}
+  const seen=clamp((a-.1)/.3), step=gap*a;
+  if(seen>0){ctx.save();ctx.globalAlpha=seen;
+   for(let j=Math.floor(-cy/step)-1;j<=Math.ceil((h-cy)/step)+1;j++)for(let i=Math.floor(-cx/step)-1;i<=Math.ceil((w-cx)/step)+1;i++)inkGalaxy(ctx,cx+i*step,cy+j*step,small?9:12,(i*7+j*3)*.9,false);ctx.restore();}
+  if(since<at(2)){const ago=13.8*(1-Math.pow(clamp((a-.04)/1.11),1.5));
+   if(since>=at(0)+.4)words.push([ago<.05?'today':ago>13.75?'13.8 billion years ago':`${ago.toFixed(1)} billion years ago`,cx,h*.12]);
+   if(since>=at(1)+1.4)words.push(['hot and dense everywhere',cx,cy]);}
+  if(u>0){
+   // The glow's waves, from every direction, stretching as they come; a radio dish catches them.
+   const dx=cx, ds=small?20:26, dy=h-ds*1.5, ex=dx, ey=dy-ds*.3, far=Math.hypot(w,h), lam=(small?7:9)*(1+7*u), amp=small?4:5, nm=600+300*u, k=clamp((nm-740)/120);
+   const col=nm<=740?nmColour(nm,.95*clamp(u*6)):`rgba(${Math.round(150+55*k)},${Math.round(25+180*k)},${Math.round(25+187*k)},${.95-.25*k})`, dark=night>.5, dishInk=dark?'rgba(235,232,245,.92)':ink;
+   for(let i=0;i<7;i++){const an=Math.PI*(1.08+.84*i/6), ux=Math.cos(an), uy=Math.sin(an), pts=[];
+    for(let s=ds*.7;s<far;s+=2){const wv=amp*Math.sin(TAU*(s+since*lam*1.2)/lam);pts.push([ex+ux*s-uy*wv,ey+uy*s+ux*wv]);}
+    trace(ctx,pts);ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.stroke();
+    // An arrowhead near the dish: the waves come in.
+    if(small&&i%2)continue;const s0=ds*(2.2+(i%2)*1.6), tx=ex+ux*s0, ty=ey+uy*s0;ctx.beginPath();ctx.moveTo(tx-ux*7,ty-uy*7);ctx.lineTo(tx+ux*3-uy*5,ty+uy*3+ux*5);ctx.lineTo(tx+ux*3+uy*5,ty+uy*3-ux*5);ctx.closePath();ctx.fillStyle=col;ctx.fill();}
+   ctx.beginPath();ctx.moveTo(dx-ds*1.1,dy-ds*.5);ctx.quadraticCurveTo(dx,dy+ds*.45,dx+ds*1.1,dy-ds*.5);ctx.closePath();ctx.fillStyle=dark?'rgba(44,40,66,1)':'rgba(235,232,228,1)';ctx.fill();ctx.strokeStyle=dishInk;ctx.lineWidth=2.2;ctx.stroke();
+   ctx.lineWidth=1.3;trace(ctx,[[dx-ds*.8,dy-ds*.35],[dx,dy-ds*.95],[dx+ds*.8,dy-ds*.35]]);ctx.stroke();ctx.beginPath();ctx.arc(dx,dy-ds*.95,2.8,0,TAU);ctx.fillStyle=dishInk;ctx.fill();
+   ctx.lineWidth=2.2;trace(ctx,[[dx-ds*.45,dy+ds*.75],[dx,dy-ds*.02],[dx+ds*.45,dy+ds*.75]]);ctx.stroke();
+   if(u>.5)words.push(['a radio dish today',dx+ds+(small?62:70),dy]);
+   if(u>.55)words.push(['faint microwaves',w*(small?.72:.76),h*.3]);
+   if(st.playing)soundClip('static',.22*clamp(u*4));}
+  if(still)EXPAND.geo={any:true};
+ }
  else{
-  // The grid of galaxies. Its gaps grow by the same share at once; seen from the ringed galaxy, every other one moves
-  // straight away, faster the farther it is.
-  let a=1, homeK=EXPAND.home??EXPAND_AT(0,0);
-  if(live){a=1+.15*clamp(st.mass)*(((st.t||0)*.035)%1);}
-  else if(stage===3){a=1+.15*clamp(since/dur);homeK=since<at(2)?EXPAND_AT(0,0):small?EXPAND_AT(1,-1):EXPAND_AT(2,0);}
-  else if(stage===5)a=Math.max(.04,1.15-1.11*smooth((since-at(0)-.3)/(at(2)-at(0)+.6)));
-  const showArrows=live||stage===3&&since>=at(1)-.2, aEmit=stage===4?1+1.1*clamp((at(1)-.5)/dur):1;
-  if(stage===4&&!live)a=1+1.1*clamp(since/dur);
-  const cx=w/2, cy=h*(small?.5:.48), gap=Math.min(w*(small?.2:.11),h*(small?.17:.24)), base=EXPAND_GRID.map(([i,j])=>[cx+i*gap,cy+j*gap]), anchor=stage===5&&!live?[cx,cy]:base[homeK], pts=base.map(([x,y])=>[anchor[0]+(x-anchor[0])*a,anchor[1]+(y-anchor[1])*a]), onStage=([x,y])=>x>-30&&x<w+30&&y>-30&&y<h+30;
-  // Faint links between neighbours: every one lengthens by the same share as the gaps grow.
-  if(stage>=3&&stage<=4||live){ctx.strokeStyle='rgba(120,60,80,.16)';ctx.lineWidth=1;EXPAND_GRID.forEach(([,,i,j],k)=>{for(const [di,dj] of [[1,0],[0,1]]){if(i+di>14||j+dj>9)continue;const q=EXPAND_AT(i+di,j+dj);if(!onStage(pts[k])&&!onStage(pts[q]))continue;trace(ctx,[pts[k],pts[q]]);ctx.stroke();}});}
-  // Packed back together, the whole field glows evenly: the start was everywhere, not at a point.
-  if(stage===5&&!live){const k=1-clamp((a-.04)/.6), g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,`rgba(255,190,120,${.5*k})`);g.addColorStop(1,`rgba(255,175,110,${.55*k})`);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}
-  // Running back (chapter 6), the field is laid out afresh to cover the whole stage at every moment, so it never shows an
-  // edge, and the galaxies fade out before they crowd too close to draw.
-  if(stage===5&&!live){const seen=clamp((a-.28)/.3), step=gap*a;if(seen>0){ctx.save();ctx.globalAlpha=seen;
-    for(let j=Math.floor(-cy/step)-1;j<=Math.ceil((h-cy)/step)+1;j++)for(let i=Math.floor(-cx/step)-1;i<=Math.ceil((w-cx)/step)+1;i++)inkGalaxy(ctx,cx+i*step,cy+j*step,small?9:12,(i*7+j*3)*.9,false);ctx.restore();}}
-  else pts.forEach(([x,y],k)=>{if(x>-20&&x<w+20&&y>-20&&y<h+20)inkGalaxy(ctx,x,y,small?9:12,k*.9,k===homeK&&(showArrows||stage===4));});
-  if(showArrows||stage===4&&!live){const [hx,hy]=pts[homeK];ctx.beginPath();ctx.arc(hx,hy,(small?14:18),0,TAU);ctx.strokeStyle='rgba(190,18,60,.9)';ctx.lineWidth=2;ctx.stroke();}
-  if(showArrows){const [hx,hy]=pts[homeK];
-   const sc=(small?.14:.16)*(h<300?.7:1)*(live?clamp(st.mass):1);pts.forEach(([x,y],k)=>{if(k===homeK||!onStage([x,y]))return;const dx=(x-hx)*sc, dy=(y-hy)*sc, x2=x+dx, y2=y+dy;if(Math.hypot(dx,dy)<3)return;
-    trace(ctx,[[x+Math.sign(dx)*0,y],[x2,y2]]);ctx.strokeStyle='rgba(190,18,60,.55)';ctx.lineWidth=1.6;ctx.stroke();const an=Math.atan2(dy,dx);
-    ctx.beginPath();ctx.moveTo(x2+Math.cos(an)*6,y2+Math.sin(an)*6);ctx.lineTo(x2+Math.cos(an+2.5)*5,y2+Math.sin(an+2.5)*5);ctx.lineTo(x2+Math.cos(an-2.5)*5,y2+Math.sin(an-2.5)*5);ctx.closePath();ctx.fillStyle='rgba(190,18,60,.7)';ctx.fill();});}
+  // A row of galaxies, every gap growing at the same rate. Arrows show how fast nearby galaxies move away as seen from
+  // a ringed one: one gap away, one length; two gaps away, twice that.
+  const cx=w/2, y=h*.5, g=stage===4&&!live?Math.min(w*(small?.16:.12),130):Math.min(130,(w/2-(small?16:24))/((small?3.3:4.3)*1.2)), r=small?9:12, sc=.4, dy=small?22:28, vis=x=>x>-20&&x<w+20;
+  const rose='rgba(190,18,60,', teal='rgba(15,118,110,';
+  const ring=(x,c)=>{ctx.beginPath();ctx.arc(x,y,small?14:18,0,TAU);ctx.strokeStyle=c+'.9)';ctx.lineWidth=2;ctx.stroke();};
+  const links=(X,from,to,alpha)=>{ctx.strokeStyle=`rgba(120,60,80,${alpha})`;ctx.lineWidth=1.2;for(let k=from;k<to;k++){const x0=X(k)+r+4, x1=X(k+1)-r-4;if(x1>x0&&(vis(x0)||vis(x1))){trace(ctx,[[x0,y],[x1,y]]);ctx.stroke();}}};
+  const arrow=(x,len,yy,c)=>{if(Math.abs(len)<3)return;trace(ctx,[[x,yy],[x+len,yy]]);ctx.strokeStyle=c+'.7)';ctx.lineWidth=2;ctx.stroke();const s=Math.sign(len);
+   ctx.beginPath();ctx.moveTo(x+len+s*6,yy);ctx.lineTo(x+len-s*1,yy-4.5);ctx.lineTo(x+len-s*1,yy+4.5);ctx.closePath();ctx.fillStyle=c+'.85)';ctx.fill();};
   if(stage===4&&!live){
-   // Light leaving a far galaxy crosses the grid; its waves stretch as the gaps grow.
-   const [sx,sy]=pts[EXPAND_AT(small?-1:-3,small?-2:-1)], [hx,hy]=pts[homeK], lam=(small?14:18)*a/aEmit, nm=Math.min(740,450*a/aEmit), dd=Math.hypot(hx-sx,hy-sy), fMax=Math.max(.1,(dd-(small?14:18)-2.6*lam)/dd), f=.06+(fMax-.06)*clamp((since-at(1)+.5)/(dur-at(1)-1.5)), x=sx+(hx-sx)*f, y=sy+(hy-sy)*f;
-   const dx=(hx-sx), dy=(hy-sy), d=Math.hypot(dx,dy), ux=dx/d, uy=dy/d, pts2=[];for(let s=-lam*2.5;s<=lam*2.5;s+=1.5){const amp=6*Math.exp(-(s*s)/(2*lam*lam));pts2.push([x+ux*s-uy*amp*Math.sin(TAU*s/lam),y+uy*s+ux*amp*Math.sin(TAU*s/lam)]);}
-   if(since>=at(1)-.5){trace(ctx,pts2);ctx.strokeStyle=nmColour(nm);ctx.lineWidth=2.4;ctx.stroke();}
+   // Chapter 5: seen from the ringed galaxy at the right, a far galaxy's light crosses the growing gaps and stretches.
+   const hx=w*(small?.8:.82), a=1+1.1*clamp(since/dur), aEmit=1+1.1*clamp((at(1)-.5)/dur), far=small?-2:-3, X=k=>hx+k*g*a;
+   links(X,-14,3,.22);for(let k=-14;k<=3;k++){const x=X(k);if(vis(x))inkGalaxy(ctx,x,y,r,k*.9,k===0);}ring(hx,rose);
+   const lam=(small?14:18)*a/aEmit, nm=Math.min(740,450*a/aEmit), sxp=X(far), dd=hx-sxp, fMax=Math.max(.1,(dd-(small?14:18)-2.6*lam)/dd), f=.06+(fMax-.06)*clamp((since-at(1)+.5)/(dur-at(1)-1.5)), px=sxp+dd*f;
+   if(since>=at(1)-.5){const pts=[];for(let s=-lam*2.5;s<=lam*2.5;s+=1.5)pts.push([px+s,y-(small?13:16)-7*Math.exp(-(s*s)/(2*lam*lam))*Math.sin(TAU*s/lam)]);trace(ctx,pts);ctx.strokeStyle=nmColour(nm);ctx.lineWidth=2.4;ctx.stroke();}
+   if(since>=at(1))words.push(['light stretches too',px,y-(small?40:46)]);
+  }else{
+   // Chapter 4, and the picture to play with after playback: the row grows about a point between two galaxies, so none
+   // holds still on the page.
+   const a=live?1+.2*clamp(st.mass)*(((st.t||0)*.035)%1):1+.2*clamp(since/dur), X=k=>cx+(k+.5)*g*a;
+   const A=live?(EXPAND.home??-1):small?-1:-2, B=small?0:1, grow=s0=>live?clamp(st.mass):clamp((since-s0)/1), showA=live||since>=at(1)-.2, showB=!live&&since>=at(2)-.2;
+   links(X,-14,14,live?.22:.22+.3*clamp((since-at(0)-.5)/.6)*(1-clamp((since-at(1)+.6)/.6)));
+   for(let k=-14;k<=14;k++){const x=X(k);if(vis(x))inkGalaxy(ctx,x,y,r,k*.9,showA&&k===A);}
+   const fan=(home,yy,c,gr)=>{for(let d=-2;d<=2;d++){const x=X(home+d);if(d&&vis(x))arrow(x,(x-X(home))*sc*gr,yy,c);}};
+   if(showA){ring(X(A),rose);fan(A,y-dy,rose,grow(at(1)-.2));words.push(['seen from here',X(A),y-dy-(small?22:26)]);}
+   if(showB){ring(X(B),teal);fan(B,y+dy,teal,grow(at(2)-.2));words.push(['or from here',X(B),y+dy+(small?22:26)]);}
+   if(live)EXPAND.geo={pts:Array.from({length:29},(_,i)=>[i-14,X(i-14),y]).filter(([,x])=>vis(x)),reach:Math.max(18,g*.45)};
   }
-  if(live||still)EXPAND.geo={pts:pts.map(p=>onStage(p)?p:[-1e9,-1e9]),reach:Math.max(18,gap*.4)};
-  if(stage===3&&since>=at(1))words.push([since<at(2)?'seen from here':'or from here',pts[homeK][0],pts[homeK][1]-(small?26:32)]);
-  if(stage===4&&since>=at(1)){const [sx,sy]=pts[EXPAND_AT(small?-1:-3,small?-2:-1)], [hx,hy]=pts[homeK], f=.06+.6*clamp((since-at(1)+.5)/(dur-at(1)-1.5)), ux=(hx-sx)/Math.hypot(hx-sx,hy-sy), uy=(hy-sy)/Math.hypot(hx-sx,hy-sy);words.push(['light stretches too',sx+(hx-sx)*f+uy*34,sy+(hy-sy)*f-ux*28]);}
-  if(stage===5&&since>=at(2))words.push(['13.8 billion years ago',cx,h*.5]);
  }
  for(const [s,x,y] of words)if(s)tag(s,x,y);
 }
@@ -4538,13 +4586,13 @@ const ENGINES={
   measure:null,scale:'',
   disclosure:'Seen from above Earth’s North Pole, with sunlight from the left: the Moon goes round anticlockwise once every 29.5 days from one new Moon to the next. The view from Earth is drawn as seen from Earth’s northern half, where a growing Moon is lit on its right. Earth’s shadow points away from the Sun; the Moon’s path is tilted about 5 degrees to Earth’s, so most full Moons pass above or below the shadow, and in an eclipse the Moon turns a dim red. The Moon, the Earth and their distance are drawn at sizes that fit the picture.',
   try:'',aria:'Over a month the Moon grows from a thin crescent to a full disc and shrinks again. The Sun always lights the half of the Moon that faces it. Seen from above, the Moon circles the Earth with its lit half toward the Sun; from Earth we see none of the lit half at new Moon, half of it a quarter of the way round, and all of it at full Moon, opposite the Sun. Earth’s shadow points away from the Sun, far from a crescent Moon, and reaches the Moon only at some full Moons, in a lunar eclipse.'},
- 'expansion':{draw:drawExpansion,touch:EXPAND_TOUCH,demo:false,a:['Growth rate','how fast every gap between galaxies grows'],b:['Unused','',''],
+ 'expansion':{draw:drawExpansion,touch:EXPAND_TOUCH,demo:false,tone:true,a:['Growth rate','how fast every gap between galaxies grows'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*Physics.hubbleH0)+' km/s per megaparsec',fb:b=>'',
   // The modelled effect for the render checks: how fast a galaxy one megaparsec away recedes.
   effect:a=>Physics.hubbleSpeed(1,clamp(a)*Physics.hubbleH0),
   measure:null,scale:'',
-  disclosure:'The dark lines are hydrogen’s, at 410, 434, 486 and 656 nanometres; chapter 1 slides them by 4 to 10%. Hubble’s plot uses a growth rate of 70 km a second for each megaparsec (3.26 million light years), with made-up scatter. The grid shows galaxies far apart; nearby galaxies, and anything held together by gravity or other forces, do not spread apart. Chapter 6 runs the growth back to a dense start.',
-  try:'',aria:'Rainbow light passing through hot hydrogen gas, as in a star, has four dark lines; a distant galaxy shows the same lines slid toward red, further for farther galaxies. Light from a galaxy moving away arrives with longer, redder waves. Hubble’s plot shows galaxies twice as far moving away twice as fast. In a grid of galaxies whose gaps all grow by the same share, every galaxy sees the others moving away faster the farther they are, so none is the centre; light crossing the grid is stretched as the gaps grow. Run backwards, the galaxies crowd into a hot, dense start about 13.8 billion years ago.'},
+  disclosure:'The gaps are hydrogen’s, at 410, 434, 486 and 656 nanometres; chapter 1 slides them by 8%. Hubble’s plot uses a growth rate of 70 km a second for each megaparsec (3.26 million light years), with made-up scatter. The row shows galaxies far apart; nearby galaxies, and anything held together by gravity or other forces, do not spread apart. The glow we receive set off about 380,000 years after the start, when space first turned clear, at about 3,000 kelvin; stretched about 1,100 times since, it arrives at 2.7 kelvin, brightest at about 1 mm.',
+  try:'',aria:'A star’s light passes through a prism and fans into a rainbow with four dark gaps where hydrogen soaked up its colours; a distant galaxy’s rainbow shows the same four gaps slid toward red. Light from a galaxy moving away arrives with longer, redder waves. Hubble’s plot shows galaxies twice as far moving away twice as fast. In a row of galaxies whose gaps all grow alike, arrows show the others moving away from one galaxy, twice as fast at twice the distance, and the same pattern around another galaxy, so none is the centre; light crossing the row is stretched as the gaps grow. Run backwards, the galaxies crowd into a hot, dense glow about 13.8 billion years ago; that glow’s waves, stretched ever since, reach a radio dish from every direction as faint microwaves.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.

@@ -757,6 +757,10 @@
     recession(points, home, H = 70) { const h = points[home]; return points.map(p => p.map((x, i) => H * (x - h[i]))); },
     hubbleTime(H0 = 70) { return 977.8 / H0; },
     stretch(aThen, aNow = 1) { return aNow / aThen; },
+    // The Big Bang's glow: light released when space first turned clear, at about 3,000 kelvin, cools in step with the
+    // stretch of its waves; Wien's law gives the wavelength where a glow at temperature T is brightest.
+    glowTemp(T, stretch) { return T / stretch; },
+    wienPeak(T) { return 2.898e-3 / T; },
     expansionChecks() {
       const near = (a, b, e) => Math.abs(a - b) <= e, pts = [[0, 0], [3, 1], [-2, 4], [5, -3], [1, 2]];
       const ratios = home => this.recession(pts, home).map((v, j) => j === home ? null : Math.hypot(...v) / Math.hypot(pts[j][0] - pts[home][0], pts[j][1] - pts[home][1])).filter(x => x !== null);
@@ -768,6 +772,10 @@
         'That is about 21 km a second for each million light years': near(this.hubbleSpeed(1) / (this.lyPerMpc / 1e6), 21.46, .01),
         'Running the growth back at that rate gives about 14 billion years': near(this.hubbleTime(), 13.97, .05),
         'Light sent when distances were half as big arrives with waves twice as long': this.stretch(.5) === 2,
+        'Glow released at 3,000 kelvin and stretched 1,100 times arrives at about 2.7 kelvin': near(this.glowTemp(3000, this.stretch(1 / 1100)), 2.73, .01),
+        'Stretching the waves twice as long halves the glow\'s temperature': this.glowTemp(3000, this.stretch(.5)) === 1500,
+        'At 2.7 kelvin the glow is brightest near 1 mm, in microwaves, far past visible light': near(this.wienPeak(2.725) * 1e3, 1.06, .01) && this.wienPeak(2.725) > 1000 * 750e-9,
+        'At 3,000 kelvin it was brightest near 1 micrometre, just past red, glowing orange': near(this.wienPeak(3000) * 1e9, 966, 1),
       }).map(([name, pass]) => ({ name, pass }));
     },
     montyChecks() {
