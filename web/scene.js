@@ -3624,6 +3624,23 @@ function arrowTracks(){
  ARROW.tracks={big,nudge:P.arrowTrack(P.arrowNudge(P.arrowReverse(big.end)),12,30),four:P.arrowTrack(P.arrowStart(4,ARROW_FOUR_SEED,true),26,30)};
  return ARROW.tracks;
 }
+// A cup of coffee seen from above, with the particles as soft clouds of milk. The box is mapped onto the round cup
+// (a square-to-disc map), so milk started in the left half of the box starts in the left half of the cup.
+function cupOfCoffee(ctx,cx,cy,R,frame,B){
+ ctx.save();
+ ctx.beginPath();ctx.arc(cx,cy,R*1.28,0,TAU);ctx.fillStyle='#f4f1ec';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.12)';ctx.lineWidth=1.5;ctx.stroke();
+ ctx.beginPath();ctx.roundRect(cx+R*1.02,cy-R*.16,R*.42,R*.32,R*.16);ctx.fillStyle='#ffffff';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.18)';ctx.stroke();
+ ctx.beginPath();ctx.arc(cx,cy,R*1.08,0,TAU);ctx.fillStyle='#ffffff';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.2)';ctx.stroke();
+ const g=ctx.createRadialGradient(cx-R*.2,cy-R*.2,R*.1,cx,cy,R);g.addColorStop(0,'#6e4428');g.addColorStop(1,'#3e2414');
+ ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fillStyle=g;ctx.fill();ctx.clip();
+ const blob=R*.13;
+ for(let i=0;i<frame.length;i+=2){
+  const u=frame[i]/B.w*2-1, v=frame[i+1]/B.h*2-1, x=cx+R*.94*u*Math.sqrt(1-v*v/2), y=cy+R*.94*v*Math.sqrt(1-u*u/2);
+  const m=ctx.createRadialGradient(x,y,0,x,y,blob);m.addColorStop(0,'rgba(250,236,214,.3)');m.addColorStop(1,'rgba(250,236,214,0)');
+  ctx.fillStyle=m;ctx.beginPath();ctx.arc(x,y,blob,0,TAU);ctx.fill();
+ }
+ ctx.restore();
+}
 const arrowFrame=(track,t)=>track.frames[Math.max(0,Math.min(track.frames.length-1,Math.round(t*30)))];
 function drawArrow(ctx,w,h,spec,st){
  const still=!!st.live&&!st.touched&&st.since!==undefined;
@@ -3668,7 +3685,7 @@ function drawArrow(ctx,w,h,spec,st){
   }else{
    // Milk spreading through coffee: forward it mixes; played backwards it unmixes, which never happens.
    const span=dur-at(1), turn=at(1)+span*.5, back=since>turn, u=back?clamp(1-(since-turn)/(dur-turn-.6)):clamp((since-at(1))/(turn-at(1)-.3)), t=6*u;
-   box(L,arrowFrame(T.big,t),{coffee:true});words.push([back?'backwards: never seen':'played forward',w/2,L.by-16],['milk in coffee',w/2,L.by+L.bh+18]);
+   cupOfCoffee(ctx,w/2,L.by+L.bh*.53,Math.min(L.bh*.38,L.bw*.3),arrowFrame(T.big,t),B);words.push([back?'backwards: never seen':'played forward',w/2,L.by-16]);
   }
  }
  else if(stage===1){
@@ -4704,7 +4721,7 @@ const ENGINES={
   // The modelled effect for the render checks: the digits in the number of ways to be half and half.
   effect:a=>{const n=2*Math.round(clamp(a)*100);return n?Physics.arrowLog10Ways(n,n/2):0;},
   measure:null,scale:'',
-  disclosure:'The particles bounce off the walls and eleven round posts but not off each other; in a real gas they also hit each other, which mixes them the same way. Every bounce is computed from the exact bounce rule, to the computer’s full precision. The exact reversal in chapter 5 is the forward run played back, since a computer’s own rounding errors also grow bounce by bounce; the nudged run is computed afresh, with each particle moved a ten-thousandth of the box’s height. Chapter 1 plays the same particles as milk in coffee.',
+  disclosure:'The particles bounce off the walls and eleven round posts but not off each other; in a real gas they also hit each other, which mixes them the same way. Every bounce is computed from the exact bounce rule, to the computer’s full precision. The exact reversal in chapter 5 is the forward run played back, since a computer’s own rounding errors also grow bounce by bounce; the nudged run is computed afresh, with each particle moved a ten-thousandth of the box’s height. Chapter 1 shows the same particles as soft clouds of milk in a cup of coffee.',
   try:'',aria:'Two billiard balls colliding look natural played forward or backwards; milk spreading through coffee looks impossible played backwards. Four particles in a box are often all in the left half, but counting the ways shows that with many particles, mixed arrangements vastly outnumber sorted ones. Two hundred particles started in the left half spread out and stay mixed. Reversing every motion exactly sends them back; nudging each by a hair first leaves them mixed. A graph of the number of ways climbs from one to a 59-digit number: the direction of time.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
