@@ -548,8 +548,8 @@ function talkContext(){
  return {page:'guide',guide,title,section:sec&&sec.started?{index:sec.index,title:sec.title}:sec?{index:0,title:(s.beats||[])[0]?.title||''}:null,text:lines.filter(Boolean).join('\n')};
 }
 function openTalk(pinned){if(!window.CouncilTalk)return;CouncilScene.pause?.();CouncilTalk.open({pinned});}
-if(window.CouncilTalk){CouncilTalk.setContext(talkContext);// Ask a question opens the conversation on a device with a Gemini key, and the GitHub issue otherwise.
- $('ask').addEventListener('click',e=>{if(!CouncilTalk.hasKey())return;e.preventDefault();openTalk(false);});$('talk-chapter').onclick=()=>openTalk(true);CouncilTalk.flush();}
+if(window.CouncilTalk){CouncilTalk.setContext(talkContext);// Ask a question opens the live voice conversation (on a device without a Gemini key, it asks for one first).
+ $('ask').addEventListener('click',e=>{e.preventDefault();openTalk(false);});$('talk-chapter').onclick=()=>openTalk(true);CouncilTalk.flush();}
 // The chapter button shows once the guide has started, for whichever chapter is on screen.
 if(VIEW==='article')setInterval(()=>{const b=$('talk-chapter'), st=CouncilScene.getState?.(), n=(st?.stage??0)+1, on=!!window.CouncilTalk&&CouncilTalk.hasKey()&&!!st?.started&&!!current?.scene?.beats?.length;
  b.hidden=!on;const text=`Talk about chapter ${n}`;if(on&&b.textContent!==text)b.textContent=text;},500);
