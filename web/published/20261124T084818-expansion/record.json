@@ -72,10 +72,10 @@
   "subtitle": "Almost every distant galaxy's light arrives redder than it should, and the farther the galaxy, the redder. What does that tell us?",
   "why": "The light from far galaxies carries a clue, discovered a century ago: almost all of them are moving away from us, and from each other.",
   "opening": "How do we know the universe is expanding?",
-  "takeaway": "Distant galaxies' hydrogen gaps have slid toward red, more the farther away they are. Their light arrives stretched because the gaps between galaxies keep growing; farther ones have more growing gaps between, so they move away faster. Every galaxy sees that same pattern, so there is no centre. Run it backwards, and everything was packed hot and dense 13.8 billion years ago; that glow, stretched ever since, still arrives as faint microwaves.",
+  "takeaway": "Distant galaxies' light arrives stretched toward red, more the farther they are: the space between galaxies keeps growing. There is no centre, and 13.8 billion years ago all of space was hot and dense.",
   "mass": 1,
   "distance": 1,
-  "controls": "first",
+  "controls": "none",
   "accent": "blue",
   "kind": "expansion",
   "show_reference": false,
@@ -246,7 +246,7 @@
  "provenance": {
   "sources_retrieved": true,
   "retrieved_by": "coordinator",
-  "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, on the owner’s pick, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in three rounds (the first found a wrong opening fact about hydrogen and pictures that suggested a centre), and their copy edits were then applied. Later the same day, at the owner’s request (the rainbow with dark lines and the grid of arrows were hard to follow, and the ending could be cooler), it was revised in a coding session: chapter 1 now shows a star’s light passing through a prism, with hydrogen’s four gaps as markers that a distant galaxy’s light shows slid toward red; chapters 4 and 5 use one row of galaxies, with matching arrows from two of them; and the ending runs back to a hot glow everywhere, then shows that glow’s waves, stretched into microwaves, reaching a radio dish today. The revision passed the render checks and all four reviews in two rounds, and their edits were applied."
+  "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, on the owner’s pick, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in three rounds (the first found a wrong opening fact about hydrogen and pictures that suggested a centre), and their copy edits were then applied. Later the same day, at the owner’s request (the rainbow with dark lines and the grid of arrows were hard to follow, and the ending could be cooler), it was revised in a coding session: chapter 1 now shows a star’s light passing through a prism, with hydrogen’s four gaps as markers that a distant galaxy’s light shows slid toward red; chapters 4 and 5 use one row of galaxies, with matching arrows from two of them; and the ending runs back to a hot glow everywhere, then shows that glow’s waves, stretched into microwaves, reaching a radio dish today. The revision passed the render checks and all four reviews in two rounds, and their edits were applied. Later, at the owner’s request, the end-card takeaway was cut to half and the interactive row after playback was removed; a reviewer checked the new takeaway."
  },
  "revisions": [
   {
@@ -712,6 +712,196 @@
     "published/20261124T084818-expansion/revision-2-9.png",
     "published/20261124T084818-expansion/revision-2-10.png",
     "published/20261124T084818-expansion/revision-2-11.png"
+   ]
+  },
+  {
+   "number": 3,
+   "scene": {
+    "title": "How do we know the universe is expanding?",
+    "subtitle": "Almost every distant galaxy's light arrives redder than it should, and the farther the galaxy, the redder. What does that tell us?",
+    "why": "The light from far galaxies carries a clue, discovered a century ago: almost all of them are moving away from us, and from each other.",
+    "opening": "How do we know the universe is expanding?",
+    "takeaway": "Distant galaxies' light arrives stretched toward red, more the farther they are: the space between galaxies keeps growing. There is no centre, and 13.8 billion years ago all of space was hot and dense.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "none",
+    "accent": "blue",
+    "kind": "expansion",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "questions": [
+     {
+      "q": "Is everything expanding, even me?",
+      "a": "No. Atoms, people, the Earth, the solar system and our own galaxy are held together by forces and gravity, and nearby galaxies are bound to each other too. Only the gaps between galaxies far apart grow."
+     },
+     {
+      "q": "So where is the centre?",
+      "a": "There isn't one. Every galaxy sees the others moving away in the same pattern, faster the farther they are, as the row of galaxies in chapter 4 shows. As far as we can tell, the universe has no edge to measure a middle from."
+     },
+     {
+      "q": "How do we know how far the galaxies are?",
+      "a": "By stars of known true brightness. Hubble used Cepheid stars, which pulse at a rate that tells how bright they really are; how faint they look then gives the distance. Today exploding stars called type Ia supernovae reach much farther."
+     },
+     {
+      "q": "Can galaxies move away faster than light?",
+      "a": "Very distant ones, yes: their distance from us grows faster than light could cross it. That doesn't break the speed limit, which applies to things moving past each other nearby, not to the growth of distances across the universe."
+     },
+     {
+      "q": "Why 13.8 billion years?",
+      "a": "If each galaxy had always kept its speed, its distance divided by its speed gives the time since all were together: about 14 billion years, the same for every galaxy. Gravity's slowing and dark energy's later speeding up nearly cancel, and the full calculation with today's best measurements gives 13.8 billion."
+     },
+     {
+      "q": "Has anyone picked up that glow?",
+      "a": "Yes, by accident at first. In 1964 Arno Penzias and Robert Wilson found a faint hiss in their radio antenna that came from every direction, day and night: it was this glow. It earned them the 1978 Nobel Prize."
+     },
+     {
+      "q": "What is a light year?",
+      "a": "The distance light travels in a year: about 9.5 trillion kilometres. A galaxy a million light years away is so far that its light set off a million years ago."
+     }
+    ],
+    "beats": [
+     {
+      "title": "Redder than it should be",
+      "body": "Pass a star's light through a prism, and it fans out into a rainbow. Hydrogen in the star always takes out the same four colours, like markers. In a distant galaxy's light, those four gaps have all slid toward red."
+     },
+     {
+      "title": "Stretched light",
+      "body": "Each colour of light is a wave with its own spacing from crest to crest. As a galaxy moves away, each crest sets off farther from us, so they spread out. Longer waves look redder, and the stretch tells us how fast it goes."
+     },
+     {
+      "title": "Farther means faster",
+      "body": "In 1929 Edwin Hubble plotted galaxies' speeds against their distances. A galaxy twice as far off is moving away about twice as fast. Today we find about 21 km a second more for each million light years away."
+     },
+     {
+      "title": "No centre",
+      "body": "In this row, every gap between neighbouring galaxies grows by the same amount. Two gaps away, two gaps grow at once, so that galaxy pulls away twice as fast. Stand on any other galaxy and you see the same pattern, so none is the centre."
+     },
+     {
+      "title": "Stretched on the way",
+      "body": "So 'moving away' really means the space between galaxies keeps growing. Light crossing those growing gaps is stretched along with them. The farther it travels, the more it stretches and reddens."
+     },
+     {
+      "title": "Running it backwards",
+      "body": "Run this growth backwards, and the galaxies crowd ever closer. Long ago, all of space was packed so hot and dense it glowed: the Big Bang. Its glow, stretched past red ever since, arrives as unseen microwaves."
+     }
+    ],
+    "theme": "rose"
+   },
+   "checks": [
+    {
+     "name": "Twice as far, a galaxy recedes twice as fast",
+     "pass": true
+    },
+    {
+     "name": "From every galaxy, the others recede at speeds in proportion to their distance",
+     "pass": true
+    },
+    {
+     "name": "From every galaxy, each other galaxy moves straight away",
+     "pass": true
+    },
+    {
+     "name": "A galaxy 3.26 million light years away recedes about 70 km a second",
+     "pass": true
+    },
+    {
+     "name": "That is about 21 km a second for each million light years",
+     "pass": true
+    },
+    {
+     "name": "Running the growth back at that rate gives about 14 billion years",
+     "pass": true
+    },
+    {
+     "name": "Light sent when distances were half as big arrives with waves twice as long",
+     "pass": true
+    },
+    {
+     "name": "Glow released at 3,000 kelvin and stretched 1,100 times arrives at about 2.7 kelvin",
+     "pass": true
+    },
+    {
+     "name": "Stretching the waves twice as long halves the glow's temperature",
+     "pass": true
+    },
+    {
+     "name": "At 2.7 kelvin the glow is brightest near 1 mm, in microwaves, far past visible light",
+     "pass": true
+    },
+    {
+     "name": "At 3,000 kelvin it was brightest near 1 micrometre, just past red, glowing orange",
+     "pass": true
+    },
+    {
+     "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+     "pass": true
+    },
+    {
+     "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+     "pass": true
+    },
+    {
+     "name": "Each subtitle stays up at least 4.1 s (minimum 2.5)",
+     "pass": true
+    },
+    {
+     "name": "Every subtitle is at most 80 characters (longest: 80)",
+     "pass": true
+    },
+    {
+     "name": "Zero-mass control removes the modeled effect",
+     "pass": true
+    },
+    {
+     "name": "Mass control updates the rendered model",
+     "pass": true
+    },
+    {
+     "name": "No-mass step shows zero and restores the chosen mass afterward",
+     "pass": true
+    },
+    {
+     "name": "Seeking reproduces identical canvas pixels",
+     "pass": true
+    },
+    {
+     "name": "At most 12 words of labels on the stage at once (most: 12)",
+     "pass": true
+    },
+    {
+     "name": "Every stage label is at most 5 words (longest: 4)",
+     "pass": true
+    },
+    {
+     "name": "Mobile page fits viewport",
+     "pass": true
+    },
+    {
+     "name": "The end card hint is plain text",
+     "pass": true
+    },
+    {
+     "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5320 moments)",
+     "pass": true
+    },
+    {
+     "name": "Renderer has no JavaScript errors",
+     "pass": true
+    }
+   ],
+   "accepted": true,
+   "learner_review": {
+    "pass": true,
+    "score": 8,
+    "summary": "Owner-requested edits only: the end-card takeaway is cut to half (197 to 205 characters) and the play-after-playback row is removed (controls none). A reviewer checked the new takeaway; its fix (all of space was hot and dense, rather than 'it all began', which suggested a known beginning at one point) was applied.",
+    "changes": [],
+    "blocking_issues": []
+   },
+   "frames": [
+    "published/20261124T084818-expansion/revision-3-0.png",
+    "published/20261124T084818-expansion/revision-3-1.png"
    ]
   }
  ]
