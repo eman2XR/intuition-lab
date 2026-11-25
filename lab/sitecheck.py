@@ -82,7 +82,7 @@ def talk_check(browser, url, guide):
     page.goto(url+'?guide='+guide, wait_until='networkidle')
     page.wait_for_function('()=>window.CouncilScene&&CouncilScene.timeline()')
     page.evaluate('()=>{const c=CouncilScene.timeline().chapters[1];CouncilScene.seek(c.start+.5,1);}')
-    page.wait_for_function('()=>!document.getElementById("talk-chapter").hidden')
+    page.wait_for_function('()=>!document.getElementById("talk-chapter").hidden&&document.getElementById("talk-chapter").dataset.pinned==="1"')
     page.click('#talk-chapter')
     page.wait_for_function('()=>document.querySelector(".voice-status")?.textContent==="Type your question"')
     page.fill('.voice-form input', 'The arrows in this chapter confused me.')

@@ -549,10 +549,12 @@ function talkContext(){
 }
 function openTalk(pinned){if(!window.CouncilTalk)return;CouncilScene.pause?.();CouncilTalk.open({pinned});}
 if(window.CouncilTalk){CouncilTalk.setContext(talkContext);// Ask a question opens the live voice conversation (on a device without a Gemini key, it asks for one first).
- $('ask').addEventListener('click',e=>{e.preventDefault();openTalk(false);});$('talk-chapter').onclick=()=>openTalk(true);CouncilTalk.flush();}
-// The chapter button shows once the guide has started, for whichever chapter is on screen.
-if(VIEW==='article')setInterval(()=>{const b=$('talk-chapter'), st=CouncilScene.getState?.(), n=(st?.stage??0)+1, on=!!window.CouncilTalk&&CouncilTalk.hasKey()&&!!st?.started&&!!current?.scene?.beats?.length;
- b.hidden=!on;const text=`Talk about chapter ${n}`;if(on&&b.textContent!==text)b.textContent=text;},500);
+ $('ask').addEventListener('click',e=>{e.preventDefault();openTalk(false);});$('talk-chapter').onclick=e=>openTalk(e.currentTarget.dataset.pinned==='1');CouncilTalk.flush();}
+// Under the captions: 'Ask about chapter N' while the guide plays (on a device with a Gemini key), and a prominent
+// 'Ask a question' on the end card when the investigation is over.
+if(VIEW==='article')setInterval(()=>{const b=$('talk-chapter'), st=CouncilScene.getState?.(), ended=!!document.querySelector('.workspace.ended'), n=(st?.stage??0)+1;
+ const on=!!window.CouncilTalk&&!!current?.scene?.beats?.length&&(ended||CouncilTalk.hasKey()&&!!st?.started);
+ b.hidden=!on;b.classList.toggle('strong',ended);b.dataset.pinned=ended?'0':'1';const text=ended?'Ask a question':`Ask about chapter ${n}`;if(on&&b.textContent!==text)b.textContent=text;},400);
 
 /* The path: the curriculum, with requests sent as GitHub issues the morning worker reads. */
 let curriculum=null, picks=new Map();

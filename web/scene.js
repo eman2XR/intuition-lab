@@ -3576,7 +3576,7 @@ function drawExpansion(ctx,w,h,spec,st){
    ctx.lineWidth=2.2;trace(ctx,[[dx-ds*.45,dy+ds*.75],[dx,dy-ds*.02],[dx+ds*.45,dy+ds*.75]]);ctx.stroke();
    if(u>.5)words.push(['a radio dish today',dx+ds+(small?62:70),dy]);
    if(u>.55)words.push(['faint microwaves',w*(small?.72:.76),h*.3]);
-   if(st.playing)soundClip('static',.22*clamp(u*4));}
+}
   if(still)EXPAND.geo={any:true};
  }
  else{
@@ -4586,7 +4586,7 @@ const ENGINES={
   measure:null,scale:'',
   disclosure:'Seen from above Earth’s North Pole, with sunlight from the left: the Moon goes round anticlockwise once every 29.5 days from one new Moon to the next. The view from Earth is drawn as seen from Earth’s northern half, where a growing Moon is lit on its right. Earth’s shadow points away from the Sun; the Moon’s path is tilted about 5 degrees to Earth’s, so most full Moons pass above or below the shadow, and in an eclipse the Moon turns a dim red. The Moon, the Earth and their distance are drawn at sizes that fit the picture.',
   try:'',aria:'Over a month the Moon grows from a thin crescent to a full disc and shrinks again. The Sun always lights the half of the Moon that faces it. Seen from above, the Moon circles the Earth with its lit half toward the Sun; from Earth we see none of the lit half at new Moon, half of it a quarter of the way round, and all of it at full Moon, opposite the Sun. Earth’s shadow points away from the Sun, far from a crescent Moon, and reaches the Moon only at some full Moons, in a lunar eclipse.'},
- 'expansion':{draw:drawExpansion,touch:EXPAND_TOUCH,demo:false,tone:true,a:['Growth rate','how fast every gap between galaxies grows'],b:['Unused','',''],
+ 'expansion':{draw:drawExpansion,touch:EXPAND_TOUCH,demo:false,a:['Growth rate','how fast every gap between galaxies grows'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*Physics.hubbleH0)+' km/s per megaparsec',fb:b=>'',
   // The modelled effect for the render checks: how fast a galaxy one megaparsec away recedes.
   effect:a=>Physics.hubbleSpeed(1,clamp(a)*Physics.hubbleH0),

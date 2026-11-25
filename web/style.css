@@ -455,6 +455,10 @@ body[data-draft=yes] .behind{display:none}
 .voice-chip{display:block;margin:6px auto 0;font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:36px;cursor:pointer}
 .voice-chip:hover{color:var(--ink);border-color:var(--muted)}
 .voice-chip[hidden]{display:none}
+.voice-chip.strong{margin-top:14px;font-size:15px;color:#fff;background:var(--orange-ink);border-color:var(--orange-ink);min-height:44px;padding:10px 24px}
+.voice-chip.strong:hover{color:#fff;background:#92400e;border-color:#92400e}
+.byline #ask{font-weight:600;color:var(--orange-ink);text-decoration:none;border:1px solid var(--orange-ink);border-radius:999px;padding:3px 12px}
+.byline #ask:hover{color:#fff;background:var(--orange-ink)}
 .voice-sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:60;width:min(560px,100%);max-height:min(72vh,620px);display:flex;flex-direction:column;gap:10px;
  box-sizing:border-box;padding:18px 18px calc(18px + env(safe-area-inset-bottom));background:var(--paper);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;
  box-shadow:0 -12px 40px rgba(0,0,0,.12);color:var(--ink)}
