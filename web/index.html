@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <!-- Picture engines may be written by the agents, so the page may only load its own files and talk to the GitHub API;
      nothing can send data elsewhere or pull in outside scripts. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' https://api.github.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' https://api.github.com https://generativelanguage.googleapis.com wss://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="description" content="A team of AI agents making short, intuitive guides that explain why things work.">
 <title>Intuition Lab — short visual guides to why things work</title>
 <meta name="theme-color" content="#ffffff">
@@ -93,6 +93,7 @@
     <p id="beat-body" class="caption-line"></p>
     <p id="try-hint" class="try-hint"></p>
    </div>
+   <button id="talk-chapter" class="voice-chip" type="button" hidden>Talk about this chapter</button>
    <!-- Sliders live inside the player and appear only when exploring: after playback or from the sliders button. -->
    <div class="controls">
     <label class="control"><span class="control-head"><span id="mass-label">Mass</span><output id="mass-value">0.70</output></span>
@@ -112,7 +113,7 @@
   </figure>
   <p id="draft-note" class="draft-note"></p>
 
-  <p class="byline"><span id="run-banner" class="tag" role="status"></span><span class="talk"><span class="sep" aria-hidden="true"></span><a id="ask" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Ask a question</a><span class="sep" aria-hidden="true"></span><a id="feedback" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Give feedback</a></span><span id="feature-sep" class="sep" aria-hidden="true" hidden></span><a id="feature" class="archive-btn" target="_blank" rel="noopener noreferrer" hidden title="Owner only: opens a GitHub issue that moves this guide to the top of the home page within a few minutes">Feature</a><span id="archive-sep" class="sep" aria-hidden="true" hidden></span><a id="archive" class="archive-btn" target="_blank" rel="noopener noreferrer" hidden title="Owner only: opens a GitHub issue that hides this guide from the home page within a few minutes">Archive</a></p>
+  <p class="byline"><span id="run-banner" class="tag" role="status"></span><span class="talk"><span class="sep" aria-hidden="true"></span><button id="talk-open" class="voice-btn" type="button" title="A live voice conversation with the editors; it is sent to the lab as feedback">Talk</button><span class="sep" aria-hidden="true"></span><a id="ask" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Ask a question</a><span class="sep" aria-hidden="true"></span><a id="feedback" target="_blank" rel="noopener noreferrer" title="Opens a public GitHub issue; the next morning's run reads it">Give feedback</a></span><span id="feature-sep" class="sep" aria-hidden="true" hidden></span><a id="feature" class="archive-btn" target="_blank" rel="noopener noreferrer" hidden title="Owner only: opens a GitHub issue that moves this guide to the top of the home page within a few minutes">Feature</a><span id="archive-sep" class="sep" aria-hidden="true" hidden></span><a id="archive" class="archive-btn" target="_blank" rel="noopener noreferrer" hidden title="Owner only: opens a GitHub issue that hides this guide from the home page within a few minutes">Archive</a></p>
  </article>
 
 
@@ -143,6 +144,6 @@
 </dialog>
 <footer><span class="wordmark small">Intuition Lab</span><nav class="foot-links"><a href="./">Investigations</a><button id="notify-open" type="button" hidden>Notify me of new guides</button></nav><span>Curiosity first. Evidence always.</span></footer>
 <div id="notify-panel" class="notify-panel" hidden><p id="notify-msg"></p><a id="notify-github" class="pill" target="_blank" rel="noopener noreferrer" hidden>Open GitHub to finish</a><div id="notify-share"><textarea id="notify-code" rows="3" readonly aria-label="Notification code"></textarea><button id="notify-copy" class="pill" type="button">Copy</button></div></div>
-<script src="physics.js?v=dev"></script><script src="scene.js?v=dev"></script><script src="app.js?v=dev"></script>
+<script src="physics.js?v=dev"></script><script src="scene.js?v=dev"></script><script src="talk.js?v=dev"></script><script src="app.js?v=dev"></script>
 </body>
 </html>

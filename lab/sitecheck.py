@@ -44,6 +44,7 @@ def main():
                 assert page.locator(f'#more-list a[href="?guide={entry["id"]}"]').count()==0, 'An investigation lists itself under More'
                 if entry.get('poster'):
                     page.wait_for_function('()=>{const i=document.getElementById("stage-poster");return i&&i.complete&&i.naturalWidth>0}')
+            if entries:talk_check(browser,url,[e for e in entries if not e.get('archived')][0]['id'])
             page.goto(url,wait_until='networkidle')
             path=Path(tempfile.gettempdir())/'council-dashboard-desktop.png'
             page.screenshot(path=str(path))
@@ -53,5 +54,51 @@ def main():
             assert not errors, errors
             print(json.dumps({'status':'passed','desktop':str(path),'mobile':str(mobile)}))
             browser.close()
+
+
+# Talk, without the network: a stand-in Gemini socket answers a typed piece of feedback, and the conversation is kept
+# with its chapter, tagged as feedback, and ready to send as a council:talk issue.
+FAKE_GEMINI = """
+window.__sent=[];
+localStorage.setItem('council-gemini-key','test');localStorage.setItem('council-gemini-model','test-model');
+localStorage.removeItem('council-github-token');localStorage.removeItem('council-talks');
+Object.defineProperty(navigator,'mediaDevices',{value:{getUserMedia:()=>Promise.reject(new Error('no microphone'))}});
+class FakeSocket{constructor(url){this.url=url;this.readyState=0;setTimeout(()=>{this.readyState=1;this.onopen&&this.onopen();},10);}
+ reply(m){this.onmessage&&this.onmessage({data:JSON.stringify(m)});}
+ send(d){const m=JSON.parse(d);window.__sent.push(m);
+  if(m.setup)setTimeout(()=>this.reply({setupComplete:{}}),10);
+  if(m.clientContent&&m.clientContent.turnComplete)setTimeout(()=>{this.reply({serverContent:{outputTranscription:{text:'Noted: the lab will look at that chapter.'}}});this.reply({serverContent:{turnComplete:true}});},10);}
+ close(){this.readyState=3;}}
+window.WebSocket=FakeSocket;
+"""
+
+
+def talk_check(browser, url, guide):
+    page = browser.new_page(viewport={'width': 1200, 'height': 900})
+    route_files(page, ROOT/'web', '/web/')
+    errors = []
+    page.on('pageerror', lambda e: errors.append(str(e)))
+    page.add_init_script(FAKE_GEMINI)
+    page.goto(url+'?guide='+guide, wait_until='networkidle')
+    page.wait_for_function('()=>window.CouncilScene&&CouncilScene.timeline()')
+    page.evaluate('()=>{const c=CouncilScene.timeline().chapters[1];CouncilScene.seek(c.start+.5,1);}')
+    page.wait_for_function('()=>!document.getElementById("talk-chapter").hidden')
+    page.click('#talk-chapter')
+    page.wait_for_function('()=>document.querySelector(".voice-status")?.textContent==="Type your question"')
+    page.fill('.voice-form input', 'The arrows in this chapter confused me.')
+    page.press('.voice-form input', 'Enter')
+    page.wait_for_selector('.voice-line.editor')
+    page.click('.voice-end')
+    page.wait_for_selector('.voice-send')
+    state = page.evaluate('()=>({href:document.querySelector(".voice-send").href,talks:JSON.parse(localStorage.getItem("council-talks")),setup:__sent[0].setup})')
+    talk = state['talks'][-1]
+    title = page.evaluate('()=>current.scene.beats[1].title')
+    assert 'council%3Atalk' in state['href'], 'Talk does not offer a council:talk issue'
+    assert talk['kind'] == 'feedback' and talk['section']['index'] == 1 and talk['pinned'], f'Talk kept the wrong kind or chapter: {talk}'
+    assert [t['who'] for t in talk['turns']] == ['you', 'editor'], 'Talk transcript is incomplete'
+    assert title in state['setup']['systemInstruction']['parts'][0]['text'], 'Talk did not tell the model about the chapter on screen'
+    assert state['setup']['inputAudioTranscription'] == {} and state['setup']['generationConfig']['responseModalities'] == ['AUDIO']
+    assert not errors, errors
+    page.close()
 
 if __name__=='__main__':main()

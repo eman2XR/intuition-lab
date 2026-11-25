@@ -13,7 +13,7 @@ from .topics import TOPICS
 
 def main():
     parser=argparse.ArgumentParser(description='Intuition Lab: visual research and review')
-    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','feature','checkin','poster'])
+    parser.add_argument('command',choices=['run','check','daily','schedule','export','push','approve-engine','archive','unarchive','feature','checkin','poster','talks'])
     parser.add_argument('push_args',nargs='*',metavar='push-arg',help="For push: keys | inbox-keys | inbox | add '<code>' | test | announce <guide-id>. For approve-engine: the candidate branch name. For archive/unarchive: a published guide id.")
     parser.add_argument('--run-dir',help='For export: folder of an accepted run, e.g. from a batch snapshot.')
     parser.add_argument('--provider',choices=['codex','claude','openai','fixture'],default=os.environ.get('COUNCIL_PROVIDER','codex'))
@@ -103,6 +103,12 @@ def main():
             record=json.loads((public/gid/'record.json').read_text())
             poster(record['scene'],public/gid/'poster.jpg');entry['poster']=f'published/{gid}/poster.jpg';print('poster',gid)
         index_path.write_text(json.dumps(index,indent=2)+'\n')
+        return
+    if args.command=='talks':
+        # The owner's voice conversations (council:talk issues): saved to .council-state/talks and listed for the round.
+        from .talks import collect, summary
+        talks=collect()
+        print('\n\n'.join(summary(t) for t in talks) if talks else 'No open talk conversations.')
         return
     if args.command=='checkin':
         # A daily run done by hand in a session (the session loop) records its one-line outcome on the site's lab panel,

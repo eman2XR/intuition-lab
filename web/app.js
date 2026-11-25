@@ -527,6 +527,32 @@ function startLab(){
  loadNotes();
 }
 
+/* Talk: what the reader is looking at, for the live conversation with the editors (talk.js). On a guide the model gets
+   the whole guide (every chapter's narration, the takeaway, the questions below the player and the note about the
+   picture) and which chapter and subtitle are on screen; on the home page, the list of guides. */
+function talkSection(){
+ const t=CouncilScene.timeline?.(), st=CouncilScene.getState?.(), beats=current?.scene?.beats||[];
+ if(!t||!st||!beats.length)return null;
+ const i=Math.max(0,Math.min(beats.length-1,st.stage??0)), line=t.chapters?.[i]?.lines?.find(l=>st.time>=l.start&&st.time<l.end);
+ return {index:i,title:beats[i].title,line:line?.text||'',started:!!st.started,time:st.time};
+}
+function talkContext(){
+ const s=current?.scene;
+ if(VIEW!=='article'||!s)return {page:'home',title:'Intuition Lab',text:`The reader is on the home page of Intuition Lab, which lists these guides: ${entries.filter(e=>!e.archived).map(e=>e.title||e.question).join('; ')}.`};
+ const sec=talkSection(), guide=current.id&&current.provider!=='fixture'?current.id:'example', title=(s.title||'').replace(/\n/g,' ');
+ const lines=[`The reader is on the guide "${title}" (id ${guide}).`,s.why?`Its opening line: ${s.why}`:'',
+  'Its chapters, each a picture with narration:',...(s.beats||[]).map((b,i)=>`${i+1}. ${b.title}: ${b.body}`),
+  s.takeaway?`Takeaway: ${s.takeaway}`:'',`About the picture: ${CouncilDraw.disclosure(s)}`,
+  (s.questions||[]).length?'Questions and answers below the player: '+s.questions.map(q=>`Q: ${q.q} A: ${q.a}`).join(' '):'',
+  sec&&sec.started?`On screen now: chapter ${sec.index+1}, "${sec.title}"${sec.line?`, with the subtitle "${sec.line}"`:''}.`:'The reader has not started the guide yet.'];
+ return {page:'guide',guide,title,section:sec&&sec.started?{index:sec.index,title:sec.title}:sec?{index:0,title:(s.beats||[])[0]?.title||''}:null,text:lines.filter(Boolean).join('\n')};
+}
+function openTalk(pinned){if(!window.CouncilTalk)return;CouncilScene.pause?.();CouncilTalk.open({pinned});}
+if(window.CouncilTalk){CouncilTalk.setContext(talkContext);$('talk-open').onclick=()=>openTalk(false);$('talk-chapter').onclick=()=>openTalk(true);CouncilTalk.flush();}
+// The chapter button shows once the guide has started, for whichever chapter is on screen.
+if(VIEW==='article')setInterval(()=>{const b=$('talk-chapter'), st=CouncilScene.getState?.(), n=(st?.stage??0)+1, on=!!window.CouncilTalk&&!!st?.started&&!!current?.scene?.beats?.length;
+ b.hidden=!on;const text=`Talk about chapter ${n}`;if(on&&b.textContent!==text)b.textContent=text;},500);
+
 /* The path: the curriculum, with requests sent as GitHub issues the morning worker reads. */
 let curriculum=null, picks=new Map();
 function updateTalk(){

@@ -32,7 +32,7 @@ jobs:
       - name: Stage public demo only
         run: |
           mkdir _site
-          cp web/index.html web/style.css web/app.js web/scene.js web/physics.js web/example.json web/curriculum.json _site/
+          cp web/index.html web/style.css web/app.js web/scene.js web/physics.js web/talk.js web/pcm-capture.js web/example.json web/curriculum.json _site/
           # Installed web app: manifest, icons, and the service worker at a stable, unversioned address.
           cp web/manifest.webmanifest web/sw.js web/push.json _site/
           cp -R web/example-frames web/icons _site/

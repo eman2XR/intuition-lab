@@ -451,3 +451,32 @@ body[data-paused=no] .talk{display:contents}
 .notify-panel p{margin:0 0 8px}
 .notify-panel textarea{display:block;width:100%;margin:0 0 8px;padding:9px 11px;font:16px/1.4 ui-monospace,Menlo,monospace;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;resize:none;word-break:break-all}
 body[data-draft=yes] .behind{display:none}
+/* Talk: a live voice conversation with the editors (talk.js), in a sheet at the bottom of the screen. */
+.byline .voice-btn{font:inherit;font-weight:600;color:var(--ink);background:none;border:1px solid var(--line);border-radius:999px;padding:2px 12px;min-height:28px;cursor:pointer}
+.byline .voice-btn:hover{border-color:var(--muted)}
+.voice-chip{display:block;margin:6px auto 0;font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:36px;cursor:pointer}
+.voice-chip:hover{color:var(--ink);border-color:var(--muted)}
+.voice-chip[hidden]{display:none}
+.voice-sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:60;width:min(560px,100%);max-height:min(72vh,620px);display:flex;flex-direction:column;gap:10px;
+ box-sizing:border-box;padding:18px 18px calc(18px + env(safe-area-inset-bottom));background:var(--paper);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;
+ box-shadow:0 -12px 40px rgba(0,0,0,.12);color:var(--ink)}
+.voice-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.voice-title{margin:0;font-weight:700;font-size:15px}
+.voice-about{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.voice-status{font-size:12px;font-weight:600;color:var(--faint);white-space:nowrap;padding-top:2px}
+.voice-hint,.voice-note{margin:0;font-size:13px;color:var(--faint)}
+.voice-note a{color:var(--muted)}
+.voice-log{flex:1;min-height:60px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.voice-line{margin:0;font-size:15px;line-height:1.45}
+.voice-line b{font-size:12px;letter-spacing:.02em;color:var(--faint);margin-right:6px}
+.voice-line.editor{color:var(--muted)}
+.voice-form,.voice-actions{display:flex;gap:8px}
+.voice-form input{flex:1;min-width:0;min-height:44px;font:inherit;font-size:16px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:#fff}
+.voice-form .pill,.voice-actions .pill{min-height:44px;padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none}
+.voice-actions{justify-content:space-between}
+.voice-mute[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.voice-keys{display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:600}
+.voice-keys label{display:flex;flex-direction:column;gap:4px}
+.voice-keys input{min-height:44px;font:inherit;font-size:16px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.voice-keys small{font-weight:400;color:var(--faint)}
+.voice-keys .pill{align-self:flex-start;min-height:44px;cursor:pointer}
