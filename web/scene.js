@@ -3488,7 +3488,7 @@ function drawExpansion(ctx,w,h,spec,st){
  const still=!!st.live&&!st.touched&&st.since!==undefined;
  if(still){const c=st.chapters?.at(-1);st={...st,live:false,stage:(st.chapters?.length||6)-1,since:c?c.end-c.start:16};}
  const small=w<520, labels=st.labels, size=small?11:13, ink='rgba(20,23,28,.85)', faint='rgba(20,23,28,.35)';
- const preview=st.since===undefined, last=(st.chapters?.length||6)-1, stage=preview?3:Math.min(st.live?last:st.stage,last), since=preview?8:Math.max(0,st.since);
+ const preview=st.since===undefined, last=(st.chapters?.length||6)-1, stage=preview?0:Math.min(st.live?last:st.stage,last), since=preview?16:Math.max(0,st.since);
  const ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+5*i, dur=ch?ch.end-ch.start:16, live=!!st.live&&!preview;
  const fade=(s0,d=.6)=>live?1:clamp((since-s0)/d);
  const tag=(s,x,y,o={})=>{if(!labels)return;const z=o.size||size;ctx.font=`700 ${z}px ${FONT}`;const half=ctx.measureText(s).width/2+8;pill(ctx,s,clamp(x,half,w-half),clamp(y,z,h-z),{align:'center',size:z,weight:700,color:o.color||ink});};
