@@ -98,8 +98,17 @@ def talk_check(browser, url, guide):
     assert [t['who'] for t in talk['turns']] == ['you', 'editor'], 'Talk transcript is incomplete'
     assert title in state['setup']['systemInstruction']['parts'][0]['text'], 'Talk did not tell the model about the chapter on screen'
     assert state['setup']['inputAudioTranscription'] == {} and state['setup']['generationConfig']['responseModalities'] == ['AUDIO']
+    # A GitHub token saved from the end panel sends the conversation (GitHub stands in) and closes the sheet.
+    posted = []
+    page.route('https://api.github.com/repos/**/issues', lambda route: (posted.append(route.request.post_data_json), route.fulfill(status=201, body='{}')))
+    page.fill('.voice-token input', 'test-token')
+    page.click('.voice-token button')
+    page.wait_for_selector('.voice-sheet', state='detached')
+    assert posted and posted[0]['labels'] == ['council:talk'] and '<!-- council-talk -->' in posted[0]['body'], 'Token did not send the conversation'
+    assert page.evaluate('()=>JSON.parse(localStorage.getItem("council-talks")||"[]").length') == 0, 'Sent conversation left in the outbox'
+    page.evaluate('()=>localStorage.removeItem("council-github-token")')
     # Ask a question opens the same conversation on this device, which has a key.
-    page.click('.voice-close')
+    page.wait_for_timeout(100)
     page.click('#ask')
     page.wait_for_selector('.voice-sheet')
     assert page.evaluate('()=>!document.querySelector(".voice-sheet .voice-about").textContent.startsWith("Chapter")'), 'Ask a question opened a chapter conversation'

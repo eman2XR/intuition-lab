@@ -129,6 +129,13 @@ function open(opts={}){
   note('Sending opens a GitHub issue with this conversation; the next daily round reads it.');
   sheet.querySelector('.voice-send').addEventListener('click',()=>{const list=outbox();const t=list.find(x=>x.talkId===talk.talkId);if(t){t.sent=true;saveOutbox(list);}setTimeout(()=>sheet.remove(),300);});
   sheet.querySelector('.voice-close').addEventListener('click',()=>sheet.remove());
+  // Saving a GitHub token once here sends this conversation, any waiting ones, and every later one when End is tapped.
+  const tf=document.createElement('form');tf.className='voice-keys voice-token';tf.autocomplete='off';
+  tf.innerHTML=`<label>Or send it from here, now and from now on<input name="h" type="password" autocomplete="off" placeholder="GitHub token"><small>A token that can create issues in ${REPO}, saved on this device only. After that, End sends each conversation for you.</small></label><button type="submit" class="pill">Save token and send</button>`;
+  sheet.querySelector('.voice-actions').before(tf);
+  tf.addEventListener('submit',async e=>{e.preventDefault();const h=tf.h.value.trim();if(!h)return;put(KEYS.github,h);
+   if(await post(talk)){tf.remove();note('Sent. From now on, End sends each conversation for you.');flush();setTimeout(()=>sheet.remove(),1500);}
+   else{put(KEYS.github,'');note('GitHub did not accept that token. Check that it can create issues in this repository.');}});
  }
  sheet.querySelector('.voice-end').addEventListener('click',end);
  sheet.addEventListener('keydown',e=>{if(e.key==='Escape')end();});
