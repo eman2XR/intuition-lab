@@ -3624,21 +3624,41 @@ function arrowTracks(){
  ARROW.tracks={big,nudge:P.arrowTrack(P.arrowNudge(P.arrowReverse(big.end)),12,30),four:P.arrowTrack(P.arrowStart(4,ARROW_FOUR_SEED,true),26,30)};
  return ARROW.tracks;
 }
-// A cup of coffee seen from above, with the particles as soft clouds of milk. The box is mapped onto the round cup
-// (a square-to-disc map), so milk started in the left half of the box starts in the left half of the cup.
-function cupOfCoffee(ctx,cx,cy,R,frame,B){
+// A glass of coffee seen from the side, with the particles as milk. The box is turned on its side, so milk started in
+// the left half of the box starts in the top half of the glass and sinks into the coffee as it spreads. The colour is
+// a density field, like a shader: each particle adds a soft spot of milk to a fine grid, and each grid cell is drawn
+// between black coffee and cream by how much milk it holds. A gentle swirl bends the spots so the milk curls.
+function glassOfCoffee(ctx,cx,cy,H,frame,B,t){
+ const top=cy-H/2, bot=cy+H/2, wTop=H*.36, wBot=H*.3, surf=top+H*.1, xL=y=>cx-(wTop+(wBot-wTop)*(y-top)/H), xR=y=>2*cx-xL(y);
  ctx.save();
- ctx.beginPath();ctx.arc(cx,cy,R*1.28,0,TAU);ctx.fillStyle='#f4f1ec';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.12)';ctx.lineWidth=1.5;ctx.stroke();
- ctx.beginPath();ctx.roundRect(cx+R*1.02,cy-R*.16,R*.42,R*.32,R*.16);ctx.fillStyle='#ffffff';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.18)';ctx.stroke();
- ctx.beginPath();ctx.arc(cx,cy,R*1.08,0,TAU);ctx.fillStyle='#ffffff';ctx.fill();ctx.strokeStyle='rgba(20,23,28,.2)';ctx.stroke();
- const g=ctx.createRadialGradient(cx-R*.2,cy-R*.2,R*.1,cx,cy,R);g.addColorStop(0,'#6e4428');g.addColorStop(1,'#3e2414');
- ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fillStyle=g;ctx.fill();ctx.clip();
- const blob=R*.13;
+ ctx.beginPath();ctx.ellipse(cx,bot+H*.035,wBot*1.25,H*.035,0,0,TAU);ctx.fillStyle='rgba(20,23,28,.1)';ctx.fill();
+ // The liquid, clipped to the glass below its surface.
+ ctx.beginPath();ctx.moveTo(xL(surf),surf);ctx.lineTo(xL(bot),bot);ctx.lineTo(xR(bot),bot);ctx.lineTo(xR(surf),surf);ctx.closePath();ctx.save();ctx.clip();
+ const NX=40, NY=160, x0=cx-wTop, x1=cx+wTop, y0=surf, y1=bot, cw=(x1-x0)/NX, chh=(y1-y0)/NY, field=new Float32Array(NX*NY), sig=.1, reach=3*sig;
  for(let i=0;i<frame.length;i+=2){
-  const u=frame[i]/B.w*2-1, v=frame[i+1]/B.h*2-1, x=cx+R*.94*u*Math.sqrt(1-v*v/2), y=cy+R*.94*v*Math.sqrt(1-u*u/2);
-  const m=ctx.createRadialGradient(x,y,0,x,y,blob);m.addColorStop(0,'rgba(250,236,214,.3)');m.addColorStop(1,'rgba(250,236,214,0)');
-  ctx.fillStyle=m;ctx.beginPath();ctx.arc(x,y,blob,0,TAU);ctx.fill();
+  let u=frame[i+1]/B.h, v=frame[i]/B.w;
+  u+=.035*Math.sin(v*13+t*.9+u*4);v+=.025*Math.sin(u*10-t*.7);
+  const gx0=Math.max(0,Math.floor((u-reach)*NX)), gx1=Math.min(NX-1,Math.ceil((u+reach)*NX)), gy0=Math.max(0,Math.floor((v-reach)*NY)), gy1=Math.min(NY-1,Math.ceil((v+reach)*NY));
+  for(let gy=gy0;gy<=gy1;gy++){const dv=(gy+.5)/NY-v;for(let gx=gx0;gx<=gx1;gx++){const du=(gx+.5)/NX-u;field[gy*NX+gx]+=Math.exp(-(du*du+dv*dv)/(2*sig*sig));}}
  }
+ const full=200*2*Math.PI*sig*sig*2, coffee=[52,30,18], milk=[244,226,198];let topColour='rgba(120,80,50,.55)';
+ // Each row is one smooth gradient through its cells' colours; rows overlap so no seams show between them.
+ for(let gy=0;gy<NY;gy++){
+  const g=ctx.createLinearGradient(x0,0,x1,0), depth=1-.18*gy/NY;
+  for(let gx=0;gx<NX;gx++){const k=Math.pow(Math.min(1,field[gy*NX+gx]/full),.8), c=coffee.map((a,n)=>Math.round((a+(milk[n]-a)*k)*depth));g.addColorStop((gx+.5)/NX,`rgb(${c[0]},${c[1]},${c[2]})`);}
+  ctx.fillStyle=g;ctx.fillRect(x0,y0+gy*chh-1.5,x1-x0,chh+3);
+  if(gy===0){let sum=0;for(let gx=0;gx<NX;gx++)sum+=Math.min(1,field[gx]/full);const k=Math.pow(sum/NX,.8), c=coffee.map((a,n)=>Math.round(a+(milk[n]-a)*k+18));topColour=`rgba(${c[0]},${c[1]},${c[2]},.85)`;}
+ }
+ const gl=ctx.createLinearGradient(x0,0,x1,0);gl.addColorStop(0,'rgba(0,0,0,.28)');gl.addColorStop(.25,'rgba(0,0,0,0)');gl.addColorStop(.8,'rgba(0,0,0,0)');gl.addColorStop(1,'rgba(0,0,0,.32)');
+ ctx.fillStyle=gl;ctx.fillRect(x0,y0,x1-x0,y1-y0);ctx.restore();
+ // The surface, the glass walls and base, and a highlight down the left wall.
+ ctx.beginPath();ctx.ellipse(cx,surf,xR(surf)-cx,H*.035,0,0,TAU);ctx.fillStyle=topColour;ctx.fill();
+ ctx.beginPath();ctx.moveTo(xL(top),top);ctx.lineTo(xL(bot),bot);ctx.quadraticCurveTo(cx,bot+H*.05,xR(bot),bot);ctx.lineTo(xR(top),top);
+ ctx.strokeStyle='rgba(60,70,80,.55)';ctx.lineWidth=2;ctx.stroke();
+ ctx.beginPath();ctx.ellipse(cx,top,wTop,H*.035,0,0,TAU);ctx.strokeStyle='rgba(60,70,80,.45)';ctx.lineWidth=1.5;ctx.stroke();
+ ctx.beginPath();ctx.moveTo(xL(bot)+3,bot+2);ctx.quadraticCurveTo(cx,bot+H*.07,xR(bot)-3,bot+2);ctx.strokeStyle='rgba(60,70,80,.35)';ctx.lineWidth=H*.02;ctx.stroke();
+ const hl=ctx.createLinearGradient(0,top,0,bot);hl.addColorStop(0,'rgba(255,255,255,.55)');hl.addColorStop(1,'rgba(255,255,255,.05)');
+ ctx.beginPath();ctx.moveTo(xL(top+H*.08)+H*.035,top+H*.08);ctx.lineTo(xL(bot-H*.1)+H*.03,bot-H*.1);ctx.strokeStyle=hl;ctx.lineWidth=H*.022;ctx.lineCap='round';ctx.stroke();
  ctx.restore();
 }
 const arrowFrame=(track,t)=>track.frames[Math.max(0,Math.min(track.frames.length-1,Math.round(t*30)))];
@@ -3684,8 +3704,8 @@ function drawArrow(ctx,w,h,spec,st){
    words.push([back?'played backwards':'played forward',w/2,L.by-16]);
   }else{
    // Milk spreading through coffee: forward it mixes; played backwards it unmixes, which never happens.
-   const span=dur-at(1), turn=at(1)+span*.5, back=since>turn, u=back?clamp(1-(since-turn)/(dur-turn-.6)):clamp((since-at(1))/(turn-at(1)-.3)), t=6*u;
-   cupOfCoffee(ctx,w/2,L.by+L.bh*.53,Math.min(L.bh*.38,L.bw*.3),arrowFrame(T.big,t),B);words.push([back?'backwards: never seen':'played forward',w/2,L.by-16]);
+   const span=dur-at(1), turn=at(1)+span*.5, back=since>turn, u=back?clamp(1-(since-turn)/(dur-turn-.6)):clamp((since-at(1)-.6)/(turn-at(1)-.9)), t=6*u;
+   glassOfCoffee(ctx,w/2,L.by+L.bh*.55,small?Math.min(L.bh*1.05,h*.62):L.bh*.84,arrowFrame(T.big,t),B,t);words.push([back?'backwards: never seen':'played forward',w/2,L.by-16]);
   }
  }
  else if(stage===1){
@@ -4721,7 +4741,7 @@ const ENGINES={
   // The modelled effect for the render checks: the digits in the number of ways to be half and half.
   effect:a=>{const n=2*Math.round(clamp(a)*100);return n?Physics.arrowLog10Ways(n,n/2):0;},
   measure:null,scale:'',
-  disclosure:'The particles bounce off the walls and eleven round posts but not off each other; in a real gas they also hit each other, which mixes them the same way. Every bounce is computed from the exact bounce rule, to the computer’s full precision. The exact reversal in chapter 5 is the forward run played back, since a computer’s own rounding errors also grow bounce by bounce; the nudged run is computed afresh, with each particle moved a ten-thousandth of the box’s height. Chapter 1 shows the same particles as soft clouds of milk in a cup of coffee.',
+  disclosure:'The particles bounce off the walls and eleven round posts but not off each other; in a real gas they also hit each other, which mixes them the same way. Every bounce is computed from the exact bounce rule, to the computer’s full precision. The exact reversal in chapter 5 is the forward run played back, since a computer’s own rounding errors also grow bounce by bounce; the nudged run is computed afresh, with each particle moved a ten-thousandth of the box’s height. Chapter 1 shows the same particles as milk in a glass of coffee, the box turned on its side so the milk starts at the top, drawn as a smooth density with gentle swirls.',
   try:'',aria:'Two billiard balls colliding look natural played forward or backwards; milk spreading through coffee looks impossible played backwards. Four particles in a box are often all in the left half, but counting the ways shows that with many particles, mixed arrangements vastly outnumber sorted ones. Two hundred particles started in the left half spread out and stay mixed. Reversing every motion exactly sends them back; nudging each by a hair first leaves them mixed. A graph of the number of ways climbs from one to a 59-digit number: the direction of time.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
