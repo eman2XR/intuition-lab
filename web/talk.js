@@ -208,5 +208,5 @@ async function connect(key,instruction,on){
 }
 
 readSetupLink();
-window.CouncilTalk={open,setContext(fn){contextFn=fn;},flush,waiting,issueLink};
+window.CouncilTalk={open,setContext(fn){contextFn=fn;},flush,waiting,issueLink,hasKey:()=>!!get(KEYS.gemini)};
 })();

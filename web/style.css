@@ -452,8 +452,6 @@ body[data-paused=no] .talk{display:contents}
 .notify-panel textarea{display:block;width:100%;margin:0 0 8px;padding:9px 11px;font:16px/1.4 ui-monospace,Menlo,monospace;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;resize:none;word-break:break-all}
 body[data-draft=yes] .behind{display:none}
 /* Talk: a live voice conversation with the editors (talk.js), in a sheet at the bottom of the screen. */
-.byline .voice-btn{font:inherit;font-weight:600;color:var(--ink);background:none;border:1px solid var(--line);border-radius:999px;padding:2px 12px;min-height:28px;cursor:pointer}
-.byline .voice-btn:hover{border-color:var(--muted)}
 .voice-chip{display:block;margin:6px auto 0;font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:36px;cursor:pointer}
 .voice-chip:hover{color:var(--ink);border-color:var(--muted)}
 .voice-chip[hidden]{display:none}

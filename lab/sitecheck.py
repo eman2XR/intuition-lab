@@ -98,6 +98,12 @@ def talk_check(browser, url, guide):
     assert [t['who'] for t in talk['turns']] == ['you', 'editor'], 'Talk transcript is incomplete'
     assert title in state['setup']['systemInstruction']['parts'][0]['text'], 'Talk did not tell the model about the chapter on screen'
     assert state['setup']['inputAudioTranscription'] == {} and state['setup']['generationConfig']['responseModalities'] == ['AUDIO']
+    # Ask a question opens the same conversation on this device, which has a key.
+    page.click('.voice-close')
+    page.click('#ask')
+    page.wait_for_selector('.voice-sheet')
+    assert page.evaluate('()=>!document.querySelector(".voice-sheet .voice-about").textContent.startsWith("Chapter")'), 'Ask a question opened a chapter conversation'
+    page.click('.voice-end')
     assert not errors, errors
     page.close()
 
