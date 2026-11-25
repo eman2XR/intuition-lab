@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id);
 const put=(id,text)=>{const node=$(id);if(node)node.textContent=text??'';};
 const el=(tag,props={},...children)=>{const node=Object.assign(document.createElement(tag),props);node.append(...children);return node;};
-const TOPICS={'gravity-clocks':'Gravity and time','light-bending':'Gravity and light','spacetime':'Space and time','twin-trip':'Space and time','interference':'Waves','standing-waves':'Waves','two-slit-particles':'Quanta','tunneling':'Quanta','wave-packet':'Quanta','quantum-well':'Quanta','falling-time':'Gravity and time','diffraction':'Waves','spacetime-paths':'Space and time','light-clock':'Space and time','river':'Black holes','fall-views':'Gravity and time','tides':'Curved spacetime','lift':'Gravity and time','moon-tides':'Gravity and time','attention':'How AI reads','speed-limit':'Space and time','birthdays':'Chance and evidence','sky-colour':'Light and colour','night-sky':'The universe','simultaneity':'Space and time','eratosthenes':'The universe','seasons':'The universe','monty-hall':'Chance and evidence','simpson':'Chance and evidence','doppler':'Waves','radio':'Waves','moon-phases':'The universe','expansion':'The universe'};
+const TOPICS={'gravity-clocks':'Gravity and time','light-bending':'Gravity and light','spacetime':'Space and time','twin-trip':'Space and time','interference':'Waves','standing-waves':'Waves','two-slit-particles':'Quanta','tunneling':'Quanta','wave-packet':'Quanta','quantum-well':'Quanta','falling-time':'Gravity and time','diffraction':'Waves','spacetime-paths':'Space and time','light-clock':'Space and time','river':'Black holes','fall-views':'Gravity and time','tides':'Curved spacetime','lift':'Gravity and time','moon-tides':'Gravity and time','attention':'How AI reads','speed-limit':'Space and time','birthdays':'Chance and evidence','sky-colour':'Light and colour','night-sky':'The universe','simultaneity':'Space and time','eratosthenes':'The universe','seasons':'The universe','monty-hall':'Chance and evidence','simpson':'Chance and evidence','doppler':'Waves','radio':'Waves','moon-phases':'The universe','expansion':'The universe','arrow-of-time':'Heat and time'};
 /* AGENT-ENGINES: app-topics. Home-page category labels for engines the daily run builds from a research brief are
    spliced in below this line (lab/build_engine.py) as TOPICS['<kind>']='<category>'; statements. */
 // The accuracy reviewer checks physics for physics guides and the mathematics for the others.
@@ -552,9 +552,9 @@ if(window.CouncilTalk){CouncilTalk.setContext(talkContext);// Ask a question ope
  $('ask').addEventListener('click',e=>{e.preventDefault();openTalk(false);});$('talk-chapter').onclick=e=>openTalk(e.currentTarget.dataset.pinned==='1');CouncilTalk.flush();}
 // Under the captions: 'Ask about chapter N' while the guide plays (on a device with a Gemini key), and a prominent
 // 'Ask a question' on the end card when the investigation is over.
-if(VIEW==='article')setInterval(()=>{const b=$('talk-chapter'), st=CouncilScene.getState?.(), ended=!!document.querySelector('.workspace.ended'), n=(st?.stage??0)+1;
+if(VIEW==='article'){const syncAsk=()=>{const b=$('talk-chapter'), st=CouncilScene.getState?.(), ended=!!document.querySelector('.workspace.ended'), n=(st?.stage??0)+1;
  const on=!!window.CouncilTalk&&!!current?.scene?.beats?.length&&(ended||CouncilTalk.hasKey()&&!!st?.started);
- b.hidden=!on;b.classList.toggle('strong',ended);b.dataset.pinned=ended?'0':'1';const text=ended?'Ask a question':`Ask about chapter ${n}`;if(on&&b.textContent!==text)b.textContent=text;},400);
+ b.hidden=!on;b.classList.toggle('strong',ended);b.dataset.pinned=ended?'0':'1';const text=ended?'Ask a question':`Ask about chapter ${n}`;if(on&&b.textContent!==text)b.textContent=text;};setInterval(syncAsk,400);const ws=document.querySelector('.workspace');if(ws)new MutationObserver(syncAsk).observe(ws,{attributes:true,attributeFilter:['class']});}
 
 /* The path: the curriculum, with requests sent as GitHub issues the morning worker reads. */
 let curriculum=null, picks=new Map();

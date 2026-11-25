@@ -3611,6 +3611,112 @@ function drawExpansion(ctx,w,h,spec,st){
  for(const [s,x,y] of words)if(s)tag(s,x,y);
 }
 
+// Why time only runs forward. Particles fly in a box, bouncing off its walls and five round posts (Physics.arrowMove);
+// every bounce works the same backwards, yet a box started sorted mixes, because mixed arrangements vastly outnumber
+// sorted ones (Physics.arrowWays). Reversing every motion exactly sends them back; a hair's-width nudge does not.
+// Bold colour fields: the box's left and right halves are two flat colours, the particles cream dots.
+const ARROW={tracks:null}, ARROW_FOUR_SEED=20;
+function arrowTracks(){
+ if(ARROW.tracks)return ARROW.tracks;
+ // The exact reversal is the forward run played back: computed afresh, the computer's own rounding errors would also
+ // grow bounce by bounce. The nudged one is computed from the reversed, nudged state.
+ const P=Physics, big=P.arrowTrack(P.arrowStart(200,7),12,30);
+ ARROW.tracks={big,nudge:P.arrowTrack(P.arrowNudge(P.arrowReverse(big.end)),12,30),four:P.arrowTrack(P.arrowStart(4,ARROW_FOUR_SEED,true),26,30)};
+ return ARROW.tracks;
+}
+const arrowFrame=(track,t)=>track.frames[Math.max(0,Math.min(track.frames.length-1,Math.round(t*30)))];
+function drawArrow(ctx,w,h,spec,st){
+ const still=!!st.live&&!st.touched&&st.since!==undefined;
+ if(still||st.live){const c=st.chapters?.at(-1);st={...st,live:false,stage:(st.chapters?.length||6)-1,since:c?c.end-c.start:16};}
+ const small=w<520, labels=st.labels, size=small?11:13, ink='rgba(20,23,28,.85)', faint='rgba(20,23,28,.4)';
+ const preview=st.since===undefined, last=(st.chapters?.length||6)-1, stage=preview?0:Math.min(st.stage,last), since=preview?7.6:Math.max(0,st.since);
+ const ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+5*i, dur=ch?ch.end-ch.start:16;
+ const words=[], tag=(s,x,y)=>{if(!labels||!s)return;ctx.font=`700 ${size}px ${FONT}`;const half=ctx.measureText(s).width/2+8;pill(ctx,s,clamp(x,half,w-half),clamp(y,size,h-size),{align:'center',size,weight:700,color:ink});};
+ const T=arrowTracks(), B=Physics.arrowBox, LEFT='#2e6b73', RIGHT='#3b4a7a', CREAM='#fff1d0', COFFEE='#6b4630', POST='#1b2130';
+ // The box, sized to leave room for a graph below when there is one.
+ const layout=graph=>{const gH=graph?h*(small?.22:.24):0, room=h*(graph?.66:.84)-gH*0, bw=Math.min(w*(small?.9:.62),(graph?h*.5:h*.74)*1.6), bh=bw/1.6, bx=(w-bw)/2, by=graph?h*.07:(h-bh)/2;
+  return {bx,by,bw,bh,X:x=>bx+x/B.w*bw,Y:y=>by+y/B.h*bh,g:graph?{x0:bx,x1:bx+bw,y0:by+bh+gH+h*.09,y1:by+bh+h*.09}:null};};
+ const box=(L,frame,o={})=>{
+  ctx.save();ctx.beginPath();ctx.roundRect(L.bx,L.by,L.bw,L.bh,10);ctx.clip();
+  if(o.coffee||o.plain){ctx.fillStyle=o.coffee?COFFEE:'#3a5468';ctx.fillRect(L.bx,L.by,L.bw,L.bh);}
+  else{ctx.fillStyle=LEFT;ctx.fillRect(L.bx,L.by,L.bw/2,L.bh);ctx.fillStyle=RIGHT;ctx.fillRect(L.bx+L.bw/2,L.by,L.bw/2,L.bh);}
+  if(!o.bare)for(const [cx,cy,r] of B.posts){ctx.beginPath();ctx.arc(L.X(cx),L.Y(cy),r/B.w*L.bw,0,TAU);ctx.fillStyle=o.coffee?'rgba(30,18,10,.8)':POST;ctx.fill();}
+  if(frame){const r=Math.max(2,B.pr/B.w*L.bw);
+   // A few particles get a soft halo so each one is easy to follow.
+   if(o.halo){ctx.fillStyle='rgba(255,241,208,.28)';for(let i=0;i<frame.length;i+=2){ctx.beginPath();ctx.arc(L.X(frame[i]),L.Y(frame[i+1]),r*2.6,0,TAU);ctx.fill();}}
+   ctx.fillStyle=CREAM;for(let i=0;i<frame.length;i+=2){ctx.beginPath();ctx.arc(L.X(frame[i]),L.Y(frame[i+1]),r,0,TAU);ctx.fill();}}
+  ctx.restore();
+  ctx.beginPath();ctx.roundRect(L.bx,L.by,L.bw,L.bh,10);ctx.strokeStyle='rgba(20,23,28,.55)';ctx.lineWidth=2;ctx.stroke();};
+ // A line graph of values[0..n] (one a frame) up to frame n, on the layout's graph area.
+ const plot=(L,f,tEnd,tNow,yMax,o={})=>{const g=L.g, X=t=>g.x0+(g.x1-g.x0)*t/tEnd, Y=v=>g.y0-(g.y0-g.y1)*v/yMax;
+  trace(ctx,[[g.x0,g.y1],[g.x0,g.y0],[g.x1,g.y0]]);ctx.strokeStyle=faint;ctx.lineWidth=1.5;ctx.stroke();
+  if(o.half!==undefined){ctx.setLineDash([4,4]);trace(ctx,[[g.x0,Y(o.half)],[g.x1,Y(o.half)]]);ctx.strokeStyle='rgba(20,23,28,.25)';ctx.stroke();ctx.setLineDash([]);}
+  const pts=[];for(let t=0;t<=tNow+1e-9;t+=1/15)pts.push([X(t),Y(f(t))]);if(pts.length>1){trace(ctx,pts);ctx.strokeStyle=o.color||LEFT;ctx.lineWidth=2.5;ctx.stroke();}
+  return {X,Y};};
+ const leftAt=(track,t)=>Physics.arrowLeft(arrowFrame(track,t));
+ if(stage===0){
+  const L=layout(false);
+  if(since<at(1)-.1){
+   // Two balls bouncing head on: played forward, then backwards, the motion looks just as natural.
+   // Equal balls trading speeds at each collision: two free points in a box one diameter shorter, sorted, the right one
+   // shifted by a diameter, so the balls touch but never overlap.
+   const span=at(1)-at(0)-.1, mid=at(0)+span*.5, back=since>mid, t=back?2*mid-since:since, r=L.bh*.09, ru=r/L.bw*B.w, lo=ru, len=B.w-4*ru;
+   const tri=u=>{const m=((u%(2*len))+2*len)%(2*len);return lo+(m<len?m:2*len-m);};
+   const pts=[tri(.2+.55*t),tri(len*.8-.55*t)].sort((p,q)=>p-q), xs=[pts[0],pts[1]+2*ru];
+   box(L,null,{bare:true,plain:true});[[xs[0],'#f2a65a'],[xs[1],CREAM]].forEach(([x,c])=>{ctx.beginPath();ctx.arc(L.X(x),L.Y(.5),r,0,TAU);ctx.fillStyle=c;ctx.fill();ctx.strokeStyle='rgba(20,23,28,.5)';ctx.lineWidth=1.5;ctx.stroke();});
+   words.push([back?'played backwards':'played forward',w/2,L.by-16]);
+  }else{
+   // Milk spreading through coffee: forward it mixes; played backwards it unmixes, which never happens.
+   const span=dur-at(1), turn=at(1)+span*.5, back=since>turn, u=back?clamp(1-(since-turn)/(dur-turn-.6)):clamp((since-at(1))/(turn-at(1)-.3)), t=6*u;
+   box(L,arrowFrame(T.big,t),{coffee:true});words.push([back?'backwards: never seen':'played forward',w/2,L.by-16],['milk in coffee',w/2,L.by+L.bh+18]);
+  }
+ }
+ else if(stage===1){
+  // Four particles: now and then all four are in the left half.
+  const L=layout(false), t=Math.min(25.9,since*1.1), f=arrowFrame(T.four,t), k=Physics.arrowLeft(f);
+  box(L,f,{halo:true});
+  words.push(['left half',L.bx+L.bw*.25,L.by-16],['right half',L.bx+L.bw*.75,L.by-16]);
+  words.push([k===4?'all four on the left':`${k} on the left`,w/2,L.by+L.bh+20]);
+ }
+ else if(stage===2){
+  // Counting the ways: for n particles, the number of ways to have k on the left, k from 0 to n.
+  const n=since<at(2)-.2?4:100, x0=w*(small?.1:.16), x1=w*(small?.9:.84), y0=h*.78, y1=h*.16, max=Physics.arrowWays(n,Math.floor(n/2));
+  trace(ctx,[[x0,y1],[x0,y0],[x1,y0]]);ctx.strokeStyle=faint;ctx.lineWidth=1.5;ctx.stroke();
+  const bwid=(x1-x0)/(n+1), X=k=>x0+bwid*(k+.5);
+  for(let k=0;k<=n;k++){const v=Physics.arrowWays(n,k)/max, hh=(y0-y1)*v;ctx.fillStyle=k===n?'#f2a65a':LEFT;ctx.fillRect(X(k)-bwid*.4,y0-hh,Math.max(1,bwid*.8),hh);}
+  ctx.beginPath();ctx.arc(X(n),y0-4,4,0,TAU);ctx.fillStyle='#f2a65a';ctx.fill();
+  words.push(['on the left',(x0+x1)/2,y0+20],['ways',x0+24,y1-14],['all left: 1 way',Math.min(X(n),x1-50),y0-(y0-y1)/max-18]);
+  words.push([n===4?'6 ways':'30-digit number',X(n/2),y1-14],['0',X(0),y0+20],[String(n),X(n),y0+20]);
+ }
+ else if(stage===3){
+  // Two hundred particles, started in the left half, spread out and stay spread.
+  const L=layout(true), t=12*clamp((since-.8)/Math.max(1,dur-1.6)), f=arrowFrame(T.big,t), k=Physics.arrowLeft(f);
+  box(L,f);const p=plot(L,u=>leftAt(T.big,u),12,t,200,{half:100});
+  const cx=clamp(p.X(t)+40,L.g.x0+80,L.bx+L.bw-60);words.push([`${k} on the left`,cx,p.Y(k)-16],['time',L.g.x1-18,L.g.y0+16]);
+  // The dashed line's name, where the moving count leaves room for it.
+  if(cx>L.g.x0+120||Math.abs(p.Y(k)-16-(p.Y(100)-12))>26)words.push(['half',L.g.x0+24,p.Y(100)-12]);
+ }
+ else if(stage===4){
+  // Every motion reversed: back they go (the forward run played back). Nudged a hair's width first: they stay mixed.
+  const L=layout(true), exact=since<at(1)-.1, tx=12*clamp((since-at(0)-.3)/Math.max(1,at(1)-at(0)-.8)), tn=12*clamp((since-at(1))/Math.max(1,dur-at(1)-.8));
+  const back=u=>leftAt(T.big,12-u), f=exact?arrowFrame(T.big,12-tx):arrowFrame(T.nudge,tn), k=Physics.arrowLeft(f);box(L,f);
+  ctx.save();if(!exact)ctx.globalAlpha=.7;const p=plot(L,back,12,tx,200,{half:100,color:'#f2a65a'});ctx.restore();
+  if(!exact)plot(L,u=>leftAt(T.nudge,u),12,tn,200,{color:LEFT});
+  words.push([exact?'every motion reversed':'nudged a hair’s width',w/2,L.by-16],[`${k} on the left`,clamp(p.X(exact?tx:tn)+40,L.g.x0+80,L.bx+L.bw-60),p.Y(k)+(exact?-16:18)]);
+  if(!exact)words.push(['200 on the left',L.g.x1-60,p.Y(200)-14]);
+ }
+ else{
+  // Time's direction: the number of ways to arrange the box (its digits) climbs from one way to a 59-digit number.
+  const L=layout(true), t=12*clamp((since-.6)/Math.max(1,at(1)-.4)), f=arrowFrame(T.big,t);
+  box(L,f);const dig=u=>Physics.arrowLog10Ways(200,leftAt(T.big,u)), p=plot(L,dig,12,t,62,{color:'#0e7490'});
+  ctx.beginPath();ctx.arc(L.g.x0,L.g.y0,5,0,TAU);ctx.fillStyle='#f2a65a';ctx.fill();
+  const g=L.g;ctx.beginPath();ctx.moveTo(g.x1+10,g.y0);ctx.lineTo(g.x1-2,g.y0-6);ctx.lineTo(g.x1-2,g.y0+6);ctx.closePath();ctx.fillStyle=faint;ctx.fill();
+  words.push(['the start: 1 way',g.x0+62,g.y0-18],['time’s direction',(g.x0+g.x1)/2,g.y0+18]);
+  if(t>3)words.push(['a 59-digit number of ways',clamp(p.X(Math.min(t,9)),g.x0+110,g.x1-110),p.Y(59)-16]);
+ }
+ for(const [s,x,y] of words)tag(s,x,y);
+}
+
 // Why 23 people are enough for a shared birthday to be likely. Someone shares your own birthday only about 6% of the
 // time, from 22 chances; but a match can be between any two people, and 23 people make 253 pairs. As people arrive
 // one at a time, each newcomer must miss every birthday already in the room, so the chance of a shared birthday
@@ -4593,6 +4699,13 @@ const ENGINES={
   measure:null,scale:'',
   disclosure:'The gaps are hydrogen’s, at 410, 434, 486 and 656 nanometres; chapter 1 slides them by 8%. Hubble’s plot uses a growth rate of 70 km a second for each megaparsec (3.26 million light years), with made-up scatter. The row shows galaxies far apart; nearby galaxies, and anything held together by gravity or other forces, do not spread apart. The glow we receive set off about 380,000 years after the start, when space first turned clear, at about 3,000 kelvin; stretched about 1,100 times since, it arrives at 2.7 kelvin, brightest at about 1 mm.',
   try:'',aria:'A star’s light passes through a prism and fans into a rainbow with four dark gaps where hydrogen soaked up its colours; a distant galaxy’s rainbow shows the same four gaps slid toward red. Light from a galaxy moving away arrives with longer, redder waves. Hubble’s plot shows galaxies twice as far moving away twice as fast. In a row of galaxies whose gaps all grow alike, arrows show the others moving away from one galaxy, twice as fast at twice the distance, and the same pattern around another galaxy, so none is the centre; light crossing the row is stretched as the gaps grow. Run backwards, the galaxies crowd into a hot, dense glow about 13.8 billion years ago; that glow’s waves, stretched ever since, reach a radio dish from every direction as faint microwaves.'},
+ 'arrow-of-time':{draw:drawArrow,demo:false,a:['Particles','how many particles share the box'],b:['Unused','',''],
+  fa:a=>Math.round(clamp(a)*200)+' particles',fb:b=>'',
+  // The modelled effect for the render checks: the digits in the number of ways to be half and half.
+  effect:a=>{const n=2*Math.round(clamp(a)*100);return n?Physics.arrowLog10Ways(n,n/2):0;},
+  measure:null,scale:'',
+  disclosure:'The particles bounce off the walls and eleven round posts but not off each other; in a real gas they also hit each other, which mixes them the same way. Every bounce is computed from the exact bounce rule, to the computer’s full precision. The exact reversal in chapter 5 is the forward run played back, since a computer’s own rounding errors also grow bounce by bounce; the nudged run is computed afresh, with each particle moved a ten-thousandth of the box’s height. Chapter 1 plays the same particles as milk in coffee.',
+  try:'',aria:'Two billiard balls colliding look natural played forward or backwards; milk spreading through coffee looks impossible played backwards. Four particles in a box are often all in the left half, but counting the ways shows that with many particles, mixed arrangements vastly outnumber sorted ones. Two hundred particles started in the left half spread out and stay mixed. Reversing every motion exactly sends them back; nudging each by a hair first leaves them mixed. A graph of the number of ways climbs from one to a 59-digit number: the direction of time.'},
  'monty-hall':{draw:drawMonty,touch:MONTY_TOUCH,demo:false,a:['Switch how often','the share of games in which you switch'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of games',fb:b=>'',
   // The modelled effect for the render checks: how much switching in this share of games adds to the chance of winning.

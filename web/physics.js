@@ -761,6 +761,82 @@
     // stretch of its waves; Wien's law gives the wavelength where a glow at temperature T is brightest.
     glowTemp(T, stretch) { return T / stretch; },
     wienPeak(T) { return 2.898e-3 / T; },
+    // Why time runs one way. Particles fly in a box, bouncing off its walls and eleven round posts; the round posts
+    // scatter them chaotically, so a hair's-width difference grows with each bounce. Every bounce obeys laws that work
+    // the same backwards, yet a box started sorted (all in the left half) mixes, because mixed arrangements vastly
+    // outnumber sorted ones: n particles, each in the left or right half, have C(n, k) ways to put k on the left.
+    // Units: the box is 1.6 by 1 (think metres), speeds 0.55 a second, particles 0.014 across in radius; they bounce at
+    // their edge off the walls and eleven round posts, and do not hit each other.
+    arrowBox: { w: 1.6, h: 1, speed: .55, pr: .014, posts: [[.24, .24, .075], [.62, .18, .075], [1.0, .26, .075], [1.38, .2, .075], [.42, .52, .075], [.88, .5, .075], [1.24, .56, .075], [.18, .8, .075], [.62, .8, .075], [1.04, .82, .075], [1.42, .8, .075]] },
+    // Ways to put k of n particles in the left half, and its number of decimal digits (a log, for big n).
+    arrowWays(n, k) { let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; },
+    arrowLog10Ways(n, k) { let s = 0; for (let i = 1; i <= k; i++) s += Math.log10((n - k + i) / i); return s; },
+    arrowDigits(n, k) { return Math.floor(this.arrowLog10Ways(n, k) + 1e-9) + 1; },
+    // A repeatable random start: n particles in the left half (or anywhere, if whole), clear of the posts, each heading a
+    // random way.
+    arrowStart(n, seed = 1, whole = false) {
+      let a = seed >>> 0; const rand = () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+      const B = this.arrowBox, out = [];
+      while (out.length < n) {
+        const x = .04 + rand() * ((whole ? B.w : B.w / 2) - .08), y = .04 + rand() * (B.h - .08), th = rand() * 2 * Math.PI;
+        if (B.posts.some(([cx, cy, r]) => Math.hypot(x - cx, y - cy) < r + B.pr + .02)) continue;
+        out.push([x, y, B.speed * Math.cos(th), B.speed * Math.sin(th)]);
+      }
+      return out;
+    },
+    // Moves one particle [x, y, vx, vy] on for time T exactly, bounce by bounce (mirror bounces off walls and posts).
+    arrowMove(p, T) {
+      const B = this.arrowBox, e = B.pr; let [x, y, vx, vy] = p, left = T;
+      for (let guard = 0; guard < 100000 && left > 0; guard++) {
+        let dt = Infinity, hit = null;
+        const tx = vx > 0 ? (B.w - e - x) / vx : vx < 0 ? (e - x) / vx : Infinity, ty = vy > 0 ? (B.h - e - y) / vy : vy < 0 ? (e - y) / vy : Infinity;
+        if (tx < dt) { dt = Math.max(0, tx); hit = 'x'; }
+        if (ty < dt) { dt = Math.max(0, ty); hit = 'y'; }
+        B.posts.forEach(([cx, cy, r0], i) => {
+          const r = r0 + e, ox = x - cx, oy = y - cy, b = ox * vx + oy * vy; if (b >= 0) return;
+          const a = vx * vx + vy * vy, c = ox * ox + oy * oy - r * r, disc = b * b - a * c; if (disc < 0) return;
+          const t = (-b - Math.sqrt(disc)) / a; if (t >= -1e-12 && t < dt) { dt = Math.max(0, t); hit = i; }
+        });
+        if (dt >= left) { x += vx * left; y += vy * left; break; }
+        x += vx * dt; y += vy * dt; left -= dt;
+        if (hit === 'x') vx = -vx; else if (hit === 'y') vy = -vy;
+        else { const [cx, cy, r0] = B.posts[hit], r = r0 + e, nx = (x - cx) / r, ny = (y - cy) / r, d = vx * nx + vy * ny; vx -= 2 * d * nx; vy -= 2 * d * ny; }
+      }
+      return [x, y, vx, vy];
+    },
+    // Positions of every particle at fps frames a second for T seconds: frames[f][2i], frames[f][2i+1].
+    arrowTrack(start, T, fps = 30) {
+      const n = Math.round(T * fps), frames = [];
+      let state = start.map(p => p.slice());
+      for (let f = 0; f <= n; f++) { frames.push(Float32Array.from(state.flatMap(p => [p[0], p[1]]))); state = state.map(p => this.arrowMove(p, 1 / fps)); }
+      return { frames, end: state };
+    },
+    arrowReverse(state) { return state.map(([x, y, vx, vy]) => [x, y, -vx, -vy]); },
+    // The same state with every particle shifted by d (a hair's width is about 0.0001 of a 1 m box) in a set direction.
+    arrowNudge(state, d = 1e-4) { return state.map(([x, y, vx, vy], i) => [x + d * Math.cos(i * 2.39), y + d * Math.sin(i * 2.39), vx, vy]); },
+    arrowLeft(frame) { let k = 0; for (let i = 0; i < frame.length; i += 2) if (frame[i] < this.arrowBox.w / 2) k++; return k; },
+    arrowChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, s = this.arrowStart(30, 5), T = 6;
+      // Reversal is checked over 3 s: the computer's own rounding errors also grow bounce by bounce, about thirtyfold a second.
+      const run = (st, t = T) => st.map(p => this.arrowMove(p, t)), back = run(this.arrowReverse(run(s, 3)), 3);
+      const gap = Math.max(...back.map((p, i) => Math.hypot(p[0] - s[i][0], p[1] - s[i][1])));
+      const end = run(s), nudged = run(this.arrowNudge(s)), spread = Math.max(...end.map((p, i) => Math.hypot(p[0] - nudged[i][0], p[1] - nudged[i][1])));
+      const big = this.arrowTrack(this.arrowStart(200, 7), 12, 2), share = this.arrowLeft(big.frames.at(-1)) / 200;
+      const nudgedBack = this.arrowTrack(this.arrowNudge(this.arrowReverse(big.end)), 12, 2), mostLeft = Math.max(...nudgedBack.frames.slice(2).map(f => this.arrowLeft(f)));
+      const energy = end.every(p => near(Math.hypot(p[2], p[3]), this.arrowBox.speed, 1e-9));
+      return Object.entries({
+        'Four particles: all on the left is 1 way out of 16, half and half is 6': this.arrowWays(4, 4) === 1 && 2 ** 4 === 16 && this.arrowWays(4, 2) === 6,
+        'Twenty particles: 184,756 ways to be half and half': near(this.arrowWays(20, 10), 184756, 1e-6),
+        'A hundred particles: sorted is one way in a 31-digit number': String(2n ** 100n).length === 31 && this.arrowDigits(100, 50) === 30,
+        'Two hundred particles: a 59-digit number of ways to be half and half': this.arrowDigits(200, 100) === 59,
+        'Reversing every motion brings each particle back to where it started, to within a billionth': gap < 1e-9,
+        'Every bounce keeps each particle\'s speed': energy,
+        'A hair\'s-width nudge grows, bounce by bounce, into a different path': spread > .05,
+        'Started in the left half, 200 particles spread out to roughly half and half': share > .35 && share < .65,
+        'Reversed after mixing but nudged a hair\'s width, 200 particles stay mixed (never more than 115 on the left)': mostLeft <= 115 && this.arrowLeft(big.frames[0]) === 200,
+        'Waiting for all 200 to return, at one new arrangement a second, takes far longer than the universe\'s age': 2 ** 200 > 1e40 * 4.35e17,
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     expansionChecks() {
       const near = (a, b, e) => Math.abs(a - b) <= e, pts = [[0, 0], [3, 1], [-2, 4], [5, -3], [1, 2]];
       const ratios = home => this.recession(pts, home).map((v, j) => j === home ? null : Math.hypot(...v) / Math.hypot(pts[j][0] - pts[home][0], pts[j][1] - pts[home][1])).filter(x => x !== null);
@@ -811,7 +887,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,'arrow-of-time':this.arrowChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

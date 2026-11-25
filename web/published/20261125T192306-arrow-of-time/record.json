@@ -1,0 +1,457 @@
+{
+  "id": "20261125T192306-arrow-of-time",
+  "status": "reviewed",
+  "question": "Why does time only run forward?",
+  "topic": "arrow-of-time",
+  "created": "2026-11-25T19:23:06.351630+00:00",
+  "research": {
+    "claim": "Time seems to run one way because systems of many particles go from rare (sorted, low-entropy) arrangements to overwhelmingly more numerous mixed (high-entropy) ones, even though each collision obeys time-symmetric laws; the direction is set by the universe's very low-entropy beginning (the past hypothesis).",
+    "explanation": "For n particles each in the left or right half, there are C(n,k) arrangements with k on the left; C(n,n)=1 while C(n,n/2) is enormous (184,756 for n=20; about 1.0e29 for n=100; about 9.1e58 for n=200). A system wandering among arrangements with time-symmetric dynamics therefore almost always moves toward the mixed macrostate and stays near it (the second law in Boltzmann's statistical form). Reversing every velocity exactly retraces the path (Loschmidt's objection), but in chaotic dynamics (here a dispersing billiard: round posts) a tiny perturbation grows exponentially, so the reversed path is never realised in practice. Return to the sorted state is allowed (Poincaré recurrence) but takes vastly longer than the age of the universe.",
+    "assumptions": [
+      "Particles bounce elastically off walls and five round posts and do not hit each other; the posts make the motion chaotic, as collisions between molecules do in a real gas.",
+      "The nudge shifts each particle by 1e-4 of a box about 1 m across, roughly a hair's width.",
+      "The return-time estimate counts one new arrangement a second for 2^200 arrangements."
+    ],
+    "prediction": "A box of gas released from one half fills the whole box and never spontaneously returns to the half; a film of it run backwards shows an event never observed.",
+    "falsifier": "Observing a large isolated system spontaneously return to a much more sorted state (for example a gas gathering back into one half) at rates far above the statistical estimate.",
+    "limitations": [
+      "A two-dimensional toy model with 200 non-interacting particles; real gases have about 10^22 molecules or more per litre and molecular collisions.",
+      "Why the early universe had low entropy is an open question."
+    ],
+    "misconceptions": [
+      "The laws of motion themselves do not forbid unmixing; it is overwhelmingly unlikely, not impossible.",
+      "Entropy is not simply messiness; it counts arrangements that look the same."
+    ],
+    "questions": [],
+    "sources": [
+      {
+        "title": "Arrow of time (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Arrow_of_time",
+        "supports": "Physical laws at the microscopic level are time-symmetric; the thermodynamic arrow of time follows the second law, with examples such as cream mixing into coffee or an egg breaking."
+      },
+      {
+        "title": "Second law of thermodynamics (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics",
+        "supports": "The entropy of an isolated system does not decrease; the statistical-mechanics explanation in terms of the number of microstates."
+      },
+      {
+        "title": "Entropy (statistical thermodynamics) (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Entropy_(statistical_thermodynamics)",
+        "supports": "Boltzmann's entropy counts the microstates consistent with a macrostate, S = k log W."
+      },
+      {
+        "title": "Loschmidt's paradox (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Loschmidt%27s_paradox",
+        "supports": "The reversibility objection: time-symmetric dynamics allow the reversed process, which looks like the film played backwards."
+      },
+      {
+        "title": "Dynamical billiards (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Dynamical_billiards",
+        "supports": "Billiards with convex (round) scatterers are dispersing and strongly chaotic (Sinai)."
+      },
+      {
+        "title": "Poincaré recurrence theorem (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Poincar%C3%A9_recurrence_theorem",
+        "supports": "Systems return arbitrarily close to their initial state, but for macroscopic systems the recurrence time is vastly longer than the age of the universe."
+      },
+      {
+        "title": "Past hypothesis (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Past_hypothesis",
+        "supports": "The universe started in a low-entropy state; the term was coined by David Albert; its origin is an open question."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "Why does time only run forward?",
+    "subtitle": "A film of two billiard balls colliding looks fine played backwards. A film of milk stirring into coffee doesn't. What's the difference?",
+    "why": "The laws behind every collision work the same backwards, yet eggs never unbreak and coffee never unmixes. The answer is counting.",
+    "opening": "Why does time only run forward?",
+    "takeaway": "Things mix because mixed arrangements vastly outnumber sorted ones. Time's direction runs from rare arrangements to common ones, starting from an ordered early universe.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "none",
+    "accent": "blue",
+    "kind": "arrow-of-time",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "theme": "mist",
+    "questions": [
+      {
+        "q": "So could the particles ever all go back by themselves?",
+        "a": "In principle, yes: nothing forbids it. But with 200 particles it would take far longer than the age of the universe, and a glass of water holds about ten trillion trillion molecules. In practice, it never happens."
+      },
+      {
+        "q": "What is entropy?",
+        "a": "A measure of how many ways the tiny parts of something can be arranged while it looks the same to us. Mixed, spread-out states have far more ways, so higher entropy. The second law of thermodynamics says that, left alone, entropy does not go down."
+      },
+      {
+        "q": "Doesn't life create order, against this rule?",
+        "a": "Living things build order in one place by making more disorder elsewhere: they take in food or sunlight and give off heat and waste. Counted together, the total still goes up."
+      },
+      {
+        "q": "Why was the early universe so ordered?",
+        "a": "Nobody knows yet. That the universe began in a very low-entropy state is called the past hypothesis, and explaining it is an open question in cosmology."
+      },
+      {
+        "q": "Why do the particles bounce off posts?",
+        "a": "The round posts make the paths chaotic: a tiny difference in where a particle hits a post grows bounce after bounce. In a real gas, the molecules hitting each other do the same job."
+      },
+      {
+        "q": "Do we remember the past and not the future for the same reason?",
+        "a": "Many physicists think so. A record, like a memory or a footprint, can only form as the world gets more mixed, so records point the same way as mixing: toward the past's lower-entropy state."
+      }
+    ],
+    "beats": [
+      {
+        "title": "Films that run backwards",
+        "body": "Film two billiard balls colliding, then run it backwards: nothing looks wrong. Film milk spreading through coffee; backwards, it crowds back to one side. We never see that, yet every tiny bounce inside works both ways."
+      },
+      {
+        "title": "Four particles",
+        "body": "Put four particles in a box, bouncing off its walls and posts. Watch the counter: every so often, all four are on the left at once. With only four, all of them on the left is nothing special."
+      },
+      {
+        "title": "Counting the ways",
+        "body": "A way is one list of which particle sits on which side. All four on the left is one way; two on each side can happen six ways. With 100 particles, half and half has a 30-digit number of ways."
+      },
+      {
+        "title": "Mixing by chance",
+        "body": "Start 200 particles in the left half and let them go. Every bounce shuffles them, and nearly every shuffle comes out mixed. All 200 back on the left would take far longer than the universe's age."
+      },
+      {
+        "title": "Running it backwards",
+        "body": "Reverse every particle's motion exactly, and they march back to the left. Shift each by a hair's width first, and the march back falls apart. Real things always get tiny bumps, so the perfect return never happens."
+      },
+      {
+        "title": "Time's direction",
+        "body": "Forward in time runs from few ways, like all on the left, to countless more. Milk spreads through coffee and eggs break for that same reason. It runs one way because the universe began in a very rare, ordered state."
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "Four particles: all on the left is 1 way out of 16, half and half is 6",
+      "pass": true
+    },
+    {
+      "name": "Twenty particles: 184,756 ways to be half and half",
+      "pass": true
+    },
+    {
+      "name": "A hundred particles: sorted is one way in a 31-digit number",
+      "pass": true
+    },
+    {
+      "name": "Two hundred particles: a 59-digit number of ways to be half and half",
+      "pass": true
+    },
+    {
+      "name": "Reversing every motion brings each particle back to where it started, to within a billionth",
+      "pass": true
+    },
+    {
+      "name": "Every bounce keeps each particle's speed",
+      "pass": true
+    },
+    {
+      "name": "A hair's-width nudge grows, bounce by bounce, into a different path",
+      "pass": true
+    },
+    {
+      "name": "Started in the left half, 200 particles spread out to roughly half and half",
+      "pass": true
+    },
+    {
+      "name": "Reversed after mixing but nudged a hair's width, 200 particles stay mixed (never more than 115 on the left)",
+      "pass": true
+    },
+    {
+      "name": "Waiting for all 200 to return, at one new arrangement a second, takes far longer than the universe's age",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.8 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 78)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 5)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5150 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, on the owner’s pick, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in two rounds (the first found that the run nudged by a hair’s width still drifted partly back, because particles that missed the posts were not chaotic, and that a chapter’s label and subtitle gave different numbers), and their copy edits were applied; the reviews below are the last of each kind."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Why does time only run forward?",
+        "subtitle": "A film of two billiard balls colliding looks fine played backwards. A film of milk stirring into coffee doesn't. What's the difference?",
+        "why": "The laws behind every collision work the same backwards, yet eggs never unbreak and coffee never unmixes. The answer is counting.",
+        "opening": "Why does time only run forward?",
+        "takeaway": "Things mix because mixed arrangements vastly outnumber sorted ones. Time's direction runs from rare arrangements to common ones, starting from an ordered early universe.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "arrow-of-time",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "So could the particles ever all go back by themselves?",
+            "a": "In principle, yes: nothing forbids it. But with 200 particles it would take far longer than the age of the universe, and a glass of water holds about ten trillion trillion molecules. In practice, it never happens."
+          },
+          {
+            "q": "What is entropy?",
+            "a": "A measure of how many ways the tiny parts of something can be arranged while it looks the same to us. Mixed, spread-out states have far more ways, so higher entropy. The second law of thermodynamics says that, left alone, entropy does not go down."
+          },
+          {
+            "q": "Doesn't life create order, against this rule?",
+            "a": "Living things build order in one place by making more disorder elsewhere: they take in food or sunlight and give off heat and waste. Counted together, the total still goes up."
+          },
+          {
+            "q": "Why was the early universe so ordered?",
+            "a": "Nobody knows yet. That the universe began in a very low-entropy state is called the past hypothesis, and explaining it is an open question in cosmology."
+          },
+          {
+            "q": "Why do the particles bounce off posts?",
+            "a": "The round posts make the paths chaotic: a tiny difference in where a particle hits a post grows bounce after bounce. In a real gas, the molecules hitting each other do the same job."
+          },
+          {
+            "q": "Do we remember the past and not the future for the same reason?",
+            "a": "Many physicists think so. A record, like a memory or a footprint, can only form as the world gets more mixed, so records point the same way as mixing: toward the past's lower-entropy state."
+          }
+        ],
+        "beats": [
+          {
+            "title": "Films that run backwards",
+            "body": "Film two billiard balls colliding, then run it backwards: nothing looks wrong. Film milk spreading through coffee; backwards, it crowds back to one side. We never see that, yet every tiny bounce inside works both ways."
+          },
+          {
+            "title": "Four particles",
+            "body": "Put four particles in a box, bouncing off its walls and posts. Watch the counter: every so often, all four are on the left at once. With only four, all of them on the left is nothing special."
+          },
+          {
+            "title": "Counting the ways",
+            "body": "A way is one list of which particle sits on which side. All four on the left is one way; two on each side can happen six ways. With 100 particles, half and half has a 30-digit number of ways."
+          },
+          {
+            "title": "Mixing by chance",
+            "body": "Start 200 particles in the left half and let them go. Every bounce shuffles them, and nearly every shuffle comes out mixed. All 200 back on the left would take far longer than the universe's age."
+          },
+          {
+            "title": "Running it backwards",
+            "body": "Reverse every particle's motion exactly, and they march back to the left. Shift each by a hair's width first, and the march back falls apart. Real things always get tiny bumps, so the perfect return never happens."
+          },
+          {
+            "title": "Time's direction",
+            "body": "Forward in time runs from few ways, like all on the left, to countless more. Milk spreads through coffee and eggs break for that same reason. It runs one way because the universe began in a very rare, ordered state."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Four particles: all on the left is 1 way out of 16, half and half is 6",
+          "pass": true
+        },
+        {
+          "name": "Twenty particles: 184,756 ways to be half and half",
+          "pass": true
+        },
+        {
+          "name": "A hundred particles: sorted is one way in a 31-digit number",
+          "pass": true
+        },
+        {
+          "name": "Two hundred particles: a 59-digit number of ways to be half and half",
+          "pass": true
+        },
+        {
+          "name": "Reversing every motion brings each particle back to where it started, to within a billionth",
+          "pass": true
+        },
+        {
+          "name": "Every bounce keeps each particle's speed",
+          "pass": true
+        },
+        {
+          "name": "A hair's-width nudge grows, bounce by bounce, into a different path",
+          "pass": true
+        },
+        {
+          "name": "Started in the left half, 200 particles spread out to roughly half and half",
+          "pass": true
+        },
+        {
+          "name": "Reversed after mixing but nudged a hair's width, 200 particles stay mixed (never more than 115 on the left)",
+          "pass": true
+        },
+        {
+          "name": "Waiting for all 200 to return, at one new arrangement a second, takes far longer than the universe's age",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 78)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 5)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5150 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Round 2: the round-1 blocker is fixed. With eleven round posts and faster particles, the reversed run nudged by a hair's width stays between 86 and 112 on the left while the exact reversal returns to 200, and a new check holds it to that. The counting is right (C(4,2) = 6, a 30-digit number of half-and-half ways for 100 and a 59-digit number for 200), the return time is far longer than the universe's age, and the rounding-error note in the disclosure is accurate (about thirtyfold a second). The Q&A, the past hypothesis and the disclosure are correct.",
+        "changes": [
+          "Say billiard balls colliding in the page subtitle and the description (applied).",
+          "Reword 'computed exactly' next to the rounding-error note (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8.5,
+        "summary": "Round 2: both blockers are fixed. Chapter 5 shows the faded exact reversal climbing to 200 under the nudged run staying near half, so the point reads at a glance, and chapter 3's label agrees with its subtitle. The flat ball box, 'backwards: never seen', the haloed four particles with a chance all-left moment, the 'half' line and the orange start dot on the closing graph all work, on phone too.",
+        "changes": [
+          "Stronger faded curve in chapter 5 and the 'all left' label above its bar on phones (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8.5,
+        "summary": "Round 2: a beginner can follow every step: why the reversed milk looks wrong, what a way is, why mixing happens on its own (every bounce shuffles them), why the exact return never happens (real things get tiny bumps) and what sets time's direction. Its last wording edits for chapters 2 and 6 were applied.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 9,
+        "summary": "Without the narration, the viewer read every chapter as intended: two balls that look normal either way against a spreading crowd that only gathers when played backwards, four particles sometimes all on one side, 1-4-6-4-1 ways growing into a tall narrow peak, 200 particles mixing and staying mixed, the exact reversal regathering them while the nudged one stays mixed, and the number of ways climbing from one along time's direction. Its note to name the brown box as milk in coffee was applied.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261125T192306-arrow-of-time/revision-1-0.png",
+        "published/20261125T192306-arrow-of-time/revision-1-1.png",
+        "published/20261125T192306-arrow-of-time/revision-1-2.png",
+        "published/20261125T192306-arrow-of-time/revision-1-3.png",
+        "published/20261125T192306-arrow-of-time/revision-1-4.png",
+        "published/20261125T192306-arrow-of-time/revision-1-5.png",
+        "published/20261125T192306-arrow-of-time/revision-1-6.png",
+        "published/20261125T192306-arrow-of-time/revision-1-7.png",
+        "published/20261125T192306-arrow-of-time/revision-1-8.png",
+        "published/20261125T192306-arrow-of-time/revision-1-9.png",
+        "published/20261125T192306-arrow-of-time/revision-1-10.png",
+        "published/20261125T192306-arrow-of-time/revision-1-11.png"
+      ]
+    }
+  ]
+}
