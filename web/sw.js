@@ -69,6 +69,8 @@ self.addEventListener('fetch',event=>{
  const request=event.request,url=new URL(request.url);
  if(request.method!=='GET'||url.origin!==self.location.origin||!url.href.startsWith(INDEX))return;
  if(url.pathname.endsWith('/sw.js'))return;
+ // The page's own check for a newer version goes straight to the network, and is never stored.
+ if(url.searchParams.has('fresh'))return;
  if(request.mode==='navigate')event.respondWith(networkFirst(event,INDEX));
  else if(url.searchParams.has('v'))event.respondWith(versioned(event));
  else if(/\.(json|webmanifest)$/.test(url.pathname))event.respondWith(networkFirst(event,request.url));

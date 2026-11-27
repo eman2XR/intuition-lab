@@ -690,6 +690,21 @@ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.sta
 // Only the deployed site installs the service worker: a local preview still loads ?v=dev scripts, which it would keep serving after edits.
 const deployed=!document.querySelector('script[src*="?v=dev"]');
 const worker='serviceWorker' in navigator&&isSecureContext&&deployed?navigator.serviceWorker.register('sw.js').catch(()=>null):Promise.resolve(null);
+// A Home Screen app is not reloaded when it comes back to the front: iOS resumes the page as it was, possibly days
+// old. So whenever the page comes back after a while (or every half hour while open), it asks the server which
+// version is live and reloads into it, unless a guide is playing or a conversation or settings sheet is open.
+const liveVersion=()=>(document.querySelector('script[src*="app.js?v="]')?.getAttribute('src')||'').split('?v=')[1]||'';
+let hiddenAt=0, checking=false;
+async function checkForUpdate(){
+ if(!deployed||checking||document.hidden)return;checking=true;
+ try{const html=await (await fetch(location.pathname+'?fresh='+Date.now(),{cache:'no-store'})).text(), v=(html.match(/app\.js\?v=([^"&]+)/)||[])[1];
+  const busy=document.querySelector('.voice-sheet')||window.CouncilScene?.getState?.()?.mode==='playing';
+  if(v&&v!==liveVersion()&&!busy)location.reload();}catch{}
+ checking=false;
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hiddenAt=Date.now();else if(Date.now()-hiddenAt>60000)checkForUpdate();});
+addEventListener('pageshow',e=>{if(e.persisted)checkForUpdate();});
+setInterval(checkForUpdate,30*60*1000);
 const keyBytes=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(s.length/4)*4,'=')),c=>c.charCodeAt(0));
 function notifyPanel(message,subscription,github){
  put('notify-msg',message);
