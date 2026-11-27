@@ -478,6 +478,11 @@ body[data-draft=yes] .behind{display:none}
 .voice-actions{justify-content:space-between}
 .voice-mute[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .voice-keys{display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:600}
+.settings-sheet{max-height:min(86vh,760px)}
+.settings-body{overflow-y:auto;display:flex;flex-direction:column;gap:18px;padding-bottom:4px}
+.settings-body .voice-keys>span,.settings-body label{display:flex;flex-direction:column;gap:4px}
+.settings-row{display:flex;gap:8px;flex-wrap:wrap}
+.settings-done{min-height:36px;padding:0 14px;cursor:pointer}
 .voice-keys label{display:flex;flex-direction:column;gap:4px}
 .voice-keys input{min-height:44px;font:inherit;font-size:16px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
 .voice-keys small{font-weight:400;color:var(--faint)}

@@ -164,7 +164,7 @@ function askKey(sheet,note,done){
   <label>GitHub token, optional<input name="h" type="password" autocomplete="off"><small>With a token that can create issues in ${REPO}, conversations are sent for you. Without one, you send each with a tap on GitHub.</small></label>
   <button type="submit" class="pill send">Save and test</button>`;
  sheet.querySelector('.voice-log').after(form);
- note('Both stay on this device only. Restrict the key to this site’s address in the Google Cloud console.');
+ note('Both stay on this device only. Restrict the key to this site’s address in the Google Cloud console. You can change them later in Settings, at the foot of the page.');
  form.addEventListener('submit',async e=>{e.preventDefault();const g=form.g.value.trim(), h=form.h.value.trim();
   try{const model=await findModel(g);put(KEYS.gemini,g);put(KEYS.model,model);if(h)put(KEYS.github,h);done();}catch(err){note(esc(err.message));}});
 }
@@ -215,5 +215,53 @@ async function connect(key,instruction,on){
 }
 
 readSetupLink();
-window.CouncilTalk={open,setContext(fn){contextFn=fn;},flush,waiting,issueLink,hasKey:()=>!!get(KEYS.gemini)};
+
+// Settings: the keys and tokens this device keeps, the voice model, sound, waiting conversations, and a setup link
+// that carries the keys to another device. Everything here stays in this browser's storage.
+async function testGithub(token){
+ let res;try{res=await fetch(`https://api.github.com/repos/${REPO}`,{headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json'}});}catch{throw new Error('GitHub could not be reached.');}
+ if(res.status===401)throw new Error('GitHub did not accept that token.');
+ if(!res.ok)throw new Error(`That token cannot see ${REPO}.`);
+}
+function openSettings(){
+ document.querySelector('.settings-sheet')?.remove();
+ const sheet=document.createElement('div');sheet.className='voice-sheet settings-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-label','Settings');
+ const tail=v=>v?`Saved, ending ${esc(v.slice(-4))}`:'Not set';
+ const render=()=>{
+  const g=get(KEYS.gemini), h=get(KEYS.github), m=get(KEYS.model), w=waiting().length, sound=(()=>{try{return localStorage.getItem('council-sound')!=='off';}catch{return true;}})();
+  sheet.innerHTML=`<div class="voice-head"><div><p class="voice-title">Settings</p><p class="voice-about">Saved in this browser only. Each phone, browser and Home Screen app keeps its own.</p></div><button type="button" class="pill voice-close settings-done">Done</button></div>
+  <div class="settings-body">
+   <form class="voice-keys" data-k="gemini" autocomplete="off"><label>Gemini API key <small>${tail(g)}</small><input name="v" type="password" autocomplete="off" placeholder="${g?'Paste a new key to replace it':'Paste your key'}"></label>
+    <div class="settings-row"><button type="submit" class="pill send">Save and test</button>${g?'<button type="button" class="pill" data-clear="gemini">Remove</button>':''}</div></form>
+   <form class="voice-keys" data-k="github" autocomplete="off"><label>GitHub token <small>${tail(h)}. With a token that can create issues in ${REPO}, End sends each conversation for you.</small><input name="v" type="password" autocomplete="off" placeholder="${h?'Paste a new token to replace it':'Paste a token'}"></label>
+    <div class="settings-row"><button type="submit" class="pill send">Save and test</button>${h?'<button type="button" class="pill" data-clear="github">Remove</button>':''}</div></form>
+   <div class="voice-keys"><span>Voice model <small>${m?esc(m):'chosen when you next talk'}</small></span>${g?'<div class="settings-row"><button type="button" class="pill" data-act="model">Find the newest again</button></div>':''}</div>
+   <div class="voice-keys"><span>Sound in guides <small>${sound?'on':'off'}</small></span><div class="settings-row"><button type="button" class="pill" data-act="sound">${sound?'Turn off':'Turn on'}</button></div></div>
+   <div class="voice-keys"><span>Waiting conversations <small>${w?`${w} not sent yet`:'none'}</small></span>${w?`<div class="settings-row">${h?'<button type="button" class="pill" data-act="send">Send now</button>':''}<button type="button" class="pill" data-act="drop">Discard</button></div>`:''}</div>
+   ${g||h?`<div class="voice-keys"><span>Set up another device <small>Copies a link that saves these keys when opened once. It contains the keys, so send it only to yourself.</small></span><div class="settings-row"><button type="button" class="pill" data-act="link">Copy setup link</button></div></div>`:''}
+   <div class="voice-keys"><span>Watched marks <small>The ticks on guides you have finished.</small></span><div class="settings-row"><button type="button" class="pill" data-act="watched">Clear</button></div></div>
+  </div><p class="voice-note" aria-live="polite"></p>`;
+  const note=t=>{sheet.querySelector('.voice-note').textContent=t;};
+  sheet.querySelector('.settings-done').onclick=()=>sheet.remove();
+  sheet.querySelectorAll('form[data-k]').forEach(f=>f.addEventListener('submit',async e=>{e.preventDefault();const v=f.v.value.trim();if(!v)return;note('Testing…');
+   try{if(f.dataset.k==='gemini'){const model=await findModel(v);put(KEYS.gemini,v);put(KEYS.model,model);render();note(`Saved. Voice model: ${model}.`);}
+    else{await testGithub(v);put(KEYS.github,v);await flush();render();note('Saved. Conversations will be sent for you.');}}catch(err){note(err.message);}}));
+  sheet.querySelectorAll('[data-clear]').forEach(b=>b.onclick=()=>{put(KEYS[b.dataset.clear],'');if(b.dataset.clear==='gemini')put(KEYS.model,'');render();note('Removed.');});
+  sheet.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{const a=b.dataset.act;
+   if(a==='model'){note('Looking…');try{const model=await findModel(get(KEYS.gemini));put(KEYS.model,model);render();note(`Voice model: ${model}.`);}catch(err){note(err.message);}}
+   if(a==='sound'){try{localStorage.setItem('council-sound',localStorage.getItem('council-sound')==='off'?'on':'off');}catch{}render();note('Applies from the next guide you open.');}
+   if(a==='send'){note('Sending…');await flush();render();note(waiting().length?'Some could not be sent; check the token.':'Sent.');}
+   if(a==='drop'){saveOutbox([]);render();note('Discarded.');}
+   if(a==='watched'){try{localStorage.removeItem('council-watched');}catch{}render();note('Cleared. Reload to see it on the cards.');}
+   if(a==='link'){const p=new URLSearchParams();if(get(KEYS.gemini))p.set('gemini',get(KEYS.gemini));if(get(KEYS.github))p.set('github',get(KEYS.github));
+    const url=`${location.origin}${location.pathname}#${p.toString()}`;try{await navigator.clipboard.writeText(url);note('Copied. Open it once in the other browser, then delete it from wherever you pasted it.');}catch{note(url);}}
+  });
+ };
+ render();document.body.append(sheet);
+ sheet.addEventListener('keydown',e=>{if(e.key==='Escape')sheet.remove();});
+}
+// A link to #settings opens it, on load or later.
+const settingsHash=()=>{if(location.hash==='#settings'){history.replaceState(null,'',location.pathname+location.search);setTimeout(openSettings,0);}};
+settingsHash();addEventListener('hashchange',settingsHash);
+window.CouncilTalk={open,setContext(fn){contextFn=fn;},flush,waiting,issueLink,hasKey:()=>!!get(KEYS.gemini),settings:openSettings};
 })();

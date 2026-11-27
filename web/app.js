@@ -549,6 +549,7 @@ function talkContext(){
 }
 function openTalk(pinned){if(!window.CouncilTalk)return;CouncilScene.pause?.();CouncilTalk.open({pinned});}
 if(window.CouncilTalk){CouncilTalk.setContext(talkContext);// Ask a question opens the live voice conversation (on a device without a Gemini key, it asks for one first).
+ {const so=$('settings-open');if(so)so.onclick=()=>window.CouncilTalk?.settings();}
  $('ask').addEventListener('click',e=>{e.preventDefault();openTalk(false);});$('talk-chapter').onclick=e=>openTalk(e.currentTarget.dataset.pinned==='1');CouncilTalk.flush();}
 // Under the captions: 'Ask about chapter N' while the guide plays (on a device with a Gemini key), and a prominent
 // 'Ask a question' on the end card when the investigation is over.

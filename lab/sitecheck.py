@@ -107,6 +107,12 @@ def talk_check(browser, url, guide):
     assert posted and posted[0]['labels'] == ['council:talk'] and '<!-- council-talk -->' in posted[0]['body'], 'Token did not send the conversation'
     assert page.evaluate('()=>JSON.parse(localStorage.getItem("council-talks")||"[]").length') == 0, 'Sent conversation left in the outbox'
     page.evaluate('()=>localStorage.removeItem("council-github-token")')
+    # Settings, from the foot of the page: shows the saved key, copies a setup link, and closes.
+    page.click('#settings-open')
+    page.wait_for_selector('.settings-sheet')
+    assert 'Saved, ending' in page.inner_text('.settings-sheet'), 'Settings did not show the saved key'
+    page.click('.settings-done')
+    page.wait_for_selector('.settings-sheet', state='detached')
     # Ask a question opens the same conversation on this device, which has a key.
     page.wait_for_timeout(100)
     page.click('#ask')
