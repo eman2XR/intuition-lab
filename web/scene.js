@@ -3632,6 +3632,177 @@ function drawExpansion(ctx,w,h,spec,st){
  for(const [s,x,y] of words)if(s)tag(s,x,y);
 }
 
+// Why a flame points up. A candle on a dark stage; its flame is a glowing field computed cell by cell (like a shader)
+// into a small buffer and drawn smoothly scaled, added onto the dark with 'lighter'. Hot gas is lighter than room air
+// (Physics.flameDensity), the cool air pushes it up, and the rising stream pulls the flame into a point; without
+// gravity (Physics.flameAspect(0)) the flame is a round, dim, blue ball.
+let flameBuffer=null;
+const FLAME_DARK=['#0d0f15','#17120f'];
+function flameStage(ctx,w,h){const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,FLAME_DARK[0]);g.addColorStop(1,FLAME_DARK[1]);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}
+// The flame's glow at (u, v), in units of its width, v up from the wick; gravity share g sets its shape, t its flicker.
+// Returns [r, g, b] light to add, 0..255. On Earth a teardrop: a blue cup at the base, a darker zone around the wick,
+// a white-yellow body and an orange edge. In free fall a dim, pale blue shell around the wick, brightest at its rim.
+function flameLight(u,v,g,t,bright){
+ const s=clamp(g), H=Physics.flameAspect(1), flick=1+.035*Math.sin(t*7.3)+.02*Math.sin(t*13.1+1.3), q=v/(H*flick);
+ const uu=u-.07*Math.sin(q*3.2-t*4.1)*q*q-.02*Math.sin(t*9.7)*q;
+ let er=0,eg=0,eb=0;
+ if(s>0){
+  const prof=q<.28?Math.sqrt(Math.max(0,1-Math.pow((.28-q)/.4,2))):Math.pow(Math.max(0,(1-q)/.72),.7);
+  const d=q<-.14||q>1?2:Math.abs(uu)/(.5*Math.max(.02,prof)), inside=clamp(1-d), glow=Math.exp(-Math.max(0,d-1)*3.2)*.2;
+  const core=clamp(1-Math.hypot(uu*2.6,(q-.16)*4.2))*.75, rim=clamp(1-Math.abs(d-.9)*5), base=rim*clamp(1-Math.abs(q-.05)/.13);
+  er=255*Math.pow(inside,.35)*(1-core*.75)+255*glow+25*base;
+  eg=(235*Math.pow(inside,.9)+15)*(1-core*.7)*(inside>0?1:0)+120*glow+90*base;
+  eb=230*Math.pow(inside,2.2)*(1-core*.8)+30*glow+230*base+40*core*inside;
+ }
+ let br=0,bg=0,bb=0;
+ if(s<1){
+  // Seen from outside, a thin glowing shell is brightest at its rim and about half as bright across its middle.
+  const below=clamp(1+v*1.6), d=Math.hypot(u,v-.3)/1.35, limb=d<1?.6+.4*Math.pow(d,4):0, edge=d<1?clamp((1-d)/.12):0, halo=Math.exp(-Math.max(0,d-1)*5)*.25;
+  const I=(limb*(.35+.65*edge)+halo*(d<1?0:1))*below;br=60*I;bg=105*I;bb=210*I;}
+ return [(er*s+br*(1-s))*bright,(eg*s+bg*(1-s))*bright,(eb*s+bb*(1-s))*bright];
+}
+// The flame drawn around its base (x, y) with width W: computed into a buffer, scaled smoothly and added on.
+function drawFlame(ctx,x,y,W,g,t,bright=1){
+ const asp=Math.max(1.6,Physics.flameAspect(g)), left=x-W*2.2, top=y-W*(asp+1.1), right=x+W*2.2, bottom=y+W*1.2, cell=Math.max(2,W/22);
+ const cols=Math.ceil((right-left)/cell), rows=Math.ceil((bottom-top)/cell);
+ flameBuffer=flameBuffer||document.createElement('canvas');
+ if(flameBuffer.width!==cols||flameBuffer.height!==rows){flameBuffer.width=cols;flameBuffer.height=rows;}
+ const fctx=flameBuffer.getContext('2d'), image=fctx.createImageData(cols,rows), data=image.data;
+ for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+  const px=left+(i+.5)*cell, py=top+(j+.5)*cell, [r,gg,b]=flameLight((px-x)/W,(y-py)/W,g,t,bright), o=4*(j*cols+i);
+  data[o]=Math.min(255,r);data[o+1]=Math.min(255,gg);data[o+2]=Math.min(255,b);data[o+3]=255;
+ }
+ fctx.putImageData(image,0,0);
+ ctx.save();ctx.globalCompositeOperation='lighter';ctx.imageSmoothingEnabled=true;ctx.drawImage(flameBuffer,left,top,cols*cell,rows*cell);
+ // A wide, faint halo of warm light around it.
+ const hr=W*(3+asp), halo=ctx.createRadialGradient(x,y-W*asp*.45,0,x,y-W*asp*.45,hr), warm=g>.5?'255,150,60':'90,120,255';
+ halo.addColorStop(0,`rgba(${warm},${.16*bright})`);halo.addColorStop(1,`rgba(${warm},0)`);ctx.fillStyle=halo;ctx.beginPath();ctx.arc(x,y-W*asp*.45,hr,0,TAU);ctx.fill();
+ ctx.restore();
+}
+// A candle standing at (x, y) (its base), tilted by angle a, its wax width cw and height ch, lit by a flame above.
+// Returns the wick's tip, where the flame sits.
+function drawCandle(ctx,x,y,cw,ch,a,lit=1){
+ ctx.save();ctx.translate(x,y);ctx.scale(1,.22);const fg=ctx.createRadialGradient(0,0,0,0,0,cw*2.6);fg.addColorStop(0,`rgba(255,170,90,${.18*lit})`);fg.addColorStop(1,'rgba(255,170,90,0)');ctx.fillStyle=fg;ctx.beginPath();ctx.arc(0,0,cw*2.6,0,TAU);ctx.fill();ctx.restore();
+ ctx.save();ctx.translate(x,y);ctx.rotate(a);
+ const g=ctx.createLinearGradient(-cw/2,0,cw/2,0);g.addColorStop(0,'#8a7a64');g.addColorStop(.35,'#efe3cc');g.addColorStop(.6,'#f6ecd8');g.addColorStop(1,'#9c8a70');
+ ctx.beginPath();ctx.moveTo(-cw/2,0);ctx.lineTo(-cw/2,-ch);ctx.ellipse(0,-ch,cw/2,cw*.13,0,Math.PI,0,false);ctx.lineTo(cw/2,0);ctx.ellipse(0,0,cw/2,cw*.13,0,0,Math.PI,false);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+ // The top, warm where the flame lights it, with a small pool of melted wax.
+ const tg=ctx.createRadialGradient(0,-ch,0,0,-ch,cw*.55);tg.addColorStop(0,`rgba(255,214,150,${.95*lit+.2})`);tg.addColorStop(1,'rgba(214,196,168,1)');
+ ctx.beginPath();ctx.ellipse(0,-ch,cw/2,cw*.13,0,0,TAU);ctx.fillStyle=tg;ctx.fill();
+ ctx.beginPath();ctx.ellipse(0,-ch,cw*.3,cw*.07,0,0,TAU);ctx.fillStyle=`rgba(255,226,170,${.6*lit})`;ctx.fill();
+ // A soft warm light down the front.
+ const fl=ctx.createLinearGradient(0,-ch,0,0);fl.addColorStop(0,`rgba(255,170,80,${.3*lit})`);fl.addColorStop(1,'rgba(255,170,80,0)');ctx.fillStyle=fl;ctx.fillRect(-cw/2,-ch,cw,ch);
+ // The wick, black and curled, its tip glowing.
+ const wl=cw*.32;ctx.beginPath();ctx.moveTo(0,-ch);ctx.quadraticCurveTo(cw*.02,-ch-wl*.6,cw*.05,-ch-wl);ctx.strokeStyle='#1d1612';ctx.lineWidth=Math.max(1.5,cw*.045);ctx.lineCap='round';ctx.stroke();
+ ctx.beginPath();ctx.arc(cw*.05,-ch-wl,Math.max(1.2,cw*.03),0,TAU);ctx.fillStyle=`rgba(200,70,30,${.9*clamp(lit*2-1)})`;ctx.fill();
+ ctx.restore();
+ const tx=cw*.05, ty=-ch-wl*.85;return [x+tx*Math.cos(a)-ty*Math.sin(a),y+tx*Math.sin(a)+ty*Math.cos(a)];
+}
+// Dots bouncing in a box (x, y, w, h) at time t: n dots of radius r at speed sp (box widths a second), seeded.
+function flameDots(ctx,x,y,bw,bh,n,sp,t,r,colour,seed,trail=false){
+ const tri=u=>{const m=((u%2)+2)%2;return m<1?m:2-m;};
+ ctx.fillStyle=colour;
+ for(let k=0;k<n;k++){const th=hash(seed+k*3.1)*TAU, s=sp*(.7+.6*hash(seed+k*5.7));
+  const px=tri(hash(seed+k*1.7)*2+Math.cos(th)*s*t), py=tri(hash(seed+k*2.3)*2+Math.sin(th)*s*t*bw/bh);
+  const X=x+2*r+(bw-4*r)*px, Y=y+2*r+(bh-4*r)*py;ctx.beginPath();ctx.arc(X,Y,r,0,TAU);ctx.fill();
+  if(trail){const qx=tri(hash(seed+k*1.7)*2+Math.cos(th)*s*(t-.3)), qy=tri(hash(seed+k*2.3)*2+Math.sin(th)*s*(t-.3)*bw/bh);ctx.save();ctx.strokeStyle=colour;ctx.globalAlpha=.3;ctx.lineWidth=r*.7;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(x+2*r+(bw-4*r)*qx,y+2*r+(bh-4*r)*qy);ctx.stroke();ctx.restore();}}
+}
+function drawFlameGuide(ctx,w,h,spec,st){
+ const still=!!st.live&&!st.touched&&st.since!==undefined;
+ if(still||st.live){const c=st.chapters?.at(-1);st={...st,live:false,stage:(st.chapters?.length||6)-1,since:c?c.end-c.start:16};}
+ const small=w<520, labels=st.labels, size=small?11:13, ink='rgba(20,23,28,.85)';
+ const preview=st.since===undefined, last=(st.chapters?.length||6)-1, stage=preview?0:Math.min(st.stage,last), since=preview?3:Math.max(0,st.since);
+ const ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+5*i, dur=ch?ch.end-ch.start:16, t=st.t||since;
+ const words=[], tag=(s,x,y)=>{if(!labels||!s)return;ctx.font=`700 ${size}px ${FONT}`;const half=ctx.measureText(s).width/2+8;pill(ctx,s,clamp(x,half,w-half),clamp(y,size,h-size),{align:'center',size,weight:700,color:ink});};
+ flameStage(ctx,w,h);
+ // A candle centred low on the stage, sized to the stage.
+ const candle=(cx,a,g,bright=1,scale=1)=>{const cw=Math.min(w*.1,h*.11)*scale, chh=Math.min(h*.34,cw*2.6), base=h*.94, tip=drawCandle(ctx,cx,base,cw,chh,a,bright*(.4+.6*g)), W=cw*.72;drawFlame(ctx,tip[0],tip[1],W,g,t,bright);return {tip,W,cw,chh,base};};
+ // The poster: a candle flame on Earth beside the round blue flame of a candle in space.
+ if(preview){
+  for(let k=0;k<70;k++){ctx.fillStyle=`rgba(255,255,255,${.15+.35*hash(k*4.1)})`;ctx.beginPath();ctx.arc(w*(.55+.45*hash(k*1.3)),h*hash(k*2.9)*.8,.5+hash(k*3.3),0,TAU);ctx.fill();}
+  candle(w*.32,0,1,1,1.1);candle(w*.7,0,0,.9,1.1);return;
+ }
+ if(stage===0){
+  // Upright, then tilted back and forth: the flame keeps pointing up.
+  const tilt=smooth((since-at(1)+.3)/1.2)*.42*Math.sin((since-at(1))*1.1);candle(w/2,tilt,1);
+ }
+ else if(stage===1){
+  // The same space holds about a sixth as much flame gas as room air, and its molecules move about 2.4 times faster.
+  const bw=Math.min(w*(small?.4:.3),h*.5), bh=bw*1.1, gap=w*(small?.06:.08), y0=(h-bh)/2+h*.04, xl=w/2-gap/2-bw, xr=w/2+gap/2;
+  const r=Math.max(2.5,bw*.022), ratio=Physics.flameDensity(Physics.flameAir.Ta)/Physics.flameDensity(Physics.flameAir.Th), n=34, sp=.12;
+  ctx.fillStyle='rgba(120,150,190,.12)';ctx.strokeStyle='rgba(160,185,215,.6)';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(xl,y0,bw,bh,10);ctx.fill();ctx.stroke();
+  const hot=ctx.createRadialGradient(xr+bw/2,y0+bh/2,0,xr+bw/2,y0+bh/2,bw*.75);hot.addColorStop(0,'rgba(255,140,50,.32)');hot.addColorStop(1,'rgba(255,90,30,.1)');
+  ctx.fillStyle=hot;ctx.strokeStyle='rgba(255,170,90,.75)';ctx.beginPath();ctx.roundRect(xr,y0,bw,bh,10);ctx.fill();ctx.stroke();
+  flameDots(ctx,xl,y0,bw,bh,n,sp,since,r,'rgba(190,210,235,.9)',11,true);
+  flameDots(ctx,xr,y0,bw,bh,Math.round(n/ratio),sp*Physics.flameSpeedRatio(Physics.flameAir.Ta,Physics.flameAir.Th),since,r,'rgba(255,200,120,.95)',29,true);
+  words.push(['room air, 20 °C',xl+bw/2,y0-16],['flame gas, 1400 °C',xr+bw/2,y0-16]);
+ }
+ else if(stage===2){
+  // A pocket of hot gas among cool air: the cool air, pulled down harder, flows around it and in underneath, pushing it
+  // up. Each cool-air dot follows the flow of a fluid around a moving ball (ideal flow past a circle), stepped from the
+  // chapter's start, so the dots part above the pocket and close in below it.
+  const top=h*.3, bot=h*.86, R=Math.min(w,h)*.13, bx=w/2, T=Math.max(2,dur-1.4), yAt=tt=>bot-(bot-top)*smooth((tt-.6)/T);
+  const n=small?80:130, dt=1/30, steps=Math.round(since/dt);
+  for(let k=0;k<n;k++){
+   let x=w*(.06+.88*hash(k*1.9)), y=h*(.04+.92*hash(k*2.7));
+   if(Math.hypot(x-bx,y-yAt(0))<R*1.25)continue;
+   if(labels&&Math.abs(x-w*(small?.2:.22))<(small?44:50)&&Math.abs(y-h*.5)<20)continue;
+   for(let m=0;m<steps;m++){const tt=m*dt, U=(yAt(tt)-yAt(tt+dt))/dt, cy=yAt(tt), dx=x-bx, dy=y-cy, r2=dx*dx+dy*dy, RR=R*R;
+    if(U<=0||r2<RR)continue;
+    // Free stream down (+y) at speed U past the pocket; the dot's own motion adds the pocket's upward speed back.
+    const r=Math.sqrt(r2), cs=dy/r, sn=dx/r, vr=U*(1-RR/r2)*cs, vt=-U*(1+RR/r2)*sn;
+    x+=(vr*sn+vt*cs)*dt;y+=(vr*cs-vt*sn-U)*dt;}
+   // A short streak behind each moving dot shows the flow; dots closing in below the pocket are brighter.
+   {const tt=since, U=(yAt(tt)-yAt(tt+dt))/dt, cy=yAt(tt), dx=x-bx, dy=y-cy, r2=dx*dx+dy*dy, RR=R*R;
+    if(U>0&&r2>RR){const r=Math.sqrt(r2), cs=dy/r, sn=dx/r, vr=U*(1-RR/r2)*cs, vt=-U*(1+RR/r2)*sn, vx=vr*sn+vt*cs, vy=vr*cs-vt*sn-U, sp=Math.hypot(vx,vy);
+     if(sp>U*.15){ctx.strokeStyle=`rgba(170,205,255,${Math.min(.8,sp/U*.6)})`;ctx.lineWidth=Math.max(1.5,R*.04);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-vx*.35,y-vy*.35);ctx.stroke();}}}
+   ctx.fillStyle='rgba(170,195,230,.8)';ctx.beginPath();ctx.arc(x,y,Math.max(2,R*.055),0,TAU);ctx.fill();
+  }
+  const by=yAt(since);
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  const blob=ctx.createRadialGradient(bx,by,0,bx,by,R);blob.addColorStop(0,'rgba(255,150,60,.6)');blob.addColorStop(.7,'rgba(255,110,40,.3)');blob.addColorStop(1,'rgba(255,90,30,0)');
+  ctx.fillStyle=blob;ctx.beginPath();ctx.arc(bx,by,R,0,TAU);ctx.fill();ctx.restore();
+  // Thin gas: a single fast molecule in the pocket, fewer per space than the cool air around it.
+  flameDots(ctx,bx-R*.6,by-R*.6,R*1.2,R*1.2,1,.35,since,Math.max(2,R*.055),'rgba(255,200,120,.95)',29,true);
+  words.push(['hot gas',bx,by-R-14],['cool air',w*(small?.2:.22),h*.5]);
+ }
+ else if(stage===3){
+  // The rising stream: fresh air drawn in at the base, rising through the flame, streaming up as hot gas.
+  const c=candle(w/2,0,1), [fx,fy]=c.tip, topY=c.base-c.chh, tipY=fy-c.W*Physics.flameAspect(1)*.92, plumeTop=h*.03;
+  // The hot gas: a narrow warm shimmer above the tip that widens as it rises and fades from pale amber to nothing.
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  const steps=48, half=k=>c.W*(.06+.8*k/steps), cxAt=k=>fx+c.W*.18*Math.sin(k*.35-since*2.2)*(k/steps), yAt=k=>tipY-(tipY-plumeTop)*k/steps;
+  const pg=ctx.createLinearGradient(0,tipY,0,plumeTop);pg.addColorStop(0,'rgba(255,200,110,0)');pg.addColorStop(.07,'rgba(255,190,100,.6)');pg.addColorStop(.25,'rgba(255,170,80,.42)');pg.addColorStop(.6,'rgba(255,150,70,.18)');pg.addColorStop(1,'rgba(255,150,70,0)');
+  ctx.beginPath();for(let k=0;k<=steps;k++){const y=yAt(k),x=cxAt(k)-half(k);k?ctx.lineTo(x,y):ctx.moveTo(x,y);}for(let k=steps;k>=0;k--)ctx.lineTo(cxAt(k)+half(k),yAt(k));ctx.closePath();
+  ctx.filter=`blur(${Math.max(2,c.W*.12)}px)`;ctx.fillStyle=pg;ctx.fill();ctx.filter='none';
+  // Moving ripples of brighter gas carried up the stream.
+  for(let m=0;m<7;m++){const s0=((since*.32+m/7)%1+1)%1, k=s0*steps, y=yAt(k), x=cxAt(k), rr=half(k)*.9, wisp=ctx.createRadialGradient(x,y,0,x,y,rr);
+   wisp.addColorStop(0,`rgba(255,200,120,${.45*(1-s0)})`);wisp.addColorStop(1,'rgba(255,140,60,0)');ctx.fillStyle=wisp;ctx.beginPath();ctx.arc(x,y,rr,0,TAU);ctx.fill();}
+  ctx.restore();
+  // Fresh air: two even lines of dots sliding in at the candle top's level, curving up into the flame's base, fading
+  // out before they reach the wax.
+  const span=Math.min(w*.4,c.cw*4.5), per=small?7:9;
+  for(const side of [-1,1])for(let k=0;k<per;k++){
+   const s0=((since*.22+k/per)%1+1)%1, u=smooth(s0), x=fx+side*(c.cw*.5+span*(1-u)), y=topY-c.W*.15-c.W*.5*Math.pow(u,3), fade=clamp(s0/.1)*clamp((1-s0)/.18);
+   ctx.fillStyle=`rgba(150,195,255,${.9*fade})`;ctx.beginPath();ctx.arc(x,y,Math.max(2,c.W*.075),0,TAU);ctx.fill();
+  }
+  words.push(['fresh air in',fx-c.cw*.5-span*.55,topY+c.W*.9],['hot gas rises',fx+half(steps*.5)+Math.max(70,c.W*2),yAt(steps*.5)]);
+ }
+ else if(stage===4){
+  // In orbit: nothing is heavier or lighter, so the flame turns round, dim and blue.
+  const g=1-smooth((since-at(0)-.4)/Math.max(1.5,at(1)-at(0))), c5=candle(w/2,0,g,.75+.25*g);
+  if(g<.85)words.push(['in free fall',w/2,c5.tip[1]-c5.W*Math.max(1.9,Physics.flameAspect(g))-60]);
+ }
+ else{
+  // Up is away from gravity: tilted any way, the flame points up, away from the pull.
+  const tilt=(small?.7:1)*Math.sin(since*.7);const cx6=w*(small?.56:.54), c=candle(cx6,tilt,1);
+  const ax=Math.max(w*.1,cx6-Math.min(w*.3,c.cw*4.2)), ay0=h*.32, ay1=h*.62;ctx.strokeStyle='rgba(200,215,235,.9)';ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(ax,ay0);ctx.lineTo(ax,ay1);ctx.moveTo(ax-9,ay1-11);ctx.lineTo(ax,ay1);ctx.lineTo(ax+9,ay1-11);ctx.stroke();
+  words.push(['gravity',ax,ay1+20]);
+ }
+ for(const [s,x,y] of words)tag(s,x,y);
+}
+
 // Why time only runs forward. Particles fly in a box, bouncing off its walls and five round posts (Physics.arrowMove);
 // every bounce works the same backwards, yet a box started sorted mixes, because mixed arrangements vastly outnumber
 // sorted ones (Physics.arrowWays). Reversing every motion exactly sends them back; a hair's-width nudge does not.
@@ -4788,6 +4959,13 @@ const ENGINES={
   measure:null,scale:'',
   disclosure:'The gaps are hydrogen’s, at 410, 434, 486 and 656 nanometres; chapter 1 slides them by 8%. Hubble’s plot uses a growth rate of 70 km a second for each megaparsec (3.26 million light years), with made-up scatter. The row shows galaxies far apart; nearby galaxies, and anything held together by gravity or other forces, do not spread apart. The glow we receive set off about 380,000 years after the start, when space first turned clear, at about 3,000 kelvin; stretched about 1,100 times since, it arrives at 2.7 kelvin, brightest at about 1 mm.',
   try:'',aria:'A star’s light passes through a prism and fans into a rainbow with four dark gaps where hydrogen soaked up its colours; a distant galaxy’s rainbow shows the same four gaps slid toward red. Light from a galaxy moving away arrives with longer, redder waves. Hubble’s plot shows galaxies twice as far moving away twice as fast. In a row of galaxies whose gaps all grow alike, arrows show the others moving away from one galaxy, twice as fast at twice the distance, and the same pattern around another galaxy, so none is the centre; light crossing the row is stretched as the gaps grow. Run backwards, the galaxies crowd into a hot, dense glow about 13.8 billion years ago; that glow’s waves, stretched ever since, reach a radio dish from every direction as faint microwaves.'},
+ 'flame':{draw:drawFlameGuide,demo:false,a:['Gravity','how strongly gravity pulls'],b:['Unused','',''],
+  fa:a=>Math.round(clamp(a)*100)+'% of Earth’s gravity',fb:b=>'',
+  // The modelled effect for the render checks: how many times its weight the push on a litre of flame gas is.
+  effect:a=>Physics.flameLift(Physics.flameAir.Th,1,clamp(a))/Physics.flameWeight(Physics.flameAir.Th,1,1),
+  measure:null,scale:'',
+  disclosure:'The densities assume the flame gas is at about 1400 °C and at the same pressure as the room, and weighs about as much per molecule as air. The flame’s shape and colours are drawn to match photographs of candle flames on Earth and in orbit, not computed from the chemistry; the dots and streams show where gas goes, not single molecules.',
+  try:'',aria:'A candle flame stands up in a pointed teardrop and keeps pointing up when the candle tilts. Two boxes compare room air at 20 degrees with flame gas at 1400 degrees: the hot one holds about a sixth as many, faster molecules. A glowing pocket of hot gas rises as cool air slides under it and pushes it up. Around the candle, fresh air flows in at the base and hot gas streams up. In free fall, as on a space station, the flame becomes a round, dim, blue ball. A tilting candle beside a downward gravity arrow keeps its flame pointing up.'},
  'arrow-of-time':{draw:drawArrow,demo:false,a:['Particles','how many particles share the box'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*200)+' particles',fb:b=>'',
   // The modelled effect for the render checks: the digits in the number of ways to be half and half.

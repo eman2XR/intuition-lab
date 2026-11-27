@@ -1,0 +1,415 @@
+{
+  "id": "20261127T013120-flame",
+  "status": "reviewed",
+  "question": "Why does a flame point up?",
+  "topic": "flame",
+  "created": "2026-11-27T01:31:20.180226+00:00",
+  "research": {
+    "claim": "A flame points up because the hot combustion gas (about 1400 °C in a candle) is several times less dense than the surrounding air, so buoyancy (Archimedes' principle) drives it upward in a natural-convection stream that draws fresh air in at the base and stretches the flame; in microgravity there is no natural convection and the flame becomes spherical, bluer and weaker.",
+    "explanation": "At constant pressure an ideal gas's density is inversely proportional to absolute temperature: 1.204 kg/m3 at 20 °C becomes about 0.21 kg/m3 at 1400 °C, about a sixth. The buoyant force on a volume equals the weight of the displaced air, so the net upward push on flame gas is about 4.7 times its own weight. The resulting natural convection carries hot products away and draws fresh air in at the base, supplying oxygen; the luminous yellow comes from glowing soot. Without gravity, buoyancy vanishes, products are not carried away, oxygen arrives only by diffusion, and the flame is spherical and blue.",
+    "assumptions": [
+      "Flame gas at about 1400 °C and room pressure, with a mean molecular mass close to air's.",
+      "The drawn flame shape, colours and flow are illustrations matched to photographs, not a combustion simulation."
+    ],
+    "prediction": "A candle flame always points opposite to gravity whatever the candle's orientation; in a freely falling or orbiting container it becomes spherical and dim.",
+    "falsifier": "A flame pointing sideways or down in still air under gravity, or staying teardrop-shaped in sustained free fall.",
+    "limitations": [
+      "Real flames range from about 1000 °C to 1400 °C; the chemistry and soot formation are not modelled."
+    ],
+    "misconceptions": [
+      "Heat itself does not 'rise'; hot gas is pushed up by denser surrounding air.",
+      "The solid wax does not burn; its vapour does."
+    ],
+    "questions": [],
+    "sources": [
+      {
+        "title": "Flame (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Flame",
+        "supports": "In microgravity, natural convection no longer occurs and the flame becomes spherical, bluer and more efficient; zero-G convection does not carry hot products away."
+      },
+      {
+        "title": "Candle (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Candle",
+        "supports": "The hottest part of a candle flame is about 1400 °C; the yellow is radiation from hot soot and the blue is chemiluminescence; the wick draws up melted wax, which vaporises and burns."
+      },
+      {
+        "title": "Density of air (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Density_of_air",
+        "supports": "Dry air at 20 °C and 101.325 kPa has a density of 1.2041 kg/m3."
+      },
+      {
+        "title": "Buoyancy (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Buoyancy",
+        "supports": "The buoyant force equals the weight of the fluid displaced (Archimedes' principle)."
+      },
+      {
+        "title": "Convection (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Convection",
+        "supports": "Natural convection is flow caused by some parts of a fluid being heavier than others: buoyancy makes less-dense fluid rise and denser fluid sink."
+      },
+      {
+        "title": "Combustion (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Combustion",
+        "supports": "Microgravity combustion research, including candle flame experiments in orbit."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "Why does a flame point up?",
+    "subtitle": "Tip a candle sideways and its flame still points straight up. Nothing is holding it there. So what decides which way a flame points?",
+    "why": "Every flame you've seen points up, from a candle to a campfire. Yet on a space station, a candle flame doesn't point anywhere at all.",
+    "opening": "Why does a flame point up?",
+    "takeaway": "Hot flame gas is much lighter than the air around it, so the air pushes it up and the flame follows. In free fall, as on a space station, nothing rises and a flame burns as a dim blue dome.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "none",
+    "accent": "orange",
+    "kind": "flame",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "theme": "sage",
+    "questions": [
+      {
+        "q": "Why is a candle flame yellow?",
+        "a": "Tiny specks of soot form in the flame and glow yellow-white because they are so hot, like the filament in an old light bulb. The blue at the bottom comes from the burning gases themselves."
+      },
+      {
+        "q": "What is actually burning?",
+        "a": "Not the solid wax. The flame melts the wax, the wick draws it up, and the heat turns it into a gas. That gas mixes with oxygen from the air and burns."
+      },
+      {
+        "q": "Why is a space flame blue and dim?",
+        "a": "Without a stream of fresh air, oxygen only seeps in slowly and the hot gas isn't carried away, so the flame burns cooler and makes little glowing soot. What is left is the blue of the burning gas."
+      },
+      {
+        "q": "Is this why smoke and hot-air balloons rise?",
+        "a": "Yes. Smoke rides the hot gas from the fire, and a hot-air balloon traps heated air in a bag. In each case the cooler, denser air around pushes the lighter, warm air up."
+      },
+      {
+        "q": "Does heat rise?",
+        "a": "Not by itself. Hot gas or water rises because the cooler, denser fluid around it is pulled down harder and pushes it up. In free fall, warm air doesn't rise; it just spreads slowly."
+      }
+    ],
+    "beats": [
+      {
+        "title": "A flame points up",
+        "body": "Light a candle and its flame stands up in a pointed teardrop. Tilt the candle, and the flame still points straight up. Why up, and not sideways?"
+      },
+      {
+        "title": "Burning makes hot gas",
+        "body": "Burning wax heats the gas in the flame to about 1400 °C. Heat makes the gas's tiny bits fly faster and shove each other apart. A boxful of flame gas weighs only a sixth as much as a boxful of air."
+      },
+      {
+        "title": "Lighter gas gets pushed up",
+        "body": "Gravity pulls the heavier cool air down harder than the hot gas. The cool air slides around and under it, lifting it like water lifts a cork. That push is nearly six times the hot gas's own weight."
+      },
+      {
+        "title": "A rising stream",
+        "body": "Around a candle, hot gas streams up and fresh air flows in below. The rising gas speeds up and narrows, pulling the flame into a point. The fresh air brings the oxygen that keeps it burning."
+      },
+      {
+        "title": "Flames in free fall",
+        "body": "On a space station everything floats, falling together, so air can't sink. With nothing pushing the hot gas one way, the flame spreads into a round dome. No stream brings fresh oxygen, so it burns weakly, dim and blue."
+      },
+      {
+        "title": "Up is away from gravity",
+        "body": "Earth pulls the heavy air down, so the light gas is pushed the other way. That way, away from Earth, is up, and the flame follows the gas. Tilt the candle any way you like, and the flame still points to the sky."
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "Room air at 20 °C weighs about 1.2 kg per cubic metre",
+      "pass": true
+    },
+    {
+      "name": "Flame gas at 1400 °C is about a sixth as dense as room air",
+      "pass": true
+    },
+    {
+      "name": "The air's push up on flame gas is nearly six times the gas's weight (almost five times more than its weight)",
+      "pass": true
+    },
+    {
+      "name": "Molecules in flame gas move about 2.4 times faster than in room air",
+      "pass": true
+    },
+    {
+      "name": "In free fall (no felt gravity) there is no push at all",
+      "pass": true
+    },
+    {
+      "name": "The drawn flame is round in free fall and over twice as tall as wide on Earth",
+      "pass": true
+    },
+    {
+      "name": "Hot gas leaving the flame rises on Earth and wanders evenly without gravity",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 78)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 8)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 4)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4970 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "This investigation was made in a coding session, not by the daily run: an AI coding agent built the picture and wrote the guide from sources retrieved in that session, as a new curriculum item once the curriculum was used up, and AI reviewers checked it with the render checks, an accuracy review, a visual review, a first-time-reader test with a subtitle edit, and a blind-viewer test. It passed them in three rounds (earlier rounds called orbit “no gravity”, drew the hot gas denser than the air, left three “why” steps unexplained, and drew the space flame as a ring), and their copy edits were applied; the reviews below are the last of each kind."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Why does a flame point up?",
+        "subtitle": "Tip a candle sideways and its flame still points straight up. Nothing is holding it there. So what decides which way a flame points?",
+        "why": "Every flame you've seen points up, from a candle to a campfire. Yet on a space station, a candle flame doesn't point anywhere at all.",
+        "opening": "Why does a flame point up?",
+        "takeaway": "Hot flame gas is much lighter than the air around it, so the air pushes it up and the flame follows. In free fall, as on a space station, nothing rises and a flame burns as a dim blue dome.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "orange",
+        "kind": "flame",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "Why is a candle flame yellow?",
+            "a": "Tiny specks of soot form in the flame and glow yellow-white because they are so hot, like the filament in an old light bulb. The blue at the bottom comes from the burning gases themselves."
+          },
+          {
+            "q": "What is actually burning?",
+            "a": "Not the solid wax. The flame melts the wax, the wick draws it up, and the heat turns it into a gas. That gas mixes with oxygen from the air and burns."
+          },
+          {
+            "q": "Why is a space flame blue and dim?",
+            "a": "Without a stream of fresh air, oxygen only seeps in slowly and the hot gas isn't carried away, so the flame burns cooler and makes little glowing soot. What is left is the blue of the burning gas."
+          },
+          {
+            "q": "Is this why smoke and hot-air balloons rise?",
+            "a": "Yes. Smoke rides the hot gas from the fire, and a hot-air balloon traps heated air in a bag. In each case the cooler, denser air around pushes the lighter, warm air up."
+          },
+          {
+            "q": "Does heat rise?",
+            "a": "Not by itself. Hot gas or water rises because the cooler, denser fluid around it is pulled down harder and pushes it up. In free fall, warm air doesn't rise; it just spreads slowly."
+          }
+        ],
+        "beats": [
+          {
+            "title": "A flame points up",
+            "body": "Light a candle and its flame stands up in a pointed teardrop. Tilt the candle, and the flame still points straight up. Why up, and not sideways?"
+          },
+          {
+            "title": "Burning makes hot gas",
+            "body": "Burning wax heats the gas in the flame to about 1400 °C. Heat makes the gas's tiny bits fly faster and shove each other apart. A boxful of flame gas weighs only a sixth as much as a boxful of air."
+          },
+          {
+            "title": "Lighter gas gets pushed up",
+            "body": "Gravity pulls the heavier cool air down harder than the hot gas. The cool air slides around and under it, lifting it like water lifts a cork. That push is nearly six times the hot gas's own weight."
+          },
+          {
+            "title": "A rising stream",
+            "body": "Around a candle, hot gas streams up and fresh air flows in below. The rising gas speeds up and narrows, pulling the flame into a point. The fresh air brings the oxygen that keeps it burning."
+          },
+          {
+            "title": "Flames in free fall",
+            "body": "On a space station everything floats, falling together, so air can't sink. With nothing pushing the hot gas one way, the flame spreads into a round dome. No stream brings fresh oxygen, so it burns weakly, dim and blue."
+          },
+          {
+            "title": "Up is away from gravity",
+            "body": "Earth pulls the heavy air down, so the light gas is pushed the other way. That way, away from Earth, is up, and the flame follows the gas. Tilt the candle any way you like, and the flame still points to the sky."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Room air at 20 °C weighs about 1.2 kg per cubic metre",
+          "pass": true
+        },
+        {
+          "name": "Flame gas at 1400 °C is about a sixth as dense as room air",
+          "pass": true
+        },
+        {
+          "name": "The air's push up on flame gas is nearly six times the gas's weight (almost five times more than its weight)",
+          "pass": true
+        },
+        {
+          "name": "Molecules in flame gas move about 2.4 times faster than in room air",
+          "pass": true
+        },
+        {
+          "name": "In free fall (no felt gravity) there is no push at all",
+          "pass": true
+        },
+        {
+          "name": "The drawn flame is round in free fall and over twice as tall as wide on Earth",
+          "pass": true
+        },
+        {
+          "name": "Hot gas leaving the flame rises on Earth and wanders evenly without gravity",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 2.8 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 78)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 8)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 4)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 4970 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": true,
+      "physics_review": {
+        "pass": true,
+        "score": 8.5,
+        "summary": "Round 3: correct and fair for beginners. Flame gas at about 1400 °C is about a sixth as dense as room air (1673 K over 293 K), the air's push on it is nearly six times its weight, the rising stream draws in fresh air, and in free fall (as on a space station, where gravity is still about 90% of Earth's but everything falls together) the flame becomes a dim blue dome, as photographs show. Earlier rounds fixed calling orbit 'no gravity' and a hot pocket drawn denser than the air.",
+        "changes": [
+          "Say 'nearly six times' for the whole push, to match chapter 2 (applied)."
+        ],
+        "blocking_issues": []
+      },
+      "visual_review": {
+        "pass": true,
+        "score": 8.5,
+        "summary": "Round 3: the candle flame looks real (blue cup, darker zone at the wick, white-yellow body, orange edge), the boxes show fewer, faster molecules, cool air parts around the rising pocket, a warm plume rises while two lines of fresh air slide in at the base, and the free-fall flame is a dim pale-blue dome around the wick. Its last notes (a sharp flame tip under the plume, a clear spot for the 'cool air' label) were applied.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "learner_review": {
+        "pass": true,
+        "score": 8.5,
+        "summary": "Round 2: a beginner can now follow why hot gas is lighter (its bits fly faster and shove apart), why it is pushed up (heavier air pulled down harder slides under it, like water lifting a cork), why the flame is pointed (the rising gas speeds up and narrows), why it is round in free fall (nothing pushes the hot gas one way) and why 'up' is away from Earth. Its wording edits were applied.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "blind_review": {
+        "pass": true,
+        "score": 8,
+        "summary": "Round 3, without the narration: the viewer read the upright flame on a tilting candle, fewer and faster molecules in hot gas, a pocket of thin hot gas rising through cool air, fresh air drawn in at the base with hot gas rising above, a round blue flame in free fall, and the flame pointing away from a gravity arrow. Its note about a bright patch where the plume met the flame tip was fixed.",
+        "changes": [],
+        "blocking_issues": []
+      },
+      "frames": [
+        "published/20261127T013120-flame/revision-1-0.png",
+        "published/20261127T013120-flame/revision-1-1.png",
+        "published/20261127T013120-flame/revision-1-2.png",
+        "published/20261127T013120-flame/revision-1-3.png",
+        "published/20261127T013120-flame/revision-1-4.png",
+        "published/20261127T013120-flame/revision-1-5.png",
+        "published/20261127T013120-flame/revision-1-6.png",
+        "published/20261127T013120-flame/revision-1-7.png",
+        "published/20261127T013120-flame/revision-1-8.png",
+        "published/20261127T013120-flame/revision-1-9.png",
+        "published/20261127T013120-flame/revision-1-10.png",
+        "published/20261127T013120-flame/revision-1-11.png"
+      ]
+    }
+  ]
+}

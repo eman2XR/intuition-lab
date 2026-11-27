@@ -1,5 +1,15 @@
 [
   {
+    "id": "20261127T013120-flame",
+    "question": "Why does a flame point up?",
+    "topic": "flame",
+    "created": "2026-11-27T01:31:20.180226+00:00",
+    "curriculum": "8.1",
+    "title": "Why does a flame point up?",
+    "theme": "sage",
+    "poster": "published/20261127T013120-flame/poster.jpg"
+  },
+  {
     "id": "20261125T192306-arrow-of-time",
     "question": "Why does time only run forward?",
     "topic": "arrow-of-time",

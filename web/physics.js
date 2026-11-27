@@ -761,6 +761,44 @@
     // stretch of its waves; Wien's law gives the wavelength where a glow at temperature T is brightest.
     glowTemp(T, stretch) { return T / stretch; },
     wienPeak(T) { return 2.898e-3 / T; },
+    // Why a flame points up. Burning heats the gas in the flame to about 1400 °C; at the same pressure a gas's density
+    // falls as its temperature rises (ideal gas), so flame gas is about a sixth as dense as room air. Gravity pulls the
+    // denser air down harder, and it pushes the hot gas up (Archimedes): the push on a volume is the weight of the air it
+    // displaces. Without gravity there is no push, so nothing rises and the flame is round.
+    // Units: kelvin, kg per cubic metre, litres, newtons; g as a share of Earth's gravity.
+    flameAir: { Ta: 293.15, Th: 1673.15, rho: 1.204, g: 9.81 },
+    flameDensity(T) { const A = this.flameAir; return A.rho * A.Ta / T; },
+    // The upward push on, and the weight of, a volume (litres) of gas at temperature T, at a share g of Earth's gravity.
+    flameLift(T, litres = 1, g = 1) { const A = this.flameAir; return (A.rho - this.flameDensity(T)) * litres / 1000 * A.g * g; },
+    flameWeight(T, litres = 1, g = 1) { return this.flameDensity(T) * litres / 1000 * this.flameAir.g * g; },
+    // Molecules' typical speed grows with the square root of temperature.
+    flameSpeedRatio(T1, T2) { return Math.sqrt(T2 / T1); },
+    // The drawn flame (a picture rule, not a combustion model): its height over its width, from round without gravity
+    // to a tall point at Earth's gravity, growing with the rising stream's speed (the square root of g).
+    flameAspect(g) { return 1 + 1.6 * Math.sqrt(Math.max(0, g)); },
+    // A parcel of hot gas leaving the flame: it drifts up at a speed that grows with the square root of g, and wanders a
+    // little at random (seeded, repeatable). Returns [x, y] in centimetres after t seconds, y up.
+    flameParcel(g, seed, t) {
+      let a = seed >>> 0; const rand = () => { a = (a + 0x6D2B79F5) >>> 0; let q = a; q = Math.imul(q ^ q >>> 15, q | 1); q ^= q + Math.imul(q ^ q >>> 7, q | 61); return ((q ^ q >>> 14) >>> 0) / 4294967296; };
+      let x = 0, y = 0; const steps = Math.round(t * 20);
+      for (let i = 0; i < steps; i++) { const th = rand() * 2 * Math.PI; x += .15 * Math.cos(th); y += .15 * Math.sin(th) + 2.5 * Math.sqrt(Math.max(0, g)) / 20; }
+      return [x, y];
+    },
+    flameChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, A = this.flameAir;
+      const ratio = this.flameDensity(A.Ta) / this.flameDensity(A.Th), push = this.flameLift(A.Th) / this.flameWeight(A.Th);
+      const mean = g => { let sx = 0, sy = 0; for (let k = 1; k <= 200; k++) { const [x, y] = this.flameParcel(g, k, 2); sx += x; sy += y; } return [sx / 200, sy / 200]; };
+      const [ex, ey] = mean(1), [zx, zy] = mean(0);
+      return Object.entries({
+        'Room air at 20 °C weighs about 1.2 kg per cubic metre': near(this.flameDensity(A.Ta), 1.204, 1e-9),
+        'Flame gas at 1400 °C is about a sixth as dense as room air': ratio > 5.5 && ratio < 6,
+        'The air\'s push up on flame gas is nearly six times the gas\'s weight (almost five times more than its weight)': (push + 1) > 5.5 && (push + 1) < 6 && push > 4.5 && push < 5,
+        'Molecules in flame gas move about 2.4 times faster than in room air': near(this.flameSpeedRatio(A.Ta, A.Th), 2.39, .01),
+        'In free fall (no felt gravity) there is no push at all': this.flameLift(A.Th, 1, 0) === 0 && this.flameLift(A.Th, 1, 1) > 0,
+        'The drawn flame is round in free fall and over twice as tall as wide on Earth': this.flameAspect(0) === 1 && this.flameAspect(1) > 2.4,
+        'Hot gas leaving the flame rises on Earth and wanders evenly without gravity': ey > 4 && Math.abs(zx) < .3 && Math.abs(zy) < .3,
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     // Why time runs one way. Particles fly in a box, bouncing off its walls and eleven round posts; the round posts
     // scatter them chaotically, so a hair's-width difference grows with each bounce. Every bounce obeys laws that work
     // the same backwards, yet a box started sorted (all in the left half) mixes, because mixed arrangements vastly
@@ -887,7 +925,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,'arrow-of-time':this.arrowChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,'arrow-of-time':this.arrowChecks,'flame':this.flameChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },

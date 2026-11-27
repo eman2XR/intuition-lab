@@ -179,6 +179,16 @@
           "model": "arrow-of-time"
         }
       ]
+    },
+    {
+      "title": "Heat and flow",
+      "items": [
+        {
+          "id": "8.1",
+          "question": "Why does a flame point up?",
+          "model": "flame"
+        }
+      ]
     }
   ]
 }
