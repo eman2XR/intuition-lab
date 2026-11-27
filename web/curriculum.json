@@ -189,6 +189,16 @@
           "model": "flame"
         }
       ]
+    },
+    {
+      "title": "Black holes and information",
+      "items": [
+        {
+          "id": "9.1",
+          "question": "Can a black hole's surface hold everything inside it?",
+          "model": "holography"
+        }
+      ]
     }
   ]
 }

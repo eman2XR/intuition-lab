@@ -761,6 +761,31 @@
     // stretch of its waves; Wien's law gives the wavelength where a glow at temperature T is brightest.
     glowTemp(T, stretch) { return T / stretch; },
     wienPeak(T) { return 2.898e-3 / T; },
+    // The holographic principle. A black hole's entropy is a quarter of its horizon's area in Planck areas (Bekenstein
+    // 1972, Hawking 1974); in bits, divide by ln 2: bits = A / (4 lP^2 ln 2), one bit per about 2.8 Planck areas. The
+    // horizon's radius grows in step with the mass (r = 2GM/c^2), so the bits grow with the area, not the volume.
+    // Units: SI (metres, kilograms).
+    holoK: { G: 6.6743e-11, c: 2.99792458e8, hbar: 1.054571817e-34, Msun: 1.98847e30, Mearth: 5.9722e24 },
+    holoPlanck() { const K = this.holoK; return Math.sqrt(K.hbar * K.G / K.c ** 3); },
+    holoRadius(M) { const K = this.holoK; return 2 * K.G * M / K.c ** 2; },
+    holoArea(M) { return 4 * Math.PI * this.holoRadius(M) ** 2; },
+    holoBits(M) { const lp = this.holoPlanck(); return this.holoArea(M) / (4 * lp * lp * Math.LN2); },
+    // The area one bit takes, in Planck areas.
+    holoTile() { return 4 * Math.LN2; },
+    // Cells in a box n cells wide, and tiles of a fixed size on a sphere's surface of radius r (in tile widths).
+    holoBoxCells(n) { return n ** 3; },
+    holoChecks() {
+      const near = (a, b, e) => Math.abs(a - b) <= e, K = this.holoK;
+      return Object.entries({
+        'The Planck length is about 1.6 × 10^-35 m': near(this.holoPlanck() / 1e-35, 1.616, .002),
+        'A black hole with the Sun\'s mass is about 3 km in radius': near(this.holoRadius(K.Msun), 2953, 2),
+        'Squeezed into a black hole, Earth would be about 1.8 cm across, marble-sized': near(2 * this.holoRadius(K.Mearth) * 100, 1.77, .01),
+        'A Sun-mass black hole holds about 10^77 bits': Math.floor(Math.log10(this.holoBits(K.Msun))) === 77,
+        'Twice the mass gives twice the width and four times the bits': near(this.holoRadius(2 * K.Msun) / this.holoRadius(K.Msun), 2, 1e-12) && near(this.holoBits(2 * K.Msun) / this.holoBits(K.Msun), 4, 1e-9),
+        'A box twice as wide holds eight times the cells': this.holoBoxCells(4) / this.holoBoxCells(2) === 8,
+        'Each bit takes about 2.8 Planck areas of horizon': near(this.holoTile(), 2.77, .01),
+      }).map(([name, pass]) => ({ name, pass }));
+    },
     // Why a flame points up. Burning heats the gas in the flame to about 1400 °C; at the same pressure a gas's density
     // falls as its temperature rises (ideal gas), so flame gas is about a sixth as dense as room air. Gravity pulls the
     // denser air down harder, and it pushes the hot gas up (Archimedes): the push on a volume is the weight of the air it
@@ -925,7 +950,7 @@
     },
     checkSets() {
       return {'gravity-clocks':this.clockChecks,'spacetime':this.spacetimeChecks,'interference':this.waveChecks,
-        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,'arrow-of-time':this.arrowChecks,'flame':this.flameChecks,
+        'two-slit-particles':this.waveChecks,'seasons':this.seasonChecks,'standing-waves':this.ropeChecks,'tunneling':this.tunnelChecks,'wave-packet':this.packetChecks,'quantum-well':this.wellChecks,'falling-time':this.fallChecks,'diffraction':this.gapChecks,'twin-trip':this.spacetimeChecks,'spacetime-paths':this.pathChecks,'light-clock':this.lightClockChecks,'river':this.riverChecks,'fall-views':this.viewsChecks,'tides':this.tidesChecks,'lift':this.liftChecks,'moon-tides':this.moonChecks,'attention':this.attentionChecks,'speed-limit':this.limitChecks,'birthdays':this.birthdayChecks,'sky-colour':this.skyChecks,'night-sky':this.nightChecks,'simultaneity':this.simulChecks,'eratosthenes':this.earthChecks,'monty-hall':this.montyChecks,'simpson':this.simpsonChecks,'doppler':this.dopplerChecks,'radio':this.radioChecks,'moon-phases':this.phaseChecks,'expansion':this.expansionChecks,'arrow-of-time':this.arrowChecks,'flame':this.flameChecks,'holography':this.holoChecks,
         /* AGENT-ENGINES: checkSets. kind->checks entries for agent-built engines are spliced in above this line. */};
     },
     checksFor(kind) { return this.checkSets()[kind]?.call(this) || this.checks(); },
