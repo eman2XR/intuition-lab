@@ -49,8 +49,8 @@
     "requires": "Awake Mac, logged-in user, VPN, and available CLI quota"
   },
   "checked": {
-    "at": "2026-11-27T01:36:39.486115+00:00",
-    "outcome": "Published 8.1 'Why does a flame point up?' (flame, sage, dark stage with a shader-drawn flame): hot gas a sixth as dense, pushed up by cooler air, a dim blue dome in free fall; passed all four reviews in three rounds."
+    "at": "2026-11-27T19:28:24.176744+00:00",
+    "outcome": "Published 9.1 'Can a black hole's surface hold everything inside it?' (holography, sky, soft shaded spheres): bits grow with a horizon's area, not volume; passed all four reviews in two rounds."
   },
   "delivery": "Static status snapshot. Deployment and refresh can take several minutes.",
   "attempts": [
