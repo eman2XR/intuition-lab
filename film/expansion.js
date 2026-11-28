@@ -147,9 +147,9 @@ void main(){
  for(int i=0;i<40;i++){if(i>=uCount)break;vec4 g=uG[i],n=uGn[i];vec3 c=uRef+(g.xyz-uRef)*uA;
   col+=galaxyAt(ro,rd,c,g.w,n.xyz,n.w,px)*uGal;
   // A trail behind each galaxy, from where it was a while ago: longer for the farther, faster ones.
-  if(uTrail>0.){vec3 b0=uRef+(g.xyz-uRef)*uA0;if(length(c-b0)>.05){float tr,sg;float d=segDist2(ro,rd,b0,c,tr,sg);float w=px*tr*1.5+g.w*.12;
+  if(uTrail>0.){vec3 b0=uRef+(g.xyz-uRef)*uA0;if(length(c-b0)>.05){float tr,sg;float d=segDist2(ro,rd,b0,c,tr,sg);float w=px*tr*1.1+g.w*.05;
    vec3 tint=h1f(n.w,12.9898)>.84?vec3(1.,.8,.6):vec3(.75,.82,1.);
-   col+=tint*exp(-d*d/(w*w))*pow(sg,1.6)*(1.-smoothstep(.85,1.,sg)*.6)*uTrail*1.1*min(1.,px*tr*4./w);}}}
+   col+=tint*exp(-d*d/(w*w))*pow(sg,2.2)*(1.-smoothstep(.88,1.,sg)*.7)*uTrail*1.2*min(1.,px*tr*4./w);}}}
  // Rings round the galaxies the picture is about.
  for(int m=0;m<2;m++){vec4 M=m==0?uMark:uMark2;if(M.w<=0.)continue;vec3 dv=M.xyz-ro;float dist=length(dv);float ang=acos(clamp(dot(rd,dv/dist),-1.,1.));
   float rr=max(3.4/dist,px*16.);col+=vec3(1.,.82,.55)*exp(-pow((ang-rr)/(px*1.3),2.))*M.w*.9;}
@@ -234,14 +234,14 @@ void main(){
 }`;
 // ---------------------------------------------------------------- A galaxy and its barcode, moved toward red (section 3)
 const SHIFT=EXP+`
-uniform float uSeedA,uSeedB,uMix,uZ,uBand,uLab,uLink,uGhost,uWaveOn,uWaveNm;
+uniform float uSeedA,uSeedB,uMix,uZ,uGS,uBand,uLab,uLink,uGhost,uWaveOn,uWaveNm;
 vec3 bandCol(float x,float z){float l=390.+(x+.62)/1.24*350.;return bandSpec(l)*absorb(l,z,.25);}
 void main(){
  vec2 p=centered();float px=1./uRes.y;
  vec3 col=stars(normalize(vec3(p*.6,1.)),px*.6,.3)+farGalaxies(normalize(vec3(p*.6,1.)),px*.6);
  // The galaxy, tilted, its look changing between galaxies.
- vec2 g=p-vec2(0.,.2);float ca=cos(.5),sa=sin(.5);vec2 q=mat2(ca,-sa,sa,ca)*g/.27;q.y/=.48;
- col+=mix(galaxyFace(q,uSeedA,0.),galaxyFace(q,uSeedB,0.),uMix)*.9;
+ vec2 g=p-vec2(0.,.2);float ca=cos(.5),sa=sin(.5);vec2 q=mat2(ca,-sa,sa,ca)*g/(.27*uGS);q.y/=.48;
+ col+=mix(galaxyFace(q,uSeedA,0.),galaxyFace(q,uSeedB,0.),uMix)*.9*(.4+.6*uGS);
  // Bands: hydrogen as measured in a lab (top), and the galaxy's light (bottom).
  for(int b=0;b<2;b++){float y0=b==0?-.19:-.33;float on=b==0?uLab:uBand;if(on<=0.)continue;
   if(abs(p.x)<.64&&abs(p.y-y0)<.05){float ins=smoothstep(.62,.615,abs(p.x))*smoothstep(.038,.034,abs(p.y-y0));
@@ -305,8 +305,8 @@ void main(){
 const PULSE=EXP+`
 uniform float uA,uB,uOnA,uOnB,uGal,uZoom,uCep,uFar,uTr;uniform vec2 uCepP;
 float cepG(float t,float P,float ph){float x=fract(t/P+ph);return x<.18?.35+.65*x/.18:.35+.65*(1.-(x-.18)/.82);}
-float trace(vec2 p,vec2 c,float P,float ph,float amp,float px){if(abs(p.x-c.x)>.2)return 0.;float tt=uTime-(c.x+.2-p.x)*7.;float y=c.y-.2+cepG(tt,P,ph)*.07*amp;
- return exp(-pow((p.y-y)/(px*1.3),2.))*smoothstep(.2,.15,abs(p.x-c.x));}
+float trace(vec2 p,vec2 c,float P,float ph,float amp,float px){if(abs(p.x-c.x)>.2)return 0.;float tt=uTime-(c.x+.2-p.x)*18.;float y=c.y-.2+cepG(tt,P,ph)*.07*amp;
+ return exp(-pow((p.y-y)/(px*2.),2.))*smoothstep(.2,.15,abs(p.x-c.x));}
 vec3 star(vec2 p,vec2 c,float L,float px){vec2 d=p-c;float r2=dot(d,d);
  float spike=(exp(-abs(d.x)/(px*1.2))*exp(-abs(d.y)*9.)+exp(-abs(d.y)/(px*1.2))*exp(-abs(d.x)*9.))*.25;
  return vec3(1.,.86,.62)*L*(exp(-r2/(px*px*6.))*3.+.00018/(r2+.00012)+spike);}
@@ -395,7 +395,7 @@ void main(){
    col=alb*(vec3(1.,.88,.72)*1.2*dif+.05)+vec3(1.,.5,.15)*rim*.1*max(dot(n,back)+.3,0.)+vec3(1.,.9,.8)*sp;}}
  // A dashed outline of the loaf's first size, so its rise shows.
  if(uGhostLoaf>0.&&rd.z<-1e-4){float t0=-ro.z/rd.z;vec3 q=ro+rd*t0;float d1=loafSDs(vec3(q.xy,-.001),1.);float lw=px*t0*1.2;
-  float dash=step(.5,fract(atan(q.y-BASE-.2,q.x)*26.));col+=vec3(.9,.85,.75)*exp(-d1*d1/(lw*lw))*dash*uGhostLoaf*.55;}
+  float dash=step(.5,fract(atan(q.y-BASE-.2,q.x)*26.));col+=vec3(.9,.85,.75)*exp(-(d1+.014)*(d1+.014)/(lw*lw))*dash*uGhostLoaf*.35;}
  o=vec4(col,1.);
 }`;
 // ---------------------------------------------------------------- The glow stretched into microwaves (section 10)
@@ -418,20 +418,24 @@ void main(){
   col+=c*exp(-d*d/(w*w))*smoothstep(.85,.6,abs(p.x))*uWaveOn;
   // Once too long to see, a ghost of the wave, dashed.
   float dash=step(.45,fract(p.x*14.));col+=vec3(.3,.36,.48)*exp(-d*d/(w*w*4.))*dash*(1.-seen)*smoothstep(.85,.6,abs(p.x))*uWaveOn*.9;}
- // The glow from every direction, seen from inside it: hot gas all round a tiny Earth, its light arriving from every side.
+ // The glow from every direction, seen from inside it: hot gas all round a tiny Earth, brightest near it, its light
+ // arriving from every side as short streaks whose bright arrow heads point in at Earth.
  if(uShell>0.){vec2 h=sphereHit(ro,rd,vec3(0),1.);vec3 nb=normalize(ro+rd*max(h.y,0.));float vb=fbm(nb*4.+uTime*.02);
-  vec3 sh=heatCol(uShellT)*(.16+.9*pow(vb,2.2))*.55;
-  float r=length(p),a=atan(p.y,p.x);
-  for(int k=0;k<16;k++){float hk=hashi(ivec3(k,3,9)),ak=(float(k)+.3*hk)*TAU/16.;float da=a-ak;da=da-TAU*floor(da/TAU+.5);
-   float dist=r*abs(sin(da))+step(1.5,abs(da))*9.;float s=fract(r*2.2+uTime*.5+hk);
-   sh+=heatCol(uShellT+.8)*1.4*exp(-pow(dist/(px*1.6),2.))*exp(-s*7.)*smoothstep(.03,.08,r)*smoothstep(.95,.55,r);}
-  sh+=vec3(.25,.5,1.)*(exp(-r*r/(px*px*7.))*1.3+.0000015/(r*r+.000012));
+  float r=length(p),a=atan(p.y,p.x),cen=exp(-r*r*2.2);
+  vec3 sh=heatCol(uShellT*(.75+.45*cen))*(.2+.9*pow(vb,2.))*(.35+.9*cen);
+  for(int k=0;k<10;k++){float hk=hashi(ivec3(k,3,9)),ak=(float(k)+.35*hk)*TAU/10.;float da=a-ak;da=da-TAU*floor(da/TAU+.5);if(abs(da)>1.2)continue;
+   float v=r*sin(da),u=r*cos(da);float ph=u*1.8+uTime*.45+hk,s=fract(ph);float uh=u-s/1.8;
+   float tail=exp(-pow(v/(px*1.6),2.))*exp(-s*22.)*step(0.,s);
+   float du=u-uh;float chev=exp(-pow((abs(v)-du*.7)/(px*1.5),2.))*step(0.,du)*step(du,.028);
+   sh+=heatCol(uShellT+1.2)*1.5*(tail+chev*1.2)*smoothstep(.06,.12,uh)*smoothstep(.95,.6,uh);}
+  // Earth: a small blue globe, lit from one side.
+  float rE=px*9.;if(r<rE*1.3){vec2 q=p/rE;float z=sqrt(max(1.-dot(q,q),0.));vec3 n=vec3(q,z);float l=max(dot(n,normalize(vec3(-.5,.4,.75))),0.);
+   vec3 globe=vec3(.06,.18,.5)*(.25+1.1*l)+vec3(.5,.55,.6)*smoothstep(.55,.75,vnoise(vec3(q*3.,1.)))*l*.5;sh=mix(sh,globe,smoothstep(1.,.92,length(q)));}
   col=mix(col,sh,uShell);}
- // The whole sky's glow, as a microwave telescope maps it, on a sphere around us.
  // The whole sky's glow as microwave telescopes map it: the sky drawn flat as an oval, in false colour.
  if(uSphere>0.){vec2 e=p/vec2(.72,.36);float rr=dot(e,e);
   if(rr<1.){float th=asin(clamp(p.y/.36,-1.,1.)),lam=PI*p.x/(.72*max(cos(th),1e-3)),phi=asin(clamp((2.*th+sin(2.*th))/PI,-1.,1.));
-   vec3 n=vec3(cos(phi)*cos(lam+uSpin),sin(phi),cos(phi)*sin(lam+uSpin));col=mix(col,cmbCol(cmbField(n))*.3,uSphere*smoothstep(1.,.985,rr));}
+   vec3 n=vec3(cos(phi)*cos(lam+uSpin),sin(phi),cos(phi)*sin(lam+uSpin));col=mix(col,cmbCol(cmbField(n))*.19,uSphere*smoothstep(1.,.985,rr));}
   col+=vec3(.5,.55,.65)*exp(-pow((sqrt(rr)-1.)*.36/(px*1.4),2.))*.25*uSphere;}
  o=vec4(col,1.);
 }`;
@@ -472,14 +476,14 @@ function build(chapters,{aspect=16/9}={}){
  // 2. Sunlight through a prism; close in on the card, where dark lines cross the rainbow.
  const cardC=[.081+.943-.105*.333,.25,.0676-.333-.105*.943],toPrism=[-.943,0,.333];
  shots.push(shot('prism',1,PRISM,(t,T)=>{const cam=cams[1],k=prog(T,at(1,1)-.3,at(1,1)+3.6,'inOutCubic');
-  const p0=[.32,.86,1.72],t0=[.42,.16,-.08],p1=[cardC[0]+toPrism[0]*.5+.333*.04,.38,cardC[2]+toPrism[2]*.5+.943*.04],t1=[cardC[0]+.333*.04,.25,cardC[2]+.943*.04];
+  const p0=[.32,.86,1.72],t0=[.42,.16,-.08],p1=[cardC[0]+toPrism[0]*.58,.39,cardC[2]+toPrism[2]*.58],t1=[cardC[0],.25,cardC[2]];
   const drift=(T-C[1].start)*.004;cam.set({pos:p0.map((v,i)=>v+(p1[i]-v)*k+(i===0?drift:0)),target:t0.map((v,i)=>v+(t1[i]-v)*k),fov:keys(k,[[0,42],[1,38]])});
   return {...cam.uniforms(),uFan:1-k,uOther:1,uNa:prog(T,at(1,2)+.3,at(1,2)+1.2)*(1-prog(T,at(1,3)+.6,at(1,3)+1.4)),uHyd:prog(T,at(1,3)+.6,at(1,3)+1.6)};}));
 
  // 3. A galaxy's light: hydrogen's lines slid toward red, for one galaxy after another; then a wave stretching.
  const zOf=T=>T<at(2,2)?.065*prog(T,at(2,1)-.2,at(2,1)+2.2,'inOutCubic'):T<at(2,2)+3?.065+(.04-.065)*prog(T,at(2,2)+.3,at(2,2)+1.4):.04+(.09-.04)*prog(T,at(2,2)+3,at(2,2)+4.1);
  shots.push(shot('shift',2,SHIFT,(t,T)=>{const m1=prog(T,at(2,2)+.2,at(2,2)+1.4),m2=prog(T,at(2,2)+2.9,at(2,2)+4.1);
-  return {uSeedA:m1<1?7.7:12.4,uSeedB:m1<1?12.4:21.9,uMix:m1<1?m1:m2,uZ:zOf(T),uLab:prog(T,C[2].start+.6,C[2].start+2),uBand:prog(T,C[2].start+1.4,C[2].start+2.8),
+  return {uGS:1-.28*m1-.3*m2,uSeedA:m1<1?7.7:12.4,uSeedB:m1<1?12.4:21.9,uMix:m1<1?m1:m2,uZ:zOf(T),uLab:prog(T,C[2].start+.6,C[2].start+2),uBand:prog(T,C[2].start+1.4,C[2].start+2.8),
    uLink:prog(T,at(2,1)+1.4,at(2,1)+2.6),uGhost:prog(T,at(2,1),at(2,1)+1),uWaveOn:prog(T,at(2,4)-.2,at(2,4)+.8),uWaveNm:keys(T,[[at(2,4)+.6,460],[at(2,4)+2.8,650,'inOutCubic'],[at(2,5)-.5,650],[at(2,5)+.4,470],[at(2,5)+3.4,650,'inOutCubic']])};}));
 
  // 4. Waves from a moving source: a siren passing you; then light, redder behind.
@@ -501,7 +505,7 @@ function build(chapters,{aspect=16/9}={}){
  shots[shots.length-1].fadeIn=X*2;
  const cep=(T,P,ph=0)=>{const x=((T/P+ph)%1+1)%1;return x<.18?.35+.65*prog(x,0,.18):.35+.65*(1-prog(x,.18,1));};
  shots.push(part('pulse',4,PULSE,at(4,3)-.6,at(5,1)+.6,(t,T)=>{const g=prog(T,at(5,0)-.3,at(5,0)+1.8,'inOutCubic');
-  return {uFar:prog(T,at(4,5)+.4,at(4,5)+2.6,'inOutCubic'),uTr:prog(T,at(4,3)+1,at(4,3)+2)*(1-prog(T,at(4,5),at(4,5)+.8)),uA:2.2*cep(T,3.2),uB:.8*cep(T,1.3,.4),uOnA:prog(T,at(4,3)-.4,at(4,3)+.6),uOnB:prog(T,at(4,3)+.4,at(4,3)+1.4),uGal:g,uZoom:keys(T,[[at(5,0)-.3,1.6],[at(5,1)+.6,1.15]]),uCep:cep(T,3.2),uCepP:[.16,-.04]};}));
+  return {uFar:prog(T,at(4,5)-.2,at(4,5)+2,'inOutCubic'),uTr:prog(T,at(4,3)+1,at(4,3)+2),uA:2.2*cep(T,3.2),uB:.8*cep(T,1.3,.4),uOnA:prog(T,at(4,3)-.4,at(4,3)+.6),uOnB:prog(T,at(4,3)+.4,at(4,3)+1.4),uGal:g,uZoom:keys(T,[[at(5,0)-.3,1.6],[at(5,1)+.6,1.15]]),uCep:cep(T,3.2),uCepP:[.16,-.04]};}));
  shots[shots.length-1].fadeOut=X*2;
 
  // 6. Hubble's plot: speed against distance, close to a straight line.
@@ -522,9 +526,9 @@ function build(chapters,{aspect=16/9}={}){
  shots[shots.length-1].fadeIn=X*2;
  // ...and back to the galaxies: the same pattern from ours, then from another.
  const other=field.pos[7];
- shots.push(part('nocentre',6,FIELD,at(6,5)-.6,C[6].end+X,(t,T)=>{const k=prog(T,at(6,5)+1.2,at(6,5)+3,'inOutCubic'),ref=other.map(v=>v*k);
-  const cam2=new Camera();orbit(cam2,27,.3,.9+(T-at(6,5))*.02,ref,50);
-  const a=grow(T,at(6,5)-1,.045),a0=grow(T-2.5,at(6,5)-1,.045);return {...cam2.uniforms(),...F({uRef:ref,uA:a,uA0:a0,uTrail:prog(T,at(6,5),at(6,5)+1),uMark:[...ref,prog(T,at(6,5)-.2,at(6,5)+.6)]})};}));
+ shots.push(part('nocentre',6,FIELD,at(6,5)-.6,C[6].end+X,(t,T)=>{const k=prog(T,at(6,5)+.6,at(6,5)+2.4,'inOutCubic'),ref=other.map(v=>v*k);
+  const a=grow(T,at(6,5)-1,.045),a0=grow(T-2.5,at(6,5)-1,.045),seen=other.map((v,i)=>ref[i]+(v-ref[i])*a),look=seen.map(v=>v*k);
+  const cam2=new Camera();orbit(cam2,27,.3,.9+(T-at(6,5))*.02,look,50);return {...cam2.uniforms(),...F({uRef:ref,uA:a,uA0:a0,uTrail:prog(T,at(6,5),at(6,5)+1),uMark:[...(k<.5?[0,0,0]:seen),prog(T,at(6,5)-.2,at(6,5)+.6)*Math.abs(1-2*prog(T,at(6,5)+.9,at(6,5)+2.1))]})};}));
  shots[shots.length-1].fadeOut=X*2;
 
  // 8. Space itself growing: a grid that stretches, and a light wave stretched with it.
@@ -533,7 +537,7 @@ function build(chapters,{aspect=16/9}={}){
  shots.push(shot('space',7,FIELD,(t,T)=>{const cam=cams[7],dz=(T-C[7].start)*.06;cam.set({pos:[13,11,29+dz],target:[13,-1,-3],fov:46});
   const a=aSpace(T),aE=aSpace(at(7,2)-.3),k=prog(T,at(7,2)-.3,at(7,4),'linear'),L=far[0]*a;
   return {...cam.uniforms(),...F({uG:plane.g,uGn:plane.n,uCount:plane.count,uA:a,uGrid:prog(T,at(7,1)-.6,at(7,1)+.6),uGridS:6*a,
-   uWave:[prog(T,at(7,2)-.3,at(7,2)+.5),2.2*a/aE,Math.min(445*a/aE,760),L*(1-k)],uWaveA:[far[0]*a,0,far[2]*a],uWaveB:[0,0,0],
+   uWave:[prog(T,at(7,2)-.3,at(7,2)+.5),2.2*a/aE,Math.min(445*a/aE,760),Math.max(L*(1-k),3.4)],uWaveA:[far[0]*a,0,far[2]*a],uWaveB:[0,0,0],
    uMark:[0,0,0,prog(T,at(7,2)-1,at(7,2))],uMark2:[far[0]*a,far[1]*a,far[2]*a,prog(T,at(7,2)-1,at(7,2))*(1-prog(T,at(7,4)+.4,at(7,4)+1.2))]})};}));
 
  // 9. Running it backwards: the galaxies crowd together, and space fills with hot, glowing gas.
@@ -581,7 +585,6 @@ function build(chapters,{aspect=16/9}={}){
     const sl=fade(at(5,4)+.6,C[5].end);add('210 km/s faster',at2(.47,.27),{a:sl});add('10 million light years',at2(.3,.13),{a:sl});}
    if(s.id==='loaf'){const sp=u.uS,sel=u.uSel,base=[0,-.32];const rpos=i=>[base[0]+R[i*4]*sp,base[1]+R[i*4+1]*sp,0];
     const a=u.uArrows;if(a>.02){const picks=[u.uPick[0],u.uPick[1]];picks.forEach((j,k)=>{const n=Math.abs(j-sel),m=rpos(j),q=P(cam,[m[0],m[1]+(n===1?.08:-.08),0]);add(n===1?'1 gap':'2 gaps',q,{a});});}}
-   if(s.id==='back')add('13.8 billion years ago',[.5,.86],{a:fade(at(8,3)+.4,at(8,4)+.4)});
    if(s.id==='shell')point('us',[.5,.5],[.035,-.075],fade(at(8,5)+1.4,C[8].end));
    if(s.id==='antenna')point('radio antenna',P(cam,[1.25+.95-.8*1.7,-.15+.72+.48*1.7+.45,6.4+.55-.36*1.7]),[-.1,-.12],fade(C[9].start+.4,at(9,1)));
    if(s.id==='glows')add('mapped in microwaves',[.5,.935],{a:fade(at(9,3)+1.4,at(9,4)+.4)});

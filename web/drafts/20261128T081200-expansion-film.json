@@ -135,27 +135,27 @@
       },
       {
         "title": "How far away",
-        "body": "Next, astronomers needed to know how far away each galaxy was. A lamp twice as far away looks four times fainter. Its light has spread over four times the area. Henrietta Leavitt found stars that pulse, and the slower ones are brighter. So timing a star's pulse tells you how bright it really is. Then how faint it looks tells you how far away it is."
+        "body": "Next, astronomers needed to know how far away each galaxy was. A lamp twice as far away looks four times fainter. Its light has spread over four times the area. Henrietta Leavitt studied pulsing stars that were all about equally far away. The slower such a star pulses, the brighter it really is. So time its pulse, and how faint it looks tells you how far away it is."
       },
       {
         "title": "Farther means faster",
-        "body": "Edwin Hubble found such stars in other galaxies, and measured their distances. In 1929, he plotted their speeds, many measured by Slipher, against distance. The points fell roughly along a straight line. A galaxy twice as far away was moving away about twice as fast. Each million light years farther away means about 21 kilometres a second faster. But why would speed grow with distance?"
+        "body": "Edwin Hubble found such stars in other galaxies, and measured their distances. In 1929, he plotted their distances against speeds from Slipher's redshifts. The points fell roughly along a straight line. A galaxy twice as far away was moving away about twice as fast. Every 10 million light years farther adds about 210 kilometres a second. But why would speed grow with distance?"
       },
       {
         "title": "No centre",
-        "body": "Think of raisins in a loaf of bread, rising in the oven. As the dough rises, every gap between raisins doubles in the same time. Sit on one raisin: the one next to it moves off by one gap. A raisin two gaps away moves off by two: twice as fast. Sit on any other raisin, and you'd see the same pattern. From any galaxy you'd see Hubble's pattern too: it points to no centre."
+        "body": "Think of raisins in a loaf of bread, rising in the oven. As the dough rises, every gap between raisins doubles in the same time. Sit on one raisin: the one next to it moves off by one gap. A raisin two gaps away moves off by two: twice as fast. Sit on any other raisin, and you'd see the same pattern. Every galaxy would see Hubble's pattern, so it doesn't put us at the centre."
       },
       {
         "title": "Space itself grows",
-        "body": "The galaxies aren't flying through space away from one spot. Like raisins in dough, they ride along as the space between them grows. Light crossing that space is stretched along with it. The longer its journey, the more it stretches, and the redder it arrives. For nearby galaxies, it matches a siren's stretch at the same speed. In 1927, Georges Lemaître used Einstein's theory of gravity to predict this."
+        "body": "The galaxies aren't flying through space away from one spot. Like raisins in dough, they ride along as the space between them grows. Light crossing that space is stretched along with it. The longer its journey, the more it stretches, and the redder it arrives. For nearby galaxies, this stretch matches a siren moving away at that speed. In 1927, Georges Lemaître used Einstein's theory of gravity to predict this."
       },
       {
         "title": "Running it backwards",
-        "body": "Now run the growth backwards. The galaxies crowd closer, and everything gets denser and hotter. Like air squeezed in a bike pump, it all warms up. About 13.8 billion years ago, all of space was hot and dense, and it glowed. That hot, dense beginning is what we call the Big Bang. Light from its farthest parts would only be reaching us now, from all around."
+        "body": "Now run the growth backwards. The galaxies crowd closer, and everything is packed tighter. Like air squeezed in a bike pump, it heats up. About 13.8 billion years ago, all of space was hot and dense, and it glowed. That hot, dense beginning is what we call the Big Bang. The glow filled all of space, so its light should still be reaching us now."
       },
       {
         "title": "The glow is still here",
-        "body": "In 1964, two radio astronomers heard a faint radio hiss they couldn't remove. It came from every direction in the sky, day and night. It was that glow, its waves stretched about a thousand times on the way. It now arrives as microwaves, waves far too long for our eyes to see. Stretched light, farther meaning faster, and an old glow: space is growing."
+        "body": "In 1964, two astronomers heard a faint hiss in their radio antenna. They couldn't get rid of it, and it came from every direction, day and night. It was that glow, its waves stretched about a thousand times on the way. It now arrives as microwaves, waves far too long for our eyes to see. Stretched light, more for farther galaxies, and an old glow: space is growing."
       }
     ],
     "narration": {
@@ -275,7 +275,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": ""
+    "intro_note": "Made in a coding session at the owner’s request: the published expansion guide redone as a film with the techniques of the holography film, and read aloud live by a Gemini voice on devices that keep a Gemini key. Each frame is rendered in high dynamic range by the lab’s WebGL2 film engine (film/expansion.js): procedural galaxies, a slit and prism casting a rainbow with real absorption lines, waves from a moving source, a lamp’s light spreading, pulsing stars with their light curves, a rising raisin loaf, a grid of growing space, hot gas run backwards and the microwave sky as an oval map, with motion blur, bloom, a grade and grain. AI reviewers checked it in three rounds. The accuracy review passed (8) in round 2 and the visual review (8) in round 3; in round 3 the first-time-reader test (8) asked for one line to be rewritten and the blind-viewer test (6) found two pictures that misled. Those fixes were made after the last round and were not reviewed again, so this draft awaits the owner’s review."
   },
   "revisions": [
     {
@@ -344,27 +344,27 @@
           },
           {
             "title": "How far away",
-            "body": "Next, astronomers needed to know how far away each galaxy was. A lamp twice as far away looks four times fainter. Its light has spread over four times the area. Henrietta Leavitt found stars that pulse, and the slower ones are brighter. So timing a star's pulse tells you how bright it really is. Then how faint it looks tells you how far away it is."
+            "body": "Next, astronomers needed to know how far away each galaxy was. A lamp twice as far away looks four times fainter. Its light has spread over four times the area. Henrietta Leavitt studied pulsing stars that were all about equally far away. The slower such a star pulses, the brighter it really is. So time its pulse, and how faint it looks tells you how far away it is."
           },
           {
             "title": "Farther means faster",
-            "body": "Edwin Hubble found such stars in other galaxies, and measured their distances. In 1929, he plotted their speeds, many measured by Slipher, against distance. The points fell roughly along a straight line. A galaxy twice as far away was moving away about twice as fast. Each million light years farther away means about 21 kilometres a second faster. But why would speed grow with distance?"
+            "body": "Edwin Hubble found such stars in other galaxies, and measured their distances. In 1929, he plotted their distances against speeds from Slipher's redshifts. The points fell roughly along a straight line. A galaxy twice as far away was moving away about twice as fast. Every 10 million light years farther adds about 210 kilometres a second. But why would speed grow with distance?"
           },
           {
             "title": "No centre",
-            "body": "Think of raisins in a loaf of bread, rising in the oven. As the dough rises, every gap between raisins doubles in the same time. Sit on one raisin: the one next to it moves off by one gap. A raisin two gaps away moves off by two: twice as fast. Sit on any other raisin, and you'd see the same pattern. From any galaxy you'd see Hubble's pattern too: it points to no centre."
+            "body": "Think of raisins in a loaf of bread, rising in the oven. As the dough rises, every gap between raisins doubles in the same time. Sit on one raisin: the one next to it moves off by one gap. A raisin two gaps away moves off by two: twice as fast. Sit on any other raisin, and you'd see the same pattern. Every galaxy would see Hubble's pattern, so it doesn't put us at the centre."
           },
           {
             "title": "Space itself grows",
-            "body": "The galaxies aren't flying through space away from one spot. Like raisins in dough, they ride along as the space between them grows. Light crossing that space is stretched along with it. The longer its journey, the more it stretches, and the redder it arrives. For nearby galaxies, it matches a siren's stretch at the same speed. In 1927, Georges Lemaître used Einstein's theory of gravity to predict this."
+            "body": "The galaxies aren't flying through space away from one spot. Like raisins in dough, they ride along as the space between them grows. Light crossing that space is stretched along with it. The longer its journey, the more it stretches, and the redder it arrives. For nearby galaxies, this stretch matches a siren moving away at that speed. In 1927, Georges Lemaître used Einstein's theory of gravity to predict this."
           },
           {
             "title": "Running it backwards",
-            "body": "Now run the growth backwards. The galaxies crowd closer, and everything gets denser and hotter. Like air squeezed in a bike pump, it all warms up. About 13.8 billion years ago, all of space was hot and dense, and it glowed. That hot, dense beginning is what we call the Big Bang. Light from its farthest parts would only be reaching us now, from all around."
+            "body": "Now run the growth backwards. The galaxies crowd closer, and everything is packed tighter. Like air squeezed in a bike pump, it heats up. About 13.8 billion years ago, all of space was hot and dense, and it glowed. That hot, dense beginning is what we call the Big Bang. The glow filled all of space, so its light should still be reaching us now."
           },
           {
             "title": "The glow is still here",
-            "body": "In 1964, two radio astronomers heard a faint radio hiss they couldn't remove. It came from every direction in the sky, day and night. It was that glow, its waves stretched about a thousand times on the way. It now arrives as microwaves, waves far too long for our eyes to see. Stretched light, farther meaning faster, and an old glow: space is growing."
+            "body": "In 1964, two astronomers heard a faint hiss in their radio antenna. They couldn't get rid of it, and it came from every direction, day and night. It was that glow, its waves stretched about a thousand times on the way. It now arrives as microwaves, waves far too long for our eyes to see. Stretched light, more for farther galaxies, and an old glow: space is growing."
           }
         ],
         "narration": {
