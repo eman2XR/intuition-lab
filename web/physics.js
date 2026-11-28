@@ -774,6 +774,7 @@
     holoTile() { return 4 * Math.LN2; },
     // Cells in a box n cells wide, and tiles of a fixed size on a sphere's surface of radius r (in tile widths).
     holoBoxCells(n) { return n ** 3; },
+    holoSurfaceCells(n) { return 6 * n * n; },
     holoChecks() {
       const near = (a, b, e) => Math.abs(a - b) <= e, K = this.holoK;
       return Object.entries({
@@ -783,6 +784,8 @@
         'A Sun-mass black hole holds about 10^77 bits': Math.floor(Math.log10(this.holoBits(K.Msun))) === 77,
         'Twice the mass gives twice the width and four times the bits': near(this.holoRadius(2 * K.Msun) / this.holoRadius(K.Msun), 2, 1e-12) && near(this.holoBits(2 * K.Msun) / this.holoBits(K.Msun), 4, 1e-9),
         'A box twice as wide holds eight times the cells': this.holoBoxCells(4) / this.holoBoxCells(2) === 8,
+        'A box 100 cells wide holds a million cells inside but only 60,000 on its surface': this.holoBoxCells(100) === 1e6 && this.holoSurfaceCells(100) === 60000 && this.holoSurfaceCells(4) / this.holoSurfaceCells(2) === 4,
+        'A box 16 cells wide: 4,096 inside, 1,536 on the surface': this.holoBoxCells(16) === 4096 && this.holoSurfaceCells(16) === 1536,
         'Each bit takes about 2.8 Planck areas of horizon': near(this.holoTile(), 2.77, .01),
       }).map(([name, pass]) => ({ name, pass }));
     },

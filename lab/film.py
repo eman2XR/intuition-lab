@@ -32,6 +32,7 @@ def main():
     ap.add_argument('--size', default='1280x720'); ap.add_argument('--fps', type=int, default=24)
     ap.add_argument('--samples', type=int, default=5); ap.add_argument('--frames', default='')
     ap.add_argument('--poster', action='store_true'); ap.add_argument('--crf', type=int, default=23)
+    ap.add_argument('--captions-only', action='store_true')
     a = ap.parse_args()
     W, H = map(int, a.size.split('x'))
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
@@ -57,6 +58,11 @@ def main():
                 t0 = time.time()
                 write(out / f'still-{t:07.2f}.jpg', pg.evaluate('([t,s])=>frame(t,s)', [t, a.samples]))
                 print(f'{t:7.2f}s rendered in {time.time() - t0:.2f}s', flush=True)
+            b.close()
+            return
+        if a.captions_only:
+            caps = [{'t': k / 10, 'items': [{**c, 'x': round(c['x'], 4), 'y': round(c['y'], 4), 'alpha': round(c['alpha'], 3)} for c in pg.evaluate('(t)=>captions(t)', k / 10)]} for k in range(int(duration * 10) + 1)]
+            (out / 'captions.json').write_text(json.dumps({'duration': duration, 'size': [W, H], 'fps': a.fps, 'frames': caps}, separators=(',', ':')))
             b.close()
             return
         n = int(duration * a.fps) + 1

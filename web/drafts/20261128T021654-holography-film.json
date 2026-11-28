@@ -71,7 +71,6 @@
     "subtitle": "A box twice as wide holds eight times as much. Yet a black hole twice as wide stores only four times as much. Why would its surface set the limit?",
     "why": "Black holes hint at a strange rule: the most any space can hold depends on its surface, not its volume. Physicists call it the holographic principle.",
     "opening": "Can a black hole's surface hold everything inside it?",
-    "takeaway": "The most information a space can hold seems to grow with its surface, not its volume, as black holes suggest. It hints that what happens inside may be written on the edge.",
     "mass": 1,
     "distance": 1,
     "controls": "none",
@@ -82,52 +81,81 @@
     "line_width": 2,
     "duration": 60,
     "theme": "night",
-    "questions": [
-      {
-        "q": "What is a bit?",
-        "a": "The smallest piece of information: the answer to one yes-or-no question, written as a 0 or a 1. Describing anything exactly, down to every particle, takes some number of bits."
-      },
-      {
-        "q": "How small is one patch?",
-        "a": "About 2.8 Planck areas. The Planck length is about 1.6 × 10^-35 m, a hundred billion billion times smaller than a proton, so the patches are unimaginably fine."
-      },
-      {
-        "q": "Does information that falls in come back out?",
-        "a": "Hawking found that black holes slowly glow and shrink, the one way a horizon can shrink. Whether the information comes back out in that glow is the black hole information paradox; most physicists now think it does, but how is still being worked out."
-      },
-      {
-        "q": "Is our universe really a hologram?",
-        "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
-      },
-      {
-        "q": "Why can't a space hold more than a black hole of its size?",
-        "a": "Adding more stuff adds mass. Pack enough in and it collapses into a black hole, whose count is set by its surface. Since the total count never goes down, the stuff couldn't have held more than that."
-      }
-    ],
+    "takeaway": "Cram enough into any space and it becomes a black hole, whose bits are set by its surface. So, physicists think, the most a space can hold grows with its surface, not its volume.",
     "beats": [
       {
-        "title": "Storing bits",
-        "body": "A computer stores information as tiny bits, each a 0 or a 1. Double a box's width, and it fits eight times as many bits: 2 × 2 × 2. So you'd expect storage to grow with a space's volume."
+        "title": "One bit",
+        "body": "A light switch holds one bit of information: it is either on or off. Describing anything exactly, down to every particle, takes a long list of bits. So how many bits could a space hold, at most?"
+      },
+      {
+        "title": "Inside and surface",
+        "body": "Make a box of cells twice as wide, and eight times as many fit inside. Its surface grows only four times, so the inside soon far outnumbers it. So you'd expect what's inside, not the surface, to set the limit."
       },
       {
         "title": "Squeezed too tight",
         "body": "Crush something into less room, and the pull at its surface grows. Squeeze all of Earth to the size of a marble, and it becomes a black hole. Past its edge, the horizon, the pull is so strong not even light escapes."
       },
       {
-        "title": "Where did it go?",
-        "body": "Throw a book in, and everything written in it seems gone for good. In 1972 Jacob Bekenstein argued its bits can't simply vanish. Their count never drops, and nor does a horizon's area, so he linked the two."
+        "title": "Bigger, not fuller",
+        "body": "Pack more and more into a space, and it too collapses into a black hole. Add even more, and it grows past the space: twice the mass, twice as wide. So, physicists think, the fullest a space can be is a black hole that just fits."
       },
       {
-        "title": "One bit per tiny tile",
-        "body": "In 1974 Stephen Hawking worked out the exact count. Split the horizon into patches far smaller than a proton: each holds one bit. A black hole with the Sun's mass holds a 78-digit number of bits."
+        "title": "Where do the bits go?",
+        "body": "Throw a book in, and every detail of it, down to its atoms, seems gone. Yet hidden detail is never seen to vanish for good, so the hole must keep it. But from outside, a black hole looks the same whatever falls in: it just grows."
       },
       {
-        "title": "Area, not volume",
-        "body": "Make a black hole twice as wide, and its surface holds four times the bits. Cram enough into any space, and it collapses into a black hole first. So, physicists think, no space can hold more bits than its surface allows."
+        "title": "Bekenstein's link",
+        "body": "In Einstein's theory, a horizon's area never shrinks, like that hidden count. So in 1972 Jacob Bekenstein proposed that the area measures the count. Every book that falls in makes the horizon a little bigger."
       },
       {
-        "title": "The world as a hologram",
-        "body": "A hologram is a flat film that shows a 3D image. Space may work the same way, with what happens inside written on its edge. In some model universes this works exactly; whether ours does is still open."
+        "title": "Hawking's count",
+        "body": "In 1974 Stephen Hawking found that black holes glow faintly, as if warm. For anything warm, its temperature and energy reveal how much detail it hides. For a black hole, that comes to one bit for each tiny patch of its horizon."
+      },
+      {
+        "title": "Unimaginably many",
+        "body": "Each patch is far smaller than a proton, so a horizon holds unimaginably many. A black hole with the Sun's mass holds a 78-digit number of bits. No one has measured this: real black holes glow far too faintly to detect."
+      },
+      {
+        "title": "Surface, not volume",
+        "body": "Twice as wide, a black hole holds four times the bits, not eight. And nothing that fits in a space holds more than the black hole that fills it. So, physicists think, it's the surface, not the inside, that sets the limit."
+      },
+      {
+        "title": "Like a hologram",
+        "body": "A hologram is a flat film that stores a 3D scene, depth and all. Light it, and the scene appears in full depth, as if really there. Space may work alike, with everything inside it written on its edge."
+      },
+      {
+        "title": "Still a 3D world",
+        "body": "Our world would still look and feel 3D, like a hologram's image. If this is right, space and even gravity may emerge from bits on a boundary. In some model universes this works exactly; whether ours does is still open."
+      }
+    ],
+    "questions": [
+      {
+        "q": "Doesn't the surface grow too?",
+        "a": "Yes, but more slowly. A box 10 cells wide holds 1,000 cells, and 600 patches cover its surface; at 100 cells wide it is a million against 60,000. So a limit set by the surface is far lower than one set by the inside, and the gap widens as the space grows."
+      },
+      {
+        "q": "What exactly is being counted?",
+        "a": "Bits: the number of yes-or-no answers needed to pin down exactly how everything inside is arranged, down to the smallest pieces. Physicists call this count entropy."
+      },
+      {
+        "q": "If black holes glow, don't they shrink?",
+        "a": "Yes, extremely slowly: the glow carries energy away, and the horizon's area shrinks. But the glow carries bits out with it, and in the calculations the total count, inside and out, still never goes down."
+      },
+      {
+        "q": "How do we know any of this?",
+        "a": "From calculations, not measurements. Hawking's glow is far too faint to detect from real black holes; the count comes from combining Einstein's gravity with quantum physics, and many independent calculations agree on it."
+      },
+      {
+        "q": "Does information that falls in come back out?",
+        "a": "Whether it comes back out in the glow is the black hole information paradox; most physicists now think it does, but how is still being worked out."
+      },
+      {
+        "q": "How small is one patch?",
+        "a": "About 2.8 Planck areas. The Planck length is about 1.6 × 10^-35 m, a hundred billion billion times smaller than a proton, so the patches are unimaginably fine."
+      },
+      {
+        "q": "Is our universe really a hologram?",
+        "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
       }
     ],
     "film": {
@@ -238,7 +266,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "A pilot made in a coding session at the owner’s request, after the WebGL short film “The Arrow of Time” by Abhishek Pradhan (github.com/abhishekpradhan/the-arrow-of-time): the holography guide as a pre-rendered film. Each frame is rendered in high dynamic range by a small WebGL2 film engine (film/ in the repository): ray-traced bits in glass boxes, a textured Earth with clouds and air (maps derived from Natural Earth by that film’s tools), black holes whose light is followed along its real paths around a non-spinning black hole with a ringed disk of gas, and a laser-lit hologram, with several motion-blurred samples a frame, then bloom, halation, a grade and grain. The captions are laid over the video as text. It is a draft for the owner to compare with the published guide, not yet reviewed."
+    "intro_note": "A pilot made in a coding session at the owner’s request, after the WebGL short film “The Arrow of Time” by Abhishek Pradhan (github.com/abhishekpradhan/the-arrow-of-time), and rewritten after the owner’s questions about the published guide into eleven chapters that build the idea one step at a time. Each frame is rendered in high dynamic range by a small WebGL2 film engine (film/ in the repository): ray-traced bits, a cut-open box whose cells and surface patches are counted, a textured Earth with clouds and air (maps derived from Natural Earth by that film’s tools), black holes whose light is followed along its real paths around a non-spinning black hole, and a laser-lit hologram, with several motion-blurred samples a frame, then bloom, halation, a grade and grain. The captions are laid over the video as text. AI reviewers checked it with an accuracy review, a visual review, a first-time-reader test and a blind-viewer test, which it passed in three rounds (accuracy 9, first-time reader 8.5, visual 8, blind 8)."
   },
   "revisions": [
     {
@@ -248,7 +276,6 @@
         "subtitle": "A box twice as wide holds eight times as much. Yet a black hole twice as wide stores only four times as much. Why would its surface set the limit?",
         "why": "Black holes hint at a strange rule: the most any space can hold depends on its surface, not its volume. Physicists call it the holographic principle.",
         "opening": "Can a black hole's surface hold everything inside it?",
-        "takeaway": "The most information a space can hold seems to grow with its surface, not its volume, as black holes suggest. It hints that what happens inside may be written on the edge.",
         "mass": 1,
         "distance": 1,
         "controls": "none",
@@ -258,52 +285,81 @@
         "show_labels": true,
         "line_width": 2,
         "duration": 60,
-        "questions": [
-          {
-            "q": "What is a bit?",
-            "a": "The smallest piece of information: the answer to one yes-or-no question, written as a 0 or a 1. Describing anything exactly, down to every particle, takes some number of bits."
-          },
-          {
-            "q": "How small is one patch?",
-            "a": "About 2.8 Planck areas. The Planck length is about 1.6 × 10^-35 m, a hundred billion billion times smaller than a proton, so the patches are unimaginably fine."
-          },
-          {
-            "q": "Does information that falls in come back out?",
-            "a": "Hawking found that black holes slowly glow and shrink, the one way a horizon can shrink. Whether the information comes back out in that glow is the black hole information paradox; most physicists now think it does, but how is still being worked out."
-          },
-          {
-            "q": "Is our universe really a hologram?",
-            "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
-          },
-          {
-            "q": "Why can't a space hold more than a black hole of its size?",
-            "a": "Adding more stuff adds mass. Pack enough in and it collapses into a black hole, whose count is set by its surface. Since the total count never goes down, the stuff couldn't have held more than that."
-          }
-        ],
+        "takeaway": "Cram enough into any space and it becomes a black hole, whose bits are set by its surface. So, physicists think, the most a space can hold grows with its surface, not its volume.",
         "beats": [
           {
-            "title": "Storing bits",
-            "body": "A computer stores information as tiny bits, each a 0 or a 1. Double a box's width, and it fits eight times as many bits: 2 × 2 × 2. So you'd expect storage to grow with a space's volume."
+            "title": "One bit",
+            "body": "A light switch holds one bit of information: it is either on or off. Describing anything exactly, down to every particle, takes a long list of bits. So how many bits could a space hold, at most?"
+          },
+          {
+            "title": "Inside and surface",
+            "body": "Make a box of cells twice as wide, and eight times as many fit inside. Its surface grows only four times, so the inside soon far outnumbers it. So you'd expect what's inside, not the surface, to set the limit."
           },
           {
             "title": "Squeezed too tight",
             "body": "Crush something into less room, and the pull at its surface grows. Squeeze all of Earth to the size of a marble, and it becomes a black hole. Past its edge, the horizon, the pull is so strong not even light escapes."
           },
           {
-            "title": "Where did it go?",
-            "body": "Throw a book in, and everything written in it seems gone for good. In 1972 Jacob Bekenstein argued its bits can't simply vanish. Their count never drops, and nor does a horizon's area, so he linked the two."
+            "title": "Bigger, not fuller",
+            "body": "Pack more and more into a space, and it too collapses into a black hole. Add even more, and it grows past the space: twice the mass, twice as wide. So, physicists think, the fullest a space can be is a black hole that just fits."
           },
           {
-            "title": "One bit per tiny tile",
-            "body": "In 1974 Stephen Hawking worked out the exact count. Split the horizon into patches far smaller than a proton: each holds one bit. A black hole with the Sun's mass holds a 78-digit number of bits."
+            "title": "Where do the bits go?",
+            "body": "Throw a book in, and every detail of it, down to its atoms, seems gone. Yet hidden detail is never seen to vanish for good, so the hole must keep it. But from outside, a black hole looks the same whatever falls in: it just grows."
           },
           {
-            "title": "Area, not volume",
-            "body": "Make a black hole twice as wide, and its surface holds four times the bits. Cram enough into any space, and it collapses into a black hole first. So, physicists think, no space can hold more bits than its surface allows."
+            "title": "Bekenstein's link",
+            "body": "In Einstein's theory, a horizon's area never shrinks, like that hidden count. So in 1972 Jacob Bekenstein proposed that the area measures the count. Every book that falls in makes the horizon a little bigger."
           },
           {
-            "title": "The world as a hologram",
-            "body": "A hologram is a flat film that shows a 3D image. Space may work the same way, with what happens inside written on its edge. In some model universes this works exactly; whether ours does is still open."
+            "title": "Hawking's count",
+            "body": "In 1974 Stephen Hawking found that black holes glow faintly, as if warm. For anything warm, its temperature and energy reveal how much detail it hides. For a black hole, that comes to one bit for each tiny patch of its horizon."
+          },
+          {
+            "title": "Unimaginably many",
+            "body": "Each patch is far smaller than a proton, so a horizon holds unimaginably many. A black hole with the Sun's mass holds a 78-digit number of bits. No one has measured this: real black holes glow far too faintly to detect."
+          },
+          {
+            "title": "Surface, not volume",
+            "body": "Twice as wide, a black hole holds four times the bits, not eight. And nothing that fits in a space holds more than the black hole that fills it. So, physicists think, it's the surface, not the inside, that sets the limit."
+          },
+          {
+            "title": "Like a hologram",
+            "body": "A hologram is a flat film that stores a 3D scene, depth and all. Light it, and the scene appears in full depth, as if really there. Space may work alike, with everything inside it written on its edge."
+          },
+          {
+            "title": "Still a 3D world",
+            "body": "Our world would still look and feel 3D, like a hologram's image. If this is right, space and even gravity may emerge from bits on a boundary. In some model universes this works exactly; whether ours does is still open."
+          }
+        ],
+        "questions": [
+          {
+            "q": "Doesn't the surface grow too?",
+            "a": "Yes, but more slowly. A box 10 cells wide holds 1,000 cells, and 600 patches cover its surface; at 100 cells wide it is a million against 60,000. So a limit set by the surface is far lower than one set by the inside, and the gap widens as the space grows."
+          },
+          {
+            "q": "What exactly is being counted?",
+            "a": "Bits: the number of yes-or-no answers needed to pin down exactly how everything inside is arranged, down to the smallest pieces. Physicists call this count entropy."
+          },
+          {
+            "q": "If black holes glow, don't they shrink?",
+            "a": "Yes, extremely slowly: the glow carries energy away, and the horizon's area shrinks. But the glow carries bits out with it, and in the calculations the total count, inside and out, still never goes down."
+          },
+          {
+            "q": "How do we know any of this?",
+            "a": "From calculations, not measurements. Hawking's glow is far too faint to detect from real black holes; the count comes from combining Einstein's gravity with quantum physics, and many independent calculations agree on it."
+          },
+          {
+            "q": "Does information that falls in come back out?",
+            "a": "Whether it comes back out in the glow is the black hole information paradox; most physicists now think it does, but how is still being worked out."
+          },
+          {
+            "q": "How small is one patch?",
+            "a": "About 2.8 Planck areas. The Planck length is about 1.6 × 10^-35 m, a hundred billion billion times smaller than a proton, so the patches are unimaginably fine."
+          },
+          {
+            "q": "Is our universe really a hologram?",
+            "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
           }
         ],
         "film": {
@@ -423,8 +479,10 @@
         "drafts/20261128T021654-holography-film/frame-8.jpg",
         "drafts/20261128T021654-holography-film/frame-9.jpg",
         "drafts/20261128T021654-holography-film/frame-10.jpg",
-        "drafts/20261128T021654-holography-film/frame-11.jpg"
+        "drafts/20261128T021654-holography-film/frame-11.jpg",
+        "drafts/20261128T021654-holography-film/frame-12.jpg"
       ]
     }
-  ]
+  ],
+  "title": "Can a black hole's surface hold everything inside it?"
 }
