@@ -26,13 +26,13 @@ jobs:
       - name: Check coordinator and providers without live model calls
         run: python -m unittest discover -s tests -v
       - name: Check the site's scripts parse
-        run: for f in web/app.js web/scene.js web/physics.js web/sw.js; do node --check "$f"; done
+        run: for f in web/app.js web/scene.js web/physics.js web/blackhole.js web/sw.js; do node --check "$f"; done
       - name: Check physics
         run: node -e "const c=require('./web/physics.js').allChecks(); const bad=c.filter(x=>!x.pass); console.log(c.length+' checks'); if(bad.length){console.log(bad);process.exit(1)}"
       - name: Stage public demo only
         run: |
           mkdir _site
-          cp web/index.html web/style.css web/app.js web/scene.js web/physics.js web/talk.js web/pcm-capture.js web/example.json web/curriculum.json _site/
+          cp web/index.html web/style.css web/app.js web/scene.js web/physics.js web/talk.js web/blackhole.js web/pcm-capture.js web/example.json web/curriculum.json _site/
           # Installed web app: manifest, icons, and the service worker at a stable, unversioned address.
           cp web/manifest.webmanifest web/sw.js web/push.json _site/
           cp -R web/example-frames web/icons _site/
