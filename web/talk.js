@@ -153,6 +153,8 @@ function open(opts={}){
  // browsers only show their permission prompt for a page action they can tie to a tap. The stream waits for the
  // connection.
  // The page's audio starts on the tap too, so iPhones let it play.
+ // A guide that played sound set the iPhone's audio to playback only, which cannot record; a conversation needs both.
+ try{if(navigator.audioSession)navigator.audioSession.type='play-and-record';}catch{}
  const audioCtx=new AC();audioCtx.resume().catch(()=>{});
  const micAsk=navigator.mediaDevices?.getUserMedia?navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true}}).catch(e=>e):Promise.resolve(new Error('unsupported'));
  connect(key,`${RULES}\n\nWhat the reader is looking at:\n${modelLine(context)}`,{
@@ -186,7 +188,7 @@ async function connect(key,instruction,on){
   text(t){send({clientContent:{turns:[{role:'user',parts:[{text:t}]}],turnComplete:true}});},
   context(t){send({clientContent:{turns:[{role:'user',parts:[{text:t}]}],turnComplete:false}});},
   mute(on){muted=on;},
-  close(){mic?.getTracks().forEach(t=>t.stop());captureCtx?.close().catch(()=>{});playing.forEach(s=>{try{s.stop();}catch{}});if(ws.readyState<=1)ws.close();ctx.close().catch(()=>{});}};
+  close(){mic?.getTracks().forEach(t=>t.stop());captureCtx?.close().catch(()=>{});try{if(navigator.audioSession)navigator.audioSession.type='auto';}catch{}playing.forEach(s=>{try{s.stop();}catch{}});if(ws.readyState<=1)ws.close();ctx.close().catch(()=>{});}};
  function playPcm(b64){
   const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)), pcm=new Int16Array(bytes.buffer,0,Math.floor(bytes.length/2));
   const buf=ctx.createBuffer(1,pcm.length,24000), ch=buf.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/0x8000;
