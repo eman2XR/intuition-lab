@@ -149,9 +149,13 @@ function open(opts={}){
  const key=get(KEYS.gemini);
  if(!key){status.textContent='Needs a key';askKey(sheet,note,()=>{sheet.remove();open(opts);});return end;}
  flush();
+ // Ask for the microphone at once, while the tap that opened the sheet still counts as the reader's own action:
+ // browsers only show their permission prompt for a page action they can tie to a tap. The stream waits for the
+ // connection.
+ const micAsk=navigator.mediaDevices?.getUserMedia?navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true}}).catch(e=>e):Promise.resolve(new Error('unsupported'));
  connect(key,`${RULES}\n\nWhat the reader is looking at:\n${modelLine(context)}`,{
   status:s=>status.textContent=s, heard:t=>say('you',t), spoke:t=>say('editor',t), turnDone:closeTurns,
-  note:m=>note(esc(m)), failed:m=>{status.textContent='Not connected';note(esc(m));}
+  note:m=>note(esc(m)), micAsk, failed:m=>{status.textContent='Not connected';note(esc(m));micAsk.then(x=>x?.getTracks?.().forEach(t=>t.stop()));}
  }).then(l=>{live=l;if(ended)l?.close();});
  return end;
 }
@@ -189,7 +193,7 @@ async function connect(key,instruction,on){
  async function startMic(){
   on.status('Allow the microphone, or type');
   try{
-   mic=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true}});
+   const got=await (on.micAsk||navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true}}));if(got instanceof Error)throw got;mic=got;
    await ctx.audioWorklet.addModule('pcm-capture.js');
    const node=new AudioWorkletNode(ctx,'council-capture');ctx.createMediaStreamSource(mic).connect(node);
    let chunks=[],count=0;
@@ -197,7 +201,11 @@ async function connect(key,instruction,on){
     const all=new Float32Array(count);let at=0;for(const c of chunks){all.set(c,at);at+=c.length;}chunks=[];count=0;
     if(!muted)send({realtimeInput:{audio:{data:base64(toPcm16(all,ctx.sampleRate)),mimeType:'audio/pcm;rate=16000'}}});};
    on.status('Listening');
-  }catch{on.note('The microphone is off for this site, so type instead, or allow the microphone in the browser’s settings.');on.status('Type your question');}
+  }catch(err){
+   // Safari remembers a refusal for the site and does not ask again, so say where to turn it back on.
+   const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1), app=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+   const how=err?.name==='NotAllowedError'?(ios?(app?'The microphone is blocked for this app. In the iPhone’s Settings, open Apps, then Safari, then Microphone, and choose Ask or Allow; then end and reopen this conversation.':'The microphone is blocked for this site. Tap the page menu (aA, or the icon left of the address), choose Website Settings, set Microphone to Ask or Allow, then end and reopen this conversation.'):'The microphone is blocked for this site. Allow it from the icon by the address bar, then end and reopen this conversation.'):'This browser could not start the microphone.';
+   on.note(how+' You can type instead.');on.status('Type your question');}
  }
  ws.onopen=()=>send({setup:{model:`models/${model}`,generationConfig:{responseModalities:['AUDIO']},systemInstruction:{parts:[{text:instruction}]},inputAudioTranscription:{},outputAudioTranscription:{}}});
  ws.onmessage=async e=>{
