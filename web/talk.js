@@ -152,10 +152,12 @@ function open(opts={}){
  // Ask for the microphone at once, while the tap that opened the sheet still counts as the reader's own action:
  // browsers only show their permission prompt for a page action they can tie to a tap. The stream waits for the
  // connection.
+ // The page's audio starts on the tap too, so iPhones let it play.
+ const audioCtx=new AC();audioCtx.resume().catch(()=>{});
  const micAsk=navigator.mediaDevices?.getUserMedia?navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true}}).catch(e=>e):Promise.resolve(new Error('unsupported'));
  connect(key,`${RULES}\n\nWhat the reader is looking at:\n${modelLine(context)}`,{
   status:s=>status.textContent=s, heard:t=>say('you',t), spoke:t=>say('editor',t), turnDone:closeTurns,
-  note:m=>note(esc(m)), micAsk, failed:m=>{status.textContent='Not connected';note(esc(m));micAsk.then(x=>x?.getTracks?.().forEach(t=>t.stop()));}
+  note:m=>note(esc(m)), micAsk, ctx:audioCtx, failed:m=>{status.textContent='Not connected';note(esc(m));micAsk.then(x=>x?.getTracks?.().forEach(t=>t.stop()));audioCtx.close().catch(()=>{});}
  }).then(l=>{live=l;if(ended)l?.close();});
  return end;
 }
@@ -173,17 +175,18 @@ function askKey(sheet,note,done){
   try{const model=await findModel(g);put(KEYS.gemini,g);put(KEYS.model,model);if(h)put(KEYS.github,h);done();}catch(err){note(esc(err.message));}});
 }
 
+const AC=window.AudioContext||window.webkitAudioContext;
 async function connect(key,instruction,on){
  let model;try{model=get(KEYS.model)||await findModel(key);put(KEYS.model,model);}catch(err){on.failed(err.message);return null;}
- const AC=window.AudioContext||window.webkitAudioContext, ctx=new AC();ctx.resume();
- let playAt=0, mic=null, muted=false;const playing=new Set();
+ const ctx=on.ctx||new AC();ctx.resume();
+ let playAt=0, mic=null, muted=false, captureCtx=null;const playing=new Set();
  const ws=new WebSocket(`${SOCKET}?key=${encodeURIComponent(key)}`);
  const send=m=>{if(ws.readyState===1)ws.send(JSON.stringify(m));};
  const live={model,ready:false,
   text(t){send({clientContent:{turns:[{role:'user',parts:[{text:t}]}],turnComplete:true}});},
   context(t){send({clientContent:{turns:[{role:'user',parts:[{text:t}]}],turnComplete:false}});},
   mute(on){muted=on;},
-  close(){mic?.getTracks().forEach(t=>t.stop());playing.forEach(s=>{try{s.stop();}catch{}});if(ws.readyState<=1)ws.close();ctx.close().catch(()=>{});}};
+  close(){mic?.getTracks().forEach(t=>t.stop());captureCtx?.close().catch(()=>{});playing.forEach(s=>{try{s.stop();}catch{}});if(ws.readyState<=1)ws.close();ctx.close().catch(()=>{});}};
  function playPcm(b64){
   const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)), pcm=new Int16Array(bytes.buffer,0,Math.floor(bytes.length/2));
   const buf=ctx.createBuffer(1,pcm.length,24000), ch=buf.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/0x8000;
@@ -194,17 +197,22 @@ async function connect(key,instruction,on){
   on.status('Allow the microphone, or type');
   try{
    const got=await (on.micAsk||navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true}}));if(got instanceof Error)throw got;mic=got;
-   await ctx.audioWorklet.addModule('pcm-capture.js');
-   const node=new AudioWorkletNode(ctx,'council-capture');ctx.createMediaStreamSource(mic).connect(node);
+   // Some phones run the microphone at a different rate from the page's audio, which a single context cannot mix;
+   // then the microphone gets a context of its own at its own rate.
+   let cap=ctx,src;
+   try{src=cap.createMediaStreamSource(mic);}catch{const rate=mic.getAudioTracks()[0]?.getSettings?.().sampleRate;cap=new AC(rate?{sampleRate:rate}:undefined);captureCtx=cap;await cap.resume().catch(()=>{});src=cap.createMediaStreamSource(mic);}
    let chunks=[],count=0;
-   node.port.onmessage=e=>{chunks.push(e.data);count+=e.data.length;if(count<ctx.sampleRate/10)return;
+   const take=data=>{chunks.push(data);count+=data.length;if(count<cap.sampleRate/10)return;
     const all=new Float32Array(count);let at=0;for(const c of chunks){all.set(c,at);at+=c.length;}chunks=[];count=0;
-    if(!muted)send({realtimeInput:{audio:{data:base64(toPcm16(all,ctx.sampleRate)),mimeType:'audio/pcm;rate=16000'}}});};
+    if(!muted)send({realtimeInput:{audio:{data:base64(toPcm16(all,cap.sampleRate)),mimeType:'audio/pcm;rate=16000'}}});};
+   // An audio worklet where it works; otherwise the older script processor, which every browser still runs.
+   try{await cap.audioWorklet.addModule('pcm-capture.js');const node=new AudioWorkletNode(cap,'council-capture');node.port.onmessage=e=>take(e.data);src.connect(node);}
+   catch{const sp=cap.createScriptProcessor(4096,1,1),quiet=cap.createGain();quiet.gain.value=0;sp.onaudioprocess=e=>take(new Float32Array(e.inputBuffer.getChannelData(0)));src.connect(sp);sp.connect(quiet);quiet.connect(cap.destination);}
    on.status('Listening');
   }catch(err){
    // Safari remembers a refusal for the site and does not ask again, so say where to turn it back on.
    const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1), app=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-   const how=err?.name==='NotAllowedError'?(ios?(app?'The microphone is blocked for this app. In the iPhone’s Settings, open Apps, then Safari, then Microphone, and choose Ask or Allow; then end and reopen this conversation.':'The microphone is blocked for this site. Tap the page menu (aA, or the icon left of the address), choose Website Settings, set Microphone to Ask or Allow, then end and reopen this conversation.'):'The microphone is blocked for this site. Allow it from the icon by the address bar, then end and reopen this conversation.'):'This browser could not start the microphone.';
+   const how=err?.name==='NotAllowedError'?(ios?(app?'The microphone is blocked for this app. In the iPhone’s Settings, open Apps, then Safari, then Microphone, and choose Ask or Allow; then end and reopen this conversation.':'The microphone is blocked for this site. Tap the page menu (aA, or the icon left of the address), choose Website Settings, set Microphone to Ask or Allow, then end and reopen this conversation.'):'The microphone is blocked for this site. Allow it from the icon by the address bar, then end and reopen this conversation.'):err?.name==='NotReadableError'||err?.name==='NotFoundError'?'The microphone is in use by another app, or not available. Close any call or recording and try again.':`This browser could not start the microphone (${String(err?.name||'error')}: ${String(err?.message||'').slice(0,120)}).`;
    on.note(how+' You can type instead.');on.status('Type your question');}
  }
  ws.onopen=()=>send({setup:{model:`models/${model}`,generationConfig:{responseModalities:['AUDIO']},systemInstruction:{parts:[{text:instruction}]},inputAudioTranscription:{},outputAudioTranscription:{}}});
