@@ -3757,6 +3757,134 @@ function drawHolography(ctx,w,h,spec,st){
  for(const [s,x,y] of words)tag(s,x,y);
 }
 
+const HOLO_BITGL='#2563eb', HOLO_OFFGL='#c9d6ea';
+// The film-look pilot of the holography guide (kind holography-gl, on the Drafts shelf): the same chapters on a dark
+// stage, with the black holes drawn by the WebGL tracer in web/blackhole.js.
+// A 3D point (u right, v away, w up) seen from yaw a and pitch p: [screen x, screen y, depth] (larger depth is nearer).
+function holoViewGL(u,v,w,a=.62,p=.38){const x=u*Math.cos(a)+v*Math.sin(a), z=-u*Math.sin(a)+v*Math.cos(a);return [x,-(w*Math.cos(p)-z*Math.sin(p)),-(z*Math.cos(p)+w*Math.sin(p))];}
+// A box n cells wide of bits, each a small shaded ball, 1s blue and 0s pale, flickering slowly; cell is one cell's width.
+function holoCubeGL(ctx,cx,cy,cell,n,t,seed){
+ const half=n/2, pts=[], P=(u,v,w)=>{const [x,y,d]=holoViewGL(u,v,w);return [cx+cell*x,cy+cell*y,d];};
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++)for(let k=0;k<n;k++){const q=P(i+.5-half,j+.5-half,k+.5-half);pts.push([...q,hash(seed+i*31+j*7+k*3+Math.floor(t*.8+hash(i+j*5+k*11)*4))<.5]);}
+ const E=[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]].map(([a,b,c])=>P(a*n-half,b*n-half,c*n-half));
+ctx.strokeStyle='rgba(200,215,240,.4)';ctx.lineWidth=1.2;
+ for(const [a,b] of [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]]){ctx.beginPath();ctx.moveTo(E[a][0],E[a][1]);ctx.lineTo(E[b][0],E[b][1]);ctx.stroke();}
+ pts.sort((p,q)=>p[2]-q[2]);
+ for(const p of pts)sphere(ctx,p[0],p[1],cell*.27,p[3]?HOLO_BITGL:HOLO_OFFGL);
+ return {w:cell*n*1.25,h:cell*n*1.35};
+}
+// A black hole: a black ball with a faint rim of bent light. Optionally its horizon carries n bits: soft dots spread
+// evenly over the sphere (a Fibonacci spiral), each lit or dim, fading toward the rim so it reads as a surface.
+function holoHoleGL(ctx,x,y,R,t,{bits=0,spin=0,glow=1,seed=1,dot=0}={}){
+ const halo=ctx.createRadialGradient(x,y,R*.96,x,y,R*1.35);halo.addColorStop(0,`rgba(90,130,200,${.3*glow})`);halo.addColorStop(1,'rgba(90,130,200,0)');
+ ctx.fillStyle=halo;ctx.beginPath();ctx.arc(x,y,R*1.35,0,TAU);ctx.fill();
+ const body=ctx.createRadialGradient(x-R*.3,y-R*.35,R*.05,x,y,R);body.addColorStop(0,'#1c2230');body.addColorStop(.6,'#090b11');body.addColorStop(1,'#020306');
+ ctx.fillStyle=body;ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.fill();
+ if(bits>0){
+  const golden=Math.PI*(3-Math.sqrt(5)), tilt=.3, ct=Math.cos(tilt), st=Math.sin(tilt), r0=dot||R*Math.sqrt(4/bits)*.62;
+  for(let i=0;i<bits;i++){
+   const Y=1-2*(i+.5)/bits, rr=Math.sqrt(1-Y*Y), ph=i*golden+spin, X=rr*Math.cos(ph), Z=rr*Math.sin(ph), y2=Y*ct-Z*st, z2=Y*st+Z*ct;
+   if(z2<=.05)continue;
+   const on=hash(seed+i*13.1+Math.floor(t*.9+hash(i*3.7)*6))<.5, k=Math.pow(z2,.7), px=x+R*X, py=y-R*y2, rad=r0*(.45+.55*k);
+   const g=ctx.createRadialGradient(px,py,0,px,py,rad);
+   if(on){g.addColorStop(0,`rgba(170,215,255,${.9*k})`);g.addColorStop(1,'rgba(120,180,255,0)');}else{g.addColorStop(0,`rgba(110,130,170,${.28*k})`);g.addColorStop(1,'rgba(110,130,170,0)');}
+   ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rad,0,TAU);ctx.fill();
+  }
+ }
+ const rim=ctx.createRadialGradient(x,y,R*.8,x,y,R);rim.addColorStop(0,'rgba(0,0,0,0)');rim.addColorStop(1,'rgba(0,0,0,.6)');ctx.fillStyle=rim;ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.fill();
+}
+// Earth: an ocean ball lit from the upper left, with continents, a few clouds and a soft night side.
+function holoEarthGL(ctx,x,y,R){
+ ctx.save();ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.clip();
+ const sea=ctx.createRadialGradient(x-R*.35,y-R*.35,R*.1,x,y,R);sea.addColorStop(0,'#5fa3e6');sea.addColorStop(1,'#1f4f8f');ctx.fillStyle=sea;ctx.fillRect(x-R,y-R,2*R,2*R);
+ ctx.fillStyle='#6fa85c';
+ const blob=pts=>{ctx.beginPath();pts.forEach(([a,b],i)=>i?ctx.lineTo(x+a*R,y+b*R):ctx.moveTo(x+a*R,y+b*R));ctx.closePath();ctx.fill();};
+ blob([[-.12,-.62],[.12,-.6],[.18,-.42],[.08,-.3],[.22,-.18],[.3,.05],[.22,.32],[.1,.55],[0,.5],[-.05,.22],[-.2,.05],[-.3,-.12],[-.22,-.3],[-.28,-.46]]);
+ blob([[.38,-.52],[.62,-.5],[.7,-.3],[.55,-.22],[.42,-.32]]);
+ blob([[-.7,-.3],[-.5,-.4],[-.42,-.2],[-.55,.05],[-.72,0]]);
+ ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=Math.max(1.5,R*.05);ctx.lineCap='round';
+ for(const [a,b,c,d] of [[-.6,-.7,-.1,-.75],[-.1,.7,.45,.62],[.35,-.05,.75,.1],[-.75,.35,-.35,.42]]){ctx.beginPath();ctx.moveTo(x+a*R,y+b*R);ctx.quadraticCurveTo(x+(a+c)/2*R,y+((b+d)/2-.08)*R,x+c*R,y+d*R);ctx.stroke();}
+ const night=ctx.createRadialGradient(x-R*.55,y-R*.5,R*.4,x-R*.2,y-R*.2,R*1.6);night.addColorStop(0,'rgba(0,10,30,0)');night.addColorStop(.55,'rgba(0,10,30,.15)');night.addColorStop(1,'rgba(0,10,30,.75)');
+ ctx.fillStyle=night;ctx.fillRect(x-R,y-R,2*R,2*R);ctx.restore();
+}
+function drawHolographyGL(ctx,w,h,spec,st){
+ const still=!!st.live&&!st.touched&&st.since!==undefined;
+ if(still||st.live){const c=st.chapters?.at(-1);st={...st,live:false,stage:(st.chapters?.length||6)-1,since:c?c.end-c.start:16};}
+ const small=w<520, labels=st.labels, size=small?11:13, ink='rgba(20,23,28,.85)';
+ const preview=st.since===undefined, last=(st.chapters?.length||6)-1, stage=preview?0:Math.min(st.stage,last), since=preview?3:Math.max(0,st.since);
+ const ch=st.chapters?.[stage], at=i=>ch?.lines?.[i]?ch.lines[i].start-ch.start:1+5*i, dur=ch?ch.end-ch.start:16, t=since;
+ const words=[], tag=(s,x,y)=>{if(!labels||!s)return;ctx.font=`700 ${size}px ${FONT}`;const half=ctx.measureText(s).width/2+8;pill(ctx,s,clamp(x,half,w-half),clamp(y,size+12,h-size),{align:'center',size,weight:700,color:ink});};
+ const m=Math.min(w,h);
+ // The stage: space, drawn by the WebGL tracer (web/blackhole.js) where it can run: a starfield, and black holes whose
+ // light paths are traced through curved space, finished with bloom, grade and grain. Elsewhere, the 2D drawing.
+ const space=holes=>{
+  if(window.CouncilGL?.blackHoles(ctx,w,h,{t,holes}))return;
+  const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,Math.max(w,h)*.7);g.addColorStop(0,'#141c33');g.addColorStop(1,'#05070d');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  for(let k=0;k<120;k++){ctx.fillStyle=`rgba(255,255,255,${.15+.5*hash(k*2.3)})`;ctx.beginPath();ctx.arc(w*hash(k*1.7),h*hash(k*3.1),.4+.9*hash(k*5.3),0,TAU);ctx.fill();}
+  for(const q of holes)holoHoleGL(ctx,q.x,q.y,q.R*.62,t,{bits:q.bits||0,spin:q.spin||0,glow:1.4,seed:q.seed||5,dot:q.dot});
+ };
+ // The poster: a black hole with a glowing disk, its horizon covered in bits.
+ if(preview){space([{x:w/2,y:h*.5,R:m*.2,disk:1,bits:600,spin:.4,elevation:.13}]);return;}
+ if(stage===0){
+  // A box of 8 bits, then one exactly twice as wide holding 64.
+  space([]);
+  const two=since>at(1)-.3, cell=Math.min(w*.9/(small?7.6:8.6),h*.62/5.6);
+  if(!two){const c=holoCubeGL(ctx,w/2,h*.5,cell*1.4,2,t,3);words.push(['8 bits',w/2,h*.5+c.h*.62+16]);}
+  else{const k=smooth((since-at(1)+.3)/.8), tall=h>w*1.05, cc=tall?Math.min(w*.9/5.6,h*.8/9.5):cell;
+   // Side by side on wide stages; stacked on tall ones, so neither box crowds the other.
+   const xa=tall?w/2:w/2-cc*3.3, ya=tall?h*.2:h*.52, xb=tall?w/2:w/2+cc*1.5, yb=tall?h*.62:h*.52;
+   holoCubeGL(ctx,xa,ya,cc,2,t,3);ctx.save();ctx.globalAlpha=k;const c=holoCubeGL(ctx,xb,yb,cc,4,t,9);ctx.restore();
+   words.push(['8 bits',tall?xa+cc*2.4:xa,tall?ya:ya+cc*1.6+16],['twice as wide: 64',xb,yb+c.h*.62+16]);}
+ }
+ else if(stage===1){
+  // Earth squeezed smaller and smaller, its old size dashed, until it turns into a black hole (drawn larger than real).
+  const u=smooth((since-.6)/Math.max(2,at(2)-.8)), R0=m*.3, R1=m*.045, R=R0*Math.pow(R1/R0,u), dark=smooth((u-.9)/.1), x=w/2, y=h*.52;
+  space(dark>0?[{x,y,R:R*1.1,elevation:.14}]:[]);
+  if(u>.02){ctx.setLineDash([5,6]);ctx.strokeStyle=`rgba(190,210,240,${.5-.2*dark})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,R0,0,TAU);ctx.stroke();ctx.setLineDash([]);}
+  if(dark<1){ctx.save();ctx.globalAlpha=1-dark;holoEarthGL(ctx,x,y,R);ctx.restore();}
+  words.push([dark>.5?'black hole':'Earth',x,dark>.5?y-R*1.9-16:y-Math.max(R,R0*(u>.02?1:0))-28]);
+  if(u>.05)words.push(['its old size',x,y+R0+18]);
+ }
+ else if(stage===2){
+  // A book falls and vanishes into the black hole; the hole then grows (drawn far larger than real).
+  const R0=m*(small?.1:.15), x=w/2, y=h*.56, fall=smooth((since-.5)/Math.max(2,at(1)+1.2)), grow=smooth((since-at(1)-1)/1.6), R=R0*(1+.28*grow);
+  space([{x,y,R,disk:.75,elevation:.12}]);
+  if(fall<1){const ex=x+R*.72, ey=y-R*.72, bx=x+R0*2.6+(ex-x-R0*2.6)*fall, by=h*.1+(ey-h*.1)*fall, s=m*.08*(1-.75*smooth((fall-.6)/.4));
+   ctx.save();ctx.beginPath();ctx.rect(0,0,w,h);ctx.arc(x,y,R,0,TAU,true);ctx.clip('evenodd');ctx.translate(bx,by);ctx.rotate(fall*2.2);
+   ctx.globalAlpha=1-smooth((fall-.7)/.3);ctx.fillStyle='#c4514a';ctx.fillRect(-s*.5,-s*.65,s,s*1.3);ctx.fillStyle='#f3ead8';ctx.fillRect(s*.38,-s*.6,s*.1,s*1.2);ctx.restore();
+   if(fall<.75)words.push(['a book',bx,by-m*.08-12]);}
+  if(grow>0){ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x,y,R0,0,TAU);ctx.stroke();ctx.setLineDash([]);}
+  if(grow>.3)words.push(['black hole grows',x,Math.max(30,y-R*2.4)],['its old size',x,y+R0*.55]);
+ }
+ else if(stage===3){
+  // The horizon covered in bits, finer and finer: in reality each is far smaller than a proton.
+  const n=since<at(1)-.2?160:since<at(2)-.2?420:1100, R=m*.3, cy=h*.56;
+  space([{x:w/2,y:cy,R:R*.72,bits:n,spin:since*.1,elevation:.3,disk:.45*(1-smooth((since-1)/2)),bitsOn:smooth((since-.3)/1.6)}]);
+  words.push(['one bit per patch',w/2,Math.max(30,cy-R*.72-40)]);
+ }
+ else if(stage===4){
+  // Twice as wide, bits of the same size: four times as many.
+  const R=Math.min(m*(small?.15:.15),w*(small?.11:.095)), xa=w*.5-R*2.6, xb=w*.5+R*1.4, y=h*.54, dot=R*Math.sqrt(4/150)*.62;
+  space([{x:xa,y,R:R*.75,bits:150,spin:since*.1,elevation:.3,dot},{x:xb,y,R:R*1.5,bits:600,spin:since*.1,elevation:.3,dot}]);
+  words.push(['1× wide: 150 bits',xa,y+R*.75+24],['2× wide: 600 bits',xb,Math.min(h-14,y+R*1.5+24)]);
+ }
+ else{
+  // A hologram: a flat film of fine fringes, and the 3D ball it shows floating just in front of it, ghostly.
+  space([]);
+  const fx=w*(small?.42:.44), fy=h*.52, fw=m*.42, fh=m*.56, sk=fw*.3, bx=fx+fw*.5+m*.2, by=fy-m*.02, br=m*.13, show=smooth((since-.4)/1.4);
+  const film=()=>{ctx.beginPath();ctx.moveTo(fx-fw/2,fy-fh/2+sk*.3);ctx.lineTo(fx+fw/2,fy-fh/2-sk*.3);ctx.lineTo(fx+fw/2,fy+fh/2-sk*.3);ctx.lineTo(fx-fw/2,fy+fh/2+sk*.3);ctx.closePath();};
+  ctx.save();film();const fg=ctx.createLinearGradient(fx-fw/2,0,fx+fw/2,0);fg.addColorStop(0,'rgba(170,195,235,.16)');fg.addColorStop(1,'rgba(210,225,250,.28)');ctx.fillStyle=fg;ctx.fill();ctx.clip();
+  // Swirled interference fringes: rings around two centres, like a recorded hologram.
+  for(let k=1;k<46;k++){ctx.strokeStyle=`hsla(${(200+k*7+since*25)%360},70%,70%,${.42-.006*k})`;ctx.lineWidth=1;ctx.beginPath();ctx.arc(fx+fw*.1,fy-fh*.05,k*fw*.022,0,TAU);ctx.stroke();ctx.beginPath();ctx.arc(fx-fw*.15,fy+fh*.12,k*fw*.026,0,TAU);ctx.stroke();}
+  ctx.restore();ctx.strokeStyle='rgba(200,220,250,.55)';ctx.lineWidth=1.5;film();ctx.stroke();
+  const glow=ctx.createRadialGradient(bx,by,0,bx,by,br*1.8);glow.addColorStop(0,`rgba(120,170,255,${.35*show})`);glow.addColorStop(1,'rgba(120,170,255,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(bx,by,br*1.8,0,TAU);ctx.fill();
+  ctx.save();ctx.globalAlpha=.88*show;ctx.beginPath();ctx.arc(bx,by,br,0,TAU);const bg=ctx.createRadialGradient(bx-br*.35,by-br*.4,br*.05,bx,by,br);bg.addColorStop(0,'#e8f1ff');bg.addColorStop(.3,'#7fa8ec');bg.addColorStop(1,'#3d66b8');ctx.fillStyle=bg;ctx.fill();
+  ctx.clip();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;for(let yy=by-br;yy<by+br;yy+=4){ctx.beginPath();ctx.moveTo(bx-br,yy+(since*8)%4);ctx.lineTo(bx+br,yy+(since*8)%4);ctx.stroke();}ctx.restore();
+  words.push(['flat film',fx-fw*.15,fy+fh/2+sk*.3+20],['3D image',bx,by-br-20]);
+ }
+ for(const [s,x,y] of words)tag(s,x,y);
+}
+
 // Why a flame points up. A candle on a dark stage; its flame is a glowing field computed cell by cell (like a shader)
 // into a small buffer and drawn smoothly scaled, added onto the dark with 'lighter'. Hot gas is lighter than room air
 // (Physics.flameDensity), the cool air pushes it up, and the rising stream pulls the flame into a point; without
@@ -5091,6 +5219,13 @@ const ENGINES={
   measure:null,scale:'',
   disclosure:'The bits, the book’s fall and the horizon’s growth are drawn far larger than they are: each real bit takes about 2.8 Planck areas of horizon, and one book would grow a black hole’s horizon by an unmeasurably small amount, and chapter 5’s counts are a drawing’s, not a real black hole’s. The black holes are non-rotating. A black hole’s entropy is a quarter of its horizon’s area in Planck units (Bekenstein and Hawking); in bits, that is one bit per 2.8 Planck areas.',
   try:'',aria:'A box of 8 small balls standing for bits, then a box twice as wide holding 64. Earth shrinks to the size of a marble and turns into a black hole. A book falls into a black hole and its horizon grows. The horizon is covered in glowing dots, one bit each, getting finer. A black hole twice as wide carries four times as many bits of the same size. A flat holographic film shows a 3D ball floating in front of it.'},
+ 'holography-gl':{draw:drawHolographyGL,demo:false,a:['Mass','the black hole’s mass'],b:['Unused','',''],
+  fa:a=>(clamp(a)*2).toFixed(1)+' Suns',fb:b=>'',
+  // The modelled effect for the render checks: the bits a black hole of this mass holds, as a power of ten.
+  effect:a=>clamp(a)>0?Math.log10(Physics.holoBits(Physics.holoK.Msun*clamp(a)*2)):0,
+  measure:null,scale:'',
+  disclosure:'The black holes are drawn by tracing light along its real paths around a non-spinning black hole. The dark disc is where sightlines bent round the hole end on its horizon, which makes it look about 2.6 times wider than the horizon itself, so the bits painted where each ray meets the horizon show its far side too, in the faint rings near the edge. The glowing disk of gas, seen over and under the hole, is added to show how light bends; a black hole made from Earth would have none. The bits, the book’s fall and the horizon’s growth are drawn far larger than they are: each real bit takes about 2.8 Planck areas of horizon, and one book would grow a black hole’s horizon by an unmeasurably small amount, and chapter 5’s counts are a drawing’s, not a real black hole’s. The black holes are non-rotating. A black hole’s entropy is a quarter of its horizon’s area in Planck units (Bekenstein and Hawking); in bits, that is one bit per 2.8 Planck areas.',
+  try:'',aria:'A box of 8 small balls standing for bits, then a box twice as wide holding 64. Earth shrinks to the size of a marble and turns into a black hole. A book falls into a black hole and its horizon grows. The horizon is covered in glowing dots, one bit each, getting finer. A black hole twice as wide carries four times as many bits of the same size. A flat holographic film shows a 3D ball floating in front of it.'},
  'flame':{draw:drawFlameGuide,demo:false,a:['Gravity','how strongly gravity pulls'],b:['Unused','',''],
   fa:a=>Math.round(clamp(a)*100)+'% of Earth’s gravity',fb:b=>'',
   // The modelled effect for the render checks: how many times its weight the push on a litre of flame gas is.
@@ -5158,7 +5293,7 @@ const THEMES={
  mist:{page:'#ebf0f1',top:'#f7f9fa',bottom:'#e0e8ea',accent:'#0e7490',end:'rgba(213,228,231,.92)'},
  night:{page:'#e8edf1',top:'#162030',bottom:'#0b1119',accent:'#d97706',end:'rgba(220,228,236,.92)',dark:true},
 };
-const DARK_READY=new Set(['light-clock','night-sky','speed-limit']);
+const DARK_READY=new Set(['light-clock','night-sky','speed-limit','holography-gl']);
 function themeOf(spec){const t=THEMES[spec?.theme];return t&&(!t.dark||DARK_READY.has(spec.kind))?t:THEMES.paper;}
 function draw(ctx,w,h,spec,state){engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
 window.CouncilDraw={draw,accent:spec=>ACCENT[spec.accent]||ACCENT.mint,disclosure:spec=>engineOf(spec).disclosure||'',theme:themeOf,themes:()=>Object.keys(THEMES),darkReady:kind=>DARK_READY.has(kind)};

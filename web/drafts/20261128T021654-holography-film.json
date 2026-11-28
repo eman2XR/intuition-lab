@@ -1,0 +1,420 @@
+{
+  "id": "20261128T021654-holography-film",
+  "status": "draft",
+  "question": "Can a black hole's surface hold everything inside it?",
+  "topic": "holography-gl",
+  "created": "2026-11-28T02:16:54.356727+00:00",
+  "research": {
+    "claim": "A black hole's entropy, the information needed to describe what fell in, is one quarter of its horizon area in Planck units (Bekenstein 1972, Hawking 1974); because no region can hold more than the black hole that would fit in it, the maximum information in a region grows with its boundary area, not its volume. The holographic principle ('t Hooft 1993, Susskind 1995) proposes that the physics inside is encoded on the boundary, made precise in AdS/CFT but unproven for our universe.",
+    "explanation": "S = A/(4 lP^2) in natural units, so bits = A/(4 lP^2 ln 2), about 2.8 Planck areas per bit. The horizon radius is r = 2GM/c^2: 2.95 km for the Sun's mass (1.5 × 10^77 bits) and 8.9 mm for Earth's. Doubling the mass doubles the radius and quadruples the area and the bits, whereas a box of fixed-size cells twice as wide has eight times the cells. Adding matter to a region eventually forms a black hole, so the black hole of that size bounds the information.",
+    "assumptions": [
+      "Non-rotating, uncharged (Schwarzschild) black holes.",
+      "Bits counted as entropy divided by ln 2."
+    ],
+    "prediction": "Any physical system's entropy is bounded by the area of a surface enclosing it, in Planck units (holographic bound).",
+    "falsifier": "A region containing more entropy than a quarter of its boundary area in Planck units, or a black hole whose entropy does not scale with area.",
+    "limitations": [
+      "Black-hole entropy has not been measured directly; it follows from theory (Hawking radiation is too faint to observe for astrophysical black holes).",
+      "The holographic principle is a conjecture of quantum gravity; it is precise in AdS/CFT, which describes a model universe unlike ours."
+    ],
+    "misconceptions": [
+      "The bits are not literally written on a physical surface you could touch.",
+      "A hologram is an analogy: the film stores the scene in interference fringes."
+    ],
+    "questions": [],
+    "sources": [
+      {
+        "title": "Holographic principle (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Holographic_principle",
+        "supports": "Black hole entropy is one quarter of the horizon area in Planck units; first proposed by 't Hooft in 1993, given a string-theory interpretation by Susskind; the description of a volume encoded on its boundary."
+      },
+      {
+        "title": "Black hole thermodynamics (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Black_hole_thermodynamics",
+        "supports": "In 1972 Bekenstein conjectured that black hole entropy is proportional to horizon area; S = A/(4 lP^2) with lP = sqrt(G hbar / c^3)."
+      },
+      {
+        "title": "Bekenstein bound (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Bekenstein_bound",
+        "supports": "Black hole entropy proportional to the number of Planck areas covering the horizon; bound on information in a region."
+      },
+      {
+        "title": "Planck units (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Planck_units",
+        "supports": "The Planck length is about 1.616255 × 10^-35 m."
+      },
+      {
+        "title": "Schwarzschild radius (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Schwarzschild_radius",
+        "supports": "r = 2GM/c^2; about 3 km for the Sun's mass and about 9 mm for Earth's."
+      },
+      {
+        "title": "Hawking radiation (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Hawking_radiation",
+        "supports": "Hawking's 1974 calculation that black holes radiate, fixing their entropy and temperature."
+      },
+      {
+        "title": "Holography (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Holography",
+        "supports": "A hologram records a 3D scene on a flat film as an interference pattern."
+      },
+      {
+        "title": "AdS/CFT correspondence (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/AdS/CFT_correspondence",
+        "supports": "A precise realisation of the holographic principle relating gravity in anti-de Sitter space to a quantum field theory on its boundary."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "Can a black hole's surface hold everything inside it?",
+    "subtitle": "A box twice as wide holds eight times as much. Yet a black hole twice as wide stores only four times as much. Why would its surface set the limit?",
+    "why": "Black holes hint at a strange rule: the most any space can hold depends on its surface, not its volume. Physicists call it the holographic principle.",
+    "opening": "Can a black hole's surface hold everything inside it?",
+    "takeaway": "The most information a space can hold seems to grow with its surface, not its volume, as black holes suggest. It hints that what happens inside may be written on the edge.",
+    "mass": 1,
+    "distance": 1,
+    "controls": "none",
+    "accent": "blue",
+    "kind": "holography-gl",
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "duration": 60,
+    "theme": "night",
+    "questions": [
+      {
+        "q": "What is a bit?",
+        "a": "The smallest piece of information: the answer to one yes-or-no question, written as a 0 or a 1. Describing anything exactly, down to every particle, takes some number of bits."
+      },
+      {
+        "q": "How small is one patch?",
+        "a": "About 2.8 Planck areas. The Planck length is about 1.6 × 10^-35 m, a hundred billion billion times smaller than a proton, so the patches are unimaginably fine."
+      },
+      {
+        "q": "Does information that falls in come back out?",
+        "a": "Hawking found that black holes slowly glow and shrink, the one way a horizon can shrink. Whether the information comes back out in that glow is the black hole information paradox; most physicists now think it does, but how is still being worked out."
+      },
+      {
+        "q": "Is our universe really a hologram?",
+        "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
+      },
+      {
+        "q": "Why can't a space hold more than a black hole of its size?",
+        "a": "Adding more stuff adds mass. Pack enough in and it collapses into a black hole, whose count is set by its surface. Since the total count never goes down, the stuff couldn't have held more than that."
+      }
+    ],
+    "beats": [
+      {
+        "title": "Storing bits",
+        "body": "A computer stores information as tiny bits, each a 0 or a 1. Double a box's width, and it fits eight times as many bits: 2 × 2 × 2. So you'd expect storage to grow with a space's volume."
+      },
+      {
+        "title": "Squeezed too tight",
+        "body": "Crush something into less room, and the pull at its surface grows. Squeeze all of Earth to the size of a marble, and it becomes a black hole. Past its edge, the horizon, the pull is so strong not even light escapes."
+      },
+      {
+        "title": "Where did it go?",
+        "body": "Throw a book in, and everything written in it seems gone for good. In 1972 Jacob Bekenstein argued its bits can't simply vanish. Their count never drops, and nor does a horizon's area, so he linked the two."
+      },
+      {
+        "title": "One bit per tiny tile",
+        "body": "In 1974 Stephen Hawking worked out the exact count. Split the horizon into patches far smaller than a proton: each holds one bit. A black hole with the Sun's mass holds a 78-digit number of bits."
+      },
+      {
+        "title": "Area, not volume",
+        "body": "Make a black hole twice as wide, and its surface holds four times the bits. Cram enough into any space, and it collapses into a black hole first. So, physicists think, no space can hold more bits than its surface allows."
+      },
+      {
+        "title": "The world as a hologram",
+        "body": "A hologram is a flat film that shows a 3D image. Space may work the same way, with what happens inside written on its edge. In some model universes this works exactly; whether ours does is still open."
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "No mass gives a straight ray",
+      "pass": true
+    },
+    {
+      "name": "Doubling mass doubles weak-field deflection",
+      "pass": true
+    },
+    {
+      "name": "Doubling passing distance halves deflection",
+      "pass": true
+    },
+    {
+      "name": "Far-field slope agrees with 4m/b",
+      "pass": true
+    },
+    {
+      "name": "Bending points toward the mass",
+      "pass": true
+    },
+    {
+      "name": "Controls remain in the weak-field regime",
+      "pass": true
+    },
+    {
+      "name": "Flat mesh when there is no mass",
+      "pass": true
+    },
+    {
+      "name": "Mesh distances equal light travel time",
+      "pass": true
+    },
+    {
+      "name": "Straightest mesh line bends by 4m/b for a light mass",
+      "pass": true
+    },
+    {
+      "name": "Mesh light path bends toward the mass",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 77)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 8)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 4)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5140 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": "A pilot made in a coding session at the owner’s request, after the WebGL short film “The Arrow of Time”: the holography guide redrawn on a dark stage, its black holes ray-traced in WebGL2 (light followed along its real paths around a non-spinning black hole) and finished with bloom, a grade and grain. It is a draft for the owner to compare with the published guide; its first reviews passed the accuracy review (8) and found chapters 4 and 5 weaker in the visual review (6) and the blind test (7), and their fixes are in this version but not yet re-reviewed."
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "Can a black hole's surface hold everything inside it?",
+        "subtitle": "A box twice as wide holds eight times as much. Yet a black hole twice as wide stores only four times as much. Why would its surface set the limit?",
+        "why": "Black holes hint at a strange rule: the most any space can hold depends on its surface, not its volume. Physicists call it the holographic principle.",
+        "opening": "Can a black hole's surface hold everything inside it?",
+        "takeaway": "The most information a space can hold seems to grow with its surface, not its volume, as black holes suggest. It hints that what happens inside may be written on the edge.",
+        "mass": 1,
+        "distance": 1,
+        "controls": "none",
+        "accent": "blue",
+        "kind": "holography-gl",
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "duration": 60,
+        "questions": [
+          {
+            "q": "What is a bit?",
+            "a": "The smallest piece of information: the answer to one yes-or-no question, written as a 0 or a 1. Describing anything exactly, down to every particle, takes some number of bits."
+          },
+          {
+            "q": "How small is one patch?",
+            "a": "About 2.8 Planck areas. The Planck length is about 1.6 × 10^-35 m, a hundred billion billion times smaller than a proton, so the patches are unimaginably fine."
+          },
+          {
+            "q": "Does information that falls in come back out?",
+            "a": "Hawking found that black holes slowly glow and shrink, the one way a horizon can shrink. Whether the information comes back out in that glow is the black hole information paradox; most physicists now think it does, but how is still being worked out."
+          },
+          {
+            "q": "Is our universe really a hologram?",
+            "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
+          },
+          {
+            "q": "Why can't a space hold more than a black hole of its size?",
+            "a": "Adding more stuff adds mass. Pack enough in and it collapses into a black hole, whose count is set by its surface. Since the total count never goes down, the stuff couldn't have held more than that."
+          }
+        ],
+        "beats": [
+          {
+            "title": "Storing bits",
+            "body": "A computer stores information as tiny bits, each a 0 or a 1. Double a box's width, and it fits eight times as many bits: 2 × 2 × 2. So you'd expect storage to grow with a space's volume."
+          },
+          {
+            "title": "Squeezed too tight",
+            "body": "Crush something into less room, and the pull at its surface grows. Squeeze all of Earth to the size of a marble, and it becomes a black hole. Past its edge, the horizon, the pull is so strong not even light escapes."
+          },
+          {
+            "title": "Where did it go?",
+            "body": "Throw a book in, and everything written in it seems gone for good. In 1972 Jacob Bekenstein argued its bits can't simply vanish. Their count never drops, and nor does a horizon's area, so he linked the two."
+          },
+          {
+            "title": "One bit per tiny tile",
+            "body": "In 1974 Stephen Hawking worked out the exact count. Split the horizon into patches far smaller than a proton: each holds one bit. A black hole with the Sun's mass holds a 78-digit number of bits."
+          },
+          {
+            "title": "Area, not volume",
+            "body": "Make a black hole twice as wide, and its surface holds four times the bits. Cram enough into any space, and it collapses into a black hole first. So, physicists think, no space can hold more bits than its surface allows."
+          },
+          {
+            "title": "The world as a hologram",
+            "body": "A hologram is a flat film that shows a 3D image. Space may work the same way, with what happens inside written on its edge. In some model universes this works exactly; whether ours does is still open."
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "No mass gives a straight ray",
+          "pass": true
+        },
+        {
+          "name": "Doubling mass doubles weak-field deflection",
+          "pass": true
+        },
+        {
+          "name": "Doubling passing distance halves deflection",
+          "pass": true
+        },
+        {
+          "name": "Far-field slope agrees with 4m/b",
+          "pass": true
+        },
+        {
+          "name": "Bending points toward the mass",
+          "pass": true
+        },
+        {
+          "name": "Controls remain in the weak-field regime",
+          "pass": true
+        },
+        {
+          "name": "Flat mesh when there is no mass",
+          "pass": true
+        },
+        {
+          "name": "Mesh distances equal light travel time",
+          "pass": true
+        },
+        {
+          "name": "Straightest mesh line bends by 4m/b for a light mass",
+          "pass": true
+        },
+        {
+          "name": "Mesh light path bends toward the mass",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 3.4 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 77)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 8)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 4)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5140 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": false,
+      "frames": [
+        "drafts/20261128T021654-holography-film/frame-0.png",
+        "drafts/20261128T021654-holography-film/frame-1.png",
+        "drafts/20261128T021654-holography-film/frame-2.png",
+        "drafts/20261128T021654-holography-film/frame-3.png",
+        "drafts/20261128T021654-holography-film/frame-4.png",
+        "drafts/20261128T021654-holography-film/frame-5.png",
+        "drafts/20261128T021654-holography-film/frame-6.png",
+        "drafts/20261128T021654-holography-film/frame-7.png",
+        "drafts/20261128T021654-holography-film/frame-8.png",
+        "drafts/20261128T021654-holography-film/frame-9.png",
+        "drafts/20261128T021654-holography-film/frame-10.png",
+        "drafts/20261128T021654-holography-film/frame-11.png"
+      ]
+    }
+  ]
+}

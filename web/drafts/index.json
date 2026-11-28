@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "20261128T021654-holography-film",
+    "title": "Can a black hole's surface hold everything inside it? (film-look pilot)",
+    "created": "2026-11-28T02:16:54.356727+00:00",
+    "kind": "holography-gl",
+    "review_status": "pilot",
+    "curriculum": "9.1"
+  }
+]
