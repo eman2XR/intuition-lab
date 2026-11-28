@@ -313,7 +313,7 @@ function build(chapters,{aspect=16/9}={}){
  const orbit=(cam,dist,el,az,target=[0,0,0],fov=40)=>cam.set({pos:[Math.sin(az)*dist*Math.cos(el),dist*Math.sin(el)+target[1],Math.cos(az)*dist*Math.cos(el)],target,fov});
 
  // 1. One bit; a long list of bits; an empty box.
- shots.push(shot('switch',0,BALLS,(t,T)=>{const cam=cams[0],a=at(0,0),b=at(0,1),c=at(0,2);
+ shots.push(shot('switch',0,BALLS,(t,T)=>{const cam=cams[0],a=at(0,0),b=at(0,2),c=at(0,4);
   const ball=new Float32Array(256),lit=new Float32Array(64);
   const ph=T<a?-1:(T-a)/1.6, on=ph<0?0:(Math.floor(ph)%2===0?prog(ph%1,0,.12):1-prog(ph%1,0,.12));
   const grow=prog(T,b-.3,b+3.6), gone=prog(T,c-.2,c+2.2), move=prog(T,b-.4,b+.8);
@@ -330,36 +330,37 @@ function build(chapters,{aspect=16/9}={}){
   return {...cam.uniforms(),uBall:ball,uLit:lit,uCount:41,uBox:[0,.4,0,.62],uBoxShow:prog(T,c+.3,c+2),uFloorY:-.55,uKey:[-.55,.85,.5]};}));
 
  // 2. A box of cells grows from 2 to 16 cells wide, cut open at the corner facing us; its surface is amber patches.
- const sizes=[[C[1].start-X,2],[at(1,1)-.3,4],[at(1,1)+2.8,8],[at(1,2)-.2,16]];
+ const sizes=[[C[1].start-X,2],[at(1,1)-.3,4],[at(1,2)+.3,8],[at(1,3)-.2,16]];
  const cubeState=T=>{let i=0;while(i<sizes.length-1&&T>=sizes[i+1][0])i++;const [t0,N]=sizes[i],prev=i?sizes[i-1][1]:N,pop=i?prog(T,t0,t0+1.8):1;return {N,prev,pop};};
  const cubeSize=T=>{const {N,prev,pop}=cubeState(T);return (prev+(N-prev)*prog(pop,0,1,'inOutCubic'))*CELL;};
  shots.push(shot('cube',1,CUBE,(t,T)=>{const cam=cams[1],{N,prev,pop}=cubeState(T);cubeCam(cam,cubeSize(T),(T-C[1].start)*.012);
   return {...cam.uniforms(),uN:N,uPrevN:prev,uPop:pop,uCell:CELL,uG0:G0,uBitsT:T,uCut:1,uKey:[-.55,.85,.5]};}));
 
  // 3. Earth squeezed into a black hole.
- const sq=c=>prog(c,at(2,0)+.6,at(2,2)-.2,'inOutCubic');
+ const sq=c=>prog(c,at(2,1)+.5,at(2,2)+3.4,'inOutCubic');
  shots.push(shot('earth',2,EARTH,(t,T)=>{const cam=cams[2],u=sq(T),R=Math.pow(.24,u);
-  cam.set({pos:[0,.15,4.2],target:[0,0,0],fov:38});return {...cam.uniforms(),uR:R,uR0:1,uSpin:T*.035+2.2,uSun:[-.8,.35,.6],uRing:prog(T,at(2,0)+.8,at(2,0)+1.8),uAlbedo:'albedo',uMasks:'masks',uRelief:'relief'};}));
+  cam.set({pos:[0,.15,4.2],target:[0,0,0],fov:38});return {...cam.uniforms(),uR:R,uR0:1,uSpin:T*.035+2.2,uSun:[-.8,.35,.6],uRing:prog(T,at(2,1)+.4,at(2,1)+1.4),uAlbedo:'albedo',uMasks:'masks',uRelief:'relief'};}));
  const H=(o)=>({uGlow:.12,uHawk:0,uPhoton:.6,uH0:[0,0,0,1],uH1:[0,0,0,1],uD0:[0,16,0,0],uD1:[0,16,0,0],uS0:[0,0],uS1:[0,0],uN:1,uBook:[0,0,0,0],uBookOn:0,uBookRot:0,uRingM:1,uRingOn:0,...o});
- const collapse=shot('collapse',2,HOLES,(t,T)=>{const cam=cams[2];cam.set({pos:[0,.15,4.2],target:[0,0,0],fov:38});
-  return {...cam.uniforms(),...H({uH0:[0,0,0,.24/5.196],uGlow:.5,uPhoton:4,uRingM:1/5.196,uRingOn:.6})};});
- collapse.start=C[2].start+(at(2,2)-C[2].start)*.98;collapse.fadeIn=.8;shots[2].end=collapse.start+.8;shots[2].fadeOut=.8;shots.push(collapse);
+ const collapseZ=T=>keys(T,[[at(2,3)-1.4,4.2],[at(2,3)+.5,1.5,'inOutCubic']]);
+ const collapse=shot('collapse',2,HOLES,(t,T)=>{const cam=cams[2],z=collapseZ(T);cam.set({pos:[0,.15*z/4.2,z],target:[0,0,0],fov:38});
+  return {...cam.uniforms(),...H({uH0:[0,0,0,.24/5.196],uGlow:.5,uPhoton:4,uRingM:1/5.196,uRingOn:.6*(1-prog(T,at(2,3)-1.6,at(2,3)-.6))})};});
+ collapse.start=at(2,2)+3.5;collapse.fadeIn=.8;shots[2].end=collapse.start+.8;shots[2].fadeOut=.8;shots.push(collapse);
 
  // 4. Gas gathers and falls in, and the black hole grows past its old size: twice the mass, twice as wide. The camera
  // stays put, so the growth is the hole's own.
  shots.push(shot('grow',3,HOLES,(t,T)=>{const cam=cams[3];orbit(cam,51,.07,-.08,[0,-.4,0]);
-  const grow=prog(T,at(3,1)+.2,at(3,1)+4.6,'inOutCubic'),M=.55*(1+grow);
-  return {...cam.uniforms(),...H({uH0:[0,0,0,M],uD0:[prog(T,C[3].start,at(3,0)+3.5),24*.55/M,0,0],uRingM:.55,uRingOn:prog(T,at(3,0)+2,at(3,0)+3.2)})};}));
+  const grow=prog(T,at(3,3)-.3,at(3,4)+2,'inOutCubic'),M=.55*(1+grow);
+  return {...cam.uniforms(),...H({uH0:[0,0,0,M],uD0:[prog(T,C[3].start,at(3,1)+2.5),24*.55/M,0,0],uRingM:.55,uRingOn:prog(T,at(3,2)-.6,at(3,2)+.6)})};}));
 
  // 5-6. A book falls in; then the horizon grows a little past a ring of its old size.
  shots.push(shot('book',4,HOLES,(t,T)=>{const cam=cams[4];orbit(cam,36,.08,-.12,[0,-.6,0]);
-  const fall=prog(T,C[4].start+.3,at(4,1)+2.4,'inCubic'),grow=prog(T,at(5,2)-.2,at(5,2)+2.2),M=1+.16*grow;
+  const fall=prog(T,C[4].start+.3,at(4,1)+2.4,'inCubic'),grow=prog(T,at(5,4)+.3,at(5,4)+2.6),M=1+.16*grow;
   const start=[8.5,6.5,9],end=[.6,.6,1.6],bp=start.map((s,i)=>s+(end[i]-s)*fall);
-  return {...cam.uniforms(),...H({uH0:[0,0,0,M],uD0:[1,24,0,0],uBook:[...bp,fall],uBookOn:fall<1?1:0,uBookRot:T*.9,uRingM:1,uRingOn:prog(T,C[5].start+.3,C[5].start+1.6)})};},5));
+  return {...cam.uniforms(),...H({uH0:[0,0,0,M],uD0:[1,24,0,0],uBook:[...bp,fall],uBookOn:fall<1?1:0,uBookRot:T*.9,uRingM:1,uRingOn:prog(T,at(5,4)-1.2,at(5,4)-.2)})};},5));
 
  // 7. Hawking's glow, and the count it gives: one bit per patch.
  shots.push(shot('glow',6,HOLES,(t,T)=>{const cam=cams[6],az=(T-C[6].start)*.012;orbit(cam,24,.14,az,[0,0,0],36);
-  return {...cam.uniforms(),...H({uD0:[1-prog(T,C[6].start+.4,at(6,0)+3.2),24,300,prog(T,at(6,2)-.4,at(6,2)+2.2)],uS0:[T*.08,0],uHawk:prog(T,at(6,0)+.8,at(6,0)+3.4)})};}));
+  return {...cam.uniforms(),...H({uD0:[1-prog(T,C[6].start+.4,at(6,0)+3.2),24,300,prog(T,at(6,4)-.4,at(6,4)+2.2)],uS0:[T*.08,0],uHawk:prog(T,at(6,0)+.8,at(6,0)+3.4)})};}));
 
  // 8. Finer and finer patches: unimaginably many. The camera holds its distance, so the hole keeps its size.
  shots.push(shot('patches',7,HOLES,(t,T)=>{const cam=cams[7],az=(T-C[7].start)*.012+.25;orbit(cam,24,.14,az,[0,0,0],36);
@@ -374,24 +375,30 @@ function build(chapters,{aspect=16/9}={}){
  // 10. The hologram.
  shots.push(shot('hologram',9,HOLO,(t,T)=>{const cam=cams[9],az=keys(T,[[C[9].start,-.55],[C[9].end,-.3]]),dist=keys(T,[[C[9].start,8.4],[C[9].end,7.6]]);
   cam.set({pos:[Math.sin(az)*dist+.8,1,Math.cos(az)*dist],target:[.9,0,.6],fov:40});
-  return {...cam.uniforms(),uPlate:[-.6,0,0],uLaser:[-3.6,1.3,2.2],uShow:prog(T,C[9].start+.2,C[9].start+1.6),uImg:prog(T,at(9,1)-.4,at(9,1)+1.6)};}));
+  return {...cam.uniforms(),uPlate:[-.6,0,0],uLaser:[-3.6,1.3,2.2],uShow:prog(T,at(9,2)-.4,at(9,2)+1.2),uImg:prog(T,at(9,2)+.4,at(9,2)+2.4)};}));
 
  // 11. A boundary of bits around the box of bits: the inside described on the edge.
  shots.push(shot('shell',10,SHELL,(t,T)=>{const cam=cams[10],az=(T-C[10].start)*.04-.4,dist=keys(T,[[C[10].start,4.4],[C[10].end,5.6]]);
   cam.set({pos:[Math.sin(az)*dist,1.1+dist*.08,Math.cos(az)*dist],target:[0,0,0],fov:38});
-  return {...cam.uniforms(),uC:[0,0,0],uR:1.35,uCell:CELL,uBitsT:T,uShow:prog(T,C[10].start+.2,at(10,1)+.5),uSpin:T*.06};}));
+  return {...cam.uniforms(),uC:[0,0,0],uR:1.35,uCell:CELL,uBitsT:T,uShow:prog(T,at(10,1)-.4,at(10,1)+1.4),uSpin:T*.06};}));
 
  // Captions: only what the picture cannot say, a count, set clear of the thing it counts.
  const P=(cam,p)=>cam.project(p,aspect),fmt=n=>n.toLocaleString('en-US');
  const captions=t=>{const out=[],add=(text,p,{dy=0,dx=0,a=1}={})=>{if(p&&a>.01)out.push({text,x:p[0]+dx,y:p[1]+dy,alpha:a,align:'center'});};
+  // "horizon", with a thin line to the edge of the dark disc (where every sightline inside ends on the horizon).
+  const horizon=(cam,c,M,dir,a)=>{const q=P(cam,c);if(!q||a<=.01)return;const d=Math.hypot(...c.map((v,i)=>v-cam.pos[i])),ang=Math.asin(Math.min(1,5.196*M/d)),r=Math.tan(ang)/(2*cam.tan);
+   const l=Math.hypot(...dir),u=[dir[0]/l,dir[1]/l];out.push({text:'horizon',x:q[0]+u[0]*(r+.15)/aspect,y:q[1]+u[1]*(r+.15),ax:q[0]+u[0]*r/aspect,ay:q[1]+u[1]*r,alpha:a,align:'center'});};
   const fade=(t,a,b)=>Math.min(prog(t,a,a+.5),1-prog(t,b-.5,b));
   for(const s of shots){if(t<s.start||t>s.end)continue;s.render(t-s.start,t);const cam=cams[s.c];
-   if(s.id==='switch')add('1 bit',P(cam,[0,-.08,0]),{dy:.03,a:fade(t,at(0,0)+.4,at(0,1)-.3)});
+   if(s.id==='switch')add('1 bit',P(cam,[0,-.08,0]),{dy:.03,a:fade(t,at(0,0)+.4,at(0,2)-.3)});
    if(s.id==='cube'){const {N,prev,pop}=cubeState(t),n=pop>.5?N:prev,a=fade(t,C[1].start+1.2,C[1].end),size=cubeSize(t);
     const corners=[];for(let k=0;k<8;k++){const q=P(cam,[G0[0]+(k&1?size:0),G0[1]+(k&2?size:0),G0[2]+(k&4?size:0)]);if(q)corners.push(q);}
     // One count above the box and one below, so they never collide with it, on any screen.
     const ys=corners.map(q=>q[1]),top=Math.min(...ys),bottom=Math.max(...ys);
     add(`${fmt(n**3)} cells inside`,[.5,Math.max(.06,top-.06)],{a});add(`${fmt(6*n*n)} surface patches`,[.5,Math.min(.94,bottom+.06)],{a});}
+   if(s.id==='collapse')horizon(cam,[0,0,0],.24/5.196,[1,-.75],fade(t,at(2,3)+.2,C[2].end));
+   if(s.id==='book')horizon(cam,[0,0,0],1,[1,-.2],fade(t,at(5,1)-.2,at(5,4)-1.3));
+   if(s.id==='glow')horizon(cam,[0,0,0],1,[1,-.8],fade(t,at(6,4)+.2,C[6].end));
    if(s.id==='two'){add('150 bits',P(cam,[-11,-6.6,0]),{a:fade(t,C[8].start+.6,C[8].end)});add('600 bits',P(cam,[7,-11.8,0]),{a:fade(t,C[8].start+.9,C[8].end)});}
   }
   return out;};

@@ -6,7 +6,7 @@
 const HOST='generativelanguage.googleapis.com';
 const SOCKET=`wss://${HOST}/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent`;
 const REPO='eman2XR/intuition-lab';
-const KEYS={gemini:'council-gemini-key',github:'council-github-token',model:'council-gemini-model',outbox:'council-talks'};
+const KEYS={gemini:'council-gemini-key',github:'council-github-token',model:'council-gemini-model',narrator:'council-narrator-model',outbox:'council-talks'};
 const MARK='<!-- council-talk -->';
 const RULES=`You are one of the editors of Intuition Lab, a small website of short animated guides that explain physics and other science to curious adults, mostly beginners. You are talking with a reader live, by voice, about the guide they are watching.
 - Answer in plain spoken English, briefly (two or three sentences), unless they ask for more.
@@ -232,6 +232,77 @@ async function connect(key,instruction,on){
  return live;
 }
 
+// Narration: a film guide's subtitle lines read aloud live by a Gemini voice, on a device that keeps a Gemini key. The
+// quickest live model is asked for each line a few lines ahead of the film; the audio is kept for replays, and each
+// line starts when the film reaches it. Pausing the film pauses the voice, and a jump starts again from the next line.
+const NARRATOR='You are the narrator of a calm science documentary film. Each message you receive is the next line of the script. Read it aloud exactly as written, word for word, in a warm, clear, unhurried voice. Never add, drop or change a word, never answer or comment, and say nothing else.';
+const AHEAD=4, LATE=2;
+async function narratorModel(key){
+ let res;try{res=await fetch(`https://${HOST}/v1beta/models?pageSize=200`,{headers:{'x-goog-api-key':key}});}catch{throw new Error('Gemini could not be reached.');}
+ if(!res.ok)throw new Error(`Gemini answered ${res.status}.`);
+ const live=((await res.json()).models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('bidiGenerateContent')).map(m=>m.name.replace(/^models\//,'')).filter(n=>/flash-live/.test(n));
+ live.sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}));
+ return live[0]||findModel(key);
+}
+function narrator({id,voice,lines}){
+ const key=get(KEYS.gemini), clips=lines.map(()=>({parts:[],asked:false})), sources=new Set();
+ let ws=null, ready=false, busy=-1, want=0, tries=0, closed=false, ctx=null, playAt=0, on=-1, played=-1, last=null, paused=true, pausedAt=0;
+ const pcmOf=b64=>{const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));return new Int16Array(bytes.buffer,0,bytes.length>>1);};
+ const lineAt=t=>{let i=-1;for(let k=0;k<lines.length&&lines[k].start<=t;k++)i=k;return i;};
+ function queue(pcm){
+  const buf=ctx.createBuffer(1,pcm.length,24000), ch=buf.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/0x8000;
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);playAt=Math.max(playAt,ctx.currentTime+.03);src.start(playAt);playAt+=buf.duration;
+  sources.add(src);src.onended=()=>sources.delete(src);
+ }
+ function ask(){
+  if(!ready||busy>=0)return;
+  for(let i=want;i<Math.min(lines.length,want+AHEAD);i++)if(!clips[i].asked){clips[i].asked=true;busy=i;
+   ws.send(JSON.stringify({clientContent:{turns:[{role:'user',parts:[{text:lines[i].text}]}],turnComplete:true}}));return;}
+ }
+ async function connect(){
+  tries++;let model;try{model=get(KEYS.narrator)||await narratorModel(key);put(KEYS.narrator,model);}catch{return;}
+  if(closed)return;
+  const s=ws=new WebSocket(`${SOCKET}?key=${encodeURIComponent(key)}`);
+  s.onopen=()=>s.send(JSON.stringify({setup:{model:`models/${model}`,generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:voice||'Algenib'}}}},systemInstruction:{parts:[{text:NARRATOR}]}}}));
+  s.onmessage=async e=>{
+   let msg;try{msg=JSON.parse(typeof e.data==='string'?e.data:await e.data.text());}catch{return;}
+   if(msg.setupComplete){ready=true;tries=0;ask();return;}
+   const sc=msg.serverContent;if(!sc||busy<0)return;
+   for(const p of sc.modelTurn?.parts||[])if(p.inlineData?.data){const pcm=pcmOf(p.inlineData.data);clips[busy].parts.push(pcm);if(on===busy&&ctx)queue(pcm);}
+   if(sc.turnComplete){busy=-1;ask();}
+  };
+  // A session that ends (its time limit, the network) is opened again when the film next needs a line.
+  s.onclose=()=>{if(!ready)put(KEYS.narrator,'');if(busy>=0&&on!==busy)clips[busy]={parts:[],asked:false};ready=false;busy=-1;if(ws===s)ws=null;};
+ }
+ function reset(time){
+  sources.forEach(x=>{try{x.stop();}catch{}});sources.clear();playAt=0;on=-1;
+  const cur=lineAt(time);played=cur>=0&&time-lines[cur].start>.6?cur:cur-1;
+ }
+ connect();
+ return {id,
+  step(time,playing){
+   const cur=lineAt(time);want=Math.max(0,cur);
+   if(!ws&&!closed&&playing&&tries<3)connect();
+   ask();
+   if(!playing){if(!paused){paused=true;pausedAt=time;ctx?.suspend?.().catch(()=>{});}return;}
+   // The audio context is made on the tap that starts the film, so phones let it play.
+   if(!ctx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;ctx=new AC();}
+   if(paused){paused=false;if(last===null||Math.abs(time-pausedAt)>.3)reset(time);ctx.resume?.().catch(()=>{});}
+   else if(time<last-.05||time>last+1)reset(time);
+   last=time;
+   if(cur>=0&&cur>played){const c=clips[cur];
+    if(time-lines[cur].start>LATE)played=cur;
+    else if(c.parts.length){played=on=cur;if(playAt>ctx.currentTime)playAt+=.15;for(const p of c.parts)queue(p);}}
+  },
+  stop(){closed=true;try{ws?.close();}catch{}sources.forEach(x=>{try{x.stop();}catch{}});ctx?.close?.().catch(()=>{});}};
+}
+let N=null;
+function narrate(film,time=0,playing=false){
+ if(!film||!get(KEYS.gemini)){N?.stop();N=null;return;}
+ if(N?.id!==film.id){N?.stop();N=narrator(film);}
+ N.step(time,playing);
+}
+
 readSetupLink();
 
 // Settings: the keys and tokens this device keeps, the voice model, sound, waiting conversations, and a setup link
@@ -264,9 +335,9 @@ function openSettings(){
   sheet.querySelectorAll('form[data-k]').forEach(f=>f.addEventListener('submit',async e=>{e.preventDefault();const v=f.v.value.trim();if(!v)return;note('Testing…');
    try{if(f.dataset.k==='gemini'){const model=await findModel(v);put(KEYS.gemini,v);put(KEYS.model,model);render();note(`Saved. Voice model: ${model}.`);}
     else{await testGithub(v);put(KEYS.github,v);await flush();render();note('Saved. Conversations will be sent for you.');}}catch(err){note(err.message);}}));
-  sheet.querySelectorAll('[data-clear]').forEach(b=>b.onclick=()=>{put(KEYS[b.dataset.clear],'');if(b.dataset.clear==='gemini')put(KEYS.model,'');render();note('Removed.');});
+  sheet.querySelectorAll('[data-clear]').forEach(b=>b.onclick=()=>{put(KEYS[b.dataset.clear],'');if(b.dataset.clear==='gemini'){put(KEYS.model,'');put(KEYS.narrator,'');}render();note('Removed.');});
   sheet.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{const a=b.dataset.act;
-   if(a==='model'){note('Looking…');try{const model=await findModel(get(KEYS.gemini));put(KEYS.model,model);render();note(`Voice model: ${model}.`);}catch(err){note(err.message);}}
+   if(a==='model'){note('Looking…');put(KEYS.narrator,'');try{const model=await findModel(get(KEYS.gemini));put(KEYS.model,model);render();note(`Voice model: ${model}.`);}catch(err){note(err.message);}}
    if(a==='sound'){try{localStorage.setItem('council-sound',localStorage.getItem('council-sound')==='off'?'on':'off');}catch{}render();note('Applies from the next guide you open.');}
    if(a==='send'){note('Sending…');await flush();render();note(waiting().length?'Some could not be sent; check the token.':'Sent.');}
    if(a==='drop'){saveOutbox([]);render();note('Discarded.');}
@@ -281,5 +352,5 @@ function openSettings(){
 // A link to #settings opens it, on load or later.
 const settingsHash=()=>{if(location.hash==='#settings'){history.replaceState(null,'',location.pathname+location.search);setTimeout(openSettings,0);}};
 settingsHash();addEventListener('hashchange',settingsHash);
-window.CouncilTalk={open,setContext(fn){contextFn=fn;},flush,waiting,issueLink,hasKey:()=>!!get(KEYS.gemini),settings:openSettings};
+window.CouncilTalk={open,setContext(fn){contextFn=fn;},flush,waiting,issueLink,hasKey:()=>!!get(KEYS.gemini),settings:openSettings,narrate};
 })();

@@ -5303,28 +5303,39 @@ function filmFrame(w,h){
  if(!FILM.video){const v=document.createElement('video');v.className='stage-film';v.muted=true;v.playsInline=true;v.preload='auto';v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');
   box.prepend(v);FILM.video=v;const l=document.createElement('div');l.className='film-captions';l.setAttribute('aria-hidden','true');box.append(l);FILM.layer=l;}
  const v=FILM.video;if(FILM.src!==f.video){FILM.src=f.video;v.src=f.video;if(f.poster)v.poster=f.poster;}
+ v.muted=!(f.narrated&&SOUND.on);
  if(FILM.capsSrc!==f.captions){FILM.capsSrc=f.captions;FILM.caps=null;fetch(f.captions).then(r=>r.json()).then(j=>{FILM.caps=j;paint();}).catch(()=>{});}
  box.classList.add('has-film');
  const playing=mode==='playing';
  if(playing){if(v.paused)v.play().catch(()=>{});if(Math.abs(v.currentTime-time)>.35)v.currentTime=time;}
  else{if(!v.paused)v.pause();if(started&&Math.abs(v.currentTime-time)>.04)v.currentTime=time;}
+ // A film read aloud live: the narrator (talk.js) is handed the lines and the clock, on a device with a Gemini key.
+ window.CouncilTalk?.narrate?.(spec.narration?.live&&SOUND.on?{id:f.video,voice:spec.narration.voice,lines:timeline.chapters.flatMap(c=>c.lines)}:null,time,playing&&started);
  // Captions: the frame nearest the clock, placed over the video's picture (letterboxed in the stage).
  const c=FILM.caps;FILM.layer.replaceChildren();if(!c||!started)return;
  const ar=c.size[0]/c.size[1], bw=box.clientWidth, bh=box.clientHeight, pw=Math.min(bw,bh*ar), ph=pw/ar, px=(bw-pw)/2, py=(bh-ph)/2;
  const fr=c.frames[Math.max(0,Math.min(c.frames.length-1,Math.round(time*10)))];
- for(const it of fr?.items||[]){const s=document.createElement('span');s.className='film-caption';s.textContent=it.text;s.style.left=(px+it.x*pw)+'px';s.style.top=(py+it.y*ph)+'px';s.style.opacity=it.alpha;FILM.layer.append(s);}
+ for(const it of fr?.items||[]){
+  // A caption may point at something: a thin line from near the words to the point, with a dot there.
+  if(it.ax!==undefined){const x0=px+it.ax*pw,y0=py+it.ay*ph,x1=px+it.x*pw,y1=py+it.y*ph,len=Math.hypot(x1-x0,y1-y0)-12,ang=Math.atan2(y1-y0,x1-x0);
+   if(len>4){const l=document.createElement('i');l.className='film-pointer';l.style.left=x0+'px';l.style.top=y0+'px';l.style.width=len+'px';l.style.transform=`rotate(${ang}rad)`;l.style.opacity=it.alpha;FILM.layer.append(l);}
+   const d=document.createElement('i');d.className='film-pointer-dot';d.style.left=x0+'px';d.style.top=y0+'px';d.style.opacity=it.alpha;FILM.layer.append(d);}
+  const s=document.createElement('span');s.className='film-caption';s.textContent=it.text;s.style.left=(px+it.x*pw)+'px';s.style.top=(py+it.y*ph)+'px';s.style.opacity=it.alpha;FILM.layer.append(s);}
 }
-function draw(ctx,w,h,spec,state){if(spec.film){filmFrame(w,h);return;}FILM.video?.closest('.stage')?.classList.remove('has-film');engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
+function draw(ctx,w,h,spec,state){if(spec.film){filmFrame(w,h);return;}FILM.video?.closest('.stage')?.classList.remove('has-film');window.CouncilTalk?.narrate?.(null);engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
 window.CouncilDraw={draw,accent:spec=>ACCENT[spec.accent]||ACCENT.mint,disclosure:spec=>engineOf(spec).disclosure||'',theme:themeOf,themes:()=>Object.keys(THEMES),darkReady:kind=>DARK_READY.has(kind)};
 window.CouncilLab={draw:drawLab,hit:labHit,view:()=>labXf};
 // Subtitle pacing: comfortable reading speed, a minimum time on screen, and a pause between sentences.
-const READING={cps:14,minimum:2.8,pause:.9,lead:.8,tail:.8};
+// A film read aloud live (spec.narration.live) also leaves each line time to be spoken at the voice's pace.
+const READING={cps:14,minimum:2.8,pause:.9,lead:.8,tail:.8,voice:12};
 // A guide's timeline from its text alone: chapter and sentence start and end times, in seconds.
 function timelineOf(spec){
- let t=0;
+ // A narrated guide (spec.spoken: each line's spoken length, from lab/narrate.py, or the voice's pace when it is read
+ // live) keeps every line up at least as long as it is spoken, so the voice, the subtitles and the picture stay together.
+ let t=0, n=0;
  const chapters=spec.beats.map(beat=>{
   const start=t;t+=READING.lead;
-  const lines=sentences(beat.body).map(text=>{const shown=Math.max(READING.minimum,text.length/READING.cps),line={text,start:t,end:t+shown};t+=shown+READING.pause;return line;});
+  const lines=sentences(beat.body).map(text=>{const said=spec.spoken?.[n++]??(spec.narration?.live?text.length/READING.voice:0), shown=Math.max(READING.minimum,text.length/READING.cps,said?said+.3:0),line={text,start:t,end:t+shown};t+=shown+READING.pause;return line;});
   t+=READING.tail;return {start,end:t,lines};
  });
  // A scene may ask for a longer duration than reading needs; stretch evenly, never compress.
@@ -5678,7 +5689,7 @@ window.CouncilScene.effect=()=>{const e=engineOf(spec);return e.effect?e.effect(
 $('play').onclick=toggle;$('poster').onclick=play;
 $('reset').onclick=()=>{started=false;play();};
 $('sound').onclick=()=>{SOUND.on=!SOUND.on;try{localStorage.setItem('council-sound',SOUND.on?'on':'off');}catch{}audioStart();soundButton();paint();};
-function soundButton(){const b=$('sound');b.hidden=!sounds(engineOf(spec));b.setAttribute('aria-pressed',String(SOUND.on));b.setAttribute('aria-label',SOUND.on?'Mute the sound':'Turn the sound on');}
+function soundButton(){const b=$('sound');b.hidden=!sounds(engineOf(spec))&&!spec?.film?.narrated&&!(spec?.narration?.live&&window.CouncilTalk?.hasKey());b.setAttribute('aria-pressed',String(SOUND.on));b.setAttribute('aria-label',SOUND.on?'Mute the sound':'Turn the sound on');}
 $('explore').onclick=()=>{exploreOpen=!document.querySelector('.workspace').classList.contains('exploring');pause();paint();};
 // Scrubbing: click or drag anywhere on the bar; playback continues if it was playing.
 function scrubTo(clientX){

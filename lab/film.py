@@ -33,6 +33,7 @@ def main():
     ap.add_argument('--samples', type=int, default=5); ap.add_argument('--frames', default='')
     ap.add_argument('--poster', action='store_true'); ap.add_argument('--crf', type=int, default=23)
     ap.add_argument('--captions-only', action='store_true')
+    ap.add_argument('--audio', default='', help='a narration WAV to put under the picture')
     a = ap.parse_args()
     W, H = map(int, a.size.split('x'))
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
@@ -80,6 +81,11 @@ def main():
             t = k / 10
             caps.append({'t': t, 'items': [{**c, 'x': round(c['x'], 4), 'y': round(c['y'], 4), 'alpha': round(c['alpha'], 3)} for c in pg.evaluate('(t)=>captions(t)', t)]})
         enc.stdin.close(); enc.wait()
+        if a.audio:
+            silent = out / 'film-silent.mp4'; (out / 'film.mp4').rename(silent)
+            subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(silent), '-i', a.audio, '-map', '0:v', '-map', '1:a', '-c:v', 'copy',
+                            '-c:a', 'aac', '-b:a', '96k', '-shortest', '-movflags', '+faststart', str(out / 'film.mp4')], check=True)
+            silent.unlink()
         (out / 'captions.json').write_text(json.dumps({'duration': duration, 'size': [W, H], 'fps': a.fps, 'frames': caps}, separators=(',', ':')))
         b.close()
         if errors:

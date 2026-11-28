@@ -85,47 +85,47 @@
     "beats": [
       {
         "title": "One bit",
-        "body": "A light switch holds one bit of information: it is either on or off. Describing anything exactly, down to every particle, takes a long list of bits. So how many bits could a space hold, at most?"
+        "body": "A light switch is either on or off. That single choice, on or off, is called a bit. Anything at all can be described in bits, if you use enough of them. Pinning down every particle in a room would take an enormous list. So here's a question: how many bits can a given space hold?"
       },
       {
         "title": "Inside and surface",
-        "body": "Make a box of cells twice as wide, and eight times as many fit inside. Its surface grows only four times, so the inside soon far outnumbers it. So you'd expect what's inside, not the surface, to set the limit."
+        "body": "Think of the space as a box of tiny cells, each holding one bit. Make the box twice as wide, and eight times as many cells fit inside. Its outside surface, though, grows only four times. The bigger the box, the more the inside outnumbers the surface. So you'd expect a space's limit to depend on the room inside it."
       },
       {
         "title": "Squeezed too tight",
-        "body": "Crush something into less room, and the pull at its surface grows. Squeeze all of Earth to the size of a marble, and it becomes a black hole. Past its edge, the horizon, the pull is so strong not even light escapes."
+        "body": "But packing things into a space has a catch: gravity. Squeeze anything into less room, and its pull grows stronger. Crush the whole Earth down to the size of a marble, and it becomes a black hole. Its edge is called the horizon. Nothing that crosses it, not even light, ever comes back out."
       },
       {
         "title": "Bigger, not fuller",
-        "body": "Pack more and more into a space, and it too collapses into a black hole. Add even more, and it grows past the space: twice the mass, twice as wide. So, physicists think, the fullest a space can be is a black hole that just fits."
+        "body": "The same happens if you keep adding things to a space. Sooner or later, it all collapses into a black hole. Add even more, and the black hole doesn't get fuller. It gets bigger. Twice the mass makes it twice as wide. So the fullest a space can ever be is a black hole that just fills it."
       },
       {
         "title": "Where do the bits go?",
-        "body": "Throw a book in, and every detail of it, down to its atoms, seems gone. Yet hidden detail is never seen to vanish for good, so the hole must keep it. But from outside, a black hole looks the same whatever falls in: it just grows."
+        "body": "Now drop a book into a black hole. Its words, its paper, every detail of it, seem to be gone. But burn a book instead, and its smoke and ash still carry every detail. Physics has a rule: the total of such scrambled detail never goes down. So the black hole must somehow hold the book's details. Yet it only grows."
       },
       {
-        "title": "Bekenstein's link",
-        "body": "In Einstein's theory, a horizon's area never shrinks, like that hidden count. So in 1972 Jacob Bekenstein proposed that the area measures the count. Every book that falls in makes the horizon a little bigger."
+        "title": "Bekenstein's idea",
+        "body": "In 1972, Jacob Bekenstein noticed something about that growth. In Einstein's theory, a horizon's area can grow but never shrink. That is just like the total of scrambled detail. So he proposed that the horizon's area keeps count of it. Every book that falls in adds a little to the area."
       },
       {
         "title": "Hawking's count",
-        "body": "In 1974 Stephen Hawking found that black holes glow faintly, as if warm. For anything warm, its temperature and energy reveal how much detail it hides. For a black hole, that comes to one bit for each tiny patch of its horizon."
+        "body": "Two years later, Stephen Hawking found that black holes faintly glow. That means a black hole has a temperature, as if it were warm. For anything warm, temperature and energy tell how much detail it hides. Working this out, Hawking found the exact count for a black hole. It comes to one bit for each tiny patch of its horizon."
       },
       {
         "title": "Unimaginably many",
-        "body": "Each patch is far smaller than a proton, so a horizon holds unimaginably many. A black hole with the Sun's mass holds a 78-digit number of bits. No one has measured this: real black holes glow far too faintly to detect."
+        "body": "Each of those patches is far smaller than a proton. So a black hole holds an unimaginable number of bits. One with the Sun's mass would hold a 78-digit number of them. No one has measured this: the glow is far too faint to see. The count comes from theory, joining Einstein's gravity to quantum physics."
       },
       {
         "title": "Surface, not volume",
-        "body": "Twice as wide, a black hole holds four times the bits, not eight. And nothing that fits in a space holds more than the black hole that fills it. So, physicists think, it's the surface, not the inside, that sets the limit."
+        "body": "Here is the surprise. Make a black hole twice as wide, and it holds four times the bits, not eight. Its bits grow with its surface, not with the room inside. And nothing in a space can hold more than a black hole that would fill it. So, physicists think, the most any space can hold is set by its surface."
       },
       {
         "title": "Like a hologram",
-        "body": "A hologram is a flat film that stores a 3D scene, depth and all. Light it, and the scene appears in full depth, as if really there. Space may work alike, with everything inside it written on its edge."
+        "body": "That sounds strange, but something familiar works the same way. A hologram is a flat sheet of film. Yet when light shines on it, a whole 3D scene appears, with real depth. Everything about that scene is stored on the flat sheet. Many physicists think space itself may work like this."
       },
       {
         "title": "Still a 3D world",
-        "body": "Our world would still look and feel 3D, like a hologram's image. If this is right, space and even gravity may emerge from bits on a boundary. In some model universes this works exactly; whether ours does is still open."
+        "body": "This doesn't make the world flat: it would still look and feel 3D. But everything inside a space could be described by bits on its edge. Some think even space and gravity could arise from those bits. In simplified model universes, physicists have shown this works exactly. Whether our own universe works this way is still an open question."
       }
     ],
     "questions": [
@@ -158,6 +158,10 @@
         "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
       }
     ],
+    "narration": {
+      "live": true,
+      "voice": "Algenib"
+    },
     "film": {
       "video": "drafts/20261128T021654-holography-film/film.mp4",
       "captions": "drafts/20261128T021654-holography-film/captions.json",
@@ -289,47 +293,47 @@
         "beats": [
           {
             "title": "One bit",
-            "body": "A light switch holds one bit of information: it is either on or off. Describing anything exactly, down to every particle, takes a long list of bits. So how many bits could a space hold, at most?"
+            "body": "A light switch is either on or off. That single choice, on or off, is called a bit. Anything at all can be described in bits, if you use enough of them. Pinning down every particle in a room would take an enormous list. So here's a question: how many bits can a given space hold?"
           },
           {
             "title": "Inside and surface",
-            "body": "Make a box of cells twice as wide, and eight times as many fit inside. Its surface grows only four times, so the inside soon far outnumbers it. So you'd expect what's inside, not the surface, to set the limit."
+            "body": "Think of the space as a box of tiny cells, each holding one bit. Make the box twice as wide, and eight times as many cells fit inside. Its outside surface, though, grows only four times. The bigger the box, the more the inside outnumbers the surface. So you'd expect a space's limit to depend on the room inside it."
           },
           {
             "title": "Squeezed too tight",
-            "body": "Crush something into less room, and the pull at its surface grows. Squeeze all of Earth to the size of a marble, and it becomes a black hole. Past its edge, the horizon, the pull is so strong not even light escapes."
+            "body": "But packing things into a space has a catch: gravity. Squeeze anything into less room, and its pull grows stronger. Crush the whole Earth down to the size of a marble, and it becomes a black hole. Its edge is called the horizon. Nothing that crosses it, not even light, ever comes back out."
           },
           {
             "title": "Bigger, not fuller",
-            "body": "Pack more and more into a space, and it too collapses into a black hole. Add even more, and it grows past the space: twice the mass, twice as wide. So, physicists think, the fullest a space can be is a black hole that just fits."
+            "body": "The same happens if you keep adding things to a space. Sooner or later, it all collapses into a black hole. Add even more, and the black hole doesn't get fuller. It gets bigger. Twice the mass makes it twice as wide. So the fullest a space can ever be is a black hole that just fills it."
           },
           {
             "title": "Where do the bits go?",
-            "body": "Throw a book in, and every detail of it, down to its atoms, seems gone. Yet hidden detail is never seen to vanish for good, so the hole must keep it. But from outside, a black hole looks the same whatever falls in: it just grows."
+            "body": "Now drop a book into a black hole. Its words, its paper, every detail of it, seem to be gone. But burn a book instead, and its smoke and ash still carry every detail. Physics has a rule: the total of such scrambled detail never goes down. So the black hole must somehow hold the book's details. Yet it only grows."
           },
           {
-            "title": "Bekenstein's link",
-            "body": "In Einstein's theory, a horizon's area never shrinks, like that hidden count. So in 1972 Jacob Bekenstein proposed that the area measures the count. Every book that falls in makes the horizon a little bigger."
+            "title": "Bekenstein's idea",
+            "body": "In 1972, Jacob Bekenstein noticed something about that growth. In Einstein's theory, a horizon's area can grow but never shrink. That is just like the total of scrambled detail. So he proposed that the horizon's area keeps count of it. Every book that falls in adds a little to the area."
           },
           {
             "title": "Hawking's count",
-            "body": "In 1974 Stephen Hawking found that black holes glow faintly, as if warm. For anything warm, its temperature and energy reveal how much detail it hides. For a black hole, that comes to one bit for each tiny patch of its horizon."
+            "body": "Two years later, Stephen Hawking found that black holes faintly glow. That means a black hole has a temperature, as if it were warm. For anything warm, temperature and energy tell how much detail it hides. Working this out, Hawking found the exact count for a black hole. It comes to one bit for each tiny patch of its horizon."
           },
           {
             "title": "Unimaginably many",
-            "body": "Each patch is far smaller than a proton, so a horizon holds unimaginably many. A black hole with the Sun's mass holds a 78-digit number of bits. No one has measured this: real black holes glow far too faintly to detect."
+            "body": "Each of those patches is far smaller than a proton. So a black hole holds an unimaginable number of bits. One with the Sun's mass would hold a 78-digit number of them. No one has measured this: the glow is far too faint to see. The count comes from theory, joining Einstein's gravity to quantum physics."
           },
           {
             "title": "Surface, not volume",
-            "body": "Twice as wide, a black hole holds four times the bits, not eight. And nothing that fits in a space holds more than the black hole that fills it. So, physicists think, it's the surface, not the inside, that sets the limit."
+            "body": "Here is the surprise. Make a black hole twice as wide, and it holds four times the bits, not eight. Its bits grow with its surface, not with the room inside. And nothing in a space can hold more than a black hole that would fill it. So, physicists think, the most any space can hold is set by its surface."
           },
           {
             "title": "Like a hologram",
-            "body": "A hologram is a flat film that stores a 3D scene, depth and all. Light it, and the scene appears in full depth, as if really there. Space may work alike, with everything inside it written on its edge."
+            "body": "That sounds strange, but something familiar works the same way. A hologram is a flat sheet of film. Yet when light shines on it, a whole 3D scene appears, with real depth. Everything about that scene is stored on the flat sheet. Many physicists think space itself may work like this."
           },
           {
             "title": "Still a 3D world",
-            "body": "Our world would still look and feel 3D, like a hologram's image. If this is right, space and even gravity may emerge from bits on a boundary. In some model universes this works exactly; whether ours does is still open."
+            "body": "This doesn't make the world flat: it would still look and feel 3D. But everything inside a space could be described by bits on its edge. Some think even space and gravity could arise from those bits. In simplified model universes, physicists have shown this works exactly. Whether our own universe works this way is still an open question."
           }
         ],
         "questions": [
@@ -362,6 +366,10 @@
             "a": "Nobody knows. The idea is made exact in some model universes, through what is called the AdS/CFT correspondence. Whether it holds for our universe is an open question."
           }
         ],
+        "narration": {
+          "live": true,
+          "voice": "Algenib"
+        },
         "film": {
           "video": "drafts/20261128T021654-holography-film/film.mp4",
           "captions": "drafts/20261128T021654-holography-film/captions.json",
@@ -478,9 +486,7 @@
         "drafts/20261128T021654-holography-film/frame-7.jpg",
         "drafts/20261128T021654-holography-film/frame-8.jpg",
         "drafts/20261128T021654-holography-film/frame-9.jpg",
-        "drafts/20261128T021654-holography-film/frame-10.jpg",
-        "drafts/20261128T021654-holography-film/frame-11.jpg",
-        "drafts/20261128T021654-holography-film/frame-12.jpg"
+        "drafts/20261128T021654-holography-film/frame-10.jpg"
       ]
     }
   ],
