@@ -5295,7 +5295,26 @@ const THEMES={
 };
 const DARK_READY=new Set(['light-clock','night-sky','speed-limit','holography-gl']);
 function themeOf(spec){const t=THEMES[spec?.theme];return t&&(!t.dark||DARK_READY.has(spec.kind))?t:THEMES.paper;}
-function draw(ctx,w,h,spec,state){engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
+// A film guide (spec.film: a pre-rendered video, its captions and poster) plays its video in the stage, kept on the
+// guide's own clock so the subtitles stay in step, with its captions laid out as text over the picture.
+const FILM={video:null,layer:null,src:'',caps:null,capsSrc:''};
+function filmFrame(w,h){
+ const f=spec.film, box=document.querySelector('.stage');if(!box)return;
+ if(!FILM.video){const v=document.createElement('video');v.className='stage-film';v.muted=true;v.playsInline=true;v.preload='auto';v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');
+  box.prepend(v);FILM.video=v;const l=document.createElement('div');l.className='film-captions';l.setAttribute('aria-hidden','true');box.append(l);FILM.layer=l;}
+ const v=FILM.video;if(FILM.src!==f.video){FILM.src=f.video;v.src=f.video;if(f.poster)v.poster=f.poster;}
+ if(FILM.capsSrc!==f.captions){FILM.capsSrc=f.captions;FILM.caps=null;fetch(f.captions).then(r=>r.json()).then(j=>{FILM.caps=j;paint();}).catch(()=>{});}
+ box.classList.add('has-film');
+ const playing=mode==='playing';
+ if(playing){if(v.paused)v.play().catch(()=>{});if(Math.abs(v.currentTime-time)>.35)v.currentTime=time;}
+ else{if(!v.paused)v.pause();if(started&&Math.abs(v.currentTime-time)>.04)v.currentTime=time;}
+ // Captions: the frame nearest the clock, placed over the video's picture (letterboxed in the stage).
+ const c=FILM.caps;FILM.layer.replaceChildren();if(!c||!started)return;
+ const ar=c.size[0]/c.size[1], bw=box.clientWidth, bh=box.clientHeight, pw=Math.min(bw,bh*ar), ph=pw/ar, px=(bw-pw)/2, py=(bh-ph)/2;
+ const fr=c.frames[Math.max(0,Math.min(c.frames.length-1,Math.round(time*10)))];
+ for(const it of fr?.items||[]){const s=document.createElement('span');s.className='film-caption';s.textContent=it.text;s.style.left=(px+it.x*pw)+'px';s.style.top=(py+it.y*ph)+'px';s.style.opacity=it.alpha;FILM.layer.append(s);}
+}
+function draw(ctx,w,h,spec,state){if(spec.film){filmFrame(w,h);return;}FILM.video?.closest('.stage')?.classList.remove('has-film');engineOf(spec).draw(ctx,w,h,spec,{...state,dark:!!themeOf(spec).dark});}
 window.CouncilDraw={draw,accent:spec=>ACCENT[spec.accent]||ACCENT.mint,disclosure:spec=>engineOf(spec).disclosure||'',theme:themeOf,themes:()=>Object.keys(THEMES),darkReady:kind=>DARK_READY.has(kind)};
 window.CouncilLab={draw:drawLab,hit:labHit,view:()=>labXf};
 // Subtitle pacing: comfortable reading speed, a minimum time on screen, and a pause between sentences.
@@ -5626,6 +5645,8 @@ function tick(stamp){
  // Nothing moves until the viewer presses play or touches a control.
  if(spec&&started&&mode!=='paused'){
   time+=dt;
+  // A film guide follows its video's own clock while it plays, so picture and subtitles never drift apart.
+  if(spec.film&&mode==='playing'&&FILM.video&&!FILM.video.paused&&FILM.video.readyState>=2&&!FILM.video.seeking)time=Math.min(timeline.total,FILM.video.currentTime);
   if(mode==='playing'){
    const next=chapterAt(time), last=timeline.chapters.length-1, c=timeline.chapters[last];
    if(next!==stage)setStage(next);

@@ -129,7 +129,12 @@
         "title": "The world as a hologram",
         "body": "A hologram is a flat film that shows a 3D image. Space may work the same way, with what happens inside written on its edge. In some model universes this works exactly; whether ours does is still open."
       }
-    ]
+    ],
+    "film": {
+      "video": "drafts/20261128T021654-holography-film/film.mp4",
+      "captions": "drafts/20261128T021654-holography-film/captions.json",
+      "poster": "drafts/20261128T021654-holography-film/poster.jpg"
+    }
   },
   "checks": [
     {
@@ -233,7 +238,7 @@
   "provenance": {
     "sources_retrieved": true,
     "retrieved_by": "coordinator",
-    "intro_note": "A pilot made in a coding session at the owner’s request, after the WebGL short film “The Arrow of Time”: the holography guide redrawn on a dark stage, its black holes ray-traced in WebGL2 (light followed along its real paths around a non-spinning black hole) and finished with bloom, a grade and grain. It is a draft for the owner to compare with the published guide; its first reviews passed the accuracy review (8) and found chapters 4 and 5 weaker in the visual review (6) and the blind test (7), and their fixes are in this version but not yet re-reviewed."
+    "intro_note": "A pilot made in a coding session at the owner’s request, after the WebGL short film “The Arrow of Time” by Abhishek Pradhan (github.com/abhishekpradhan/the-arrow-of-time): the holography guide as a pre-rendered film. Each frame is rendered in high dynamic range by a small WebGL2 film engine (film/ in the repository): ray-traced bits in glass boxes, a textured Earth with clouds and air (maps derived from Natural Earth by that film’s tools), black holes whose light is followed along its real paths around a non-spinning black hole with a ringed disk of gas, and a laser-lit hologram, with several motion-blurred samples a frame, then bloom, halation, a grade and grain. The captions are laid over the video as text. It is a draft for the owner to compare with the published guide, not yet reviewed."
   },
   "revisions": [
     {
@@ -300,7 +305,12 @@
             "title": "The world as a hologram",
             "body": "A hologram is a flat film that shows a 3D image. Space may work the same way, with what happens inside written on its edge. In some model universes this works exactly; whether ours does is still open."
           }
-        ]
+        ],
+        "film": {
+          "video": "drafts/20261128T021654-holography-film/film.mp4",
+          "captions": "drafts/20261128T021654-holography-film/captions.json",
+          "poster": "drafts/20261128T021654-holography-film/poster.jpg"
+        }
       },
       "checks": [
         {
@@ -402,18 +412,18 @@
       ],
       "accepted": false,
       "frames": [
-        "drafts/20261128T021654-holography-film/frame-0.png",
-        "drafts/20261128T021654-holography-film/frame-1.png",
-        "drafts/20261128T021654-holography-film/frame-2.png",
-        "drafts/20261128T021654-holography-film/frame-3.png",
-        "drafts/20261128T021654-holography-film/frame-4.png",
-        "drafts/20261128T021654-holography-film/frame-5.png",
-        "drafts/20261128T021654-holography-film/frame-6.png",
-        "drafts/20261128T021654-holography-film/frame-7.png",
-        "drafts/20261128T021654-holography-film/frame-8.png",
-        "drafts/20261128T021654-holography-film/frame-9.png",
-        "drafts/20261128T021654-holography-film/frame-10.png",
-        "drafts/20261128T021654-holography-film/frame-11.png"
+        "drafts/20261128T021654-holography-film/frame-0.jpg",
+        "drafts/20261128T021654-holography-film/frame-1.jpg",
+        "drafts/20261128T021654-holography-film/frame-2.jpg",
+        "drafts/20261128T021654-holography-film/frame-3.jpg",
+        "drafts/20261128T021654-holography-film/frame-4.jpg",
+        "drafts/20261128T021654-holography-film/frame-5.jpg",
+        "drafts/20261128T021654-holography-film/frame-6.jpg",
+        "drafts/20261128T021654-holography-film/frame-7.jpg",
+        "drafts/20261128T021654-holography-film/frame-8.jpg",
+        "drafts/20261128T021654-holography-film/frame-9.jpg",
+        "drafts/20261128T021654-holography-film/frame-10.jpg",
+        "drafts/20261128T021654-holography-film/frame-11.jpg"
       ]
     }
   ]

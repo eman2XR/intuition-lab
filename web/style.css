@@ -264,6 +264,13 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 img.thumb{object-fit:cover;display:block}
 .stage-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;opacity:1;transition:opacity .45s ease;background:linear-gradient(180deg,var(--stage-top,#fbf8f1) 50%,var(--stage-bottom,#f2ece1) 50%);border-radius:inherit}
 .stage-poster.gone{opacity:0}
+.stage-film{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit}
+.stage.has-film{background:#000}
+.stage.has-film canvas{opacity:0}
+.film-captions{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.film-caption{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;color:rgba(255,255,255,.92);font:500 13px/1.2 var(--sans,system-ui),sans-serif;
+ letter-spacing:.22em;text-transform:uppercase;text-shadow:0 0 12px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,.8);transition:opacity .12s linear}
+@media (max-width:560px){.film-caption{font-size:10px;letter-spacing:.16em}}
 .mini-play{position:absolute;left:16px;bottom:16px;width:40px;height:40px;border-radius:50%;background:var(--ink);transition:transform .2s,background .2s}
 .mini-play::after{content:"";position:absolute;left:16px;top:13px;border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent}
 .card:hover .mini-play{transform:scale(1.08);background:var(--orange-ink)}
