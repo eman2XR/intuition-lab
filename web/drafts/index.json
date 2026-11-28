@@ -6,5 +6,13 @@
     "kind": "holography-gl",
     "review_status": "reviewed",
     "curriculum": "9.1"
+  },
+  {
+    "id": "20261128T081200-expansion-film",
+    "title": "How do we know the universe is expanding? (film version)",
+    "created": "2026-11-28T08:12:00.192986+00:00",
+    "kind": "expansion-film",
+    "review_status": "reviewed",
+    "curriculum": "6.6"
   }
 ]

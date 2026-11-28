@@ -1,0 +1,500 @@
+{
+  "id": "20261128T081200-expansion-film",
+  "status": "draft",
+  "question": "How do we know the universe is expanding?",
+  "topic": "expansion-film",
+  "created": "2026-11-28T08:12:00.192986+00:00",
+  "research": {
+    "claim": "We know the universe is expanding because the dark lines in distant galaxies' light are shifted toward red, more for farther galaxies, and the shift grows in proportion to distance (Hubble's law, about 70 km/s for every megaparsec, 3.26 million light years). Light from a receding source arrives with longer waves; and a pattern in which speed grows in proportion to distance is what every galaxy sees when all the distances between galaxies grow by the same share, so no galaxy is the centre. Running the growth back gives a hot, dense beginning about 13.8 billion years ago.",
+    "explanation": "With every distance scaled by a factor a(t), the separation of galaxies i and j is a(t) x_ij, so their relative speed is (da/dt / a) times their separation: H0 times distance, the same from every galaxy. Light emitted when the scale was a_then arrives with its wavelength multiplied by a_now/a_then (the cosmological redshift); for nearby galaxies the shift z is about v/c. 1/H0 for H0 = 70 km/s/Mpc is 977.8/70 = 14.0 billion years; with gravity's slowing and dark energy's later speeding up, the measured age is about 13.8 billion years.",
+    "assumptions": [
+      "A growth rate of 70 km/s per megaparsec (about 21 km/s for each million light years); measurements range from about 67 to 73.",
+      "Hydrogen's visible lines at 410, 434, 486 and 656 nanometres and sodium's pair at 589; the galaxies' lines are moved by 4 to 9%.",
+      "The galaxies' trails show their motion sped up by many millions of years; nearby galaxies, and anything held together by gravity or other forces, do not spread apart.",
+      "The plot's scatter is made up for the picture.",
+      "The raisin loaf is an analogy: unlike dough, space as far as we know has no edge and no outside.",
+      "The glow's wave is shown stretching from orange to too long to see; the true stretch since it set off is about 1,100 times, and its sky map is in false colour.",
+      "Hubble's own 1929 slope was about 500 km/s per megaparsec, too steep because his distances were too small; Slipher's galaxies' lines moved by less than 1%, the pictures' by 4 to 9%.",
+      "Run backwards, the galaxies are shown melting into the hot gas; in fact they formed later, from that gas."
+    ],
+    "prediction": "A galaxy twice as far as another shows about twice the redshift, and the same proportion holds whichever direction we look.",
+    "falsifier": "If distant galaxies' lines showed no shift, or shifts that did not grow with distance, or galaxies in some directions approached as often as others receded, this explanation would be wrong.",
+    "limitations": [
+      "Very distant galaxies need the full theory (general relativity), in which redshift is not simply proportional to distance.",
+      "The picture leaves out the expansion's slowing and later speeding up.",
+      "Hubble's own 1929 value was about 500 km/s per megaparsec, too high because of errors in his distances; today's measurements give about 67 to 73."
+    ],
+    "misconceptions": [
+      "The galaxies are flying away from a centre where an explosion happened.",
+      "Everything, including atoms and the solar system, is expanding.",
+      "Nothing can move away from us faster than light."
+    ],
+    "questions": [
+      "Is everything expanding, even me?",
+      "So where is the centre?",
+      "How do we know how far the galaxies are?",
+      "Can galaxies move away faster than light?",
+      "Why 13.8 billion years?"
+    ],
+    "sources": [
+      {
+        "title": "Hubble's law (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Hubble%27s_law",
+        "supports": "Galaxies move away from Earth at speeds proportional to their distance; attributed to Edwin Hubble's 1929 work, using Cepheid variable stars to find distances; the Hubble constant is around 70 km/s/Mpc (Planck 67.4, other measurements near 70 and 73); the raisin-bread analogy; type Ia supernovae as standard candles."
+      },
+      {
+        "title": "Expansion of the universe (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Expansion_of_the_universe",
+        "supports": "To any observer, all but the nearest galaxies (bound by gravity) move away at speeds proportional to their distance; the ant-on-a-balloon analogy; recession of distant objects is not limited by the speed of light, which applies to local reference frames; picturing galaxies as stationary while space stretches is often argued erroneously."
+      },
+      {
+        "title": "Redshift (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Redshift",
+        "supports": "The cosmological redshift is commonly attributed to the stretching of photons' wavelengths as the universe expands."
+      },
+      {
+        "title": "Spectral line (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Spectral_line",
+        "supports": "Spectral lines identify atoms and molecules, like fingerprints."
+      },
+      {
+        "title": "Age of the universe (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Age_of_the_universe",
+        "supports": "The age of the universe is estimated at about 13.77 to 13.79 billion years."
+      },
+      {
+        "title": "Cosmic microwave background (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Cosmic_microwave_background",
+        "supports": "Light released about 380,000 years after the Big Bang, when the universe was about 3,000 K, now arrives as a black-body glow at 2.72548 K, brightest in microwaves; discovered by accident in 1964 by Arno Penzias and Robert Wilson with a radio antenna, Nobel Prize 1978."
+      }
+    ],
+    "sources_retrieved": true
+  },
+  "scene": {
+    "title": "How do we know the universe is expanding?",
+    "opening": "How do we know the universe is expanding?",
+    "accent": "blue",
+    "mass": 1,
+    "distance": 1,
+    "show_reference": false,
+    "show_labels": true,
+    "line_width": 2,
+    "questions": [
+      {
+        "q": "Is everything expanding, even me?",
+        "a": "No. Atoms, people, the Earth, the solar system and our own galaxy are held together by forces and gravity, and nearby galaxies are bound to each other too. Only the gaps between galaxies far apart grow."
+      },
+      {
+        "q": "So where is the centre?",
+        "a": "There isn't one. Every galaxy sees the others moving away in the same pattern, faster the farther they are, as the raisins in the rising loaf show. Unlike a loaf, space has no crust and, as far as we can tell, no edge to measure a middle from."
+      },
+      {
+        "q": "How do we know how far the galaxies are?",
+        "a": "By stars of known true brightness. Hubble used Cepheid stars, which pulse at a rate that tells how bright they really are, in the nearest galaxies, and their brightest stars in farther ones; how faint they look then gives the distance. Today exploding stars called type Ia supernovae reach much farther."
+      },
+      {
+        "q": "Can galaxies move away faster than light?",
+        "a": "Very distant ones, yes: their distance from us grows by more than a light year every year. That doesn't break the speed limit, which applies to things moving past each other nearby, not to the growth of distances across the universe."
+      },
+      {
+        "q": "Why 13.8 billion years?",
+        "a": "If each galaxy had always kept its speed, its distance divided by its speed gives the time since all were together: about 14 billion years, the same for every galaxy. Gravity's slowing and the later speeding up by a mysterious push called dark energy nearly cancel, and the full calculation with today's best measurements gives 13.8 billion."
+      },
+      {
+        "q": "Who found the glow from the hot, dense past?",
+        "a": "Arno Penzias and Robert Wilson, by accident, in 1964: a faint hiss in their radio antenna that came from every direction, day and night. It earned them the 1978 Nobel Prize. Satellites have since mapped its faint patches across the whole sky."
+      },
+      {
+        "q": "What is a light year?",
+        "a": "The distance light travels in a year: about 9.5 trillion kilometres. A galaxy a million light years away is so far that its light set off a million years ago."
+      }
+    ],
+    "subtitle": "Galaxies are far too distant to watch them move. Yet we know almost all of them are moving apart. How?",
+    "why": "The light from far galaxies carries a clue, discovered a century ago: almost all of them are moving away from us, and from each other.",
+    "controls": "none",
+    "kind": "expansion-film",
+    "theme": "night",
+    "duration": 60,
+    "takeaway": "Distant galaxies' light arrives stretched toward red, more the farther they are: the space between galaxies keeps growing. No galaxy is the centre, and the glow of a hot, dense past still fills the sky.",
+    "beats": [
+      {
+        "title": "A sky that looks still",
+        "body": "On a clear night, the sky looks perfectly still. Yet almost every galaxy out there is moving away from us. And the farther away a galaxy is, the faster it goes. They're so far away that no one could ever watch them drift off. So how do we know? The answer is hidden in their colours."
+      },
+      {
+        "title": "A barcode in the light",
+        "body": "Pass sunlight through a narrow slit and a prism, and it fans into a rainbow. Look closely, and thin dark lines cross the rainbow. Most are colours soaked up by atoms in the Sun's outer layers. Each kind of atom always takes out the same colours, like a barcode. Hydrogen's barcode shows up in the light of stars, and of whole galaxies."
+      },
+      {
+        "title": "Slid toward red",
+        "body": "In the 1910s, Vesto Slipher spread out the light of faraway galaxies. He found the same barcodes, but every line had slid toward red. Almost every galaxy he measured was shifted the same way. Astronomers call this shift a redshift. Light travels as waves, and red light has longer waves than blue. And waves arrive longer when whatever sends them is moving away."
+      },
+      {
+        "title": "Stretched waves",
+        "body": "You've heard this happen with sound. A siren drops in pitch the moment it passes you and starts to pull away. Each wave sets off a little farther from you than the one before. So the waves arrive spread out, and the pitch drops. Light does the same: its waves arrive longer, so it looks redder. The bigger the stretch, the faster the galaxy is moving away."
+      },
+      {
+        "title": "How far away",
+        "body": "Next, astronomers needed to know how far away each galaxy was. A lamp twice as far away looks four times fainter. Its light has spread over four times the area. Henrietta Leavitt found stars that pulse, and the slower ones are brighter. So timing a star's pulse tells you how bright it really is. Then how faint it looks tells you how far away it is."
+      },
+      {
+        "title": "Farther means faster",
+        "body": "Edwin Hubble found such stars in other galaxies, and measured their distances. In 1929, he plotted their speeds, many measured by Slipher, against distance. The points fell roughly along a straight line. A galaxy twice as far away was moving away about twice as fast. Each million light years farther away means about 21 kilometres a second faster. But why would speed grow with distance?"
+      },
+      {
+        "title": "No centre",
+        "body": "Think of raisins in a loaf of bread, rising in the oven. As the dough rises, every gap between raisins doubles in the same time. Sit on one raisin: the one next to it moves off by one gap. A raisin two gaps away moves off by two: twice as fast. Sit on any other raisin, and you'd see the same pattern. From any galaxy you'd see Hubble's pattern too: it points to no centre."
+      },
+      {
+        "title": "Space itself grows",
+        "body": "The galaxies aren't flying through space away from one spot. Like raisins in dough, they ride along as the space between them grows. Light crossing that space is stretched along with it. The longer its journey, the more it stretches, and the redder it arrives. For nearby galaxies, it matches a siren's stretch at the same speed. In 1927, Georges Lemaître used Einstein's theory of gravity to predict this."
+      },
+      {
+        "title": "Running it backwards",
+        "body": "Now run the growth backwards. The galaxies crowd closer, and everything gets denser and hotter. Like air squeezed in a bike pump, it all warms up. About 13.8 billion years ago, all of space was hot and dense, and it glowed. That hot, dense beginning is what we call the Big Bang. Light from its farthest parts would only be reaching us now, from all around."
+      },
+      {
+        "title": "The glow is still here",
+        "body": "In 1964, two radio astronomers heard a faint radio hiss they couldn't remove. It came from every direction in the sky, day and night. It was that glow, its waves stretched about a thousand times on the way. It now arrives as microwaves, waves far too long for our eyes to see. Stretched light, farther meaning faster, and an old glow: space is growing."
+      }
+    ],
+    "narration": {
+      "live": true,
+      "voice": "Algenib"
+    },
+    "film_script": "expansion",
+    "film": {
+      "video": "drafts/20261128T081200-expansion-film/film.mp4",
+      "captions": "drafts/20261128T081200-expansion-film/captions.json",
+      "poster": "drafts/20261128T081200-expansion-film/poster.jpg"
+    }
+  },
+  "checks": [
+    {
+      "name": "Twice as far, a galaxy recedes twice as fast",
+      "pass": true
+    },
+    {
+      "name": "From every galaxy, the others recede at speeds in proportion to their distance",
+      "pass": true
+    },
+    {
+      "name": "From every galaxy, each other galaxy moves straight away",
+      "pass": true
+    },
+    {
+      "name": "A galaxy 3.26 million light years away recedes about 70 km a second",
+      "pass": true
+    },
+    {
+      "name": "That is about 21 km a second for each million light years",
+      "pass": true
+    },
+    {
+      "name": "Running the growth back at that rate gives about 14 billion years",
+      "pass": true
+    },
+    {
+      "name": "Light sent when distances were half as big arrives with waves twice as long",
+      "pass": true
+    },
+    {
+      "name": "Glow released at 3,000 kelvin and stretched 1,100 times arrives at about 2.7 kelvin",
+      "pass": true
+    },
+    {
+      "name": "Stretching the waves twice as long halves the glow's temperature",
+      "pass": true
+    },
+    {
+      "name": "At 2.7 kelvin the glow is brightest near 1 mm, in microwaves, far past visible light",
+      "pass": true
+    },
+    {
+      "name": "At 3,000 kelvin it was brightest near 1 micrometre, just past red, glowing orange",
+      "pass": true
+    },
+    {
+      "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+      "pass": true
+    },
+    {
+      "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+      "pass": true
+    },
+    {
+      "name": "Each subtitle stays up at least 4.1 s (minimum 2.5)",
+      "pass": true
+    },
+    {
+      "name": "Every subtitle is at most 80 characters (longest: 80)",
+      "pass": true
+    },
+    {
+      "name": "Zero-mass control removes the modeled effect",
+      "pass": true
+    },
+    {
+      "name": "Mass control updates the rendered model",
+      "pass": true
+    },
+    {
+      "name": "No-mass step shows zero and restores the chosen mass afterward",
+      "pass": true
+    },
+    {
+      "name": "Seeking reproduces identical canvas pixels",
+      "pass": true
+    },
+    {
+      "name": "At most 12 words of labels on the stage at once (most: 12)",
+      "pass": true
+    },
+    {
+      "name": "Every stage label is at most 5 words (longest: 4)",
+      "pass": true
+    },
+    {
+      "name": "Mobile page fits viewport",
+      "pass": true
+    },
+    {
+      "name": "The end card hint is plain text",
+      "pass": true
+    },
+    {
+      "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5320 moments)",
+      "pass": true
+    },
+    {
+      "name": "Renderer has no JavaScript errors",
+      "pass": true
+    }
+  ],
+  "provider": "reviewed-agents",
+  "provenance": {
+    "sources_retrieved": true,
+    "retrieved_by": "coordinator",
+    "intro_note": ""
+  },
+  "revisions": [
+    {
+      "number": 1,
+      "scene": {
+        "title": "How do we know the universe is expanding?",
+        "opening": "How do we know the universe is expanding?",
+        "accent": "blue",
+        "mass": 1,
+        "distance": 1,
+        "show_reference": false,
+        "show_labels": true,
+        "line_width": 2,
+        "questions": [
+          {
+            "q": "Is everything expanding, even me?",
+            "a": "No. Atoms, people, the Earth, the solar system and our own galaxy are held together by forces and gravity, and nearby galaxies are bound to each other too. Only the gaps between galaxies far apart grow."
+          },
+          {
+            "q": "So where is the centre?",
+            "a": "There isn't one. Every galaxy sees the others moving away in the same pattern, faster the farther they are, as the raisins in the rising loaf show. Unlike a loaf, space has no crust and, as far as we can tell, no edge to measure a middle from."
+          },
+          {
+            "q": "How do we know how far the galaxies are?",
+            "a": "By stars of known true brightness. Hubble used Cepheid stars, which pulse at a rate that tells how bright they really are, in the nearest galaxies, and their brightest stars in farther ones; how faint they look then gives the distance. Today exploding stars called type Ia supernovae reach much farther."
+          },
+          {
+            "q": "Can galaxies move away faster than light?",
+            "a": "Very distant ones, yes: their distance from us grows by more than a light year every year. That doesn't break the speed limit, which applies to things moving past each other nearby, not to the growth of distances across the universe."
+          },
+          {
+            "q": "Why 13.8 billion years?",
+            "a": "If each galaxy had always kept its speed, its distance divided by its speed gives the time since all were together: about 14 billion years, the same for every galaxy. Gravity's slowing and the later speeding up by a mysterious push called dark energy nearly cancel, and the full calculation with today's best measurements gives 13.8 billion."
+          },
+          {
+            "q": "Who found the glow from the hot, dense past?",
+            "a": "Arno Penzias and Robert Wilson, by accident, in 1964: a faint hiss in their radio antenna that came from every direction, day and night. It earned them the 1978 Nobel Prize. Satellites have since mapped its faint patches across the whole sky."
+          },
+          {
+            "q": "What is a light year?",
+            "a": "The distance light travels in a year: about 9.5 trillion kilometres. A galaxy a million light years away is so far that its light set off a million years ago."
+          }
+        ],
+        "subtitle": "Galaxies are far too distant to watch them move. Yet we know almost all of them are moving apart. How?",
+        "why": "The light from far galaxies carries a clue, discovered a century ago: almost all of them are moving away from us, and from each other.",
+        "controls": "none",
+        "kind": "expansion-film",
+        "duration": 60,
+        "takeaway": "Distant galaxies' light arrives stretched toward red, more the farther they are: the space between galaxies keeps growing. No galaxy is the centre, and the glow of a hot, dense past still fills the sky.",
+        "beats": [
+          {
+            "title": "A sky that looks still",
+            "body": "On a clear night, the sky looks perfectly still. Yet almost every galaxy out there is moving away from us. And the farther away a galaxy is, the faster it goes. They're so far away that no one could ever watch them drift off. So how do we know? The answer is hidden in their colours."
+          },
+          {
+            "title": "A barcode in the light",
+            "body": "Pass sunlight through a narrow slit and a prism, and it fans into a rainbow. Look closely, and thin dark lines cross the rainbow. Most are colours soaked up by atoms in the Sun's outer layers. Each kind of atom always takes out the same colours, like a barcode. Hydrogen's barcode shows up in the light of stars, and of whole galaxies."
+          },
+          {
+            "title": "Slid toward red",
+            "body": "In the 1910s, Vesto Slipher spread out the light of faraway galaxies. He found the same barcodes, but every line had slid toward red. Almost every galaxy he measured was shifted the same way. Astronomers call this shift a redshift. Light travels as waves, and red light has longer waves than blue. And waves arrive longer when whatever sends them is moving away."
+          },
+          {
+            "title": "Stretched waves",
+            "body": "You've heard this happen with sound. A siren drops in pitch the moment it passes you and starts to pull away. Each wave sets off a little farther from you than the one before. So the waves arrive spread out, and the pitch drops. Light does the same: its waves arrive longer, so it looks redder. The bigger the stretch, the faster the galaxy is moving away."
+          },
+          {
+            "title": "How far away",
+            "body": "Next, astronomers needed to know how far away each galaxy was. A lamp twice as far away looks four times fainter. Its light has spread over four times the area. Henrietta Leavitt found stars that pulse, and the slower ones are brighter. So timing a star's pulse tells you how bright it really is. Then how faint it looks tells you how far away it is."
+          },
+          {
+            "title": "Farther means faster",
+            "body": "Edwin Hubble found such stars in other galaxies, and measured their distances. In 1929, he plotted their speeds, many measured by Slipher, against distance. The points fell roughly along a straight line. A galaxy twice as far away was moving away about twice as fast. Each million light years farther away means about 21 kilometres a second faster. But why would speed grow with distance?"
+          },
+          {
+            "title": "No centre",
+            "body": "Think of raisins in a loaf of bread, rising in the oven. As the dough rises, every gap between raisins doubles in the same time. Sit on one raisin: the one next to it moves off by one gap. A raisin two gaps away moves off by two: twice as fast. Sit on any other raisin, and you'd see the same pattern. From any galaxy you'd see Hubble's pattern too: it points to no centre."
+          },
+          {
+            "title": "Space itself grows",
+            "body": "The galaxies aren't flying through space away from one spot. Like raisins in dough, they ride along as the space between them grows. Light crossing that space is stretched along with it. The longer its journey, the more it stretches, and the redder it arrives. For nearby galaxies, it matches a siren's stretch at the same speed. In 1927, Georges Lemaître used Einstein's theory of gravity to predict this."
+          },
+          {
+            "title": "Running it backwards",
+            "body": "Now run the growth backwards. The galaxies crowd closer, and everything gets denser and hotter. Like air squeezed in a bike pump, it all warms up. About 13.8 billion years ago, all of space was hot and dense, and it glowed. That hot, dense beginning is what we call the Big Bang. Light from its farthest parts would only be reaching us now, from all around."
+          },
+          {
+            "title": "The glow is still here",
+            "body": "In 1964, two radio astronomers heard a faint radio hiss they couldn't remove. It came from every direction in the sky, day and night. It was that glow, its waves stretched about a thousand times on the way. It now arrives as microwaves, waves far too long for our eyes to see. Stretched light, farther meaning faster, and an old glow: space is growing."
+          }
+        ],
+        "narration": {
+          "live": true,
+          "voice": "Algenib"
+        },
+        "film_script": "expansion",
+        "film": {
+          "video": "drafts/20261128T081200-expansion-film/film.mp4",
+          "captions": "drafts/20261128T081200-expansion-film/captions.json",
+          "poster": "drafts/20261128T081200-expansion-film/poster.jpg"
+        }
+      },
+      "checks": [
+        {
+          "name": "Twice as far, a galaxy recedes twice as fast",
+          "pass": true
+        },
+        {
+          "name": "From every galaxy, the others recede at speeds in proportion to their distance",
+          "pass": true
+        },
+        {
+          "name": "From every galaxy, each other galaxy moves straight away",
+          "pass": true
+        },
+        {
+          "name": "A galaxy 3.26 million light years away recedes about 70 km a second",
+          "pass": true
+        },
+        {
+          "name": "That is about 21 km a second for each million light years",
+          "pass": true
+        },
+        {
+          "name": "Running the growth back at that rate gives about 14 billion years",
+          "pass": true
+        },
+        {
+          "name": "Light sent when distances were half as big arrives with waves twice as long",
+          "pass": true
+        },
+        {
+          "name": "Glow released at 3,000 kelvin and stretched 1,100 times arrives at about 2.7 kelvin",
+          "pass": true
+        },
+        {
+          "name": "Stretching the waves twice as long halves the glow's temperature",
+          "pass": true
+        },
+        {
+          "name": "At 2.7 kelvin the glow is brightest near 1 mm, in microwaves, far past visible light",
+          "pass": true
+        },
+        {
+          "name": "At 3,000 kelvin it was brightest near 1 micrometre, just past red, glowing orange",
+          "pass": true
+        },
+        {
+          "name": "Subtitles read at most 14.0 characters per second (limit 15)",
+          "pass": true
+        },
+        {
+          "name": "Each chapter has at most 3 subtitle sentences (most: 3)",
+          "pass": true
+        },
+        {
+          "name": "Each subtitle stays up at least 4.1 s (minimum 2.5)",
+          "pass": true
+        },
+        {
+          "name": "Every subtitle is at most 80 characters (longest: 80)",
+          "pass": true
+        },
+        {
+          "name": "Zero-mass control removes the modeled effect",
+          "pass": true
+        },
+        {
+          "name": "Mass control updates the rendered model",
+          "pass": true
+        },
+        {
+          "name": "No-mass step shows zero and restores the chosen mass afterward",
+          "pass": true
+        },
+        {
+          "name": "Seeking reproduces identical canvas pixels",
+          "pass": true
+        },
+        {
+          "name": "At most 12 words of labels on the stage at once (most: 12)",
+          "pass": true
+        },
+        {
+          "name": "Every stage label is at most 5 words (longest: 4)",
+          "pass": true
+        },
+        {
+          "name": "Mobile page fits viewport",
+          "pass": true
+        },
+        {
+          "name": "The end card hint is plain text",
+          "pass": true
+        },
+        {
+          "name": "Labels stay inside the picture and clear of each other at every stage size (10 sizes, 5320 moments)",
+          "pass": true
+        },
+        {
+          "name": "Renderer has no JavaScript errors",
+          "pass": true
+        }
+      ],
+      "accepted": false,
+      "frames": [
+        "drafts/20261128T081200-expansion-film/frame-0.jpg",
+        "drafts/20261128T081200-expansion-film/frame-1.jpg",
+        "drafts/20261128T081200-expansion-film/frame-2.jpg",
+        "drafts/20261128T081200-expansion-film/frame-3.jpg",
+        "drafts/20261128T081200-expansion-film/frame-4.jpg",
+        "drafts/20261128T081200-expansion-film/frame-5.jpg",
+        "drafts/20261128T081200-expansion-film/frame-6.jpg",
+        "drafts/20261128T081200-expansion-film/frame-7.jpg",
+        "drafts/20261128T081200-expansion-film/frame-8.jpg",
+        "drafts/20261128T081200-expansion-film/frame-9.jpg",
+        "drafts/20261128T081200-expansion-film/frame-10.jpg"
+      ]
+    }
+  ],
+  "title": "How do we know the universe is expanding?"
+}
