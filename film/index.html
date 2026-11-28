@@ -2,16 +2,18 @@
 <html><head><meta charset="utf-8"><title>Intuition Lab film renderer</title>
 <style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
 <body><canvas id="c"></canvas>
-<script src="engine.js"></script><script src="holography.js"></script>
+<script src="engine.js"></script>
 <script>
-// Driven by lab/film.py: setup() once with the guide's chapter timing, then frame(t) for each frame.
+// Driven by lab/film.py: setup() once with the guide's chapter timing and the film's name (film/<name>.js, which
+// registers itself in CouncilFilms with its build function and textures), then frame(t) for each frame.
 let engine=null, project=null;
-window.setup=async(chapters,w,h)=>{
+const load=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('No film script '+src));document.body.append(s);});
+window.setup=async(chapters,w,h,name='holography')=>{
+ await load(name+'.js');
+ const film=window.CouncilFilms[name];
  engine=new CouncilFilm.Engine(document.getElementById('c'),{width:w,height:h});
- await engine.texture('albedo','assets/earth/albedo.png',{repeatX:true});
- await engine.texture('masks','assets/earth/masks.png',{srgb:false,repeatX:true});
- await engine.texture('relief','assets/earth/relief.png',{srgb:false,repeatX:true});
- project=HolographyFilm.build(chapters,{aspect:w/h});
+ for(const [key,url,opts] of film.textures||[])await engine.texture(key,url,opts);
+ project=film.build(chapters,{aspect:w/h});
  return project.duration;
 };
 window.frame=(t,samples,quality=.93)=>{engine.render(project,t,{samples});return engine.canvas.toDataURL('image/jpeg',quality);};

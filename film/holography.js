@@ -408,5 +408,5 @@ function build(chapters,{aspect=16/9}={}){
  const look=t=>({exposure:dim(t)?-.55:-.2,bloom:.045,halation:t>C[9].start-X&&t<C[9].end+X?.03:.1,grain:.018,vignette:.36,aberration:.12,saturation:1,contrast:1.06});
  return {shots,captions,look,samples:4,duration:C[C.length-1].end,posterProject:{shots:[poster],look:()=>({exposure:-.35,bloom:.045,halation:.1,grain:.018,vignette:.36,aberration:.12,contrast:1.06}),samples:8}};
 }
-window.HolographyFilm={build};
+(window.CouncilFilms||(window.CouncilFilms={})).holography={build,textures:[['albedo','assets/earth/albedo.png',{repeatX:true}],['masks','assets/earth/masks.png',{srgb:false,repeatX:true}],['relief','assets/earth/relief.png',{srgb:false,repeatX:true}]]};
 })();

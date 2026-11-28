@@ -3,7 +3,7 @@
 
 The guide's timeline (chapter and subtitle timing at reading pace) comes from the site's own scene engine, so the
 video lines up with the live subtitles. Each frame is rendered by film/engine.js in a headless browser, read back as
-JPEG and piped into ffmpeg (H.264). The captions are sampled at 10 per second into captions.json, for the page to lay
+JPEG and piped into ffmpeg (H.264). The scene's `film_script` names the film (film/<name>.js; holography by default). The captions are sampled at 10 per second into captions.json, for the page to lay
 out as HTML over the video. With --frames, only those times are rendered, as stills, for checking."""
 import argparse, base64, json, subprocess, sys, time
 from pathlib import Path
@@ -48,7 +48,7 @@ def main():
         pg.on('console', lambda m: errors.append(m.text) if m.type == 'error' or 'ERROR' in m.text else None)
         route_files(pg, ROOT / 'film')
         pg.goto(ORIGIN + '/index.html', wait_until='networkidle')
-        duration = pg.evaluate('([c,w,h])=>setup(c,w,h)', [chapters, W, H])
+        duration = pg.evaluate('([c,w,h,n])=>setup(c,w,h,n)', [chapters, W, H, scene.get('film_script', 'holography')])
         if errors:
             raise SystemExit('\n'.join(errors[:3]))
         write = lambda path, url: path.write_bytes(base64.b64decode(url.split(',', 1)[1]))

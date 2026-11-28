@@ -94,7 +94,7 @@ REVIEWS = ('physics_review','visual_review','learner_review')
 
 # Page and stage themes, as in web/scene.js (THEMES). Night is dark, so only pictures drawn for a dark stage get it.
 THEMES = ('sage', 'sky', 'sand', 'lilac', 'rose', 'mist', 'night')
-DARK_READY = {'light-clock', 'night-sky', 'speed-limit', 'holography-gl'}
+DARK_READY = {'light-clock', 'night-sky', 'speed-limit', 'holography-gl', 'expansion-film'}
 
 
 def pick_theme(index, kind):
